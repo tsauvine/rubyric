@@ -1,0 +1,59 @@
+<!-- reviews/edit.html.erb -->
+
+<h1>Review</h1>
+
+<!-- Menu -->
+<div class="rubricmenu">
+  <ul>
+    <% @exercise.categories.each do |category| %>
+      <li>
+        <%= category.name %>
+        <ul>
+          <% category.sections.each do |section| %>
+            <li>
+              <%= link_to section.name, edit_feedback_path(section.id), :style => (section.id == @feedback.section.id ? 'font-weight: bold' : '') %>
+
+            </li>
+          <% end %>
+        </ul>
+      </li>
+    <% end %>
+  </ul>
+</div>
+
+
+<!-- Sections -->
+<% form_tag edit_feedback_path(params[:id]) do -%>
+  <h2><%= @feedback.section.name %></h2>
+  <table>
+    <% @section.items.each do |item| %>
+      <tr>
+        <td><%= item.name %></td>
+
+        <td>
+          <%= select("post", "person_id", item.phrases.collect {|p| [ p.content, p.id ] }, { :include_blank => true} , {:style => 'width: 20em' }) %>
+        </td>
+      </tr>
+    <% end %>
+  </table>
+
+  <p>
+    Good:<br />
+    <%= text_area_tag 'area', nil, { :cols => 100, :rows => 8 } %>
+  </p>
+
+  <p>
+    Bad:<br />
+    <%= text_area_tag 'area', nil, { :cols => 100, :rows => 8 } %>
+  </p>
+
+  <p>
+    Comments:<br />
+    <%= text_area_tag 'area', nil, { :cols => 100, :rows => 8 } %>
+  </p>
+
+  <%= submit_tag 'Save' %>
+<% end %>
+
+<% #= link_to 'Back', @course
+%>

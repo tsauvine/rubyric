@@ -1,0 +1,11 @@
+<tr class="itemGrade" id="itemGradeElement<%= item_grade.id %>">
+  <td>
+    <span class="itemGradingOption" id="itemGradingOption<%= item_grade.id %>"><%= item_grade.text %></span>
+    <%= in_place_editor "itemGradingOption#{item_grade.id}", {:url => url_for(:action => "rename_item_grading_option", :id => item_grade.id) } %>
+  </td>
+  <td class="buttons">
+    <%= link_to_remote image_tag('up.png', :alt => 'Move up'), :url => { :action => 'move_item_grading_option', :gid => item_grade.id, :offset => -1 }, :update => "item-grades#{item_grade.item_id}" %>
+    <%= link_to_remote image_tag('down.png', :alt => 'Move down'), :url => { :action => 'move_item_grading_option', :gid => item_grade.id, :offset => 1 }, :update => "item-grades#{item_grade.item_id}" %>
+    <%= link_to_remote image_tag('trash.png', :alt => 'Destroy'), :url => { :action => 'destroy_item_grading_option', :id => item_grade.id }, :html => {:class => 'trash'} %>
+  </td>
+</tr>

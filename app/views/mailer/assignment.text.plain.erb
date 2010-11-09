@@ -1,0 +1,7 @@
+<%= "#{@course.code} #{@course.name} - #{@course_instance.name} - #{@exercise.name}" %>
+
+You have been assigned the following submission:
+
+<%= "#{@submission.created_at} (#{@submission.filename})" %>
+
+<%= (@submission.group.users.collect do |user| "#{user.studentnumber} #{user.name}" end).join("\n") %>

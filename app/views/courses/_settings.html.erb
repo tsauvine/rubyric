@@ -1,0 +1,39 @@
+<% form_for(@course) do |f| %>
+  <table>
+    <tr>
+      <td>Course code:</td>
+      <td><%= f.text_field :code %></td>
+      <td>
+        <% if @course.errors.on(:code) %>
+          <span class="error"><%= @course.errors.on(:code) %></span>
+        <% else %>
+          <span class="hint">e.g. X-1.101</span>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>Course name:</td>
+      <td><%= f.text_field :name %></td>
+      <td>
+        <% if @course.errors.on(:name) %>
+          <span class="error"><%= @course.errors.on(:name) %></span>
+        <% else %>
+          <span class="hint">e.g. Basics</span>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>Email:</td>
+      <td><%= f.text_field :email %></td>
+      <td class="hint">Feedback emails appear to come from this address if graders are set anonymous.</td>
+    </tr>
+  </table>
+  
+  <% if @course.new_record? %>
+    <p class="hint">These settings can be changed later.</p>
+    <p><%= f.submit "Create" %></p>
+  <% else %>
+    <p><%= f.submit "Save" %></p>
+  <% end %>
+  
+<% end %>

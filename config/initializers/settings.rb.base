@@ -1,0 +1,10 @@
+# NOTE: Rails must be restarted for changes to take effect. Restart mongrel or kill fcgid.
+
+# sets the upload root, relative to the RAILS_ROOT
+SUBMISSIONS_PATH = "/home/rubyric/submissions"
+
+# Where to send error reports. Set to nil to disable.
+ERRORS_EMAIL = "your@address"
+
+# Authentication
+FORCE_SSL = false

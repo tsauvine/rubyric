@@ -1,0 +1,47 @@
+<!-- submissions/new.html.erb -->
+
+<h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+
+<% unless @exercise.submit_pre_message.blank? %>
+  <p><%= @exercise.submit_pre_message %></p>
+<% end %>
+
+<% form_for @submission, :html => { :multipart => true } do |f| %>
+  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+  <%= f.hidden_field :group_id, :value => @group.id %>
+
+  <% if @exercise.groupsizemax > 1 %>
+    <h2>Group members</h2>
+    <table>
+      <thead>
+        <tr><td>Studentnumber</td><td>Email</td></tr>
+      </thead>
+      <tbody>
+        <% @group.users.each do |student| %>
+          <tr>
+            <td><%= student.studentnumber %></td>
+            <td><%= student.email %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% end %>
+
+  <% if @group.submissions.size > 0 %>
+    <h2>Previous submissions</h2>
+    <p>
+      <% @group.submissions.each do |submission| %>
+        <%= submission.created_at %>
+        (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)<br />
+      <% end %>
+    </p>
+  <% end %>
+
+  <h2>Upload file</h2>
+
+  <p><%= file_field_tag 'file' %></p>
+
+  <p><%= f.submit 'Submit' %></p>
+
+<% end # form_for
+%>

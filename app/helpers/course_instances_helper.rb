@@ -1,0 +1,2 @@
+module CourseInstancesHelper
+end

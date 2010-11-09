@@ -1,0 +1,44 @@
+<tr class="group" id="group<%= group.id %>">
+  <td colspan="4">
+    <!-- Students -->
+    <%= (group.users.collect do |user| "<span>#{h(user.name)} (#{h(user.studentnumber)})</span>" end).join(', ') %>
+  </td>
+</tr>
+<%
+submission_counter = 0
+group.submissions.each do |submission|
+%>
+  <tr class="submission" id="submission<%= submission.id %>">
+    <td rowspan="<%= [submission.reviews.size,1].max %>">
+      <!-- Submission -->
+      <%= check_box 'submissions_checkboxes', submission.id, {:class => submission_counter == 0 ? 'submission_check submission_check_latest' : 'submission_check'} %>
+      <span <%= submission.late? ? 'class="late"' : '' %>><%= submission.created_at %></span>
+      (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)
+    </td>
+
+    <!-- Reviews -->
+    <% if submission.reviews.empty? %>
+      <td>Not assigned</td>
+      <td></td>
+      <td></td>
+      </tr>
+    <% else
+      i = 0
+      submission.reviews.each do |review|
+        if (i > 0) %>
+          <tr class="submission">
+        <% end; i += 1 %>
+          <td>
+            <%= check_box 'reviews_checkboxes', review.id, {:class => review.status == 'finished' ? 'review_check review_check_finished' : 'review_check'} %>
+            <%= h review.user.name %>
+            <%= link_to 'Edit review', {:controller => 'reviews', :action => ['unfinished','finished','mailed'].include?(review.status) ? 'finish' : 'edit', :id => review.id}, {:title => 'Edit review', :class => 'smallButton'} %>
+          </td>
+          <td><%= review.status %></td>
+          <td class="grade"><%= review.grade %></td>
+        </tr>
+      <% end # each
+      %>
+    <% end # if
+    %>
+<% submission_counter += 1; end # submissions
+%>

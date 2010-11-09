@@ -1,0 +1,33 @@
+<h1>
+  <%= "#{@course.code} #{@course.name}" %> -
+  <%= "#{@course_instance.name}" %> -
+  <%= @exercise.name %> -
+</h1>
+
+<h2>Grade distribution</h2>
+
+<% @histograms.each do |histogram| %>
+  <table class="histogram">
+    <caption><%=h histogram[:grader] %></caption>
+    <thead>
+      <th>grade</th>
+      <th></th>
+      <th>count</th>
+    </thead>
+    
+    <% if histogram[:histogram].empty? %>
+      <td colspan="3">No reviews</td>
+    <% else %>
+      <% histogram[:histogram].each do |grade, count| %>
+        <% percentage = count * 100 / histogram[:total] %>
+        <tr>
+          <td><%= grade %></td>
+          <td style="width: 200px">
+            <div style="width: <%= percentage %>%; height: 10px; border: 1px solid gray; background: #ff8080;"></div>
+          </td>
+          <td><%= count %> (<%= percentage %> %)</td>
+        </tr>
+      <% end %>
+    <% end %>
+  </table>
+<% end %>

@@ -1,0 +1,30 @@
+<!-- Menu -->
+<table class="rubricmenu">
+  <% @exercise.categories.each do |category| %>
+    <tr>
+      <td class="bold"><%= category.name %></td>
+    </tr>
+    <% category.sections.each do |section|
+    feedback = @review.find_feedback(section.id)
+    %>
+      <tr<%= @section && @section.id == section.id ? ' class="selected"' : '' %>>
+        <td class="section-name<%= @section && @section.id == section.id ? ' selected' : '' %>">
+          <%= link_to section.name, {:action => 'edit', :section => section.id}, :class => (@section && @section.id == section.id ? 'selected' : ''), :onclick => "return !modified || confirm('You have not saved the feedback. Proceed?')" %>
+        </td>
+        <td class='status <%= status_color(feedback.status) %>'>
+          <%= status_text(feedback.status) %>
+        </td>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <% if ['unfinished', 'finished', 'mailed'].include?(@review.status)  %>
+    <tr<%= controller.action_name == 'finish' ? ' class="selected"' : '' %>>
+      <td class="bold">
+        <%= link_to 'Finish', {:action => 'finish', :id => params[:id]}, :class => controller.action_name == 'finish' ? 'selected' : '', :onclick => "return !modified || confirm('You have not saved the feedback. Proceed without saving?')" %>
+      </td>
+      <td>
+      </td>
+    </tr>
+  <% end %>
+</table>

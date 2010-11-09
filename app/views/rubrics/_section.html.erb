@@ -1,0 +1,40 @@
+<div class="section" id="sectionElement<%= section.id %>">
+  <h2>
+    <span id="sectionName<%= section.id %>"><%= section.name %></span>
+    <%= in_place_editor "sectionName#{section.id}", {:url => url_for(:action => "rename_section", :id => section.id)}  %>
+
+    <span class="weight">(weight: <span id="sectionWeight<%= section.id %>"><%= section.weight %></span>)</span>
+    <%= in_place_editor "sectionWeight#{section.id}", {:url => url_for(:action => "set_section_weight", :id => section.id)}  %>
+
+    <div class="buttons">
+    <%= link_to_remote image_tag('up.png', :alt => 'Move up'), :url => { :action => 'move_section', :sid => section.id, :offset => -1 }, :update => "sections#{section.category_id}" %>
+    <%= link_to_remote image_tag('down.png', :alt => 'Move down'), :url => { :action => 'move_section', :sid => section.id, :offset => 1 }, :update => "sections#{section.category_id}" %>
+    <%= link_to_remote image_tag('trash.png', :alt => 'Destroy'), :url => { :action => 'destroy_section', :id => section.id }, :confirm => 'Are you sure?', :html => {:class => 'trash'} %>
+    </div>
+  </h2>
+
+  <!-- Items -->
+  <div id="items<%= section.id %>">
+    <%= render :partial => 'item', :collection => section.items %>
+  </div>
+
+  <p><%= link_to_remote 'New item', :url => { :action => 'new_item', :sid => section.id }, :update => "items#{section.id}", :position => 'bottom', :html => { :class  => 'new' } %></p>
+
+
+  <!-- Section grading options -->
+  <div class="section-grading-options">
+    <h2 title="Grades for the whole section">Section grades</h2>
+    <table>
+      <thead>
+        <tr><td><span title="This text is shown to grader">Text</span></td><td><span title="Points are used internally when calculating the final grade">Points</span></td><td></td></tr>
+      </thead>
+      <tbody id="section-grades<%= section.id %>">
+        <%= render :partial => 'section_grade', :collection => section.section_grading_options %>
+      </tbody>
+    </table>
+    <%= link_to_remote 'New grade', :url => { :action => 'new_section_grading_option', :sid => section.id }, :update => "section-grades#{section.id}", :position => 'bottom', :html => { :class  => 'new' } %>
+    <a href="javascript:copySectionGrades(<%= section.id %>)" class='new'>Copy</a>
+    <a href="javascript:pasteSectionGrades(<%= section.id %>)" class='new'>Paste</a>
+  </div>
+
+</div> <!-- /section -->

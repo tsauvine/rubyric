@@ -1,0 +1,5 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+testcourse:
+  code: T-106.1234
+  name: Test course

@@ -1,0 +1,6 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+test_exercise:
+  name: Exercise 1
+  course_instance_id: 1
+  deadline: 2008-09-01 00:00

@@ -1,0 +1,15 @@
+studentnumber,reviewer,grade<br />
+
+<% @groups.each do |group| %>
+  <% group.submissions.each do |submission| %>
+    <% submission.reviews.each do |review| %>
+      <% submission.group.users.each do |student| %>
+
+        <%= h student.studentnumber %>,<%= h review.user.studentnumber %>,<%= review.grade %><br />
+
+      <% end %>
+    <% end %>
+  <% end %>
+<% end %>
+
+<p><%= link_to 'Back', @exercise %></p>

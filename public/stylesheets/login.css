@@ -1,0 +1,30 @@
+#logintable > tbody > tr > td {
+  width: 300px;
+  text-align: center;
+  padding: .5em 1em;
+}
+
+#logintable tr.hint td {
+  vertical-align: bottom;
+}
+
+#logintable tr.logins td {
+  vertical-align: center;
+  font-size: small;
+}
+
+#traditional-login {
+  text-align: center;
+
+  border: 2px solid black;
+  padding: 16px;
+  margin: 0em auto;
+
+  border-collapse: separate;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+}
+
+#traditional-login input[type="submit"] {
+    margin-top: .5em;
+}

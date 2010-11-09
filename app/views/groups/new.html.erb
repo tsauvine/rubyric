@@ -1,0 +1,44 @@
+<!-- groups/new.html.erb -->
+
+<h1>Create a group for <%= "#{@course.code} #{@course.name} / #{@course_instance.name} / #{@exercise.name}" %></h1>
+
+<div style="float: left">
+  <%= error_messages_for :submission %>
+
+  <% form_for @group do |f| %>
+    <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+    <%= hidden_field_tag :exercise, params[:exercise] %>
+
+    <h2>Group members</h2>
+
+    <table>
+      <thead>
+        <tr>
+          <td>Studentnumber</td>
+          <td>Email</td>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Users-->
+        <% (0...@exercise.groupsizemax).each do |i| %>
+          <tr>
+            <td>
+              <%= text_field_tag "studentnumber[#{i}]", @studentnumber[i],
+                :onChange => remote_function(:url => { :action => 'check_studentnumber' }, :with => "'studentnumber=' + $('studentnumber_#{i}').value") %>
+            </td>
+            <td>
+              <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}", :onChange => remote_function(:url => { :action => 'check_email' }, :with => "'studentnumber=' + $('studentnumber_#{i}').value + '&email=' + $('email_#{i}').value") %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <p><% # = f.file_field 'submission'
+    %></p>
+
+    <p><%= f.submit 'Create' %></p>
+
+  <% end # form_for
+  %>
+</div>

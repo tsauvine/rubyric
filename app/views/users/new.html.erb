@@ -1,0 +1,37 @@
+<h1>Create new user</h1>
+
+<%= error_messages_for :user %>
+
+<% form_for :user, :url => users_path do |f| -%>
+  <table>
+    <tr>
+      <td>Studentnumber:</td>
+      <td><%= f.text_field :studentnumber %></td>
+    </tr>
+    <tr>
+      <td>E-mail:</td>
+      <td><%= f.text_field :email %></td>
+    </tr>
+    <tr>
+      <td>First name:</td>
+      <td><%= f.text_field :firstname %></td>
+    </tr>
+    <tr>
+      <td>Last name:</td>
+      <td><%= f.text_field :lastname %></td>
+    </tr>
+    <tr>
+      <td>Password</td>
+      <td><%= f.password_field :password %></td>
+    </tr>
+    <tr>
+      <td>Confirm password</td>
+      <td><%= f.password_field :password_confirmation %></td>
+    </tr>
+  </table>
+
+  <%= f.submit 'Create' %>
+
+<% end %>
+
+

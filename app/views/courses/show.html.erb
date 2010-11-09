@@ -1,0 +1,39 @@
+<!-- courses/show.html.erb -->
+
+<h1><%=h @course.code %> <%=h @course.name %></h1>
+
+<h3>Instances</h3>
+<% if @course.course_instances.empty? && @is_teacher %>
+  <p class="hint">Please, create a course instance (e.g. Spring <%= Time.now.year %>)</p>
+<% end %>
+
+<table>
+  <% @course.course_instances.each do |instance| %>
+    <tr>
+      <td><%= link_to instance.name, instance %></td>
+
+      <% if @is_teacher %>
+        <td class="trash"><%= link_to(image_tag('trash.png', :alt => 'Destroy'), instance, :confirm => 'Are you sure?', :method => :delete) %></td>
+      <% end %>
+    </tr>
+  <% end %>
+
+
+  <% if @is_teacher %>
+    <tr>
+      <td><%= link_to 'Create new instance', { :controller => 'course_instances', :action => 'new', :course => @course.id }, :class => 'new' %></td>
+      <td></td>
+    </tr>
+  <% end %>
+</table>
+
+<% if @is_teacher %>
+  <h3>Teachers</h3>
+
+  <% @course.teachers.each do |user| %>
+    <%= h user.name %><br />
+  <% end %>
+
+  <%= link_to 'Edit', url_for(:controller=>'courses', :action=>'teachers', :id => @course.id), :class => 'edit' %>
+<% end %>
+

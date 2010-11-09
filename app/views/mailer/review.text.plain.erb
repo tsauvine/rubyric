@@ -1,0 +1,7 @@
+<%= "#{@course.code} #{@course.name} - #{@course_instance.name} - #{@exercise.name}" %><% unless @exercise.anonymous_graders %>
+
+Your submission was graded by <%= @grader.firstname %> <%= @grader.lastname %><% end %><% unless @review.grade.blank? || @exercise.grading_mode == 'none' %>
+
+Grade: <%= @review.grade %><% end %>
+
+<%= word_wrap @review.feedback, 76 %>

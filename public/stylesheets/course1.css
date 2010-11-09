@@ -1,0 +1,9 @@
+body {
+  background: #ffF8f0;
+  color: black;
+}
+
+.header {
+  background: #EED3A4 !important;
+  border-bottom: 1px solid white;
+}

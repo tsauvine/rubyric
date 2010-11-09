@@ -1,0 +1,30 @@
+<% form_for(@course_instance) do |f| %>
+  <%= f.hidden_field :course_id, :value => @course.id %>
+
+  <table>
+    <tr>
+      <td>Name:</td>
+      <td><%= f.text_field :name %></td>
+      <td>
+        <% if @course_instance.errors.on(:name) %>
+          <span class="error"><%= @course_instance.errors.on(:name) %></span>
+        <% else %>
+          <span class="hint">e.g. Spring <%= Time.now.year %></span>
+        <% end %>
+      </td>
+    </tr>
+    <% unless @course_instance.new_record? %>
+      <tr>
+        <td><%= f.label :active %></td>
+        <td><%= f.check_box :active %></td>
+        <td class="hint">Inactive course instances do not accept submissions.</td>
+      </tr>
+    <% end %>
+  </table>
+
+  <h2>Description</h2>
+  <p class="hint">Optional description is shown on the front page of the instance.</p>
+  <%= f.text_area :description, :rows => 3, :cols => 80 %>
+  
+  <p><%= f.submit "Save" %></p>
+<% end %>

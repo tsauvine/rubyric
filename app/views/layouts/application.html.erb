@@ -1,0 +1,159 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title>Rubyric</title>
+    <%= stylesheet_link_tag 'red' %>
+    <%= stylesheet_link_tag @stylesheets %>
+    <%= javascript_include_tag  :defaults %>
+</head>
+<body>
+
+<div id="header" class="header">
+
+  <%= image_tag 'rubyric.png', {:alt => 'Rubyric', :id => 'logo'} %>
+
+  <div class="navibar">
+    <ul>
+      <% 
+      # Language
+      # Only show the language button for GET requests. If the current page is the result of a POST request, doing a GET request to the same URL could lead to a different view or even a 404.
+      if request.get? %>
+        <!--li><%= link_to t(:other_language_name), url_for(:overwrite_params => {:locale => t(:other_language_code)}) %></li-->
+      <% end %>
+
+      <% if logged_in? %>
+        <li><%= link_to 'My preferences', edit_user_path(current_user.id) %></li>
+        <li><%= link_to 'Logout', logout_url %></li>
+      <% else %>
+        <li><%= link_to 'Login', login_url %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <%= image_tag 'ruby.png', {:alt => '', :id => 'ruby'} %>
+</div>
+
+<div>
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <ul>
+      <li class="first"><%= link_to 'Rubyric', root_url %></li>
+      <% if @course %>
+        <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
+      <% end %>
+
+      <% if @course_instance %>
+        <li>/ <%= link_to "#{@course_instance.name}", @course_instance %></li>
+      <% end %>
+
+      <% if @exercise %>
+        <li>/ <%= link_to "#{@exercise.name}", @exercise %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <!-- Login -->
+  <div class="login">
+    <%
+    user = current_user
+    if user
+    %>
+      <%= link_to "#{h(user.firstname)} #{h(user.lastname)} (#{h(user.studentnumber)})", edit_user_path(user.id) %>
+      <% #= link_to 'Logout', logout_url
+      %>
+    <% end %>
+  </div>
+</div>
+
+<div class="clear"></div>
+
+<div class="page">
+  <div class="leftNavi">
+    <!-- Left navigation -->
+    <% if @course and !@course.new_record? %>
+      <ul class="naviButtons">
+        <li><%= link_to @course.name, course_path(@course) %></li>
+        <% if @is_teacher || is_admin?(current_user) %>
+          <ul>
+            <li><%= link_to 'Settings', edit_course_path(@course) %></li>
+          </ul>
+        <% end %>
+      </ul>
+      
+      <% if @course_instance and !@course_instance.new_record? %>
+        <!-- Selected instance -->
+        <ul class="naviButtons">
+          <li><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
+          <% if @is_teacher || is_admin?(current_user) %>
+            <ul>
+              <li><%= link_to 'Settings', edit_course_instance_path(@course_instance) %></li>  
+            </ul>
+          <% end %>
+        </ul>
+        
+        <% if @exercise and !@exercise.new_record?%>
+          <!-- Selected exercise -->
+          <ul class="naviButtons">
+            <li><%= link_to @exercise.name, exercise_path(@exercise) %></li>
+            <% if @is_teacher || is_admin?(current_user) %>
+              <ul>
+                <li><%= link_to 'Settings', edit_exercise_path(@exercise) %></li>
+                <li><%= link_to 'Rubric', edit_rubric_path(@exercise) %></li>
+                <li><%= link_to 'Submissions', exercise_path(@exercise) %></li>
+                <li><%= link_to 'Statistics', statistics_exercise_path(@exercise) %></li>
+                <li><%= link_to 'Results', results_exercise_path(@exercise) %></li>
+              </ul>
+            <% end %>
+          </ul>
+        <% else %>
+          <!-- List of exercises-->
+          <ul class="naviButtons">
+            <li>Exercises</li>
+            <% @course_instance.exercises.each do |exercise| %>
+              <ul>
+                <li><%= link_to exercise.name, exercise_path(exercise) %></li>
+              </ul>
+            <% end %>
+          </ul>
+        <% end %>
+      <% else %>
+        <!-- List of instances -->
+        <ul class="naviButtons">
+          <li>Instances</li>
+          <% @course.course_instances.each do |instance| %>
+            <ul>
+              <li><%= link_to instance.name, course_instance_path(instance) %></li>  
+            </ul>
+          <% end %>
+        </ul>
+      <% end %>
+        
+    <% end %>
+  </div>
+  
+  <!--div id="contextHelp">
+  </div-->
+
+  <div class="content">
+    <!-- Flash messages -->
+    <% if flash[:warning] %>
+      <p class="flash flashWarning"><%= h flash[:warning] %></p>
+    <% end %>
+
+    <% if flash[:success] %>
+      <p class="flash flashSuccess"><%= h flash[:success] %></p>
+    <% end %>
+
+    <% if flash[:error] %>
+      <p class="flash flashError"><%= h flash[:error] %></p>
+    <% end %>
+
+    <%= yield  %>
+  </div>
+</div>
+
+</body>
+</html>

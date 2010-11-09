@@ -1,0 +1,44 @@
+<!-- frontpage/course_instances.html.erb -->
+
+<% if @courses.size < 1 && @course_instances.size < 1 %>
+  <h1>You do not currently belong to any course</h1>
+
+  <ul class="sparse">
+    <li>If you are a <strong>student</strong> looking to submit your exercise, please follow the instructions on the homepage of your course.</li>
+    <li>If you are a <strong>teacher</strong> and want to use rubyric on your course, <%= link_to 'follow this link', new_course_path %>.</li>
+  </ul>
+<% end %>
+
+<!-- As teacher -->
+<% if @courses.length > 0 %>
+  <h1>My courses (as teacher)</h1>
+
+  <ul>
+  <% @courses.each do |course| %>
+    <li><%= link_to course.name, course %></li>
+    <ul>
+      <% course.active_instances.each do |instance| %>
+        <li><%= link_to instance.name, instance %></li>
+      <% end %>
+    </ul>
+  <% end %>
+  </ul>
+  
+  <p><%= link_to 'Create new course', new_course_path, :class => 'new' %></p>
+<% end %>
+
+<!-- As student or assistant -->
+<% if @courses.length > 0 %>
+  <h1>My courses</h1>
+  <ul>
+  <% @course_instances.each do |instance| %>
+    <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
+  <% end %>
+  </ul>
+<% end %>
+
+
+<!-- Show all courses -->
+<% if is_admin?(current_user) %>
+  <%= link_to "Show all courses", courses_path %>
+<% end %>

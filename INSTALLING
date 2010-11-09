@@ -1,0 +1,22 @@
+= Configure =
+
+cp production.sh.base production.sh
+cp start.sh.base start.sh
+Set the --prefix=... parameter in start.sh and production.sh if running Rubyric in a subdirectory (eg. www.example.com/rubyric).
+
+cp config/database.yml.base config/database.yml
+Set the database parameters in config/database.yml.
+
+cp config/initializers/settings.rb.base config/initializers/settings.rb
+Configure all the parameters in config/initializers/settings.rb
+
+
+== Set up the database ==
+rake db:schema:load
+
+
+== Starting / Stopping ==
+
+start.sh starts the mongrel server in development mode
+production.sh starts the mongrel server in production mode
+stop.sh stops the mongrel server

@@ -1,0 +1,12 @@
+<% submission = review.submission %>
+
+<tr class="submission" id="review<%= review.id %>">
+  <td><%= (submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %></td>
+  <td>
+    <span <%= submission.late? ? 'class="late"' : '' %>><%= submission.created_at %></span>
+      (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)
+  </td>
+  <td><%= review.status %></td>
+  <td class="grade"><%= review.grade %></td>
+  <td><%= link_to 'Edit review', {:controller => 'reviews', :action => ['unfinished','finished','mailed'].include?(review.status) ? 'finish' : 'edit', :id => review.id} %></td>
+</tr>

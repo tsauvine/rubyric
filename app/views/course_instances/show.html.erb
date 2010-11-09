@@ -1,0 +1,40 @@
+<!-- course_instance/show.html.erb -->
+
+<h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+
+<% if @course_instance.description %>
+  <p><%= @course_instance.description %></p>
+<% end %>
+
+
+<h2>Exercises</h2>
+<table>
+  <% unless @course_instance.exercises.empty? %>
+    <% @course_instance.exercises.each do |exercise| %>
+      <tr>
+        <td><%= link_to exercise.name, exercise %></td>
+        <% if @allow_edit %>
+          <td><%= link_to(image_tag('trash.png', :alt => 'Destroy'), exercise, :confirm => 'Are you sure?', :method => :delete) %></td>
+        <% end %>
+      </tr>
+    <% end %>
+  <% end %>
+
+  <% if @allow_edit %>
+    <tr><td><%= link_to "Create new exercise", url_for(:controller=>'exercises', :action=>'new', :ci => @course_instance.id), :class => 'new' %></td></tr>
+  <% end %>
+</table>
+
+
+<% if @allow_edit %>
+  <h2>People</h2>
+
+  <p><%= @course_instance.students.length %> students
+    <%= link_to 'Edit', url_for(:controller=>'course_instances', :action=>'students', :id => @course_instance.id), :class => 'edit' %>
+  </p>
+
+  <p><%= @course_instance.assistants.length %> teaching assistants
+    <%= link_to 'Edit', url_for(:controller=>'course_instances', :action=>'assistants', :id => @course_instance.id), :class => 'edit' %>
+  </p>
+<% end %>
+

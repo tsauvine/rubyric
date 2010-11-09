@@ -1,0 +1,5 @@
+# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+
+test_course:
+  course_id: 1
+  name: Spring 2008

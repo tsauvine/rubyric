@@ -1,0 +1,68 @@
+<!-- exercises/manage.html.erb -->
+
+<h1>
+  <%= "#{@course.code} #{@course.name}" %> -
+  <%= "#{@course_instance.name}" %> -
+  <%= @exercise.name %>
+</h1>
+
+<p><strong>Submit url: </strong><%= submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
+
+<p><b>Deadline:</b>
+<% if @exercise.deadline.blank? %>
+  <%= link_to 'No deadline set', edit_exercise_path(@exercise), :class => 'warning' %>
+<% else %>
+  <%=h @exercise.deadline %></p>
+<% end %>
+
+
+<h2>Submissions</h2>
+
+<%= form_tag exercises_path, :id => 'submissions_form'  %>
+  <%= hidden_field_tag :eid, params[:id] # exercise id for ajax calls
+  %>
+
+  <table class="assignments">
+    <thead>
+      <tr>
+        <td>Submission</td>
+        <td>Review</td>
+        <td>Status</td>
+        <td>Grade</td>
+      </tr>
+    </thead>
+    <tbody id="submissions_table">
+      <%= render :partial => 'group', :collection => @groups %>
+    </tbody>
+    <tbody>
+      <tr>
+        <td>
+          <input type='submit' value='Select all' onClick="$$('#submissions_form input.submission_check').each(function(box){box.checked=true});return false;" title="Selects all submissions" />
+          <input type='submit' value='Select latest' onClick="$$('#submissions_form input.submission_check_latest').each(function(box){box.checked=true});return false;" title="Selects the latest submission from each group" />
+          <input type='submit' value='Select none' onClick="$$('#submissions_form input.submission_check').each(function(box){box.checked=false});return false;" />
+        </td>
+        <td>
+          <input type='submit' value='Select all' onClick="$$('#submissions_form input.review_check').each(function(box){box.checked=true});return false;" />
+          <input type='submit' value='Select finished' onClick="$$('#submissions_form input.review_check_finished').each(function(box){box.checked=true});return false;" />
+          <input type='submit' value='Select none' onClick="$$('#submissions_form input.review_check').each(function(box){box.checked=false});return false;" />
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tbody>
+  </table>
+
+  <p>
+    Assign selected to
+    <%= select_tag('assistant', options_for_select(@graders, :selected => nil)) %>
+
+    <%= submit_to_remote('assign_submissions', 'Assign', :url => {:action => 'assign_submissions'}, :update => 'submissions_table') %>
+    <%= submit_to_remote('assign_submissions_exclusive', 'Assign exclusively', :url => {:action => 'assign_submissions', :exclusive => 'true'}, :update =>  'submissions_table', :confirm => 'Are you sure? Existing reviews will be deleted.') %>
+  </p>
+
+  <p>
+    <%= submit_to_remote('remove_button', 'Delete selected', :url => {:action => 'remove_selected_submissions'}, :update =>  'submissions_table', :confirm => 'Are you sure you want to delete?', :html => {:action => 'remove_selected_submissions', :class => 'trash'}) %>
+
+    <%= submit_to_remote('send_button', 'Mail selected', :url => {:action => 'send_selected_reviews'}, :update =>  'submissions_table', :confirm => 'Feedback mails will be sent to the students.', :html => {:action => 'send_selected_reviews', :title => 'Emails selected reviews to the students'}) %>
+  </p>
+</form>

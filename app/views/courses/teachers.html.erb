@@ -1,0 +1,48 @@
+<!-- course/teachers.html.erb -->
+
+<h1>Teachers</h1>
+
+<% form_remote_tag :update => 'teachers_table', :url => {:action => 'remove_selected_teachers'}, :html => { :id => 'teachers_form' } do -%>
+  <%= hidden_field_tag :course_id, @course.id %>
+
+  <table id="teachers_table">
+    <% if @course.teachers.empty? %>
+      <tr><td>No teachers</td></tr>
+    <% end %>
+    <%= render :partial => 'user', :collection => @course.teachers, :locals => { :cid => @course.id } %>
+  </table>
+
+  <p>
+    <input type='submit' value='Select all' onClick="$$('#teachers_form input.check').each(function(box){box.checked=true});return false;" />
+    <input type='submit' value='Select none' onClick="$$('#teachers_form input.check').each(function(box){box.checked=false});return false;" />
+  </p>
+  <p><%= submit_tag 'Remove selected', {:confirm => 'Are you sure?'} %></p>
+<% end -%>
+
+<% form_remote_tag :update => 'teachers_table', :url => {:action => 'add_teacher'} do -%>
+  <%= hidden_field_tag :course_id, @course.id %>
+  <h2>Add teachers</h2>
+
+  <table>
+    <tr>
+      <td>studentnumber</td>
+      <td>firstname</td>
+      <td>lastname</td>
+      <td>email</td>
+      <td>password</td>
+    </tr>
+    <tr>
+      <td><%= text_field_tag 'studentnumber' %></td>
+      <td><%= text_field_tag 'firstname' %></td>
+      <td><%= text_field_tag 'lastname' %></td>
+      <td><%= text_field_tag 'email' %></td>
+      <td><%= text_field_tag 'password' %></td>
+    </tr>
+  </table>
+
+  <p class="help">Firstname, lastname, email and password are ignored if the user exists.</p>
+
+  <p><%= submit_tag 'Add' %></p>
+<% end -%>
+
+<p><%= link_to 'Back', @course %></p>

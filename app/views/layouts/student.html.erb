@@ -1,0 +1,74 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+    <title>Rubyric</title>
+    <%= stylesheet_link_tag 'aloha' %>
+
+    <% if @course && !@course.css.blank? %>
+      <%= stylesheet_link_tag "course#{@course.id}" %>
+    <% end %>
+
+    <%= javascript_include_tag  :defaults %>
+</head>
+<body>
+
+<div class="header">
+  <!-- Breadcrumbs -->
+  <div class="breadcrumbs">
+    <ul>
+      <% if @course %>
+        <li class="first"><%= "#{@course.code} #{@course.name}" %></li>
+      <% end %>
+
+      <% if @course_instance %>
+        <li><%= "#{@course_instance.name}" %></li>
+      <% end %>
+
+      <% if @exercise %>
+        <li><%= "#{@exercise.name}" %></li>
+      <% end %>
+    </ul>
+  </div>
+
+  <!-- Login -->
+  <div class="login">
+    <%
+    user = current_user
+    if user
+    %>
+      <%= "#{user.firstname} #{user.lastname} (#{user.studentnumber})" %><br />
+    <% end %>
+  </div>
+
+  <!-- Logo-->
+  <div id="logo"></div>
+
+  <div class="clear"></div>
+</div>
+
+<div class="body">
+    <div class="content">
+
+    <!-- Flash messages -->
+    <% if flash[:warning] %>
+      <p class="flash flashWarning"><%= flash[:warning] %></p>
+    <% end %>
+
+    <% if flash[:success] %>
+      <p class="flash flashSuccess"><%= flash[:success] %></p>
+    <% end %>
+
+    <% if flash[:error] %>
+      <p class="flash flashError"><%= flash[:error] %></p>
+    <% end %>
+
+    <%= yield  %>
+
+    </div>
+</div>
+
+</body>
+</html>

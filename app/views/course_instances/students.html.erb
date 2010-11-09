@@ -1,0 +1,40 @@
+<!-- course_instance/students.html.erb -->
+
+<h1>Students</h1>
+
+<% form_remote_tag :update => 'student_table', :url => {:action => 'remove_selected_students'}, :html => { :id => 'student_form' } do -%>
+  <%= hidden_field_tag :course_instance_id, @course_instance.id %>
+
+  <table id="student_table">
+    <% if @course_instance.students.empty? %>
+      <tr><td>No students</td></tr>
+    <% end %>
+    <%= render :partial => 'user', :collection => @course_instance.students, :locals => { :iid => @course_instance.id } %>
+  </table>
+
+  <p>
+    <input type='submit' value='Select all' onClick="$$('#student_form input.check').each(function(box){box.checked=true});return false;" />
+    <input type='submit' value='Select none' onClick="$$('#student_form input.check').each(function(box){box.checked=false});return false;" />
+  </p>
+  <p><%= submit_tag 'Remove selected', {:confirm => 'Are you sure?'} %></p>
+<% end -%>
+
+<% form_remote_tag :update => 'student_table', :url => {:action => 'students_csv'} do -%>
+  <%= hidden_field_tag :course_instance_id, @course_instance.id %>
+  <h2>Add students</h2>
+
+  <p>Paste the list of students here<br />
+  (Format: studentnumber, firstname, lastname, email, password. Studentnumber is the only mandatory column.)</p>
+  <%= text_area_tag :paste, nil, :rows => 25, :cols => 80 %>
+
+  <p><%= submit_tag 'Upload' %></p>
+<% end -%>
+
+<% form_for :csv, :url => {:action => 'students'}, :html => { :multipart => true } do |f| -%>
+  <p>Or upload a csv file (only utf8 supported)</p>
+  <%= f.file_field :file %>
+  <p><%= f.submit 'Upload' %></p>
+<% end -%>
+
+
+<p><%= link_to 'Back', @course_instance %></p>

@@ -1,0 +1,11 @@
+<!-- exercises/upload.html.erb -->
+
+<h1>Upload rubric</h1>
+
+<% form_for :xml, :url => {:action => 'upload'}, :html => { :multipart => true } do |f| -%>
+  <p>Upload XML</p>
+  <%= f.file_field :file %>
+  <p><%= f.submit 'Upload', :confirm => 'Warning: The existing rubric will be overwritten.' %></p>
+<% end -%>
+
+<%= link_to 'Back', edit_rubric_path(@exercise) %>
