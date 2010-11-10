@@ -36,6 +36,27 @@ module AuthenticatedSystem
     def login_required
       logged_in? || redirect_to_login
     end
+    
+    def access_denied
+      if request.xhr?
+        head :forbidden
+      elsif logged_in?
+        render :template => 'shared/forbidden', :status => 403
+      else
+        # If not logged in, redirect to login
+        respond_to do |format|
+          format.html do
+            store_location
+            redirect_to new_session_path
+          end
+          format.any do
+            request_http_basic_authentication 'Web Password'
+          end
+        end
+      end
+      
+      return false
+    end
 
     # Redirect as appropriate when an access request fails.
     #
