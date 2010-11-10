@@ -17,13 +17,6 @@
 
   <div class="navibar">
     <ul>
-      <% 
-      # Language
-      # Only show the language button for GET requests. If the current page is the result of a POST request, doing a GET request to the same URL could lead to a different view or even a 404.
-      if request.get? %>
-        <!--li><%= link_to t(:other_language_name), url_for(:overwrite_params => {:locale => t(:other_language_code)}) %></li-->
-      <% end %>
-
       <% if logged_in? %>
         <li><%= link_to 'My preferences', edit_user_path(current_user.id) %></li>
         <li><%= link_to 'Logout', logout_url %></li>
