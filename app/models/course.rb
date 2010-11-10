@@ -8,15 +8,6 @@ class Course < ActiveRecord::Base
   validates_presence_of :name
 
   def has_teacher(user)
-    unless user
-      logger.info "NO USER GIVEN"
-    end
-    
-    unless teachers.include?(user)
-      logger.info "NOT A TEACER ON THIS COURSE"
-    end
-    
-    
     user && teachers.include?(user)
   end
 
