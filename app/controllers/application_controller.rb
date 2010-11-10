@@ -67,16 +67,11 @@ class ApplicationController < ActionController::Base
 
     if @course_instance
       @course = @course_instance.course
-      
       @is_assistant = @course_instance.has_assistant(current_user)
     end
     
     if @course
       @is_teacher = @course.has_teacher(current_user)
-      
-      if @is_teacher
-        logger.info "IS TEACHER"
-      end
     end
   end
 
