@@ -1,5 +1,22 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-testcourse:
+course:
   code: T-106.1234
   name: Test course
+  teachers: teacher1
+
+course_with_email:
+  code: T-106.1001
+  name: Course with email address
+  email: course@example.com
+  teachers: teacher1
+
+course_without_email:
+  code: T-106.1002
+  name: Course without email address
+  teachers: teacher1
+
+somebody_elses_course:
+  code: T-123.4567
+  name: Somebody elses course
+  teachers: teacher2

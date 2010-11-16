@@ -1,33 +1,18 @@
 class UsersController < ApplicationController
-  # Be sure to include AuthenticationSystem in Application Controller instead
-  include AuthenticatedSystem
-
 
   # GET /users/1
-  def show
-    @user = User.find(params[:id])
+#   def show
+#     @user = User.find(params[:id])
+# 
+#     return access_denied unless is_admin?(current_user) || @user == current_user
+#   end
 
-    unless is_admin?(current_user) || @user == current_user
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-    end
-  end
-
-  # render new.rhtml
   def new
-    unless is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless is_admin?(current_user)
   end
 
   def create
-    unless is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless is_admin?(current_user)
 
     @user = User.new(params[:user])
     @user.save
@@ -45,20 +30,13 @@ class UsersController < ApplicationController
   def edit
     @user = User.find(params[:id])
 
-    unless is_admin?(current_user) || @user == current_user
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-    end
+    return access_denied unless is_admin?(current_user) || @user == current_user
   end
 
   def update
     @user = User.find(params[:id])
 
-    unless is_admin?(current_user) || @user == current_user
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless is_admin?(current_user) || @user == current_user
 
     if @user.update_attributes(params[:user])
       flash[:success] = "User #{@user.studentnumber} was successfully updated."

@@ -1,5 +1,13 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-test_course:
-  course_id: 1
-  name: Spring 2008
+active:
+  course: course
+  name: Spring
+  active: true
+  assistants: assistant1
+  
+inactive:
+  course: course
+  name: Inactive instance
+  active: false
+  assistants: assistant1

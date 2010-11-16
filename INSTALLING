@@ -13,10 +13,3 @@ Configure all the parameters in config/initializers/settings.rb
 
 == Set up the database ==
 rake db:schema:load
-
-
-== Starting / Stopping ==
-
-start.sh starts the mongrel server in development mode
-production.sh starts the mongrel server in production mode
-stop.sh stops the mongrel server

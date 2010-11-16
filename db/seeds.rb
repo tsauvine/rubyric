@@ -7,14 +7,25 @@
 #   Major.create(:name => 'Daley', :city => cities.first)
 
 # Create admin
-
 user = User.new(:password => 'admin', :password_confirmation => 'admin', :firstname => 'Admin', :lastname => 'User', :email => '')
 user.login = 'admin'
 user.studentnumber = '12345'
 user.admin = true
 user.save
 
-# Create other users
+# Create teachers
+for i in 1..2 do
+  r = User.new
+  r.studentnumber = '1' + i.to_s.rjust(4, '0')
+  r.login = r.studentnumber
+  r.password = "teacher#{i}"
+  r.password_confirmation = "teacher#{i}"
+  r.firstname = 'Teacher'
+  r.lastname = i
+  r.email = "student#{i}@example.com"
+  r.save
+end
+
 
 # Create students
 for i in 1..10 do

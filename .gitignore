@@ -6,3 +6,4 @@ log/
 config/database.yml
 config/initializers/settings.rb
 public/images/
+submissions/

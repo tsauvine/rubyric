@@ -1,0 +1,103 @@
+admin:
+  login: admin
+  studentnumber: '12345'
+  crypted_password: 0ea6550e8ec14a9d8f6a717040e2e9de552b9b95 # admin
+  salt: 94319306a3a7ca836f22f385fb0591707c4e8548
+  firstname: Admin
+  lastname: User
+  email: admin@example.com
+  admin: true
+
+teacher1:
+  login: teacher1
+  studentnumber: '10001'
+  crypted_password: de50a0ab674f20463c89436a642b85e89a309728 # teacher1
+  salt: b55a469cee60fdb2f968233f426ca27781eda0af
+  firstname: Teacher
+  lastname: 1
+  email: teacher1@example.com
+
+teacher2:
+  login: teacher2
+  studentnumber: '10002'
+  crypted_password: 66ec84c679bf95d26413322301bdac37854e7862 # teacher2
+  salt: 9f42f458c5dda23765b735131a46dbe285872392
+  firstname: Teacher
+  lastname: 2
+  email: teacher2@example.com
+
+student1:
+  login: '00001'
+  studentnumber: '00001'
+  crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7 # student1
+  salt: 98c619b2d472f6f306aad84906358afe559bd8ea
+  firstname: Student
+  lastname: 1
+  email: student1@example.com
+
+student2:
+  login: student2
+  studentnumber: '00002'
+  crypted_password: 56ea63d2566302d0c61d9b73da93c8838ad9eb71 # student2
+  salt: ac1630086e4cc40dfd7b76a0b8b06c04b4e681dc
+  firstname: Student
+  lastname: 2
+  email: student2@example.com
+
+student3:
+  login: student3
+  studentnumber: '00003'
+  crypted_password: 7e4aa5a9f155f9c14725a19a2c7a9cc3675b20d6 # student3
+  salt: 895f52f9e9ff33c73181cc79d2c0df1c4f526848
+  firstname: Student
+  lastname: 3
+  email: student3@example.com
+
+assistant1:
+  login: assistant1
+  studentnumber: '00011'
+  crypted_password: e0c593ab71d84d5c2054a571224bda31f91c25e7 # assistant1
+  salt: 95b4c6de166de5d53d3250836fea471eb7bfc59f
+  firstname: Assistant
+  lastname: 1
+  email: assistant1@example.com
+
+assistant2:
+  login: assistant2
+  studentnumber: '00012'
+  crypted_password: 51ee4f47f9d01a6b9b81cefb0c9577009b9ec207 # assistant2
+  salt: 9e9c440aa94243b6bcaa46cdc3ddd65fb0eff4c5
+  firstname: Assistant
+  lastname: 2
+  email: assistant2@example.com
+
+assistant3:
+  login: assistant3
+  studentnumber: '00013'
+  crypted_password: 21103cb0bc24ec634382738f35264fd2db5cd00f # assistant3
+  salt: 4f1f084d6206c9e47633eee80ed0d5ae656f03a6
+  firstname: Assistant
+  lastname: 3
+  email: assistant3@example.com
+
+quentin:
+  login: quentin
+  studentnumber: '20001'
+  firstname: Quentin
+  lastname: Testuser
+  email: quentin@example.com
+  crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7
+  salt: 98c619b2d472f6f306aad84906358afe559bd8ea
+  created_at: <%= 5.days.ago.to_s :db %>
+  #remember_token_expires_at: <%= 1.days.from_now.to_s %>
+  #remember_token: <= make_fake_token %>
+  
+aaron:
+  login: aaron
+  studentnumber: '20002'
+  firstname: Aaron
+  lastname: Testuser
+  email: aaron@example.com
+  crypted_password: 56ea63d2566302d0c61d9b73da93c8838ad9eb71
+  salt: ac1630086e4cc40dfd7b76a0b8b06c04b4e681dc
+  created_at: <%= 1.days.ago.to_s :db %>

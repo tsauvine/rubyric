@@ -1,8 +1,7 @@
 require 'test_helper'
 
 class CourseInstanceTest < ActiveSupport::TestCase
-  # Replace this with your real tests.
-  def test_truth
-    assert true
-  end
+  
+  #should_not_allow_mass_assignment_of :course_id
+
 end

@@ -8,11 +8,7 @@ class SubmissionsController < ApplicationController
     @exercise = @submission.exercise
     load_course
 
-    unless @submission.group.has_member?(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @submission.group.has_member?(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
 

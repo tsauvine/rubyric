@@ -23,6 +23,7 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(studentnumber, password)
+    logger.info("Athenticating with password '#{password}'")
     u = find_by_studentnumber(studentnumber)
 
     if !u
@@ -41,7 +42,10 @@ class User < ActiveRecord::Base
 
   # Encrypts some data with the salt.
   def self.encrypt(password, salt)
-    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
+    
+    hash = Digest::SHA1.hexdigest("--#{salt}--#{password}--")
+    logger.debug("--#{salt}--#{password}-- => #{hash}")
+    hash
   end
 
   # Encrypts the password with the user salt

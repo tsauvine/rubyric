@@ -1,5 +1,5 @@
 class CourseInstancesController < ApplicationController
-  before_filter :login_required #, :except => [:show]
+  before_filter :login_required
 
   # GET /course_instances/1
   def show
@@ -24,11 +24,7 @@ class CourseInstancesController < ApplicationController
     @is_teacher = @course.has_teacher(current_user)
 
     # Authorize
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized to create course instances.'
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @course_instance = CourseInstance.new
   end
@@ -39,10 +35,7 @@ class CourseInstancesController < ApplicationController
     load_course
 
     # Authorize
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized to edit course instances.'
-      redirect_to @course
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
   # POST /course_instances
@@ -51,11 +44,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.new(params[:course_instance])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized to create a course instance.'
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @course_instance.save
       flash[:success] = 'Course instance was successfully created.'
@@ -70,11 +59,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized to edit.'
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @course_instance.update_attributes(params[:course_instance])
       flash[:success] = 'Course instance was successfully updated.'
@@ -91,11 +76,7 @@ class CourseInstancesController < ApplicationController
     load_course
 
     # Authorize
-    unless @course.has_teacher(current_user)
-      flash[:error] = 'You are not authorized to delete course instances.'
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user)
 
     #Destroy
     @course_instance.destroy
@@ -107,11 +88,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized view students.'
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:csv] && params[:csv][:file]
       # FIXME: this is a temporary hack
@@ -129,10 +106,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find_by_id(params[:course_instance_id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:paste]
       @course_instance.add_students_csv(params[:paste])
@@ -147,10 +121,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find_by_id(params[:iid])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @course_instance.remove_student(params[:uid])
 
@@ -164,10 +135,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find_by_id(params[:course_instance_id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     students = Array.new
     @course_instance.students.each do |student|
@@ -184,11 +152,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = 'You are not authorized view teaching assistants.'
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:csv] && params[:csv][:file]
       @course_instance.add_assistants_csv(params[:csv][:file].read)
@@ -200,10 +164,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find_by_id(params[:course_instance_id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:paste]
       @course_instance.add_assistants_csv(params[:paste])
@@ -217,10 +178,7 @@ class CourseInstancesController < ApplicationController
     @course_instance = CourseInstance.find_by_id(params[:course_instance_id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     users = Array.new
     @course_instance.assistants.each do |user|

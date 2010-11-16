@@ -6,6 +6,9 @@ class CourseInstance < ActiveRecord::Base
   has_and_belongs_to_many :assistants, {:class_name => 'User', :join_table => 'assistants_course_instances', :order => :studentnumber}
   
   validates_presence_of :name
+  
+  # TODO:
+  # attr_accessible :name, :description, :active
 
   def has_assistant(user)
     user && assistants.include?(user)

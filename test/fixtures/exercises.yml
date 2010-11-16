@@ -1,6 +1,65 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
-test_exercise:
-  name: Exercise 1
-  course_instance_id: 1
-  deadline: 2008-09-01 00:00
+active_exercise:
+  course_instance: active
+  name: Active exercise
+  deadline: <%= 10.days.from_now.to_s(:db) %> 
+
+active_exercise2:
+  course_instance: active
+  name: Active exercise 2
+  deadline: <%= 10.days.from_now.to_s(:db) %> 
+
+passed_exercise:
+  course_instance: active
+  name: Exercise with deadline in the past
+  deadline: <%= 10.days.ago.to_s(:db) %> 
+
+inactive_exercise:
+  course_instance: inactive
+  name: Old exercise
+  deadline: <%= 1.years.ago.to_s(:db) %> 
+  
+solo_exercise:
+  course_instance: active
+  name: Groupsize 1
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  groupsizemin: 1
+  groupsizemax: 1
+
+group_exercise:
+  course_instance: active
+  name: Minimum groupsize 2
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  groupsizemin: 2
+  groupsizemax: 3
+
+anon_graders:
+  course_instance: active
+  name: Anonymous graders
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  anonymous_graders: true
+
+anon_submissions:
+  course_instance: active
+  name: Anonymous submissions
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  anonymous_submissions: true
+
+grader_mailable:
+  course_instance: active
+  name: Grader can send
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  grader_can_email: true
+
+submit_without_login:
+  course_instance: active
+  name: Can submit without login
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  submit_without_login: true
+
+no_autoassign:
+  course_instance: active
+  name: No autoassign
+  deadline: <%= 10.days.from_now.to_s(:db) %>
+  autoassign: false
