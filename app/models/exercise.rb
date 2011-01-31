@@ -210,4 +210,36 @@ class Exercise < ActiveRecord::Base
     histogram.sort { |x,y| x[0] <=> y[0] }
   end
 
+  # Assign submissions to assistants
+  # csv: student, assistant
+  def batch_assign(csv)
+    counter = 0
+    
+    # Make an array of lines
+    array = csv.split(/\r?\n|\r(?!\n)/)
+
+    Exercise.transaction do
+      array.each do |line|
+        parts = line.split(',',2).map { |s| s.strip }
+        next if parts.size < 1
+        
+        submission_studentnumber = parts[0]
+        assistant_studentnumber = parts[1]
+        
+        # Find submissions that belong to the student
+        submissions = Submission.find(:all, :conditions => [ "groups.exercise_id = ? AND users.studentnumber = ?", self.id, submission_studentnumber], :joins => {:group => :users})
+        grader = User.find_by_studentnumber(assistant_studentnumber)
+        
+        next unless grader
+        
+        # Assign those submissions
+        submissions.each do |submission|
+          counter += 1 if submission.assign_once_to(grader)
+        end
+      end
+      
+      return counter
+    end
+  end
+
 end

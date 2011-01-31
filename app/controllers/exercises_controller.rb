@@ -389,4 +389,29 @@ class ExercisesController < ApplicationController
     render :partial => 'group', :collection => @exercise.groups
   end
 
+  def batch_assign
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    # Authorization
+    unless @course.has_teacher(current_user) || is_admin?(current_user)
+      flash[:error] = "Unauthorized"
+      redirect_to @course
+      return
+    end
+
+    # Process CSV
+    if params[:paste]
+      counter = @exercise.batch_assign(params[:paste])
+      flash[:success] = "#{counter} new assignments"
+      redirect_to @exercise
+    end
+    
+    if params[:csv] && params[:csv][:file]
+      counter = @exercise.batch_assign(params[:csv][:file].read)
+      flash[:success] = "#{counter} new assignments"
+      redirect_to @exercise
+    end
+  end
+  
 end

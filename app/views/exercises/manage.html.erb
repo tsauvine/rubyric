@@ -58,6 +58,7 @@
 
     <%= submit_to_remote('assign_submissions', 'Assign', :url => {:action => 'assign_submissions'}, :update => 'submissions_table') %>
     <%= submit_to_remote('assign_submissions_exclusive', 'Assign exclusively', :url => {:action => 'assign_submissions', :exclusive => 'true'}, :update =>  'submissions_table', :confirm => 'Are you sure? Existing reviews will be deleted.') %>
+    <%= link_to 'Batch assign', batch_assign_exercise_path(@exercise) %>
   </p>
 
   <p>

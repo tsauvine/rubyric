@@ -23,11 +23,10 @@
         <% (0...@exercise.groupsizemax).each do |i| %>
           <tr>
             <td>
-              <%= text_field_tag "studentnumber[#{i}]", @studentnumber[i],
-                :onChange => remote_function(:url => { :action => 'check_studentnumber' }, :with => "'studentnumber=' + $('studentnumber_#{i}').value") %>
+              <%= text_field_tag "studentnumber[#{i}]", @studentnumber[i] %>
             </td>
             <td>
-              <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}", :onChange => remote_function(:url => { :action => 'check_email' }, :with => "'studentnumber=' + $('studentnumber_#{i}').value + '&email=' + $('email_#{i}').value") %>
+              <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}" %>
             </td>
           </tr>
         <% end %>

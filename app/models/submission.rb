@@ -62,6 +62,14 @@ class Submission < ActiveRecord::Base
 
     return review
   end
+  
+  def assign_once_to(user)
+    user = User.find(user) unless user.is_a?(User)
+    
+    return false if Review.exists?(:user_id => user.id, :submission_id => self.id)
+    
+    assign_to(user)
+  end
 
   # Assigns this submission to be reviewed by user, and removes previous assignments.
   def assign_to_exclusive(user)
