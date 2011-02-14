@@ -1,9 +1,10 @@
 .bundle
-Gemfile.lock
 db/*.sqlite3
-tmp/
-log/
+log/*.log
+tmp/**/*
+submissions/
+public/images/
+Gemfile.lock
 config/database.yml
 config/initializers/settings.rb
-public/images/
-submissions/
+config/initializers/secret_token.rb

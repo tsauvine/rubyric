@@ -1,10 +1,10 @@
 common: &common
   adapter: postgresql
-  username: rubyric
-  password: rubyric
+  username: rails
+  password: rails
   encoding: utf8
-#  host: localhost
-#  port: 5432
+  host: localhost
+  port: 5432
 
 
 development:
