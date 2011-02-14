@@ -91,13 +91,13 @@ class CourseInstancesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:csv] && params[:csv][:file]
-      # FIXME: this is a temporary hack
       skipped_students = @course_instance.add_students_csv(params[:csv][:file].read)
 
-      if skipped_students.size > 0
-        msg = 'The following students could not be created: ' + skipped_students.join(', ') + '. Check character encoding.'
-        flash[:error] = msg
-      end
+      # FIXME;
+#       if skipped_students.size > 0
+#         msg = 'The following students could not be created: ' + skipped_students.join(', ') + '. Check character encoding.'
+#         flash[:error] = msg
+#       end
     end
   end
 
