@@ -23,6 +23,10 @@ class Section < ActiveRecord::Base
     end
   end
 
+  # def next_sibling_or_cousin
+  # TODO
+  # end
+  
   def swap_indices(a, b)
     return unless a and b
 

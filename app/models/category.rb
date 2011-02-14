@@ -3,6 +3,8 @@ class Category < ActiveRecord::Base
   has_many :sections, {:dependent => :destroy, :order => 'position'}
 
   def move(offset)
+    # move_higher, move_lower
+    
     index = exercise.categories.index(self)
     return if index + offset < 0 || index + offset >= exercise.categories.size
 
@@ -10,7 +12,9 @@ class Category < ActiveRecord::Base
     swap_indices(self, other)
   end
 
-  def next_sibling()
+  def next_sibling
+    # higher_item
+    
     index = self.exercise.categories.index(self)
 
     if index < self.exercise.categories.size - 1
@@ -19,7 +23,7 @@ class Category < ActiveRecord::Base
       return nil
     end
   end
-
+  
   def swap_indices(a, b)
     return unless a and b
 

@@ -23,7 +23,7 @@ class CourseInstance < ActiveRecord::Base
   end
 
 
-# Raises an exception if adding the user fails.
+  # Raises an exception if adding the user fails.
   def add_user_hash(h, collection)
     if !h[:login] && !h[:studentnumber]
       raise ArgumentError.new("New user has neither login nor student number")
