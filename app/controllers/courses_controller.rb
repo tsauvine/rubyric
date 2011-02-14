@@ -28,11 +28,8 @@ class CoursesController < ApplicationController
   def edit
     @course = Course.find(params[:id])
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
-
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      redirect_to :action => :show
-      flash[:error] = 'You are not authorized to edit this course.'
-    end
+    
+    return access_denied unless @is_teacher
   end
 
   # POST /courses
@@ -55,34 +52,30 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:id])
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
 
-    if @course.has_teacher(current_user) || is_admin?(current_user)
-      if @course.update_attributes(params[:course])
-        flash[:success] = 'Course was successfully updated.'
-        redirect_to(@course)
-      else
-        render :action => "edit"
-      end
+    return access_denied unless @is_teacher
+    
+    if @course.update_attributes(params[:course])
+      flash[:success] = 'Course was successfully updated.'
+      redirect_to(@course)
     else
-      # Access denied
-      redirect_to :action => :index
-      flash[:error] = 'You are not authorized to edit this course.'
+      render :action => "edit"
     end
   end
 
   # DELETE /courses/1
   def destroy
     @course = Course.find(params[:id])
+    
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
     name = @course.name
-
-    if @course.has_teacher(current_user) || is_admin?(current_user)
-      if @course.destroy
-        flash[:success] = "#{name} was successfully deleted."
-      end
-      redirect_to(courses_url)
+    if @course.destroy
+      flash[:success] = "#{name} was successfully deleted."
     else
-      flash[:error] = "You are not authorized to delete #{name}."
-      redirect_to :action => :index
+      flash[:error] = "Unable to delete #{name}."
     end
+    
+    redirect_to(courses_url)
   end
 
   def teachers
