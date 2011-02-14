@@ -16,6 +16,10 @@ course_without_email:
   name: Course without email address
   teachers: teacher1
 
+course_without_teacher:
+  code: T-106.1003
+  name: Course without teacher
+
 somebody_elses_course:
   code: T-123.4567
   name: Somebody elses course

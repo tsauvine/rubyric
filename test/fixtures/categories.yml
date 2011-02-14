@@ -1,1 +1,29 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+category_B:
+  name: "Category B"
+  position: 2
+  weight: 0
+  exercise: active_exercise
+
+category_A:
+  name: "Category A"
+  position: 1
+  weight: .4
+  exercise: active_exercise
+
+category_C:
+  name: "Category C"
+  position: 3
+  weight: .6
+  exercise: active_exercise
+
+category: 
+  name: "Generic category"
+  position: 1
+  weight: 1
+  exercise: active_exercise2
+
+category_without_section:
+  name: "Empty Category"
+  position: 2
+  weight: 1
+  exercise: active_exercise2

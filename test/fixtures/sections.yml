@@ -1,1 +1,41 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+section_A2:
+  name: "Section A.2"
+  position: 2
+  category: category_A
+  weight: 0
+
+section_A1:
+  name: "Section A.1"
+  position: 1
+  category: category_A
+  weight: .4
+
+section_A3:
+  name: "Section A.3"
+  position: 3
+  category: category_A
+  weight: .6
+
+section_B1:
+  name: "Section B.1"
+  position: 1
+  category: category_B
+  weight: 1
+
+section_C1:
+  name: "Section C.1"
+  position: 1
+  category: category_C
+  weight: 1
+
+section_C2:
+  name: "Section C.2"
+  position: 2
+  category: category_C
+  weight: 1
+
+section_without_items:
+  name: "Empty section"
+  position: 1
+  category: category
+  weight: 1

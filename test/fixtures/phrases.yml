@@ -1,1 +1,82 @@
-# Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+phrase_A22_good:
+  item: item_A22
+  content: "Phrase A.2.2 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_A22_bad:
+  item: item_A22
+  content: "Phrase A.2.2 bad"
+  feedbacktype: "Bad"
+  position: 2
+
+phrase_A22_neutral:
+  item: item_A22
+  content: "Phrase A.2.2 neutral"
+  feedbacktype: "Neutral"
+  position: 3
+
+
+phrase_A21_good:
+  item: item_A21
+  content: "Phrase A.2.1 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_A21_bad:
+  item: item_A21
+  content: "Phrase A.2.1 bad"
+  feedbacktype: "Bad"
+  position: 2
+
+
+phrase_A11_good:
+  item: item_A11
+  content: "Phrase A.1.1 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_A11_bad:
+  item: item_A11
+  content: "Phrase A.1.1 bad"
+  feedbacktype: "Bad"
+  position: 2
+
+
+phrase_B11_good:
+  item: item_B11
+  content: "Phrase B.1.1 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_B11_bad:
+  item: item_B11
+  content: "Phrase B.1.1 bad"
+  feedbacktype: "Bad"
+  position: 2
+
+
+phrase_C11_good:
+  item: item_C11
+  content: "Phrase C.1.1 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_C11_bad:
+  item: item_C11
+  content: "Phrase C.1.1 bad"
+  feedbacktype: "Bad"
+  position: 2
+
+
+phrase_C21_good:
+  item: item_C21
+  content: "Phrase C.2.2 good"
+  feedbacktype: "Good"
+  position: 1
+
+phrase_C21_bad:
+  item: item_C21
+  content: "Phrase C.2.2 bad"
+  feedbacktype: "Bad"
+  position: 2

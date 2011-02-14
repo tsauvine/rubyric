@@ -5,9 +5,16 @@ active:
   name: Spring
   active: true
   assistants: assistant1
+  students: student1
   
 inactive:
   course: course
   name: Inactive instance
   active: false
   assistants: assistant1
+
+somebody_elses_instance:
+  course: somebody_elses_course
+  name: Somebody else's instance
+  active: true
+  assistants: assistant2
