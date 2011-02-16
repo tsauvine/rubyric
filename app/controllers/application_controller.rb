@@ -2,15 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   helper :all # include all helpers, all the time
-
-  def initialize
-    @stylesheets = []
-  end
-
-  # See ActionController::Base for details
-  # Uncomment this to filter the contents of submitted sensitive data parameters
-  # from your application log (in this case, all fields with names like "password").
-  filter_parameter_logging :password
+  helper_method :current_session, :current_user, :is_admin?
 
   # SSL
   before_filter :redirect_to_ssl
@@ -41,14 +33,6 @@ class ApplicationController < ActionController::Base
 
 
   protected
-
-#   def get_stylesheets
-#     stylesheets = [] unless stylesheets
-#     ["http://www.example.com/stylesheets/#{controller.controller_path}/#{controller.action_name}"].each do |ss|
-#       stylesheets << ss if File.exists? "#{Dir.pwd}/public/stylesheets/#{ss}.css"
-#     end
-#   end
-
 
   # If @exercise is defined, loads @course_instance and @course.
   # If @course_instance is defined, loads @course.
@@ -81,4 +65,48 @@ class ApplicationController < ActionController::Base
     end
   end
 
+
+  private
+  
+  def current_session
+    return @current_session if defined?(@current_session)
+    @current_session = Session.find
+  end
+  
+  def current_user
+    return @current_user if defined?(@current_user)
+    @current_user = current_session && current_session.record
+  end
+  
+  def is_admin?(user)
+    user && user.admin
+  end
+  
+  def require_user
+    unless current_user
+      store_location
+      flash[:notice] = "You must be logged in to access this page"
+      redirect_to new_session_url
+      return false
+    end
+  end
+
+  def require_no_user
+    if current_user
+      store_location
+      flash[:notice] = "You must be logged out to access this page"
+      redirect_to account_url
+      return false
+    end
+  end
+  
+  def store_location
+    session[:return_to] = request.request_uri
+  end
+  
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
+  end
+  
 end

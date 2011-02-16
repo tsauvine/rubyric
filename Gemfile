@@ -24,6 +24,8 @@ gem 'pg'
 # gem 'sqlite3-ruby', :require => 'sqlite3'
 # gem 'aws-s3', :require => 'aws/s3'
 gem 'acts_as_list'
+gem 'authlogic'
+gem 'shoulda'
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
@@ -32,4 +34,4 @@ gem 'acts_as_list'
 #   gem 'webrat'
 # end
 
-#gem 'mongrel', '>= 1.2.0.pre2'
+gem 'mongrel', '>= 1.2.0.pre2'

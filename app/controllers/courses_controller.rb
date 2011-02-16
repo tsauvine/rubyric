@@ -1,6 +1,6 @@
 class CoursesController < ApplicationController
   before_filter :login_required #, :except => [:index, :show]
-
+  
   # GET /courses
   def index
     if is_admin?(current_user)

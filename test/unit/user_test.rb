@@ -1,104 +1,55 @@
 require File.dirname(__FILE__) + '/../test_helper'
 
 class UserTest < ActiveSupport::TestCase
-  # Be sure to include AuthenticatedTestHelper in test/test_helper.rb instead.
-  # Then, you can remove it from this and the functional test.
-  include AuthenticatedTestHelper
-  fixtures :users
+  fixtures :users, :courses
 
-  def test_should_create_user
-    assert_difference 'User.count' do
-      user = create_user
+  should "create user with only studentnumber" do
+    user = User.new
+    user.studentnumber = '973582'
+    
+    assert_difference('User.count', 1) do
+      user.save
       assert !user.new_record?, "#{user.errors.full_messages.to_sentence}"
     end
   end
-
-#   def test_should_require_login
-#     assert_no_difference 'User.count' do
-#       u = create_user(:login => nil)
-#       assert u.errors.on(:login)
-#     end
-#   end
-
-#   def test_should_require_password
-#     assert_no_difference 'User.count' do
-#       u = create_user(:password => nil)
-#       assert u.errors.on(:password)
-#     end
-#   end
-# 
-#   def test_should_require_password_confirmation
-#     assert_no_difference 'User.count' do
-#       u = create_user(:password_confirmation => nil)
-#       assert u.errors.on(:password_confirmation)
-#     end
-#   end
-
-#   def test_should_require_email
-#     assert_no_difference 'User.count' do
-#       u = create_user(:email => nil)
-#       assert u.errors.on(:email)
-#     end
-#   end
-
-# FIXME:
-#   def test_should_reset_password
-#     users(:student1).update_attributes(:password => 'new password', :password_confirmation => 'new password')
-#     assert_equal users(:student1), User.authenticate('student1', 'new password')
-#   end
-# 
-#   def test_should_not_rehash_password
-#     users(:student1).update_attributes(:login => 'studentNew')
-#     assert_equal users(:student1), User.authenticate('studentNew', 'student1')
-#   end
-# 
-#   def test_should_authenticate_user
-#     assert_equal users(:student1), User.authenticate('student1', 'student1')
-#   end
-
-  def test_should_set_remember_token
-    users(:quentin).remember_me
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
+  
+  should "not create user if studentnumber exists" do
+    user = User.new
+    user.studentnumber = '00001'
+    
+    assert_difference('User.count', 0) do
+      user.save
+    end
   end
-
-  def test_should_unset_remember_token
-    users(:quentin).remember_me
-    assert_not_nil users(:quentin).remember_token
-    users(:quentin).forget_me
-    assert_nil users(:quentin).remember_token
+  
+  should "not create user if login exists" do
+    user = User.new
+    user.login = '00001'
+    user.studentnumber = '892648'
+    
+    assert_difference('User.count', 0) do
+      user.save
+    end
   end
-
-  def test_should_remember_me_for_one_week
-    before = 1.week.from_now.utc
-    users(:quentin).remember_me_for 1.week
-    after = 1.week.from_now.utc
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert users(:quentin).remember_token_expires_at.between?(before, after)
+  
+  should "not be admin" do
+    user = User.find(users(:student1).id)
+    assert !user.admin?, "Student should not be admin"
   end
-
-  def test_should_remember_me_until_one_week
-    time = 1.week.from_now.utc
-    users(:quentin).remember_me_until time
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert_equal users(:quentin).remember_token_expires_at, time
+  
+  should "be admin" do
+    user = User.find(users(:admin).id)
+    assert user.admin?, "Admin should be admin"
   end
-
-  def test_should_remember_me_default_two_weeks
-    before = 2.weeks.from_now.utc
-    users(:quentin).remember_me
-    after = 2.weeks.from_now.utc
-    assert_not_nil users(:quentin).remember_token
-    assert_not_nil users(:quentin).remember_token_expires_at
-    assert users(:quentin).remember_token_expires_at.between?(before, after)
+  
+  should "not be teacher" do
+    user = User.find(users(:student1).id)
+    assert !user.teacher?, "Student should not be teacher"
   end
-
-protected
-  def create_user(options = {})
-    record = User.new({ :login => 'quire', :studentnumber => '98765', :email => 'quire@example.com', :firstname => 'Quire', :lastname => 'Testuser', :password => 'quire', :password_confirmation => 'quire' }.merge(options))
-    record.save
-    record
+  
+  should "be teacher" do
+    user = User.find(users(:teacher1).id)
+    assert user.teacher?, "Teacher should be teacher"
   end
+  
 end

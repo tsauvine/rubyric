@@ -29,8 +29,11 @@ teacher2:
 student1:
   login: '00001'
   studentnumber: '00001'
-  crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7 # student1
-  salt: 98c619b2d472f6f306aad84906358afe559bd8ea
+  #crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7 # student1
+  #salt: 98c619b2d472f6f306aad84906358afe559bd8ea
+  salt: <%= salt = Authlogic::Random.hex_token %>
+  crypted_password: <%= Authlogic::CryptoProviders::Sha512.encrypt("student1" + salt) %>
+  #persistence_token: 6cde0674657a8a313ce952df979de2830309aa4c11ca65805dd00bfdc65dbcc2f5e36718660a1d2e68c1a08c276d996763985d2f06fd3d076eb7bc4d97b1e317
   firstname: Student
   lastname: 1
   email: student1@example.com
@@ -80,24 +83,36 @@ assistant3:
   lastname: 3
   email: assistant3@example.com
 
-quentin:
-  login: quentin
-  studentnumber: '20001'
-  firstname: Quentin
-  lastname: Testuser
-  email: quentin@example.com
-  crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7
-  salt: 98c619b2d472f6f306aad84906358afe559bd8ea
-  created_at: <%= 5.days.ago.to_s :db %>
-  #remember_token_expires_at: <%= 1.days.from_now.to_s %>
-  #remember_token: <= make_fake_token %>
-  
-aaron:
-  login: aaron
-  studentnumber: '20002'
-  firstname: Aaron
-  lastname: Testuser
-  email: aaron@example.com
-  crypted_password: 56ea63d2566302d0c61d9b73da93c8838ad9eb71
-  salt: ac1630086e4cc40dfd7b76a0b8b06c04b4e681dc
-  created_at: <%= 1.days.ago.to_s :db %>
+shibuser:
+  login: 'shibuser@example.com'
+  studentnumber: '00021'
+  #persistence_token: 6cde0674657a8a313ce952df979de2830309aa4c11ca65805dd00bfdc65dbcc2f5e36718660a1d2e68c1a08c276d996763985d2f06fd3d076eb7bc4d97b1e317
+  firstname: Student
+  lastname: 21
+  email: student21@example.com
+
+ghost:
+  studentnumber: '00022'
+
+
+# quentin:
+#   login: quentin
+#   studentnumber: '20001'
+#   firstname: Quentin
+#   lastname: Testuser
+#   email: quentin@example.com
+#   crypted_password: 4c87fb47872199b91ffea6bd9c434390dc0f38e7
+#   salt: 98c619b2d472f6f306aad84906358afe559bd8ea
+#   created_at: <%= 5.days.ago.to_s :db %>
+#   #remember_token_expires_at: <%= 1.days.from_now.to_s %>
+#   #remember_token: <= make_fake_token %>
+#   
+# aaron:
+#   login: aaron
+#   studentnumber: '20002'
+#   firstname: Aaron
+#   lastname: Testuser
+#   email: aaron@example.com
+#   crypted_password: 56ea63d2566302d0c61d9b73da93c8838ad9eb71
+#   salt: ac1630086e4cc40dfd7b76a0b8b06c04b4e681dc
+#   created_at: <%= 1.days.ago.to_s :db %>

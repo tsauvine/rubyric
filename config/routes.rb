@@ -1,5 +1,8 @@
 Rubyric::Application.routes.draw do
-  resource :session
+  resource :session do
+    get 'shibboleth'
+  end
+  
   resources :users
   resources :groups
   resources :courses
