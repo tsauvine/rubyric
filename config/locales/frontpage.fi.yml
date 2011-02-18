@@ -1,3 +1,14 @@
 fi:
-  my_courses: Omat kurssit
-  my_courses_teacher: Omat kurssit (opettajana)
+  frontpage_login_heading: "Kirjaudu"
+  frontpage_intro_html: "Rubyric on rubriikkipohjainen arvostelutyökalu, jonka helpottaa sanallisen palautteen antamista suurilla kursseilla. <a href='http://www.cse.hut.fi/en/research/letech/rubyric/'>Lue lisää...</a>"
+
+  frontpage_courses_teacher_heading: "Omat kurssit (opettajana)"
+  frontpage_courses_assistant_heading: "Omat kurssit (assarina)"
+  frontpage_courses_student_heading: "Omat kurssit"
+
+  frontpage_not_enrolled_heading: "Et ole rekisteröitynyt millekään kurssille"
+  frontpage_not_enrolled_info_html: "<ul><li>Jos olet <strong>opiskelija</strong> ja haluat palauttaa harjoitustyösi, seuraa ohjeita <strong>kurssin kotisivulla</strong>.</li><li>Jos olet <strong>opettaja</strong> ja haluat käyttää Rubyricia kurssillasi, seuraa <a href='http://www.cse.hut.fi/en/research/letech/rubyric/'>tätä linkkiä</a>.</li></ul>"
+
+  frontpage_create_course_link: "Luo uusi kurssi"
+  frontpage_show_all_courses: "Näytä kaikki kurssit"
+  

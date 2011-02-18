@@ -1,14 +1,10 @@
 class FrontpageController < ApplicationController
 
-  def index
+  def show
     if current_user
-      # course instances as assistant
-      @course_instances = Array.new
-      @course_instances.concat(current_user.course_instances_assistant)
-      @course_instances.concat(current_user.course_instances_student)
-      
-      # course instances as teacher
-      @courses = current_user.courses_teacher
+      @courses_teacher = current_user.courses_teacher
+      @instances_assistant = current_user.course_instances_assistant
+      @instances_student = current_user.course_instances_student
 
       render :action => 'course_instances'
     else

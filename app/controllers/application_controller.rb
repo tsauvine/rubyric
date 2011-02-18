@@ -11,7 +11,7 @@ class ApplicationController < ActionController::Base
   end
   
   # Locale
-  # before_filter :set_locale
+  before_filter :set_locale
   def set_locale
     if params[:locale]  # Locale is given as a URL parameter
       I18n.locale = params[:locale]
@@ -20,12 +20,12 @@ class ApplicationController < ActionController::Base
       session[:locale] = params[:locale]
 
       # Save the locale in user's preferences
-      if logged_in?
-        current_user.locale = params[:locale]
-        current_user.save
-      end
-    elsif logged_in? && !current_user.locale.blank?  # Get locale from user's preferences
-      I18n.locale = current_user.locale
+      #if logged_in?
+      #  current_user.locale = params[:locale]
+      #  current_user.save
+      #end
+    #elsif logged_in? && !current_user.locale.blank?  # Get locale from user's preferences
+    #  I18n.locale = current_user.locale
     elsif !session[:locale].blank?  # Get locale from session
       I18n.locale = session[:locale]
     end

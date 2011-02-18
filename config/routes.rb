@@ -3,6 +3,8 @@ Rubyric::Application.routes.draw do
     get 'shibboleth'
   end
   
+  resource :frontpage, :only => [:show], :controller => 'frontpage'
+  
   resources :users
   resources :groups
   resources :courses
@@ -25,11 +27,11 @@ Rubyric::Application.routes.draw do
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout
   
-  root :to => "frontpage#index"
+  root :to => "frontpage#show"
   
   # Install the default routes as the lowest priority.
   # FIXME: get rid of this
-  match ':controller(/:action(/:id(.:format)))'
+  #match ':controller(/:action(/:id(.:format)))'
   
   # The priority is based upon order of creation:
   # first created -> highest priority.

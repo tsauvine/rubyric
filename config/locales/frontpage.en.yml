@@ -1,3 +1,14 @@
 en:
-  my_courses: My courses
-  my_courses_teacher: My courses (as teacher)
+  frontpage_login_heading: "Login"
+  frontpage_intro_html: "Rubyric is a rubric-based assessment tool. It's designed to speed up grading and improve feedback on large courses. <a href='http://www.cse.hut.fi/en/research/letech/rubyric/'>Learn more...</a>"
+
+  frontpage_courses_teacher_heading: "My courses (as teacher)"
+  frontpage_courses_assistant_heading: "My courses (as teaching assistant)"
+  frontpage_courses_student_heading: "My courses"
+
+  frontpage_not_enrolled_heading: "You are not enrolled in any course"
+  frontpage_not_enrolled_info_html: "<ul><li>If you are a <strong>student</strong> looking to submit your exercise, please follow the instructions on the <strong>homepage of your course</strong>.</li><li>If you are a <strong>teacher</strong> and want to use Rubyric on your course, please <a href='http://www.cse.hut.fi/en/research/letech/rubyric/'>follow this link</a>.</li></ul>"
+
+  frontpage_create_course_link: "Create new course"
+  frontpage_show_all_courses: "Show all courses"
+  

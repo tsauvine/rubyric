@@ -14,37 +14,37 @@ class ActiveSupport::TestCase
   setup :activate_authlogic
 
   # Add more helper methods to be used by all tests here...
-#   def login_as(user)
+  def login_as(user)
 #     #@request.session[:user_id] = users(user).id
-#     Session.create(users(user))
-#   end
-#   
-#   def self.should_require_login(*actions)
-#     actions.each do |action|
-#       should "Require login for '#{action}' action" do
-#         get(action)
-#         assert_redirected_to(new_session_url)
-#       end
-#     end
-#   end
-#   
-#   def assert_forbidden
-#     assert_response :forbidden
-#     assert_template 'shared/forbidden'
-#   end
+    Session.create(users(user))
+  end
 
-#   def current_session
-#     return @current_session if defined?(@current_session)
-#     @current_session = Session.find
-#   end
-  
+  def self.should_require_login(*actions)
+    actions.each do |action|
+      should "Require login for '#{action}' action" do
+        get(action)
+        assert_redirected_to(new_session_url)
+      end
+    end
+  end
+
+  def assert_forbidden
+    assert_response :forbidden
+    assert_template 'shared/forbidden'
+  end
+ 
   def current_user
-    #return @current_user if defined?(@current_user)
-    #@current_user = current_session && current_session.record
-    #session = Session.find
-    #return session && session.record
+    unless defined?(@current_session)
+      @current_session = Session.find
+    end
     
-    session = Session.find
-    session && session.user
+    unless defined?(@current_user)
+      @current_user = @current_session.user if @current_session
+    end
+    
+    @current_user
+      
+    #session = Session.find
+    #session && session.user
   end
 end
