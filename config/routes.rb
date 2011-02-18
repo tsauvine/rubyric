@@ -7,8 +7,22 @@ Rubyric::Application.routes.draw do
   
   resources :users
   resources :groups
-  resources :courses
-  resources :course_instances, :except => [:index]
+  
+  resources :courses do
+    get 'teachers'
+    post 'add_teachers'
+    post 'remove_selected_teachers'
+  end
+  
+  resources :course_instances, :except => [:index] do
+    resources :students, :controller => 'course_instances/students' do
+    end
+    
+    resources :assistants, :controller => 'course_instances/assistants' do
+    end
+  end
+  
+  
   resources :rubrics
   resources :submissions
   resources :reviews

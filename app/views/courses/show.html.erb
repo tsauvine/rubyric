@@ -13,7 +13,7 @@
       <td><%= link_to instance.name, instance %></td>
 
       <% if @is_teacher %>
-        <td class="trash"><%= link_to(image_tag('trash.png', :alt => 'Destroy'), instance, :confirm => 'Are you sure?', :method => :delete) %></td>
+        <td class="trash"><%= link_to (image_tag('trash.png', :alt => 'Destroy'), instance, :confirm => 'Are you sure?', :method => :delete) %></td>
       <% end %>
     </tr>
   <% end %>
@@ -21,7 +21,7 @@
 
   <% if @is_teacher %>
     <tr>
-      <td><%= link_to 'Create new instance', { :controller => 'course_instances', :action => 'new', :course => @course.id }, :class => 'new' %></td>
+      <td><%= link_to 'Create new instance', new_course_instance_path(:course => @course.id), :class => 'new' %></td>
       <td></td>
     </tr>
   <% end %>
@@ -34,6 +34,6 @@
     <%= h user.name %><br />
   <% end %>
 
-  <%= link_to 'Edit', url_for(:controller=>'courses', :action=>'teachers', :id => @course.id), :class => 'edit' %>
+  <%= link_to 'Edit', course_teachers_path(@course), :class => 'edit' %>
 <% end %>
 

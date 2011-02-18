@@ -96,8 +96,8 @@
                 <li><%= link_to 'Settings', edit_exercise_path(@exercise) %></li>
                 <li><%= link_to 'Rubric', edit_rubric_path(@exercise) %></li>
                 <li><%= link_to 'Submissions', exercise_path(@exercise) %></li>
-                <li><%= link_to 'Statistics', statistics_exercise_path(@exercise) %></li>
-                <li><%= link_to 'Results', results_exercise_path(@exercise) %></li>
+                <li><%= link_to 'Statistics', exercise_statistics_path(@exercise) %></li>
+                <li><%= link_to 'Results', exercise_results_path(@exercise) %></li>
               </ul>
             <% end %>
           </ul>

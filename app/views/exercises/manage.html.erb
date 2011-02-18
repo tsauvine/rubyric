@@ -56,14 +56,18 @@
     Assign selected to
     <%= select_tag('assistant', options_for_select(@graders, :selected => nil)) %>
 
-    <%= submit_to_remote('assign_submissions', 'Assign', :url => {:action => 'assign_submissions'}, :update => 'submissions_table') %>
-    <%= submit_to_remote('assign_submissions_exclusive', 'Assign exclusively', :url => {:action => 'assign_submissions', :exclusive => 'true'}, :update =>  'submissions_table', :confirm => 'Are you sure? Existing reviews will be deleted.') %>
-    <%= link_to 'Batch assign', batch_assign_exercise_path(@exercise) %>
+    <% #= submit_to_remote('assign_submissions', 'Assign', :url => {:action => 'assign_submissions'}, :update => 'submissions_table')
+    %>
+    <% #= submit_to_remote('assign_submissions_exclusive', 'Assign exclusively', :url => {:action => 'assign_submissions', :exclusive => 'true'}, :update =>  'submissions_table', :confirm => 'Are you sure? Existing reviews will be deleted.') 
+    %>
+    <%= link_to 'Batch assign', exercise_batch_assign_path(@exercise) %>
   </p>
 
   <p>
-    <%= submit_to_remote('remove_button', 'Delete selected', :url => {:action => 'remove_selected_submissions'}, :update =>  'submissions_table', :confirm => 'Are you sure you want to delete?', :html => {:action => 'remove_selected_submissions', :class => 'trash'}) %>
+    <% #= submit_to_remote('remove_button', 'Delete selected', :url => {:action => 'remove_selected_submissions'}, :update =>  'submissions_table', :confirm => 'Are you sure you want to delete?', :html => {:action => 'remove_selected_submissions', :class => 'trash'})
+    %>
 
-    <%= submit_to_remote('send_button', 'Mail selected', :url => {:action => 'send_selected_reviews'}, :update =>  'submissions_table', :confirm => 'Feedback mails will be sent to the students.', :html => {:action => 'send_selected_reviews', :title => 'Emails selected reviews to the students'}) %>
+    <% #= submit_to_remote('send_button', 'Mail selected', :url => {:action => 'send_selected_reviews'}, :update =>  'submissions_table', :confirm => 'Feedback mails will be sent to the students.', :html => {:action => 'send_selected_reviews', :title => 'Emails selected reviews to the students'})
+    %>
   </p>
 </form>

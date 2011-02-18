@@ -21,7 +21,7 @@
   <% end %>
 
   <% if @allow_edit %>
-    <tr><td><%= link_to "Create new exercise", url_for(:controller=>'exercises', :action=>'new', :ci => @course_instance.id), :class => 'new' %></td></tr>
+    <tr><td><%= link_to "Create new exercise", new_exercise_path(:ci => @course_instance.id), :class => 'new' %></td></tr>
   <% end %>
 </table>
 
@@ -30,11 +30,11 @@
   <h2>People</h2>
 
   <p><%= @course_instance.students.length %> students
-    <%= link_to 'Edit', url_for(:controller=>'course_instances', :action=>'students', :id => @course_instance.id), :class => 'edit' %>
+    <%= link_to 'Edit', course_instance_students_path(@course_instance), :class => 'edit' %>
   </p>
 
   <p><%= @course_instance.assistants.length %> teaching assistants
-    <%= link_to 'Edit', url_for(:controller=>'course_instances', :action=>'assistants', :id => @course_instance.id), :class => 'edit' %>
+    <%= link_to 'Edit', course_instance_assistants_path(@course_instance), :class => 'edit' %>
   </p>
 <% end %>
 
