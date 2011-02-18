@@ -32,6 +32,7 @@ Rubyric::Application.routes.draw do
     get 'results'
     get 'statistics'
     get 'batch_assign'
+    get 'archive'
   end
 
 

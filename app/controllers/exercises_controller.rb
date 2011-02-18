@@ -413,5 +413,10 @@ class ExercisesController < ApplicationController
       redirect_to @exercise
     end
   end
+
+  def archive
+    @exercise = Exercise.find(params[:exercise_id])
+    @exercise.archive
+  end
   
 end

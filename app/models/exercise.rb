@@ -246,4 +246,8 @@ class Exercise < ActiveRecord::Base
     end
   end
 
+  def archive
+    
+  end
+  
 end
