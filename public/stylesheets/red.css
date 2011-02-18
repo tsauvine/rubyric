@@ -76,6 +76,25 @@ ul.sparse li {
   margin-bottom: 1em;
 }
 
+p.narrow, div.narrow {
+  width: 800px;
+}
+
+.sessions-login-method {
+  width: 800px;
+  margin-bottom: 5em;
+}
+
+.sessions-login-box {
+  float: left;
+  border: 2px solid #aaa;
+  padding: 16px;
+  
+
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+}
+
 /******************
  * Header
  ******************/
@@ -409,6 +428,17 @@ table.histogram {
 table.histogram td {
   padding: .1em .5em;
 }
+
+
+/******************
+ * Frontpage
+ ******************/
+
+#frontpage-intro {
+  margin-bottom: 3em;
+}
+
+
 
 /***********************************
  * Feedback editor (assistant view)

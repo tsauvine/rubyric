@@ -1,0 +1,9 @@
+en:
+  sessions_login_heading: "Login"
+  sessions_traditional_hint: "Login using a Rubyric account (test accounts)"
+  sessions_shibboleth_hint: "Log in using the authentication service of your home university (WebLogin)"
+  sessions_login_button: "Log in"
+  sessions_studentnumber_label: "Student number"
+  sessions_password_label: "Password"
+  sessions_remember_label: "Remember me"
+  

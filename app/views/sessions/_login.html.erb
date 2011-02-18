@@ -1,36 +1,37 @@
-<table id="logintable">
-  <tr class="hint">
-    <td>Login using a Rubyric account</td>
-    <td>Log in using the authentication service of your home university</td>
-  </tr>
-  <tr class="logins">
-    <td>
-        <%= form_for @session, :as => :session, :url => session_path do |f| %>
+<div class="sessions-login-method">
+  <p class="hint"><%=t :sessions_shibboleth_hint %></p>
+  
+  <%= link_to "/Shibboleth.sso/wayf?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') do
+    image_tag('haka_portrait_large.gif', {:alt => '[Haka Login]'})
+  end %>
+</div>
 
-          <table id='traditional-login'>
-            <tr>
-              <td style="text-align: right"><label for="login">Student number</label></td>
-              <td><%= f.text_field :studentnumber, :size => 12 %></td>
-            </tr>
-            <tr>
-              <td style="text-align: right"><label for="password">Password</label></td>
-              <td><%= f.password_field :password, :size => 12 %></td>
-            </tr>
-            <tr>
-              
-            </tr>
-            <tr>
-              <td></td>
-              <td>
-                <%= f.submit 'Log in' %>
-              </td>
-            </tr>
-          </table>
-        <% end %>
-    </td>
-    <td>
-      <%= link_to(image_tag('haka_portrait_large.gif', {:alt => '[Haka Login]'}), "/Shibboleth.sso/wayf?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https'))%>
-    </td>
-  </tr>
-</table>
 
+<div class="sessions-login-method">
+  <p class="hint"><%=t :sessions_traditional_hint %></p>
+  
+  <div class="sessions-login-box">
+    <%= form_for @session, :as => :session, :url => session_path do |f| %>
+      <table>
+        <tr>
+          <td style="text-align: right"><%= f.label :studentnumber, t(:sessions_studentnumber_label) %></td>
+          <td><%= f.text_field :studentnumber, :size => 12 %></td>
+        </tr>
+        <tr>
+          <td style="text-align: right"><%= f.label :studentnumber, t(:sessions_password_label) %></td>
+          <td><%= f.password_field :password, :size => 12 %></td>
+        </tr>
+        <tr>
+          <td style="text-align: right"><%= f.label :remember_me, t(:sessions_remember_label) %></td>
+          <td><%= f.check_box :remember_me %></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>
+            <%= f.submit t(:sessions_login_button) %>
+          </td>
+        </tr>
+      </table>
+    <% end %>
+  </div>
+</div>

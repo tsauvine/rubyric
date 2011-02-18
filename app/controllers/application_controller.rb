@@ -82,23 +82,27 @@ class ApplicationController < ActionController::Base
     user && user.admin
   end
   
-  def require_user
+  def login_required
     unless current_user
       store_location
-      flash[:notice] = "You must be logged in to access this page"
+      
+      # TODO: use shibboleth
       redirect_to new_session_url
+      
       return false
     end
   end
 
-  def require_no_user
-    if current_user
-      store_location
-      flash[:notice] = "You must be logged out to access this page"
-      redirect_to account_url
-      return false
-    end
-  end
+#   def require_no_user
+#     if current_user
+#       store_location
+#       
+#       flash[:error] = "You must be logged out to access"
+#       redirect_to root_url
+#       
+#       return false
+#     end
+#   end
   
   def store_location
     session[:return_to] = request.request_uri
