@@ -210,6 +210,7 @@ ActiveRecord::Schema.define(:version => 20110214171327) do
     t.string   "organization"
     t.string   "persistence_token"
     t.string   "perishable_token"
+    t.string   "locale"
     t.integer  "login_count",       :default => 0, :null => false
     t.datetime "last_request_at"
     t.datetime "last_login_at"

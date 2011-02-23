@@ -8,6 +8,8 @@ class AlterUsers < ActiveRecord::Migration
     add_column :users, :persistence_token, :string
     add_column :users, :perishable_token, :string
     
+    add_column :users, :locale, :string, :length => 5
+    
     add_column :users, :login_count, :integer , :default => 0, :null => false
     add_column :users, :last_request_at, :datetime
     add_column :users, :last_login_at, :datetime
@@ -26,6 +28,8 @@ class AlterUsers < ActiveRecord::Migration
     remove_column :users, :login_count
     remove_column :users, :last_request_at
     remove_column :users, :last_login_at
+    remove_column :users, :current_login_at
+    
     remove_column :users, :current_login_at
     
     add_column :users, :remember_token, :string
