@@ -1,0 +1,20 @@
+fi:
+  # New
+  instance_create_heading: "Luo toteutuskerta"
+  instance_created_flash: 'Toteutuskerta luotu. Luo seuraavaksi harjoituksia, joihin opiskelijat voivat palauttaa tehtäviä.'
+  
+  # Settings
+  instance_settings_heading: "Toteutuskerran asetukset"
+  instance_name_label: "Nimi"
+  instance_name_hint: "esim. Kevät %{year}"
+  instance_active_label: "Aktiivinen"
+  instance_active_hint: "Ei-aktiiviset kurssit eivät vastaanota palautuksia."
+  instance_updated_flash: "Toteutuskerta päivitetty."
+  
+  # Show
+  instance_exercises_heading: "Harjoitukset"
+  instance_no_exercises: "Ei harjoituksia"
+  instance_create_exercise: "Luo uusi harjoitus"
+  instance_people_heading: "Ihmiset"
+  instance_n_students: "opiskelijaa"
+  instance_n_assistants: "assistenttia"

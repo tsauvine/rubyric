@@ -1,0 +1,28 @@
+en:
+  # Index
+  courses_index_heading: "Courses"
+  course_create_link: "Create new course"
+  
+  # New
+  course_new_heading: "Create new course"
+  course_new_policy: "Teachers of the Aalto university can freely use Rubyric on their courses. If you want to use Rubyric at another institution, please contact rubyric@cs.hut.fi."
+  course_created_flash: 'New course was successfully created. Next, create a course instance.'
+  course_updated_flash: 'Course was successfully updated.'
+  course_deleted_flash: "Course %{name} was successfully deleted."
+  course_delete_failed_flash: "Failed to delete #{name}."
+  
+  # Settings
+  course_edit_heading: "Course settings"
+  course_code: "Course code"
+  course_code_hint: "e.g. X-1.101"
+  course_name: "Course name"
+  course_name_hint: "e.g. Basics"
+  course_email: "Email"
+  course_email_hint: "Feedback emails appear to come from this address if graders are set anonymous."
+  
+  # Show
+  course_instances_heading: "Instances"
+  course_no_instances: "No instances"
+  course_teachers_heading: "Teachers"
+  course_create_instance: "Create new instance"
+  course_no_instances_hint: "e.g. Spring %{year}"

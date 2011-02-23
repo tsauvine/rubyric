@@ -1,0 +1,29 @@
+fi:
+  # Index
+  courses_index_heading: "Kurssit"
+  course_create_link: "Luo uusi kurssi"
+  
+  # New
+  course_new_heading: "Luo kurssi"
+  course_new_policy: "Aalto-yliopiston opettajat saavat vapaasti käyttää Rubyric-järjestelmää kursseillaan. Jos haluat käyttää Rubyriciä josskin toisessa oppilaitoksessa, ota yhteys osoitteeseen rubyric@cs.hut.fi."
+  course_created_flash: 'Kurssi luotiin onnistuneesti. Luo seuraavaksi toteutuskerta.'
+  course_updated_flash: 'Kurssi päivitetty.'
+  course_deleted_flash: "Kurssi %{name} poistettu."
+  course_delete_failed_flash: "Kurssin #{name} poistaminen epäonnistui."
+  
+  # Settings
+  course_edit_heading: "Kurssin asetukset"
+  course_code: "Kurssikoodi"
+  course_code_hint: "esim. X-1.101"
+  course_name: "Kurssin nimi"
+  course_name_hint: "esim. Perusteet"
+  course_email: "Sähköposti"
+  course_email_hint: "Palautepostit lähtevät tällä osoitteella, jos 'Anonyymit arvostelijat'-toiminto on käytössä."
+  
+  # Show
+  course_instances_heading: "Toteutuskerrat"
+  course_no_instances: "Ei toteutuskertoja"
+  course_teachers_heading: "Opettajat"
+  course_create_instance: "Luo toteutuskerta"
+  course_no_instances_hint: "esim. Kevät %{year}"
+  
