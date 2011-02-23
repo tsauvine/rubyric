@@ -320,9 +320,16 @@ h1 a {
 
 h2 {
   font-size: 100%;
-  margin-top: 2em;
+  margin-top: 3em;
   color: black;
 }
+
+h1:first-child, h2:first-child, h3:first-child, h1 + h2, h1 + h3, h2 + h3 {
+  padding-top: 0px;
+  margin-top: 0px;
+}
+
+
 
 h3 {
   font-size: 100%;

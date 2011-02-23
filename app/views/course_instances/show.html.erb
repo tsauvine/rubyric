@@ -7,9 +7,11 @@
 <% end %>
 
 
-<h2>Exercises</h2>
+<h2><%=t :instance_exercises_heading %></h2>
 <table>
-  <% unless @course_instance.exercises.empty? %>
+  <% if @course_instance.exercises.empty? %>
+    <p><%=t :instance_no_exercises %></p>
+  <% else %>
     <% @course_instance.exercises.each do |exercise| %>
       <tr>
         <td><%= link_to exercise.name, exercise %></td>
@@ -21,20 +23,20 @@
   <% end %>
 
   <% if @allow_edit %>
-    <tr><td><%= link_to "Create new exercise", new_exercise_path(:ci => @course_instance.id), :class => 'new' %></td></tr>
+    <tr><td><%= link_to t(:instance_create_exercise), new_exercise_path(:ci => @course_instance.id), :class => 'new' %></td></tr>
   <% end %>
 </table>
 
 
 <% if @allow_edit %>
-  <h2>People</h2>
+  <h2><%=t :instance_people_heading %></h2>
 
-  <p><%= @course_instance.students.length %> students
-    <%= link_to 'Edit', course_instance_students_path(@course_instance), :class => 'edit' %>
+  <p><%= @course_instance.students.length %> <%=t :instance_n_students %>
+    <%= link_to t(:Edit), course_instance_students_path(@course_instance), :class => 'edit' %>
   </p>
 
-  <p><%= @course_instance.assistants.length %> teaching assistants
-    <%= link_to 'Edit', course_instance_assistants_path(@course_instance), :class => 'edit' %>
+  <p><%= @course_instance.assistants.length %> <%=t :instance_n_assistants %>
+    <%= link_to t(:Edit), course_instance_assistants_path(@course_instance), :class => 'edit' %>
   </p>
 <% end %>
 

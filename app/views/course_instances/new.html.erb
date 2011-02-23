@@ -1,7 +1,7 @@
 <!-- course_instance/new.html.erb -->
 
-<h1>Create course instance</h1>
+<h1><%=t :instance_create_heading %></h1>
 
 <%= render :partial => 'settings' %>
 
-<%= link_to 'Back', course_path(@course) %>
+<%= link_to t(:Back), course_path(@course) %>

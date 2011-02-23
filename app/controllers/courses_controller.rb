@@ -39,7 +39,7 @@ class CoursesController < ApplicationController
     if @course.save
       @course.teachers << current_user
     
-      flash[:success] = 'New course was successfully created. Next, create a course instance.'
+      flash[:success] = t(:course_created_flash)
       redirect_to new_course_instance_path(:course => @course.id)
     else
       render :action => "new"
@@ -55,7 +55,7 @@ class CoursesController < ApplicationController
     return access_denied unless @is_teacher
     
     if @course.update_attributes(params[:course])
-      flash[:success] = 'Course was successfully updated.'
+      flash[:success] = t(:course_updated_flash)
       redirect_to(@course)
     else
       render :action => "edit"
@@ -70,9 +70,9 @@ class CoursesController < ApplicationController
     
     name = @course.name
     if @course.destroy
-      flash[:success] = "#{name} was successfully deleted."
+      flash[:success] = t(:course_deleted_flash, :name => name)
     else
-      flash[:error] = "Unable to delete #{name}."
+      flash[:error] = t(:course_delete_failed_flash, :name => name)
     end
     
     redirect_to(courses_url)
@@ -80,6 +80,8 @@ class CoursesController < ApplicationController
 
   def teachers
     @course = Course.find(params[:id])
+    
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
   # Ajax
@@ -87,10 +89,7 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:course_id])
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     unless params[:studentnumber].blank?
       user = User.find_by_studentnumber(params[:studentnumber])
@@ -120,10 +119,7 @@ class CoursesController < ApplicationController
   def remove_selected_teachers
     @course = Course.find(params[:course_id])
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     users = Array.new
     @course.teachers.each do |user|

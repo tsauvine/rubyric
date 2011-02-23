@@ -1,39 +1,39 @@
 <% form_for(@course) do |f| %>
   <table>
     <tr>
-      <td>Course code:</td>
+      <td><%=t :course_code %>:</td>
       <td><%= f.text_field :code %></td>
       <td>
         <% if @course.errors.on(:code) %>
           <span class="error"><%= @course.errors.on(:code) %></span>
         <% else %>
-          <span class="hint">e.g. X-1.101</span>
+          <span class="hint"><%=t :course_code_hint %></span>
         <% end %>
       </td>
     </tr>
     <tr>
-      <td>Course name:</td>
+      <td><%=t :course_name %>:</td>
       <td><%= f.text_field :name %></td>
       <td>
         <% if @course.errors.on(:name) %>
           <span class="error"><%= @course.errors.on(:name) %></span>
         <% else %>
-          <span class="hint">e.g. Basics</span>
+          <span class="hint"><%=t :course_name_hint %></span>
         <% end %>
       </td>
     </tr>
     <tr>
-      <td>Email:</td>
+      <td><%=t :course_email %>:</td>
       <td><%= f.text_field :email %></td>
-      <td class="hint">Feedback emails appear to come from this address if graders are set anonymous.</td>
+      <td class="hint"><%=t :course_email_hint %></td>
     </tr>
   </table>
   
   <% if @course.new_record? %>
-    <p class="hint">These settings can be changed later.</p>
-    <p><%= f.submit "Create" %></p>
+    <p class="hint"><%=t :settings_changeable_later %></p>
+    <p><%= f.submit t(:Create) %></p>
   <% else %>
-    <p><%= f.submit "Save" %></p>
+    <p><%= f.submit t(:Save) %></p>
   <% end %>
   
 <% end %>

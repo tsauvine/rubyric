@@ -1,7 +1,7 @@
 <!-- courses/edit.html.erb -->
 
-<h1>Editing course</h1>
+<h1><%=t :course_edit_heading %></h1>
 
 <%= render :partial => 'settings' %>
 
-<%= link_to 'Back', @course %>
+<%= link_to t(:Back), @course %>

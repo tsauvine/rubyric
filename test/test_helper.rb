@@ -15,18 +15,17 @@ class ActiveSupport::TestCase
 
   # Add more helper methods to be used by all tests here...
   def login_as(user)
-#     #@request.session[:user_id] = users(user).id
     Session.create(users(user))
   end
 
-  def self.should_require_login(*actions)
-    actions.each do |action|
-      should "Require login for '#{action}' action" do
-        get(action)
-        assert_redirected_to(new_session_url)
-      end
-    end
-  end
+#   def self.should_require_login(*actions)
+#     actions.each do |action|
+#       should "Require login for '#{action}' action" do
+#         get action
+#         assert_redirected_to new_session_path
+#       end
+#     end
+#   end
 
   def assert_forbidden
     assert_response :forbidden
@@ -43,8 +42,13 @@ class ActiveSupport::TestCase
     end
     
     @current_user
-      
-    #session = Session.find
-    #session && session.user
+  end
+  
+  # object: ActiveRecord object
+  # expected_attributes: hash of expected attributes and values
+  def assert_equal_attributes(object, expected_attributes)
+    expected_attributes.each do |index, value|
+      assert_equal value, object[index], "#{index}"
+    end
   end
 end

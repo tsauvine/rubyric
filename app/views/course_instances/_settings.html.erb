@@ -3,28 +3,35 @@
 
   <table>
     <tr>
-      <td>Name:</td>
+      <td><%= f.label :name, t(:instance_name_label) %>:</td>
       <td><%= f.text_field :name %></td>
       <td>
         <% if @course_instance.errors.on(:name) %>
           <span class="error"><%= @course_instance.errors.on(:name) %></span>
         <% else %>
-          <span class="hint">e.g. Spring <%= Time.now.year %></span>
+          <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
         <% end %>
       </td>
     </tr>
     <% unless @course_instance.new_record? %>
       <tr>
-        <td><%= f.label :active %></td>
+        <td><%= f.label :active, t(:instance_active_label) %>:</td>
         <td><%= f.check_box :active %></td>
-        <td class="hint">Inactive course instances do not accept submissions.</td>
+        <td class="hint"><%=t :instance_active_hint %></td>
       </tr>
     <% end %>
   </table>
 
+  <!--
   <h2>Description</h2>
   <p class="hint">Optional description is shown on the front page of the instance.</p>
   <%= f.text_area :description, :rows => 3, :cols => 80 %>
+  -->
   
-  <p><%= f.submit "Save" %></p>
+  <% if @course_instance.new_record? %>
+    <p><%= f.submit t(:Create) %></p>
+  <% else %>
+    <p><%= f.submit t(:Save) %></p>
+  <% end %>
+
 <% end %>

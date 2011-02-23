@@ -1,9 +1,9 @@
 <!-- courses/new.html.erb -->
 
-<h1>Create new course</h1>
+<h1><%=t :course_new_heading %></h1>
 
-<p>Teachers of the Aalto university can freely use Rubyric on their courses. If you want to use Rubyric at another institution, please contact svg@cs.hut.fi.</p>
+<p><%=t :course_new_policy %></p>
 
 <%= render :partial => 'settings' %>
 
-<%= link_to 'Back', root_path %>
+<%= link_to t(:Back), root_path %>

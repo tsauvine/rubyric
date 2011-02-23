@@ -28,31 +28,34 @@ class CourseInstance < ActiveRecord::Base
     if !h[:login] && !h[:studentnumber]
       raise ArgumentError.new("New user has neither login nor student number")
     end
-    u = nil
-    u = User.find_by_login(h[:login]) if h[:login]
-    u ||= User.find_by_studentnumber(h[:studentnumber]) if h[:studentnumber]
+    
+    user = nil
+    user = User.find_by_login(h[:login]) if h[:login]
+    user ||= User.find_by_studentnumber(h[:studentnumber]) if h[:studentnumber]
 
-    if u
-      collection << u unless collection.include?(u)
+    if user
+      # Existing user
+      collection << user unless collection.include?(user)
     else
-
-      # User does not exist yet in the database
-      u = User.new
-      u.studentnumber = h[:studentnumber]
-      u.firstname = h[:firstname]
-      u.lastname = h[:lastname]
-      u.email = h[:email]
-      u.password = h[:password]
-      u.login = h[:login]
-      u.save! # raise an exception if something fails
-      collection << u
+      # New user
+      user = User.new
+      user.studentnumber = h[:studentnumber]
+      user.firstname = h[:firstname]
+      user.lastname = h[:lastname]
+      user.email = h[:email]
+      user.password = h[:password]
+      user.login = h[:login]
+      
+      user.save! # raise an exception if something fails
+      
+      collection << user
     end
 
   end
 
 
   def add_users_csv(csv, collection)
-
+    # Convert Mac newlines
     array = csv.split(/\r?\n|\r(?!\n)/)
 
     #csv.each_line do |line|
@@ -72,8 +75,9 @@ class CourseInstance < ActiveRecord::Base
         end
         self.add_user_hash(user_hash, collection)
       end
-      return true
     end
+    
+    return true
   end
 
 

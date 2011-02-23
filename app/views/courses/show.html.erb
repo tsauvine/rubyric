@@ -2,38 +2,43 @@
 
 <h1><%=h @course.code %> <%=h @course.name %></h1>
 
-<h3>Instances</h3>
-<% if @course.course_instances.empty? && @is_teacher %>
-  <p class="hint">Please, create a course instance (e.g. Spring <%= Time.now.year %>)</p>
+<h2><%=t :course_instances_heading %></h2>
+<% if @course.course_instances.empty? %>
+  <p><%=t :course_no_instances %></p>
+  
+  <% if @is_teacher %>
+    <p>
+      <%= link_to t(:course_create_instance), new_course_instance_path(:course => @course.id), :class => 'new' %>
+      <span class="hint"><%=t :course_no_instances_hint, :year => Time.now.year %></span>
+    </p>
+  <% end %>
+<% else %>
+  <table>
+    <% @course.course_instances.each do |instance| %>
+      <tr>
+        <td><%= link_to instance.name, instance %></td>
+
+        <% if @is_teacher %>
+          <td class="trash"><%= link_to instance, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %></td>
+        <% end %>
+      </tr>
+    <% end %>
+
+    <% if @is_teacher %>
+      <tr>
+        <td><%= link_to t(:course_create_instance), new_course_instance_path(:course => @course.id), :class => 'new' %></td>
+        <td></td>
+      </tr>
+    <% end %>
+  </table>
 <% end %>
 
-<table>
-  <% @course.course_instances.each do |instance| %>
-    <tr>
-      <td><%= link_to instance.name, instance %></td>
-
-      <% if @is_teacher %>
-        <td class="trash"><%= link_to (image_tag('trash.png', :alt => 'Destroy'), instance, :confirm => 'Are you sure?', :method => :delete) %></td>
-      <% end %>
-    </tr>
-  <% end %>
-
-
-  <% if @is_teacher %>
-    <tr>
-      <td><%= link_to 'Create new instance', new_course_instance_path(:course => @course.id), :class => 'new' %></td>
-      <td></td>
-    </tr>
-  <% end %>
-</table>
-
 <% if @is_teacher %>
-  <h3>Teachers</h3>
+  <h2><%=t :course_teachers_heading %></h2>
 
   <% @course.teachers.each do |user| %>
     <%= h user.name %><br />
   <% end %>
 
-  <%= link_to 'Edit', course_teachers_path(@course), :class => 'edit' %>
+  <p><%= link_to t(:Edit), course_teachers_path(@course), :class => 'edit' %></p>
 <% end %>
-

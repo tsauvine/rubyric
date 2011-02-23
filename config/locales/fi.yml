@@ -1,3 +1,12 @@
 fi:
-  other_language_name: In English
-  other_language_code: en
+  other_language_name: "In English"
+  other_language_code: "en"
+  
+  settings_changeable_later: "Asetuksia voi muuttaa myöhemmin."
+  
+  Back: "Takaisin"
+  Save: "Tallenna"
+  Create: "Tallenna"
+  Edit: "Muokkaa"
+  Cancel: "Peruuta"
+  

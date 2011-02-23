@@ -47,7 +47,7 @@ class CourseInstancesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @course_instance.save
-      flash[:success] = 'Course instance was successfully created.'
+      flash[:success] = t(:instance_created_flash)
       redirect_to @course_instance
     else
       render :action => 'new'
@@ -62,10 +62,9 @@ class CourseInstancesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @course_instance.update_attributes(params[:course_instance])
-      flash[:success] = 'Course instance was successfully updated.'
+      flash[:success] = t(:instance_updated_flash)
       redirect_to @course_instance
     else
-      flash[:success] = 'Failed to update.'
       render :action => "edit"
     end
   end

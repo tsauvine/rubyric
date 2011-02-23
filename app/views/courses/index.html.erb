@@ -1,6 +1,6 @@
 <!-- courses/index.html.erb -->
 
-<h1>Courses</h1>
+<h1><%=t :courses_index_heading %></h1>
 
 <table>
   <% for course in @courses %>
@@ -9,7 +9,7 @@
       <td><%= link_to course.name, course %></td>
       <td class="trash">
         <% if course.has_teacher(current_user) || is_admin?(current_user) %>
-          <%= link_to(image_tag('trash.png', :alt => 'Destroy'), course, :confirm => 'Are you sure?',  :method => :delete) %>
+          <%= link_to course, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %>
         <% end %>
       </td>
     </tr>
@@ -17,7 +17,7 @@
 
   <% if @allow_create %>
     <tr>
-      <td><%= link_to 'New course', new_course_path, :class => 'new' %></td>
+      <td><%= link_to t(:course_create_link), new_course_path, :class => 'new' %></td>
       <td></td>
       <td></td>
     </tr>
