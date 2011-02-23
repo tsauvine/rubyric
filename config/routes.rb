@@ -45,7 +45,6 @@ Rubyric::Application.routes.draw do
   root :to => "frontpage#show"
   
   # Install the default routes as the lowest priority.
-  # FIXME: get rid of this
   #match ':controller(/:action(/:id(.:format)))'
   
   # The priority is based upon order of creation:

@@ -1,4 +1,4 @@
-require "ftools"
+#require "ftools"
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
@@ -23,7 +23,9 @@ class Submission < ActiveRecord::Base
     end
 
     # Save the original filename (ignore invalid byte sequences)
-    self.filename = Iconv.conv('UTF-8//IGNORE', 'UTF-8', @file_data.original_filename)
+    #self.filename = Iconv.conv('UTF-8//IGNORE', 'UTF-8', @file_data.original_filename) # not Rails 3 compatible
+    # TODO: check if utf-8 will cause problems
+    self.filename = @file_data.original_filename
   end
 
   # Saves the file to the filesystem. This is called automatically after create
@@ -32,16 +34,11 @@ class Submission < ActiveRecord::Base
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
-    File.makedirs(path)
+    FileUtils.makedirs(path)
 
-    if @file_data.is_a?(Tempfile)
-      FileUtils.cp(@file_data.path, "#{path}/#{filename}")
-    elsif @file_data.is_a?(StringIO)
-      File.open("#{path}/#{filename}", "wb") do |file|
-        file.write(@file_data.read)
-      end
+    File.open("#{path}/#{filename}", "wb") do |file|
+      file.write(@file_data.read)
     end
-
   end
 
   #def delete_file

@@ -22,7 +22,9 @@ class SubmissionsController < ApplicationController
         filename = "#{@submission.id}.#{@submission.extension}"
       end
 
-      send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension), :filename => filename
+      type = Mime::Type.lookup_by_extension(@submission.extension)
+      
+      send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
     end
   end
 
@@ -34,10 +36,7 @@ class SubmissionsController < ApplicationController
     @user = current_user
 
     # Authorization
-    unless @user || @exercise.submit_without_login
-      redirect_to_login
-      return
-    end
+    return access_denied unless @user || @exercise.submit_without_login
 
     # Check that instance is open
     unless @course_instance.active
@@ -105,7 +104,7 @@ class SubmissionsController < ApplicationController
       render :action => 'thanks'
     else
       flash[:error] = 'Failed'
-      redirect_to(submit_path(:exercise => params[:submission][:exercise_id]))
+      redirect_to submit_path(:exercise => params[:submission][:exercise_id])
     end
 
     # Auto assign
