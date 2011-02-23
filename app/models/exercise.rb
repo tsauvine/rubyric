@@ -246,8 +246,43 @@ class Exercise < ActiveRecord::Base
     end
   end
 
-  def archive
+  def archive(options = {})
+    only_latest = options.include? :only_latest
     
+    archive = Tempfile.new('rubyric-archive')
+    
+    # Make a temp directory. It is deleted automatically after the block returns.
+    Dir.mktmpdir("rubyric") do |temp_dir|
+      # Create the actual content directory so that it has a sensible name in the archive
+      content_dir_name = "rubyric-exercise#{self.id}"
+      Dir.mkdir "#{temp_dir}/#{content_dir_name}"
+        
+      # Add contents
+      groups.each do |group|
+        group.submissions.each do |submission|
+          
+          # Link the submissionn
+          source_filename = submission.full_filename
+          target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
+          target_filename << ".#{submission.extension}" unless submission.extension.blank?
+          
+          if File.exist?(source_filename)
+            FileUtils.ln_s(source_filename, target_filename)
+          end
+          
+          # Take only one file per group?
+          if only_latest
+            break
+          end
+        end
+      end
+        
+      # Archive the folder
+      #puts "tar -zcf #{archive.path()} #{content_dir_name}"
+      system("tar -zc --directory #{temp_dir} --file #{archive.path()} #{content_dir_name}")
+    end
+    
+    return archive
   end
   
 end

@@ -35,11 +35,7 @@ class ExercisesController < ApplicationController
       load_course
 
       # Authorization
-      unless @course.has_teacher(current_user) || is_admin?(current_user)
-        flash[:error] = "Unauthorized"
-        redirect_to @course
-        return
-      end
+      return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
       @groups = @exercise.groups
 
@@ -65,11 +61,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to view results"
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @groups = @exercise.groups
   end
@@ -79,11 +71,7 @@ class ExercisesController < ApplicationController
     load_course
     
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not allowed to view statistics"
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
     
     graders = @course.teachers + @course_instance.assistants
 
@@ -111,11 +99,7 @@ class ExercisesController < ApplicationController
     @course = @course_instance.course
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to create exercises"
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise = Exercise.new
 
@@ -131,11 +115,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "Unauthorized"
-      redirect_to @exercise
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     file = params[:xml][:file] if params[:xml] && params[:xml][:file]
 
@@ -154,11 +134,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "Unauthorized"
-      redirect_to @exercise
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     xml = @exercise.generate_xml
     send_data(xml, :filename => "#{@exercise.name}.xml", :type => 'text/xml')
@@ -173,11 +149,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to edit"
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
   # POST /exercises
@@ -185,11 +157,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.new(params[:exercise])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to create exercises"
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @exercise.save
       @exercise.initialize_example
@@ -206,11 +174,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to edit"
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @exercise.update_attributes(params[:exercise])
       flash[:success] = 'Exercise was successfully updated.'
@@ -226,11 +190,7 @@ class ExercisesController < ApplicationController
     @exercise = Exercise.find(params[:id])
     load_course
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "You are not authorized to delete"
-      redirect_to @course_instance
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise.destroy
 
@@ -246,10 +206,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Iterate through submissions checkboxes
     if params[:submissions_checkboxes]
@@ -284,10 +241,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Iterate through submissions checkboxes
     if params[:submissions_checkboxes]
@@ -313,10 +267,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Select checked submissions
     submissions = Array.new
@@ -346,10 +297,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     params[:submissions_checkboxes].each do |id, value|
       if value == '1' && !params[:assistant].empty?
@@ -366,10 +314,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise.assign_assistants_evenly
     render :partial => 'group', :collection => @exercise.groups
@@ -380,10 +325,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise.assign_assistants_evenly
     render :partial => 'group', :collection => @exercise.groups
@@ -394,11 +336,7 @@ class ExercisesController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      flash[:error] = "Unauthorized"
-      redirect_to @course
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Process CSV
     if params[:paste]
@@ -416,7 +354,14 @@ class ExercisesController < ApplicationController
 
   def archive
     @exercise = Exercise.find(params[:exercise_id])
-    @exercise.archive
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    tempfile = @exercise.archive(:only_latest => true)
+    send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
+    
+    tempfile.unlink
   end
   
 end
