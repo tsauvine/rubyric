@@ -2,7 +2,7 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
 
   helper :all # include all helpers, all the time
-  helper_method :current_session, :current_user, :is_admin?
+  helper_method :current_session, :current_user, :logged_in?, :is_admin?
 
   # SSL
   before_filter :redirect_to_ssl
@@ -78,6 +78,10 @@ class ApplicationController < ActionController::Base
     @current_user = current_session && current_session.record
   end
   
+  def logged_in?
+    !!current_user
+  end
+  
   def is_admin?(user)
     user && user.admin
   end
@@ -91,6 +95,27 @@ class ApplicationController < ActionController::Base
       
       return false
     end
+  end
+  
+  def access_denied
+    if request.xhr?
+      head :forbidden
+    elsif logged_in?
+      render :template => 'shared/forbidden', :status => 403
+    else
+      # If not logged in, redirect to login
+      respond_to do |format|
+        format.html do
+          store_location
+          redirect_to new_session_path
+        end
+        format.any do
+          request_http_basic_authentication 'Web Password'
+        end
+      end
+    end
+    
+    return false
   end
 
 #   def require_no_user

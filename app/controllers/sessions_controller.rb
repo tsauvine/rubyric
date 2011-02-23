@@ -1,6 +1,6 @@
 class SessionsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create]
-  before_filter :require_user, :only => :destroy
+  #before_filter :require_user, :only => :destroy
   
   def new
     @session = Session.new
@@ -23,7 +23,10 @@ class SessionsController < ApplicationController
   def destroy
     logout_url = session[:logout_url]
     
-    current_session.destroy
+    session = current_session
+    return unless session
+    
+    session.destroy
     flash[:success] = "Logout successful"
     
     if logout_url
