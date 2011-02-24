@@ -4,6 +4,7 @@ log/*.log
 tmp/**/*
 submissions/
 public/images/
+test/coverage/
 Gemfile.lock
 config/database.yml
 config/initializers/settings.rb
