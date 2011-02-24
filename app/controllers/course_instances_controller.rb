@@ -72,7 +72,7 @@ class CourseInstancesController < ApplicationController
     load_course
 
     # Authorize
-    return access_denied unless @course.has_teacher(current_user)
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     #Destroy
     @course_instance.destroy
