@@ -34,15 +34,15 @@
   <div class="breadcrumbs">
     <ul>
       <li class="first"><%= link_to 'Rubyric', root_url %></li>
-      <% if @course %>
+      <% if @course && !@course.new_record? %>
         <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
       <% end %>
 
-      <% if @course_instance %>
-        <li>/ <%= link_to "#{@course_instance.name}", @course_instance %></li>
+      <% if @course_instance && !@course_instance.new_record? %>
+        <li>/ <%= link_to "#{@course_instance.name}", course_instance_path(@course_instance) %></li>
       <% end %>
 
-      <% if @exercise %>
+      <% if @exercise && !@exercise.new_record? %>
         <li>/ <%= link_to "#{@exercise.name}", @exercise %></li>
       <% end %>
     </ul>

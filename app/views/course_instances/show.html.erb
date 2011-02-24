@@ -16,14 +16,14 @@
       <tr>
         <td><%= link_to exercise.name, exercise %></td>
         <% if @allow_edit %>
-          <td><%= link_to(image_tag('trash.png', :alt => 'Destroy'), exercise, :confirm => 'Are you sure?', :method => :delete) %></td>
+          <td><%= link_to exercise, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %></td>
         <% end %>
       </tr>
     <% end %>
   <% end %>
 
   <% if @allow_edit %>
-    <tr><td><%= link_to t(:instance_create_exercise), new_exercise_path(:ci => @course_instance.id), :class => 'new' %></td></tr>
+    <tr><td><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'new' %></td></tr>
   <% end %>
 </table>
 

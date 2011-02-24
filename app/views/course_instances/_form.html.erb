@@ -1,15 +1,13 @@
-<% form_for(@course_instance) do |f| %>
-  <%= f.hidden_field :course_id, :value => @course.id %>
-
+<%= form_for([@course, @course_instance]) do |f| %>
   <table>
     <tr>
       <td><%= f.label :name, t(:instance_name_label) %>:</td>
       <td><%= f.text_field :name %></td>
       <td>
-        <% if @course_instance.errors.on(:name) %>
-          <span class="error"><%= @course_instance.errors.on(:name) %></span>
-        <% else %>
+        <% if @course_instance.errors[:name].empty? %>
           <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
+        <% else %>
+          <span class="error"><%= @course_instance.errors[:name] %></span>
         <% end %>
       </td>
     </tr>
@@ -33,5 +31,4 @@
   <% else %>
     <p><%= f.submit t(:Save) %></p>
   <% end %>
-
 <% end %>

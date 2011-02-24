@@ -95,18 +95,12 @@ class ExercisesController < ApplicationController
 
   # GET /exercises/new
   def new
-    @course_instance = CourseInstance.find(params[:ci])
-    @course = @course_instance.course
+    @course_instance = CourseInstance.find(params[:course_instance_id])
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise = Exercise.new
-
-    rescue
-      @heading = 'Error'
-      @message = 'Course instance not specified'
-      render :template => "shared/error"
   end
 
   # Action for uploading an XML file
@@ -120,6 +114,7 @@ class ExercisesController < ApplicationController
     file = params[:xml][:file] if params[:xml] && params[:xml][:file]
 
     # Check that a file is uploaded
+    # FIXME: check Rails 3 compatibility
     unless [ActionController::UploadedStringIO, ActionController::UploadedTempfile].include?(file.class) and file.size.nonzero?
       return
     end
@@ -155,6 +150,7 @@ class ExercisesController < ApplicationController
   # POST /exercises
   def create
     @exercise = Exercise.new(params[:exercise])
+    @exercise.course_instance_id = params[:course_instance_id]
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)

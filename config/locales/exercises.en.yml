@@ -1,2 +1,8 @@
 en:
+  # New
+  exercise_new_heading: "Create exercise"
+  
+  # Edit
+  exercise_settings_heading: "Exercise settings"
+
   submissions: Submissions

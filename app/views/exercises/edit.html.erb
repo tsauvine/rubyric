@@ -1,7 +1,7 @@
 <!-- exercises/edit.html.erb -->
 
-<h1>Editing exercise</h1>
+<h1><%=t :exercise_settings_heading %></h1>
 
-<%= render :partial => 'settings' %>
+<%= render :partial => 'form' %>
 
-<%= link_to 'Back', @exercise %>
+<%= link_to t(:Back), @exercise %>

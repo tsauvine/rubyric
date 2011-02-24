@@ -5,38 +5,44 @@ Rubyric::Application.routes.draw do
   
   resource :frontpage, :only => [:show], :controller => 'frontpage'
   
-  resources :users
-  resources :groups
+  resources :users, :only => [:show, :edit, :update]
   
   resources :courses do
-    get 'teachers'
-    post 'add_teachers'
-    post 'remove_selected_teachers'
+    #post 'add_teachers'
+    #post 'remove_selected_teachers'
+    
+    resources :course_instances, :only => [:new, :create, :update]
+    resources :teachers, :controller => 'courses/teachers'
   end
   
-  resources :course_instances, :except => [:index] do
+  resources :course_instances, :only => [:show, :edit, :destroy] do
     resources :students, :controller => 'course_instances/students' do
     end
     
     resources :assistants, :controller => 'course_instances/assistants' do
     end
+    
+    resources :exercises, :only => [:new, :create, :update]
   end
   
+  resources :exercises, :only => [:show, :edit, :destroy] do
+    get 'results'
+    get 'statistics'
+    get 'batch_assign'
+    get 'archive'
+    
+    resources :groups
+  end
   
   resources :rubrics
   resources :submissions
   resources :reviews
   resources :feedbacks
   
-  resources :exercises do
-    get 'results'
-    get 'statistics'
-    get 'batch_assign'
-    get 'archive'
-  end
+  
 
 
-  match '/exercise/new/:instance' => 'exercises#new'
+  #match '/exercise/new/:instance' => 'exercises#new'
   match '/submit/:exercise' => 'submissions#new', :as => :submit
   
   match '/login' => 'sessions#new', :as => :login

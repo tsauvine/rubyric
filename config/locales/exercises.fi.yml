@@ -1,2 +1,8 @@
 fi:
+  # New
+  exercise_new_heading: "Luo harjoitus"
+  
+  # Edit
+  exercise_settings_heading: "Harjoituksen asetukset"
+  
   submissions: Palautukset

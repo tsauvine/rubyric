@@ -18,7 +18,8 @@
 
 <h2>Submissions</h2>
 
-<%= form_tag exercises_path, :id => 'submissions_form'  %>
+<% #form_tag exercises_path, :id => 'submissions_form' 
+%>
   <%= hidden_field_tag :eid, params[:id] # exercise id for ajax calls
   %>
 
@@ -70,7 +71,7 @@
     <% #= submit_to_remote('send_button', 'Mail selected', :url => {:action => 'send_selected_reviews'}, :update =>  'submissions_table', :confirm => 'Feedback mails will be sent to the students.', :html => {:action => 'send_selected_reviews', :title => 'Emails selected reviews to the students'})
     %>
   </p>
-</form>
+<!--/form-->
 
 
 <p><%= link_to 'Download archive', exercise_archive_path(@exercise) %></p>

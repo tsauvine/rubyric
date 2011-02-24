@@ -21,7 +21,7 @@ class CourseInstancesControllerTest < ActionController::TestCase
     end
     
     should "not be able to access to new" do
-      get :new, :course => courses(:course)
+      get :new, :course_id => courses(:course).id
       assert_forbidden
     end
     
@@ -32,13 +32,13 @@ class CourseInstancesControllerTest < ActionController::TestCase
     
     should "not be able to create course instance" do
       assert_difference('CourseInstance.count', 0) do 
-        post :create, :course_instance => {:course_id => courses(:course).id, :name => 'Test' }
+        post :create, :course_id => courses(:course).id, :course_instance => { :name => 'Test' }
       end
       assert_forbidden
     end
     
     should "not be able to update course instance" do
-      put :update, :id => course_instances(:active).id, :course_instance => {:name => 'New name', :description => 'New description', :active => false}
+      put :update, :course_id => courses(:course).id, :id => course_instances(:active).id, :course_instance => {:name => 'New name', :description => 'New description', :active => false}
       assert_forbidden
     end
     
@@ -69,7 +69,7 @@ class CourseInstancesControllerTest < ActionController::TestCase
     end
     
     should "be able to access new" do
-      get :new, :course => courses(:course).id
+      get :new, :course_id => courses(:course).id
       
       assert_not_nil assigns(:course_instance)
       assert_response :success
@@ -86,12 +86,12 @@ class CourseInstancesControllerTest < ActionController::TestCase
     
     should "be able to create course instance" do
       assert_difference('CourseInstance.count') do 
-        post :create, :course_instance => {:course_id => courses(:course).id, :name => 'Test' }
+        post :create, :course_id => courses(:course).id, :course_instance => { :name => 'Test' }
       end
     end
     
     should "be able to update course instance" do
-      put :update, :id => course_instances(:active).id, :course_instance => {:name => 'New name', :description => 'New description', :active => false}
+      put :update, :course_id => courses(:course).id, :id => course_instances(:active).id, :course_instance => {:name => 'New name', :description => 'New description', :active => false}
       
       assert_redirected_to course_instance_path(assigns(:course_instance))
       assert_not_nil flash[:success], "Should set flash[:success]"

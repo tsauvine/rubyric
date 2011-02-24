@@ -13,15 +13,8 @@ class CourseInstancesController < ApplicationController
   # GET /course_instances/new.xml
   def new
     # Load course
-    begin
-      @course = Course.find(params[:course])
-    rescue
-      @heading = 'Error'
-      @message = 'Course not specified'
-      render :template => "shared/error"
-      return
-    end
-    @is_teacher = @course.has_teacher(current_user)
+    @course = Course.find(params[:course_id])
+    load_course
 
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
@@ -41,8 +34,12 @@ class CourseInstancesController < ApplicationController
   # POST /course_instances
   # POST /course_instances.xml
   def create
-    @course_instance = CourseInstance.new(params[:course_instance])
+    # Load course
+    @course = Course.find(params[:course_id])
     load_course
+    
+    @course_instance = CourseInstance.new(params[:course_instance])
+    @course_instance.course_id = @course.id
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 

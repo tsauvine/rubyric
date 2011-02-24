@@ -1,4 +1,4 @@
-<% form_for(@exercise) do |f| %>
+<% form_for([@course_instance,@exercise]) do |f| %>
   <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
 
   <table>

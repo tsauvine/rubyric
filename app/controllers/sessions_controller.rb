@@ -15,7 +15,7 @@ class SessionsController < ApplicationController
       logger.info "Login successful"
       redirect_back_or_default root_url
     else
-      logger.info "Login failed"
+      logger.info "Login failed. #{@session.errors.full_messages.join(',')}"
       render :action => :new
     end
   end

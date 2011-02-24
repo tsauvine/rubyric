@@ -40,7 +40,7 @@ class CoursesController < ApplicationController
       @course.teachers << current_user
     
       flash[:success] = t(:course_created_flash)
-      redirect_to new_course_instance_path(:course => @course.id)
+      redirect_to new_course_course_instance_path(:course_id => @course.id)
     else
       render :action => "new"
     end

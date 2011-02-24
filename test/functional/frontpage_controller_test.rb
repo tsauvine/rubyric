@@ -21,7 +21,7 @@ class FrontpageControllerTest < ActionController::TestCase
       
       assert_response :success
       assert_template 'course_instances'
-      assert_select '#enroll-info', "A user who logs in for the first time should see some instructions."
+      assert_select '#enroll-info', nil, "A user who logs in for the first time should see some instructions."
     end
   end
   
@@ -35,7 +35,7 @@ class FrontpageControllerTest < ActionController::TestCase
       
       assert_response :success
       assert_template 'course_instances'
-      assert_select '#courses-teacher', "Teacher should see a list of courses"
+      assert_select '#courses-teacher', nil, "Teacher should see a list of courses"
     end
   end
   
@@ -49,7 +49,7 @@ class FrontpageControllerTest < ActionController::TestCase
       
       assert_response :success
       assert_template 'course_instances'
-      assert_select '#courses-assistant', "Assistant should see a list of courses"
+      assert_select '#courses-assistant', nil, "Assistant should see a list of courses"
     end
   end
   
@@ -63,14 +63,13 @@ class FrontpageControllerTest < ActionController::TestCase
       
       assert_response :success
       assert_template 'course_instances'
-      assert_select '#courses-student', "Student should see a list of courses"
+      assert_select '#courses-student', nil, "Student should see a list of courses"
     end
   end
     
   
   def test_routes
     assert_generates "/frontpage", { :controller => "frontpage", :action => "show" }
-    # assert_generates root_url, { :controller => "frontpage", :action => "show" }
   end
   
 end

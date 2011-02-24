@@ -1,13 +1,13 @@
-<% form_for(@course) do |f| %>
+<%= form_for(@course) do |f| %>
   <table>
     <tr>
       <td><%=t :course_code %>:</td>
       <td><%= f.text_field :code %></td>
       <td>
-        <% if @course.errors.on(:code) %>
-          <span class="error"><%= @course.errors.on(:code) %></span>
-        <% else %>
+        <% if @course.errors[:code].empty? %>
           <span class="hint"><%=t :course_code_hint %></span>
+        <% else %>
+          <span class="error"><%= @course.errors[:code] %></span>
         <% end %>
       </td>
     </tr>
@@ -15,10 +15,10 @@
       <td><%=t :course_name %>:</td>
       <td><%= f.text_field :name %></td>
       <td>
-        <% if @course.errors.on(:name) %>
-          <span class="error"><%= @course.errors.on(:name) %></span>
-        <% else %>
+        <% if @course.errors[:name].empty? %>
           <span class="hint"><%=t :course_name_hint %></span>
+        <% else %>
+          <span class="error"><%= @course.errors[:name] %></span>
         <% end %>
       </td>
     </tr>

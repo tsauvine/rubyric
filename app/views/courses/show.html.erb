@@ -8,7 +8,7 @@
   
   <% if @is_teacher %>
     <p>
-      <%= link_to t(:course_create_instance), new_course_instance_path(:course => @course.id), :class => 'new' %>
+      <%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'new' %>
       <span class="hint"><%=t :course_no_instances_hint, :year => Time.now.year %></span>
     </p>
   <% end %>
@@ -26,7 +26,7 @@
 
     <% if @is_teacher %>
       <tr>
-        <td><%= link_to t(:course_create_instance), new_course_instance_path(:course => @course.id), :class => 'new' %></td>
+        <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'new' %></td>
         <td></td>
       </tr>
     <% end %>
