@@ -34,7 +34,10 @@ Rubyric::Application.routes.draw do
     resources :groups
   end
   
-  resources :rubrics
+  resources :rubrics do
+    resources :sections
+  end
+  
   resources :submissions
   resources :reviews
   resources :feedbacks
