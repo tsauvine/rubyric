@@ -23,7 +23,6 @@ class User < ActiveRecord::Base
 
   # Authenticates a user by their login name and unencrypted password.  Returns the user or nil.
   def self.authenticate(studentnumber, password)
-    logger.info("Athenticating with password '#{password}'")
     u = find_by_studentnumber(studentnumber)
 
     if !u
