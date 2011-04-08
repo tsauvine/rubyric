@@ -142,7 +142,7 @@ class GroupsController < ApplicationController
 
     user = User.find_by_studentnumber(params[:studentnumber])
 
-    if user && !params[:email].empty? && user.email != params[:email]
+    if false && user && !params[:email].empty? && user.email != params[:email]
       render(:update) do |page|
         page.replace_html 'helpBox', "Email address of student #{params[:studentnumber]} does not match the one in our database. Please check that you didn't misspell."
         page.select('#helpBox').first.show

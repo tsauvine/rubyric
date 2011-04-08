@@ -1,4 +1,7 @@
 class RubricsController < ApplicationController
+  
+  layout 'wide'
+  
   def edit
     @exercise = Exercise.find(params[:id], :include =>
       {:categories =>

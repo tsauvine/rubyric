@@ -42,10 +42,7 @@ class User < ActiveRecord::Base
 
   # Encrypts some data with the salt.
   def self.encrypt(password, salt)
-    
-    hash = Digest::SHA1.hexdigest("--#{salt}--#{password}--")
-    logger.debug("--#{salt}--#{password}-- => #{hash}")
-    hash
+    Digest::SHA1.hexdigest("--#{salt}--#{password}--")
   end
 
   # Encrypts the password with the user salt

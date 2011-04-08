@@ -41,7 +41,8 @@ class ExercisesController < ApplicationController
         return
       end
 
-      @groups = @exercise.groups
+      #@groups = @exercise.groups
+      @groups = Group.find_all_by_exercise_id(@exercise.id, :include => [:users, {:submissions => {:reviews => :user}}])
 
       @graders = Array.new
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
@@ -413,5 +414,19 @@ class ExercisesController < ApplicationController
       redirect_to @exercise
     end
   end
-  
+
+  def archive
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    unless @course.has_teacher(current_user) || is_admin?(current_user)
+     flash[:error] = "Unauthorized"
+     redirect_to @course
+     return
+    end
+    
+    tempfile = @exercise.archive(:only_latest => true)
+    send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
+  end
+
 end
