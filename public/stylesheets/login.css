@@ -1,6 +1,41 @@
+div.shibboleth-login, div.shibboleth-login {
+  /*
+  border: 2px solid black;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  */
+}
+
+div.shibboleth-login {
+  margin-bottom: 100px;
+}
+
+div.shibboleth-login a {
+  border: 2px solid black;
+  -moz-border-radius: 12px;
+  -webkit-border-radius: 12px;
+  padding: 10px;
+  
+  font-size: larger;
+  margin: 1em 2em 1em 0em;
+  text-decoration: none;
+}
+
+div.shibboleth-login a:hover {
+  text-decoration: underline;
+}
+
+div.shibboleth-login .hint {
+  margin-bottom: 2em;
+}
+
+div.traditional-login {
+  
+}
+
+
 #logintable > tbody > tr > td {
   width: 300px;
-  text-align: center;
   padding: .5em 1em;
 }
 
@@ -14,11 +49,10 @@
 }
 
 #traditional-login {
-  text-align: center;
-
-  border: 2px solid black;
+  border: 2px solid gray;
   padding: 16px;
-  margin: 0em auto;
+  margin: 0em 0em;
+  color: gray;
 
   border-collapse: separate;
   -moz-border-radius: 12px;

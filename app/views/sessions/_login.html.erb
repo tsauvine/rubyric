@@ -1,37 +1,36 @@
 <% @stylesheets << 'login' %>
 
-<table id="logintable">
-  <tr class="hint">
-    <td>Login using a Rubyric account</td>
-    <td>Log in using the authentication service of your home university</td>
-  </tr>
-  <tr class="logins">
-    <td>
+<div class="shibboleth-login">
+  <p class="hint">Log in using the authentication service of your home university</p>
+  <p>
+    <%= link_to 'TKK weblogin', "/Shibboleth.sso/tkk?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
+    <%= link_to 'Taik weblogin', "/Shibboleth.sso/taik?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
+    <%= link_to 'HY weblogin', "/Shibboleth.sso/hy?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
+  </p>
+</div>
 
-        <% form_tag session_path do -%>
-
-          <table id='traditional-login'>
-            <tr>
-              <td style="text-align: right"><label for="login">Student number</label></td>
-              <td><%= text_field_tag 'studentnumber', nil, :size => 8 %></td>
-            </tr>
-            <tr>
-              <td style="text-align: right"><label for="password">Password</label></td>
-              <td><%= password_field_tag 'password', nil, :size => 8 %></td>
-            </tr>
-            <tr>
-              <td colspan="2"><%= submit_tag 'Log in' %></td>
-            </tr>
-          </table>
-          <!-- Uncomment this if you want this functionality
-          <p><label for="remember_me">Remember me:</label>
-          <%= check_box_tag 'remember_me' %></p>
-          -->
-        <% end -%>
-    </td>
-    <td>
-      <%= link_to(image_tag('haka_portrait_large.gif', {:alt => '[Haka Login]'}), "/Shibboleth.sso/wayf?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https'))%>
-    </td>
-  </tr>
-</table>
-
+<div class="traditional-login">
+  <p class="hint">Log in using a local account (test accounts)</p>
+  
+  <% form_tag session_path do %>
+    <table id='traditional-login'>
+      <tr>
+        <td style="text-align: right"><label for="login">Student number</label></td>
+        <td><%= text_field_tag 'studentnumber', nil, :size => 8 %></td>
+      </tr>
+      <tr>
+        <td style="text-align: right"><label for="password">Password</label></td>
+        <td><%= password_field_tag 'password', nil, :size => 8 %></td>
+      </tr>
+      <tr>
+        <td style="text-align: right"><label for="remember_me">Remember me</label></td>
+        <td><%= check_box_tag 'remember_me' %></td>
+      </tr>
+      <tr>
+        <td style="text-align: right"><%= submit_tag 'Log in' %></td>
+        <td></td>
+      </tr>
+    </table>
+    
+  <% end %>
+</div>
