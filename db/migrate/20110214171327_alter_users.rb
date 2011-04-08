@@ -1,4 +1,5 @@
 class AlterUsers < ActiveRecord::Migration
+  # Switch to authlogic
   def self.up
     change_column :users, :crypted_password, :string
     change_column :users, :salt, :string

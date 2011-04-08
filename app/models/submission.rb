@@ -80,8 +80,9 @@ class Submission < ActiveRecord::Base
     assign_to(user) if reviews.empty?
   end
 
-  def late?
-    exercise.deadline && self.created_at > exercise.deadline
+  def late?(ex = nil)
+    ex ||= self.exercise
+    ex.deadline && self.created_at > ex.deadline
   end
 
 end

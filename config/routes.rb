@@ -38,8 +38,6 @@ Rubyric::Application.routes.draw do
   resources :submissions
   resources :reviews
   resources :feedbacks
-  
-  
 
 
   #match '/exercise/new/:instance' => 'exercises#new'

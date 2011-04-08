@@ -37,15 +37,20 @@ class ExercisesController < ApplicationController
       # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-      @groups = @exercise.groups
+      #@groups = @exercise.groups
+      @groups = Group.includes([:users, {:submissions => {:reviews => :user}}]).where(:exercise_id => @exercise.id)
 
       @graders = Array.new
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
       @graders << ['= Assistants =', 'assistants']
       @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-      @graders << ['= Students =', 'students']
-      @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
-      render :action => 'manage'
+      
+      # if exercise.peer_review
+      #  @graders << ['= Students =', 'students']
+      #  @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
+      # end
+      
+      render :action => 'submissions'
     else
       # Student's or assistant's view
 

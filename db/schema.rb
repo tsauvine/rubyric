@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110214171327) do
+ActiveRecord::Schema.define(:version => 20110223085155) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -103,6 +103,14 @@ ActiveRecord::Schema.define(:version => 20110214171327) do
     t.integer "group_id"
     t.integer "user_id"
   end
+
+  create_table "infos", :id => false, :force => true do |t|
+    t.integer "exercise_id"
+    t.string  "studentnumber"
+    t.text    "content"
+  end
+
+  add_index "infos", ["exercise_id", "studentnumber"], :name => "index_infos_on_exercise_id_and_studentnumber"
 
   create_table "item_grades", :id => false, :force => true do |t|
     t.integer "feedback_id"

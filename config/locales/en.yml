@@ -10,3 +10,50 @@ en:
   Edit: "Edit"
   Cancel: "Cancel"
   
+  
+  #################
+  # Active Record
+  #################
+  
+#   activerecord:
+#     errors:
+#       models:
+#         course_instance:
+#           attributes:
+#             code:
+#               invalid: "may contain letters, numbers, following special characters: \-+*_.,!$'(), no whitespace"
+#               blank: "path missing"
+#               taken: "path is already in use"
+#             name:
+#               blank: "name missing"
+#         course:
+#           attributes:
+#             code:
+#               invalid: "may contain letters, numbers, following special characters: \-+*_.,!$'(), no whitespace"
+#               blank: "code missing"
+#               taken: "code is already in use"
+#             name:
+#               blank: "name missing"
+#         faq_entry:
+#           attributes:
+#             caption:
+#               blank: "caption missing"
+
+
+
+  ##############
+  # Time & Date
+  ##############
+  
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      default: "%Y-%m-%d"
+      short: "%d %b"
+      long: "%Y-%m-%d"
+
+  time:
+    formats:
+      default: "%a %d %b %H:%M"
+      short: "%d %b %H:%M"
+      long: "%a %Y-%m-%d %H:%M:%S"

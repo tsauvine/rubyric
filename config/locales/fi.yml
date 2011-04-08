@@ -9,4 +9,63 @@ fi:
   Create: "Tallenna"
   Edit: "Muokkaa"
   Cancel: "Peruuta"
-  
+
+
+ # Used in array.to_sentence.
+  support:
+    array:
+      words_connector: ", "
+      two_words_connector: " ja "
+      last_word_connector: " ja "
+
+  #################
+  # Active Record
+  #################
+#   activerecord:
+#     errors:
+#       models:
+#         course_instance:
+#           attributes:
+#             path:
+#               invalid: "saa sisältää kirjaimia, numeroita, seuraavia merkkejä: \-+*_.,!$'(), ei välilyöntejä"
+#               blank: "polku puuttuu"
+#               taken: "polku on jo käytössä"
+#             name:
+#               blank: "nimi puuttuu"
+#         course:
+#           attributes:
+#             code:
+#               invalid: "saa sisältää kirjaimia, numeroita, seuraavia merkkejä: \-+*_.,!$'(), ei välilyöntejä"
+#               blank: "koodi puuttuu"
+#               taken: "koodi on jo käytössä"
+#             name:
+#               blank: "nimi puuttuu"
+#         faq_entry:
+#           attributes:
+#             caption:
+#               blank: "otsikko puuttuu"
+
+  ##############
+  # Time & Date
+  ##############
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      default: "%d.%m.%Y"
+      short: "%d.%m"
+      long: "%d.%m.%Y"
+    day_names: [sunnuntai, maanantai, tiistai, keskiviikko, torstai, perjantai, lauantai]
+    abbr_day_names: [su, ma, ti, ke, to, pe, la]
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, Tammikuu, Helmikuu, Maaliskuu, Huhtikuu, Toukokuu, Kes&auml;kuu, Hein&auml;kuu, Elokuu, Syyskuu, Lokakuu, Marraskuu, Joulukuu]
+    abbr_month_names: [~, tammi, helmi, maalis, huhti, touko, kes&auml;, hein&auml;, elo, syys, loka, marras, joulu]
+    # Used in date_select and datime_select.
+    order: [ :year, :month, :day ]
+
+  time:
+    formats:
+      default: "%a %d.%m. klo %H:%M"
+      short: "%d.%m. klo %H:%M"
+      long: "%a %d.%m.%Y klo %H:%M:%S"
+    am: "am"
+    pm: "pm"
