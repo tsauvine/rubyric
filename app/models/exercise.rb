@@ -14,20 +14,21 @@ class Exercise < ActiveRecord::Base
   # submission_ids: array of submission ids
   # users: array of user objects
   # exclusive: previous assignments are erased
-  def assign(submission_ids, users, exclusive = false)
-    # FIXME: load submission objects
+  def assign(submission_ids, user_ids)
+    #submissions = Submission.find(submission_ids)
     
     counter = 0
-    n = users.size
+    n = user_ids.size
 
-    submissions.each do |submission|
-      assistant = users[counter % n]
+    submission_ids.each do |submission_id|
+      assistant_id = user_ids[counter % n]
 
-      if exclusive
-        submission.assign_to_exclusive(assistant)
-      else
-        submission.assign_to(assistant)
-      end
+      Review.create(:user_id => assistant_id, :submission_id => submission_id)
+      #if exclusive
+      #  submission.assign_to_exclusive(assistant)
+      #else
+        #submission.assign_to(assistant)
+      #end
 
       counter += 1
     end

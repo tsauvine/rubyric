@@ -74,7 +74,7 @@ class Submission < ActiveRecord::Base
     user = User.find(user) unless user.is_a?(User)
 
     # Remove other reviewers
-    Review.delete_all(["submission_id=? AND user_id!=?", id, user.id])
+    Review.destroy_all(["submission_id=? AND user_id!=?", id, user.id])
 
     # Assign to user if he's not already in the list
     assign_to(user) if reviews.empty?

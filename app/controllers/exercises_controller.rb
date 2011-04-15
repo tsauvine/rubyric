@@ -271,14 +271,18 @@ class ExercisesController < ApplicationController
 
     # Select checked submissions
     submission_ids = Array.new
-    params[:submissions_checkboxes].each do |id, value|
-      submission_ids << Integer(id) if value == '1'
+    if params[:submissions_checkboxes]
+      params[:submissions_checkboxes].each do |id, value|
+        submission_ids << Integer(id) if value == '1'
+      end
     end
     
     # Select checked reviews
     review_ids = Array.new
-    params[:reviews_checkboxes].each do |id, value|
-      review_ids << Integer(id) if value == '1'
+    if params[:reviews_checkboxes]
+      params[:reviews_checkboxes].each do |id, value|
+        review_ids << Integer(id) if value == '1'
+      end
     end
 
     #exclusive = params[:exclusive] == 'true'
@@ -286,11 +290,11 @@ class ExercisesController < ApplicationController
     if params[:assign]
       # Assign
       if params[:assistant] == 'assistants'
-        @exercise.assign(submission_ids, @course_instance.assistants)
+        @exercise.assign(submission_ids, @course_instance.assistant_ids)
       elsif params[:assistant] == 'students'
-        @exercise.assign(submission_ids, @course_instance.students)
+        @exercise.assign(submission_ids, @course_instance.student_ids)
       else
-        @exercise.assign(submission_ids, [User.find(params[:assistant])])
+        @exercise.assign(submission_ids, [Integer(params[:assistant])])
       end
       
       redirect_to @exercise
