@@ -1,0 +1,22 @@
+<!-- exercises/batch_assign.html.erb -->
+
+<h1>Batch assign</h1>
+
+<% form_tag exercise_batch_assign_path(@exercise), :html => { :multipart => true } do |f| -%>
+  <p class="hint">
+    Paste the CSV list here<br />
+    All submissions that have the specified student as a group member, will be assigned to the specified reviewer. Existing assignments are not duplicated, i.e. it is safe to upload the same list twice.<br />
+    (Format: studentnumber_of_student, studentnumber_of_reviewer)
+  </p>
+  <%= text_area_tag :paste, nil, :rows => 25, :cols => 80 %>
+  <p><%= submit_tag 'Upload' %></p>
+<% end -%>
+
+<% form_for :csv, exercise_batch_assign_path(@exercise), :html => { :multipart => true } do |f| -%>
+  <p class="hint">Or upload a csv file (only utf8 supported)</p>
+  <%= f.file_field :file %>
+  <p><%= submit_tag 'Upload' %></p>
+<% end -%>
+
+
+<p><%= link_to 'Back', @exercise %></p>

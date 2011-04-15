@@ -1,4 +1,7 @@
 <!-- exercises/submissions.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'submissions' %>
+<% end %>
 
 <h1>
   <%= "#{@course.code} #{@course.name}" %> -
@@ -19,11 +22,7 @@
 
 <h2>Submissions</h2>
 
-<% #form_tag exercises_path, :id => 'submissions_form' 
-%>
-  <%= hidden_field_tag :eid, params[:id] # exercise id for ajax calls
-  %>
-
+<%= form_tag assign_exercise_submissions_path(@exercise.id), :id => 'submissions_form' do |f| %>
   <table class="assignments">
     <thead>
       <tr>
@@ -36,34 +35,38 @@
     <tbody id="submissions_table">
       <%= render :partial => 'group', :collection => @groups %>
     </tbody>
-    <tbody>
+    <tfoot>
       <tr>
         <td>
-          <input type='submit' value='Select all' onClick="$$('#submissions_form input.submission_check').each(function(box){box.checked=true});return false;" title="Selects all submissions" />
-          <input type='submit' value='Select latest' onClick="$$('#submissions_form input.submission_check_latest').each(function(box){box.checked=true});return false;" title="Selects the latest submission from each group" />
-          <input type='submit' value='Select none' onClick="$$('#submissions_form input.submission_check').each(function(box){box.checked=false});return false;" />
+          <button id="submissions-select-all" onClick="return false;" title="Selects all submissions">Select all</button>
+          <button id="submissions-select-latest" onClick="return false;" title="Selects the latest submission from each group">Select latest</button>
+          <button id="submissions-select-none" onClick="return false;">Select none</button>
         </td>
         <td>
-          <input type='submit' value='Select all' onClick="$$('#submissions_form input.review_check').each(function(box){box.checked=true});return false;" />
-          <input type='submit' value='Select finished' onClick="$$('#submissions_form input.review_check_finished').each(function(box){box.checked=true});return false;" />
-          <input type='submit' value='Select none' onClick="$$('#submissions_form input.review_check').each(function(box){box.checked=false});return false;" />
+          <button id="reviews-select-all" onClick="return false;">Select all</button>
+          <button id="reviews-select-finished" onClick="return false;">Select finished</button>
+          <button id="reviews-select-none" onClick="return false;">Select none</button>
         </td>
         <td></td>
         <td></td>
       </tr>
-    </tbody>
+      
+      <tr>
+        <td>
+          <p>
+          Assign selected submissions to<br />
+          <%= select_tag 'assistant', options_for_select(@graders, :selected => nil) %>
+          <%= submit_tag 'Assign', :name => 'assign' %>
+          </p>
+          <p><%= link_to 'Batch assign', exercise_batch_assign_path(@exercise) %></p>
+        </td>
+        <td>
+          <p><%= submit_tag 'Mail selected reviews', :name => 'mail' %></p>
+          <p><%= submit_tag 'Delete selected reviews...', :name => 'delete' %></p>
+        </td>
+      </tr>
+    </tfoot>
   </table>
-
-  <p>
-    Assign selected to
-    <%= select_tag('assistant', options_for_select(@graders, :selected => nil)) %>
-
-    <% #= submit_to_remote('assign_submissions', 'Assign', :url => {:action => 'assign_submissions'}, :update => 'submissions_table')
-    %>
-    <% #= submit_to_remote('assign_submissions_exclusive', 'Assign exclusively', :url => {:action => 'assign_submissions', :exclusive => 'true'}, :update =>  'submissions_table', :confirm => 'Are you sure? Existing reviews will be deleted.') 
-    %>
-    <%= link_to 'Batch assign', exercise_batch_assign_path(@exercise) %>
-  </p>
 
   <p>
     <% #= submit_to_remote('remove_button', 'Delete selected', :url => {:action => 'remove_selected_submissions'}, :update =>  'submissions_table', :confirm => 'Are you sure you want to delete?', :html => {:action => 'remove_selected_submissions', :class => 'trash'})
@@ -72,7 +75,7 @@
     <% #= submit_to_remote('send_button', 'Mail selected', :url => {:action => 'send_selected_reviews'}, :update =>  'submissions_table', :confirm => 'Feedback mails will be sent to the students.', :html => {:action => 'send_selected_reviews', :title => 'Emails selected reviews to the students'})
     %>
   </p>
-<!--/form-->
+<% end %>
 
 
 <p><%= link_to 'Download archive', exercise_archive_path(@exercise) %></p>

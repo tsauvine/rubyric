@@ -62,6 +62,73 @@ class ExercisesController < ApplicationController
     end
   end
 
+  # GET /exercises/new
+  def new
+    @course_instance = CourseInstance.find(params[:course_instance_id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    @exercise = Exercise.new
+  end
+  
+  # POST /exercises
+  def create
+    @exercise = Exercise.new(params[:exercise])
+    @exercise.course_instance_id = params[:course_instance_id]
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    if @exercise.save
+      @exercise.initialize_example
+
+      flash[:success] = 'Exercise was successfully created.'
+      redirect_to @exercise
+    else
+      render :action => "new"
+    end
+  end
+
+  # GET /exercises/1/edit
+  def edit
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+  end
+  
+  # PUT /exercises/1
+  def update
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    if @exercise.update_attributes(params[:exercise])
+      flash[:success] = 'Exercise was successfully updated.'
+      redirect_to @exercise
+    else
+      render :action => "edit"
+    end
+  end
+
+  # DELETE /exercises/1
+  # DELETE /exercises/1.xml
+  def destroy
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    @exercise.destroy
+
+    respond_to do |format|
+      format.html { redirect_to @course_instance }
+      format.xml  { head :ok }
+    end
+  end
+
   def results
     @exercise = Exercise.find(params[:id])
     load_course
@@ -98,16 +165,6 @@ class ExercisesController < ApplicationController
     end
   end
 
-  # GET /exercises/new
-  def new
-    @course_instance = CourseInstance.find(params[:course_instance_id])
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    @exercise = Exercise.new
-  end
-
   # Action for uploading an XML file
   def upload
     @exercise = Exercise.find(params[:id])
@@ -142,65 +199,7 @@ class ExercisesController < ApplicationController
     #redirect_to :controller => 'exercises', :action => 'show', :id => @exercise.id
     #redirect_to @exercise
   end
-
-
-  # GET /exercises/1/edit
-  def edit
-    @exercise = Exercise.find(params[:id])
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-  end
-
-  # POST /exercises
-  def create
-    @exercise = Exercise.new(params[:exercise])
-    @exercise.course_instance_id = params[:course_instance_id]
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    if @exercise.save
-      @exercise.initialize_example
-
-      flash[:success] = 'Exercise was successfully created.'
-      redirect_to @exercise
-    else
-      render :action => "new"
-    end
-  end
-
-  # PUT /exercises/1
-  def update
-    @exercise = Exercise.find(params[:id])
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    if @exercise.update_attributes(params[:exercise])
-      flash[:success] = 'Exercise was successfully updated.'
-      redirect_to @exercise
-    else
-      render :action => "edit"
-    end
-  end
-
-  # DELETE /exercises/1
-  # DELETE /exercises/1.xml
-  def destroy
-    @exercise = Exercise.find(params[:id])
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    @exercise.destroy
-
-    respond_to do |format|
-      format.html { redirect_to @course_instance }
-      format.xml  { head :ok }
-    end
-  end
-
+  
   # Mails selected submissions and reviews
   def send_selected_reviews
     @exercise = Exercise.find(params[:eid])
@@ -237,79 +236,103 @@ class ExercisesController < ApplicationController
   end
 
   # Removes selected submissions and reviews
-  def remove_selected_submissions
-    @exercise = Exercise.find(params[:eid])
-    load_course
+#   def remove_selected_submissions
+#     @exercise = Exercise.find(params[:eid])
+#     load_course
+# 
+#     # Authorization
+#     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+# 
+#     # Iterate through submissions checkboxes
+#     if params[:submissions_checkboxes]
+#       params[:submissions_checkboxes].each do |id, value|
+#         Submission.destroy(id) if value == '1'
+#       end
+#     end
+# 
+#     # Iterate through reviews checkboxes
+#     if params[:reviews_checkboxes]
+#       params[:reviews_checkboxes].each do |id, value|
+#         Review.destroy(id) if value == '1'
+#       end
+#     end
+# 
+#     render :partial => 'group', :collection => @exercise.groups
+#   end
 
-    # Authorization
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    # Iterate through submissions checkboxes
-    if params[:submissions_checkboxes]
-      params[:submissions_checkboxes].each do |id, value|
-        Submission.destroy(id) if value == '1'
-      end
-    end
-
-    # Iterate through reviews checkboxes
-    if params[:reviews_checkboxes]
-      params[:reviews_checkboxes].each do |id, value|
-        Review.destroy(id) if value == '1'
-      end
-    end
-
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-
+  
   # Assigns selected submissions to the selected user
-  def assign_submissions
-    @exercise = Exercise.find(params[:eid])
+  def assign
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Select checked submissions
-    submissions = Array.new
+    submission_ids = Array.new
     params[:submissions_checkboxes].each do |id, value|
-      submissions << Submission.find(id) if value == '1'
+      submission_ids << Integer(id) if value == '1'
+    end
+    
+    # Select checked reviews
+    review_ids = Array.new
+    params[:reviews_checkboxes].each do |id, value|
+      review_ids << Integer(id) if value == '1'
     end
 
-    exclusive = params[:exclusive] == 'true'
+    #exclusive = params[:exclusive] == 'true'
 
-    # Assign
-    if (params[:assistant] == 'assistants')
-      @exercise.assign(submissions, @course_instance.assistants, exclusive)
-    elsif (params[:assistant] == 'students')
-      @exercise.assign(submissions, @course_instance.students, exclusive)
+    if params[:assign]
+      # Assign
+      if params[:assistant] == 'assistants'
+        @exercise.assign(submission_ids, @course_instance.assistants)
+      elsif params[:assistant] == 'students'
+        @exercise.assign(submission_ids, @course_instance.students)
+      else
+        @exercise.assign(submission_ids, [User.find(params[:assistant])])
+      end
+      
+      redirect_to @exercise
+    elsif params[:mail]
+      
+    elsif params[:delete]
+      @reviews = Review.find(review_ids)
+      
+      render :delete_reviews
     else
-      @exercise.assign(submissions, [User.find(params[:assistant])], exclusive)
+      redirect_to @exercise
     end
-
-    render :partial => 'group', :collection => @exercise.groups
   end
-
-
-  # Assign selected submissions to the exclusively to the selected user.
-  # Existing reviews are deleted.
-  def assign_submissions_exclusive
-    @exercise = Exercise.find(params[:eid])
+  
+   
+  def delete_reviews
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
-
+    
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    params[:submissions_checkboxes].each do |id, value|
-      if value == '1' && !params[:assistant].empty?
-        logger.info("Assigning to #{params[:assistant]}")
-        Submission.find(id).assign_to_exclusive(params[:assistant])
+    
+    # Read review list
+    counter = 0
+    if params[:reviews]
+      review_ids = Array.new
+      params[:reviews].each do |id, value|
+        review_ids << Integer(id) if value == '1'
       end
+      
+      # Delete reviews
+      reviews = Review.find(review_ids)
+      reviews.each do |review|
+        review.destroy
+      end
+      
+      counter = review_ids.size
     end
-
-    render :partial => 'group', :collection => @exercise.groups
+    
+    redirect_to @exercise, :flash => {:success => "#{counter} reviews deleted" }
   end
-
+  
   def assign_assistants_randomly
     @exercise = Exercise.find(params[:eid])
     load_course
@@ -333,7 +356,7 @@ class ExercisesController < ApplicationController
   end
 
   def batch_assign
-    @exercise = Exercise.find(params[:id])
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
     # Authorization
@@ -361,8 +384,9 @@ class ExercisesController < ApplicationController
     
     tempfile = @exercise.archive(:only_latest => true)
     send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
-    
     tempfile.unlink
   end
+  
+  private
   
 end

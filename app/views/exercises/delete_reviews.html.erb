@@ -1,0 +1,22 @@
+<h1>Delete reviews</h1>
+
+<%= form_tag exercise_delete_reviews_path(@exercise.id) do %>
+  <table>
+    <thead>
+      <th>Group</th>
+      <th>Reviewer</th>
+      <th>Status</th>
+    </thead>
+  
+    <% @reviews.each do |review| %>
+      <%= hidden_field_tag "reviews[#{review.id}]", '1' %>
+      <tr>
+        <td><%= (review.submission.group.users.collect { |user| "#{h(user.name)} (#{h(user.studentnumber)})" }).join(', ') %></td>
+        <td><%= review.user.name %></td>
+        <td><%= review.status %></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <p><%= submit_tag 'Delete' %></p>
+<% end %>

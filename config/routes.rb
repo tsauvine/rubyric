@@ -29,18 +29,36 @@ Rubyric::Application.routes.draw do
     get 'results'
     get 'statistics'
     get 'batch_assign'
+    post 'batch_assign'
     get 'archive'
+    post 'delete_reviews'
+    
+    resources :submissions, :controller => 'exercises' do
+      collection do
+        post :assign
+      end
+    end
+    
+    
     
     resources :groups
   end
   
-  resources :rubrics do
+  resources :submissions
+  
+  resources :rubrics, :only => [:edit] do
     resources :sections
   end
   
-  resources :submissions
-  resources :reviews
-  resources :feedbacks
+  
+  resources :reviews do
+    member do 
+      get :finish
+      
+    end
+  end
+  
+  resources :feedbacks, :only => [:edit]
 
 
   #match '/exercise/new/:instance' => 'exercises#new'
@@ -109,5 +127,5 @@ Rubyric::Application.routes.draw do
 
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
-  # match ':controller(/:action(/:id(.:format)))'
+  #match ':controller(/:action(/:id(.:format)))'
 end

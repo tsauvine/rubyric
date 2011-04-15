@@ -89,7 +89,8 @@ p.narrow, div.narrow {
   float: left;
   border: 2px solid #aaa;
   padding: 16px;
-  
+  font-size: small;
+  color: gray;
 
   -moz-border-radius: 12px;
   -webkit-border-radius: 12px;
@@ -777,6 +778,9 @@ p.feedback-preview {
 .assignments .late, .assignments .late a {
   color: red;
   font-weight: bold;
+}
+
+.assignments .spacer {
 }
 
 

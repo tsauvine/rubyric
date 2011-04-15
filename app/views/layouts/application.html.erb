@@ -8,6 +8,7 @@
     <%= csrf_meta_tag %>
     <%= stylesheet_link_tag 'red' %>
     <%= javascript_include_tag  :defaults %>
+    <%= yield(:javascript) %>
 </head>
 <body>
 
@@ -133,15 +134,15 @@
   <div class="content">
     <!-- Flash messages -->
     <% if flash[:warning] %>
-      <p class="flash flashWarning"><%= h flash[:warning] %></p>
+      <p class="flash flashWarning"><%= flash[:warning] %></p>
     <% end %>
 
     <% if flash[:success] %>
-      <p class="flash flashSuccess"><%= h flash[:success] %></p>
+      <p class="flash flashSuccess"><%= flash[:success] %></p>
     <% end %>
 
     <% if flash[:error] %>
-      <p class="flash flashError"><%= h flash[:error] %></p>
+      <p class="flash flashError"><%= flash[:error] %></p>
     <% end %>
 
     <%= yield  %>

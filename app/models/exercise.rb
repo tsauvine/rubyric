@@ -11,10 +11,12 @@ class Exercise < ActiveRecord::Base
   # Feedback grouping options: exercise, sections, categories
 
   # Assigns submissions evenly to the given users
-  # submissions: array of submission objects
+  # submission_ids: array of submission ids
   # users: array of user objects
   # exclusive: previous assignments are erased
-  def assign(submissions, users, exclusive = false)
+  def assign(submission_ids, users, exclusive = false)
+    # FIXME: load submission objects
+    
     counter = 0
     n = users.size
 
