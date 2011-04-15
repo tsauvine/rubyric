@@ -8,25 +8,30 @@
 <% end %>
 
 <!-- As teacher -->
-<% if @courses_teacher.length > 0 %>
+<% unless @courses_teacher.empty? %>
   <h1 id='courses-teacher'><%=t :frontpage_courses_teacher_heading %></h1>
 
-  <ul>
-  <% @courses_teacher.each do |course| %>
-    <li><%= link_to course.name, course %></li>
-    <ul>
-      <% course.active_instances.each do |instance| %>
-        <li><%= link_to instance.name, instance %></li>
-      <% end %>
-    </ul>
-  <% end %>
-  </ul>
+  <table>
+    <% @courses_teacher.each do |course| %>
+      <tr>
+        <td><%= link_to course.code, course %></td>
+        <td><%= link_to course.name, course %></td>
+
+        <% course.active_instances.each do |instance| %>
+          <tr>
+            <td></td>
+            <td><%= link_to instance.name, instance %></td>
+          </tr>
+        <% end %>
+      </tr>
+    <% end %>
+  </table>
   
   <p><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'new' %></p>
 <% end %>
 
 <!-- As assistant -->
-<% if @instances_assistant.length > 0 %>
+<% unless @instances_assistant.empty? %>
   <h1 id='courses-assistant'><%=t :frontpage_courses_assistant_heading %></h1>
   <ul>
   <% @instances_assistant.each do |instance| %>
@@ -36,7 +41,7 @@
 <% end %>
 
 <!-- As student -->
-<% if @instances_student.length > 0 %>
+<% unless @instances_student.empty? %>
   <h1 id='courses-student'><%=t :frontpage_courses_student_heading %></h1>
   <ul>
   <% @instances_student.each do |instance| %>
