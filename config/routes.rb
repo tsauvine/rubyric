@@ -39,16 +39,21 @@ Rubyric::Application.routes.draw do
       end
     end
     
-    
+    resource :rubric, :only => [:edit] do
+      resources :sections, :only => [:edit]
+      
+      member do
+        get 'download'
+        get 'upload'
+      end
+    end
     
     resources :groups
   end
   
   resources :submissions
   
-  resources :rubrics, :only => [:edit] do
-    resources :sections
-  end
+  
   
   
   resources :reviews do

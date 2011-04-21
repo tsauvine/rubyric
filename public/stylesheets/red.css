@@ -484,6 +484,8 @@ table.histogram td {
   margin: 0px 0px 2px 0px;
   padding: 0px;
   float: right;
+  
+  position: relative;
 }
 
 .feedback-editor ul.grading-options li {
@@ -504,6 +506,18 @@ table.histogram td {
 .feedback-editor ul.grading-options li.selected {
   border: 2px solid #f00000;
   padding: 1px;
+}
+
+.criterion-grade-buttons {
+  visibility: hidden;
+  position: absolute;
+  top: -1em;
+  margin: 0px;
+  padding: 0px;
+}
+
+.feedback-editor ul.grading-options li:hover .criterion-grade-buttons {
+  visibility: visible;
 }
 
 .feedback-editor td.Good:hover {

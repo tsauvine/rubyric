@@ -95,7 +95,7 @@
             <% if @is_teacher || is_admin?(current_user) %>
               <ul>
                 <li><%= link_to 'Settings', edit_exercise_path(@exercise) %></li>
-                <li><%= link_to 'Rubric', edit_rubric_path(@exercise) %></li>
+                <li><%= link_to 'Rubric', edit_exercise_rubric_path(@exercise) %></li>
                 <li><%= link_to 'Submissions', exercise_path(@exercise) %></li>
                 <li><%= link_to 'Statistics', exercise_statistics_path(@exercise) %></li>
                 <li><%= link_to 'Results', exercise_results_path(@exercise) %></li>

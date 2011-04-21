@@ -1,17 +1,19 @@
 class RubricsController < ApplicationController
+  
+  layout 'wide'
+  
   def edit
-    @exercise = Exercise.find(params[:id], :include =>
+    @exercise = Exercise.find(params[:exercise_id], :include =>
       {:categories =>
         {:sections =>
           [{:items => [:phrases, :item_grading_options]}, :section_grading_options]
         }
       })
     load_course
+    
+    @section = @exercise.categories.first.sections.first
 
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
   def preview
@@ -20,11 +22,7 @@ class RubricsController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:section]
       @section = Section.find(params[:section], :include => {:items => :phrases})
