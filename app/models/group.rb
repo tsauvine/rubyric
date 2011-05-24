@@ -1,5 +1,7 @@
 class Group < ActiveRecord::Base
   belongs_to :exercise
+  belongs_to :course_instance
+  
   has_and_belongs_to_many :users
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
 
