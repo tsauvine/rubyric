@@ -1,12 +1,19 @@
 class GroupsController < ApplicationController
-  # before_filter :login_required
+  before_filter :login_required, :only => [:index]
 
   layout 'wide'
 
   # GET /groups
-#   def index
-#     @groups = Group.find(:all)
-#   end
+  def index
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+    
+    if @course.has_teacher(current_user)
+      @groups = Group.find_by_course_instance(@course_instance.id).joins(:users)
+    else
+      @groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users)
+    end
+  end
 
   # GET /groups/1
   # GET /groups/1.xml
@@ -15,24 +22,25 @@ class GroupsController < ApplicationController
 #   end
 
   def new
-    @exercise = Exercise.find(params[:exercise])
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
-    unless logged_in? || @exercise.submit_without_login
-      redirect_to_login
-      return
-    end
+    # TODO: redirect to the correct IdP
+    return access_denied unless logged_in? || @exercise.submit_without_login
 
     @group = Group.new
 
     # Prefill the form
-    @studentnumber = Array.new
+    #@studentnumber = Array.new
     @email = Array.new
 
-    if (current_user)
-      @studentnumber[0] = current_user.studentnumber
-      @email[0] = current_user.email
-    end
+    @email_fields_count = @exercise.groupsizemax
+    @email_fields_count -= 1 if logged_in?
+    
+#     if current_user
+#       #@studentnumber[0] = current_user.studentnumber
+#       @email[0] = current_user.email
+#     end
   end
 
   # GET /groups/1/edit
@@ -48,41 +56,64 @@ class GroupsController < ApplicationController
 
   # POST /groups
   def create
-    @exercise = Exercise.find(params[:exercise])
+    @exercise = Exercise.find(params[:exercise_id])
 
-    unless logged_in? || @exercise.submit_without_login
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless logged_in? || @exercise.submit_without_login
 
-    # Read studentnumbers
+    # Read addresses
     members = Array.new
-    params[:studentnumber].each do |id, value|
-      members << {:studentnumber => value, :email => params[:email][id]} unless value.empty?
+    if params[:email]
+      params[:email].each do |index, address|
+        members << address unless address.empty?
+      end
     end
 
-    if members.size < @exercise.groupsizemin
-      flash[:error] = "There must be at least #{@exercise.groupsizemin} member#{@exercise.groupsizemin == 1 ? '' : 's'} in the group."
-      redirect_to :action => "new", :exercise => params[:exercise]
-      return
-    end
+#     if members.size < @exercise.groupsizemin
+#       flash[:error] = "There must be at least #{@exercise.groupsizemin} member#{@exercise.groupsizemin == 1 ? '' : 's'} in the group."
+#       redirect_to :action => "new", :exercise => params[:exercise]
+#       return
+#     end
 
     @group = Group.new(params[:group])
+    @group.users << current_user if current_user
 
     # Automatic groupname
-    @group.name = (members.collect do |user| "#{user[:studentnumber]}" end).join('_')
+    @group.name = (@group.users.collect { |user| user.studentnumber }).join('_')
 
     if @group.save
-      @group.add_members(members)
-      redirect_to :controller => 'submissions', :action => 'new', :exercise => @group.exercise, :group => @group.id
+      @group.add_members_by_email(members, @exercise)
+      redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
     else
       flash[:error] = 'Failed to create group.'
-      redirect_to :action => "new", :exercise => params[:exercise]
+      redirect_to :action => "new"
     end
 
   end
 
+  def join
+    return access_denied unless logged_in?
+    
+    invitation = GroupInvitation.where(:group_id => params[:id], :token => params[:token]).first
+    
+    if invitation
+      group = invitation.group
+      exercise = invitation.exercise
+      
+      # Add user to group
+      group.users << current_user
+      
+      # Delete invitation
+      invitation.destroy
+      
+      # Redirect to submit
+      flash[:success] = 'You have been added to the group'
+      redirect_to submit_path(:exercise => exercise.id, :group => group.id)
+    else
+      render :invalid_token
+    end
+    
+  end
+  
   # PUT /groups/1
   # PUT /groups/1.xml
 #   def update
@@ -108,16 +139,11 @@ class GroupsController < ApplicationController
       return
     end
 
-    unless is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless is_admin?(current_user)
 
     @group = Group.find(params[:id])
     @group.destroy
     redirect_to(groups_url)
-
   end
 
   # Ajax studentnumber checker

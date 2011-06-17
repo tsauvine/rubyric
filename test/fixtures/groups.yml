@@ -4,4 +4,4 @@ group1:
 
 group2:
   exercise: active_exercise
-  users: student2
+  users: [student2, student3]

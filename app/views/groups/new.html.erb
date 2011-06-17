@@ -2,29 +2,26 @@
 
 <h1>Create a group for <%= "#{@course.code} #{@course.name} / #{@course_instance.name} / #{@exercise.name}" %></h1>
 
-<div style="float: left">
-  <%= error_messages_for :submission %>
+<p class="hint">Please enter the email addresses of other group members. If you do not know their addresses, you can enter them later. You can change your own email address in <emph>My preferences</emph>.</p>
 
-  <% form_for @group do |f| %>
+<div>
+  <%= form_for [@exercise, @group] do |f| %>
     <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-    <%= hidden_field_tag :exercise, params[:exercise] %>
+    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
 
     <h2>Group members</h2>
 
     <table>
-      <thead>
-        <tr>
-          <td>Studentnumber</td>
-          <td>Email</td>
-        </tr>
-      </thead>
       <tbody>
-        <!-- Users-->
-        <% (0...@exercise.groupsizemax).each do |i| %>
+        <% if logged_in? %>
           <tr>
             <td>
-              <%= text_field_tag "studentnumber[#{i}]", @studentnumber[i] %>
+              <%= current_user.email %>
             </td>
+          </tr>
+        <% end %>
+        <% (0...@email_fields_count).each do |i| %>
+          <tr>
             <td>
               <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}" %>
             </td>
@@ -33,11 +30,7 @@
       </tbody>
     </table>
 
-    <p><% # = f.file_field 'submission'
-    %></p>
-
     <p><%= f.submit 'Create' %></p>
 
-  <% end # form_for
-  %>
+  <% end %>
 </div>

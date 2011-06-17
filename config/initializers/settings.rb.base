@@ -4,7 +4,13 @@
 SUBMISSIONS_PATH = "/home/rubyric/submissions"
 
 # Where to send error reports. Set to nil to disable.
-ERRORS_EMAIL = "your@address"
+ERRORS_EMAIL = "admin@example.com"
+
+# Sender address of invitation mails, etc.
+RUBYRIC_EMAIL = "rubyric@example.com"
+
+# Host is used for links in emails
+RUBYRIC_HOST = "rubyric.example.com"
 
 # Authentication
 FORCE_SSL = false

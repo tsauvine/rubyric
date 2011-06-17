@@ -11,8 +11,12 @@ class RubricsController < ApplicationController
       })
     load_course
     
-    @section = @exercise.categories.first.sections.first
-
+    if params[:section]
+      @section = Section.find(params[:section], :include => {:items => :phrases})
+    else
+      @section = @exercise.categories.first.sections.first
+    end
+    
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
@@ -27,7 +31,7 @@ class RubricsController < ApplicationController
     if params[:section]
       @section = Section.find(params[:section], :include => {:items => :phrases})
     else
-      @section  = @exercise.categories.first.sections.first
+      @section = @exercise.categories.first.sections.first
     end
 
     # TODO: unless @section...
