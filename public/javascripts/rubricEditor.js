@@ -51,7 +51,7 @@ $(document).ready(function(){
   
   $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
   
-  $(".grading-options").sortable();
+  $(".grading-options ul").sortable();
 
   $("#rubric").sortable();
   $("table.phrases tbody").sortable({connectWith: "table.phrases tbody"});
