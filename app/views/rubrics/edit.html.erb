@@ -1,8 +1,18 @@
 <!-- rubric/edit.html.erb -->
 <% content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.jeditable' %>
   <%= javascript_include_tag 'rubricEditor' %>
 <% end %>
 
+<style>
+.ui-effects-transfer {
+  border: 2px dotted gray;
+}
+
+.dropHover {
+  background: #ff8;
+}
+</style>
 
 <h1>Editing rubric</h1>
 
@@ -20,7 +30,6 @@
       </tr>
     <% end %>
   <% end %>
-
 </table>
 
 
@@ -30,8 +39,6 @@
 </p>
 
 <div id="rubric" class="feedback-editor rubric-editor">
-  <!-- render :partial => 'rubric', :object => @exercise -->
-
   <% @section.items.each do |item| %>
     <div class="criterion">
       <!-- Heading -->
@@ -58,7 +65,7 @@
           <% item.phrases.each do |phrase|%>
             <tr>
               <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>">
-              <%= h(phrase.content).gsub(/\n|\r/, '<br />') %>
+                <span class="phraseContent"><%= phrase.content.gsub(/\n|\r/, '<br />') %></span>
               </td>
               <td><span class="edit-phrase-button" id="edit-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">Edit</span></td>
             </tr>

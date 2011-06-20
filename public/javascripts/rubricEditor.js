@@ -26,38 +26,47 @@ var rubricEditorView = {
     
   },
   
-  savePhrase: function(event) {
-    event.data.textarea.html('kukkuu');
-    
+  //savePhrase: function(event) {
+  savePhrase: function(value, settings) {
+    alert('kukkuu');
+    //event.data.textarea.html('kukkuu');
+    return(value);
   },
   
   dropCriterionToSection: function(event, ui) {
-    alert('ping');
-    // droppable: $(this)
-    // draggable: ui.draggable
-    
-    //droppable = $(this);
-    //draggable = ui.draggable;
-    
-    //draggable.remove();
-    criterion_div = ui.draggable.remove();
-    //$(this).append(ui.draggable);
-    //$(this).append(ui.draggable);
+    draggable = ui.draggable;
+    draggable.effect('transfer', { to: $(this), className: "ui-effects-transfer" }, 500);
+    draggable.remove();
   }
 };
 
 
 $(document).ready(function(){
   
-  $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
-  
-  $(".grading-options").sortable();
+  $('.phraseContent').editable(rubricEditorView.savePhrase, {
+    type: 'textarea',
+    rows: 3,
+    width: '100%',
+    cancel: 'Cancel',
+    submit: 'OK'
+  });
 
-  $("#rubric").sortable();
-  $("table.phrases tbody").sortable({connectWith: "table.phrases tbody"});
   
-  
-  
+  // Quality levels are sortable
+  $(".grading-options").sortable({containment: 'parent'});
+
+  // Criteria are sortable
+  $("#rubric").sortable(
+    // TODO: {containment: '#page'}
+  );
+
+  // Phrases are sortable
+  $("table.phrases tbody").sortable({
+    containment: '#rubric',
+    axis: 'y',
+    connectWith: "table.phrases tbody"
+  });
+ 
 //   $(".criterion").draggable({
 //                 revert: 'invalid',
 //                 helper: 'clone',
@@ -65,7 +74,13 @@ $(document).ready(function(){
 //   });
 
   
-  //$(".section-name").droppable({drop: rubricEditorView.dropCriterionToSection});
+  // Criteria can be dropped to section links
+  $(".section-name").droppable({
+    accept: '.criterion',
+    hoverClass: 'dropHover',
+    drop: rubricEditorView.dropCriterionToSection,
+    tolerance: 'pointer'
+  });
 
 });
 
