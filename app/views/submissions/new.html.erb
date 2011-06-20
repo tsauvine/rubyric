@@ -6,38 +6,62 @@
   <p><%= @exercise.submit_pre_message %></p>
 <% end %>
 
-<% form_for @submission, :html => { :multipart => true } do |f| %>
+<%= form_for @submission, :html => { :multipart => true } do |f| %>
   <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-  <%= f.hidden_field :group_id, :value => @group.id %>
+  <% if @group %>
+    <%= f.hidden_field :group_id, :value => @group.id %>
+  <% end %>
 
   <% if @exercise.groupsizemax > 1 %>
     <h2>Group members</h2>
     <table>
       <thead>
-        <tr><td>Studentnumber</td><td>Email</td></tr>
+        <tr>
+          <td>Name</td>
+          <td>Email</td>
+          <td></td>
+        </tr>
       </thead>
       <tbody>
         <% @group.users.each do |student| %>
           <tr>
-            <td><%= student.studentnumber %></td>
+            <td><%= student.name %></td>
             <td><%= student.email %></td>
+          </tr>
+        <% end %>
+        <% @group.group_invitations.each do |invitation| %>
+          <tr>
+            <td></td>
+            <td><%= invitation.email %></td>
+            <td>(invited)</td>
           </tr>
         <% end %>
       </tbody>
     </table>
-  <% end %>
-
-  <% if @group.submissions.size > 0 %>
-    <h2>Previous submissions</h2>
+    
     <p>
-      <% @group.submissions.each do |submission| %>
-        <%= submission.created_at %>
-        (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)<br />
+      <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id) %>
+      <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id) %>
+      <% if @available_groups.size > 1 %>
+        <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
       <% end %>
     </p>
+    
   <% end %>
 
-  <h2>Upload file</h2>
+  <% if @group && @group.submissions.size > 0 %>
+    <h2>Submissions</h2>
+    <table>
+      <% @group.submissions.each do |submission| %>
+        <tr>
+          <td><%=l submission.created_at, :format => :long %></td>
+          <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+        </tr>
+      <% end %>
+    </table>
+  <% end %>
+
+  <h2>Submit file</h2>
 
   <p><%= file_field_tag 'file' %></p>
 

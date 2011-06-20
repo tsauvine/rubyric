@@ -1,0 +1,5 @@
+invitation1:
+  group: group2
+  exercise: active_exercise
+  token: qwerty
+  email: invitation@example.com

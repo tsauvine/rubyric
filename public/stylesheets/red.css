@@ -452,43 +452,49 @@ table.histogram td {
  * Feedback editor (assistant view)
  ***********************************/
 
-.feedback-editor {
-  margin-right: 42%;
-}
-
-.feedback-editor .phrases {
+.rubric table.phrases {
   background: #F8F8F8;
   width: 100%;
   font-size: .8em;
 /*  clear: both;*/
-  margin: 0em 0em 2em 0em;
+  margin: 0em 0em 0em 0em;
 }
 
-.feedback-editor .phrases td {
+.rubric div.criterion {
+  margin: 0em 0em 1em 0em;
+}
+
+.rubric .phrases td {
   border: 1px solid gray;
   cursor: pointer;
   padding: 4px;
 }
 
-/*.feedback-editor .phrases td:hover {
+/*.rubric .phrases td:hover {
   background: #F0F0FF;
 }*/
 
-.feedback-editor h3 {
+.rubric h3 {
   float: left;
   margin: 0em 2em 2px 0em;
   cursor: pointer;
 }
 
-.feedback-editor ul.grading-options {
+.rubric .grading-options {
   margin: 0px 0px 2px 0px;
   padding: 0px;
   float: right;
-  
   position: relative;
 }
 
-.feedback-editor ul.grading-options li {
+.rubric .grading-options ul {
+  display: block;
+  float: left;
+  padding: 0px;
+  margin: 0px;
+}
+
+.rubric .grading-options li {
   display: block;
   cursor: pointer;
   float: left;
@@ -499,38 +505,42 @@ table.histogram td {
   margin: 2px;
 }
 
-.feedback-editor ul.grading-options li:hover {
+.rubric .grading-options img {
+  margin: 4px;
+}
+
+.rubric .grading-options li:hover {
   background: #ffe0e0;
 }
 
-.feedback-editor ul.grading-options li.selected {
+.rubric .grading-options li.selected {
   border: 2px solid #f00000;
   padding: 1px;
 }
 
-.criterion-grade-buttons {
-  visibility: hidden;
+.rubric .criterion-grade-buttons {
+  display: none;
   position: absolute;
   top: -1em;
   margin: 0px;
   padding: 0px;
 }
 
-.feedback-editor ul.grading-options li:hover .criterion-grade-buttons {
-  visibility: visible;
+.rubric li:hover .criterion-grade-buttons {
+  display: block;
 }
 
-.feedback-editor td.Good:hover {
+.rubric td.Good:hover {
   background: url("../images/fbgood.png") right repeat-y;
 }
-.feedback-editor td.Bad:hover {
+.rubric td.Bad:hover {
   background: url("../images/fbbad.png") right repeat-y;
 }
-.feedback-editor td.Neutral:hover {
+.rubric td.Neutral:hover {
   background: url("../images/fbneutral.png") right repeat-y;
 }
 
-.feedback-editor .grade {
+.rubric .grade {
   font-size: 150%;
   font-weight: bold;
 }
@@ -735,6 +745,14 @@ p.feedback-preview {
 
 .rubric-editor .phrase span {
   cursor: pointer;
+}
+
+.rubric-editor .criterion img {
+  visibility: hidden;
+}
+
+.rubric-editor .criterion:hover img {
+  visibility: visible;
 }
 
 .rubric-editor table.phrases {

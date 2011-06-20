@@ -1,0 +1,10 @@
+<%= @course.code %> <%= @course.name %>
+
+You have been added to the following group:
+<% @group.users.each do |user| %>  <%= user.name %>
+<% end %><% @group.group_invitations.each do |invitation| %>  <%= invitation.email %>
+<% end %>
+
+Please confirm by visiting the following link:
+
+<%= join_group_url(:id => @group.id, :token => @invitation.token, :protocol => 'https://') %>

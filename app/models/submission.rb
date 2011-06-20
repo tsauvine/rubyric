@@ -10,6 +10,15 @@ class Submission < ActiveRecord::Base
   after_create :write_file
   #after_destroy :delete_file
 
+  
+  def has_member?(user)
+    group.has_member?(user)
+  end
+  
+  def has_reviewer?(user)
+    Review.exists?(:submission_id => self.id, :user_id => user.id)
+  end
+  
   # Setter for the form's file field.
   def file=(file_data)
     @file_data = file_data

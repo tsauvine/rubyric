@@ -32,57 +32,62 @@
   <% end %>
 </table>
 
-
 <p>
   <%= link_to 'Save as XML', download_exercise_rubric_path(@exercise) %>
   <%= link_to 'Load XML', upload_exercise_rubric_path(@exercise) %>
 </p>
 
-<div id="rubric" class="feedback-editor rubric-editor">
+<div id="rubric" class="rubric rubric-editor">
+  <!-- render :partial => 'rubric', :object => @exercise -->
   <% @section.items.each do |item| %>
-    <div class="criterion">
+    <div class="criterion" data-id="<%= item.id %>">
       <!-- Heading -->
-      <h3><%= item.name.blank? ? '-' : item.name %></h3>
+      <h3>
+        <%= item.name.blank? ? '-' : item.name %>
+        <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
+        <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
+      </h3>
 
       <!-- Grading options -->
-      <ul class="grading-options">
-        <% item.item_grading_options.each do |grading_option| %>
-          <li id="grade-<%= grading_option.id %>"><%= grading_option.text %>
-            <ul class="criterion-grade-buttons">
-              <li>Move</li>
-              <li>Delete</li>
-            </ul>
-          </li>
-        <% end %>
-        <li>Add quality level</li>
-      </ul>
+      <div class="grading-options">
+        <ul>
+          <% item.item_grading_options.each do |grading_option| %>
+            <li id="grade-<%= grading_option.id %>"><%= grading_option.text %>
+              <div class="criterion-grade-buttons">
+                <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete quality level' %>
+              </div>
+            </li>
+          <% end %>
+        </ul>
+        <%= image_tag 'create.png', :alt => 'Add', :title => 'Add quality level' %>
+      </div>
 
       <div class="clear"></div>
 
       <!-- Phrases -->
-      <table id="phrases<%= item.id %>" class="phrases">
-        <tbody>
-          <% item.phrases.each do |phrase|%>
-            <tr>
-              <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>">
-                <span class="phraseContent"><%= phrase.content.gsub(/\n|\r/, '<br />') %></span>
-              </td>
-              <td><span class="edit-phrase-button" id="edit-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">Edit</span></td>
-            </tr>
-          <% end %>
-        </tbody>
-        <tfoot>
-          <tr>
-            <td>Add phrase</td>
-            <td></td>
-          </tr>
-        </tfoot>
-      </table>
+      <div class="phrases">
+        <table id="phrases-<%= item.id %>" class="phrases">
+          <tbody>
+            <% item.phrases.each do |phrase|%>
+              <tr>
+                <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>">
+                <%= h(phrase.content).gsub(/\n|\r/, '<br />') %>
+                </td>
+                <td>
+                  <span class="edit-phrase-button" id="edit-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">
+                    <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase' %>
+                  </span>
+                  <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase' %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+        <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase' %>
+      </div>
     </div>
   <% end %>
   
-  <p>Add criterion</p>  
+  <p><%= image_tag 'create.png' %>Add criterion</p>  
 
 </div>
-
-<p><%= link_to 'Back', @exercise %></p>

@@ -51,10 +51,9 @@ Rubyric::Application.routes.draw do
     resources :groups
   end
   
+  match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
+    
   resources :submissions
-  
-  
-  
   
   resources :reviews do
     member do 

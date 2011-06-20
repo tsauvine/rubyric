@@ -1,20 +1,9 @@
-<h1>Listing groups</h1>
+<h1>Select group</h1>
 
-<table>
-  <tr>
-    <th>Name</th>
-  </tr>
+<ul>
+  <% @groups.each do |group| %>
+    <li><%= link_to group.users.collect { |user| user.name }.join(', '), submit_path(:exercise => @exercise.id, :group => group.id) %></li>
+  <% end %>
+</ul>
 
-<% for group in @groups %>
-  <tr>
-    <td><%=h group.name %></td>
-    <td><%= link_to 'Show', group %></td>
-    <td><%= link_to 'Edit', edit_group_path(group) %></td>
-    <td><%= link_to 'Destroy', group, :confirm => 'Are you sure?', :method => :delete %></td>
-  </tr>
-<% end %>
-</table>
-
-<br />
-
-<%= link_to 'New group', new_group_path %>
+<p><%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id) %></p>

@@ -1,1 +1,5 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
+review:
+  user: assistant1
+  submission: submission
+  

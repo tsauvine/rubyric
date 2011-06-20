@@ -1,6 +1,9 @@
 class Group < ActiveRecord::Base
   belongs_to :exercise
+  belongs_to :course_instance
+  
   has_and_belongs_to_many :users
+  has_many :group_invitations
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
 
   def has_member?(user)
@@ -14,8 +17,6 @@ class Group < ActiveRecord::Base
   #
   # members is an array of {:studentnumber, :email} hashes.
   def add_members(members)
-    group = nil
-
     members.each do |member|
       # Find user
       user = User.find_by_studentnumber(member[:studentnumber])
@@ -35,6 +36,31 @@ class Group < ActiveRecord::Base
     end
   end
 
-
+  # If matching email address if found, user is added to the group. Otherwise, an invitation link is sent to that address.
+  #
+  # members: array of email addresses
+  def add_members_by_email(addresses, exercise)
+    addresses.each do |address|
+      user = User.find_by_email(address)
+      
+      if user
+        self.users << user unless self.users.include?(user)
+      else
+        # Create invitation
+        invitation = GroupInvitation.create(
+          :group_id => self.id,
+          :exercise_id => exercise.id,
+          :token => Digest::SHA1.hexdigest([Time.now, rand].join),
+          :email => address,
+          :expires_at => Time.now + 1.weeks)
+        
+        #GroupInvitationMailer.invitation(invitation.id).deliver
+        
+        # Send invitation link with delayed_job
+        GroupInvitationMailer.delay.invitation(invitation.id)
+      end
+    end
+    
+  end
 
 end

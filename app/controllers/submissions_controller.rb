@@ -8,20 +8,17 @@ class SubmissionsController < ApplicationController
     @exercise = @submission.exercise
     load_course
 
+    # TODO: @submission.has_reviewer(current_user)
     return access_denied unless @submission.group.has_member?(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
 
     unless File.exist?(@submission.full_filename)
+      # TODO: better error message
       @heading = 'File not found'
       render :template => "shared/error"
     else
-      if @submission.filename
-        filename = @submission.filename
-      else
-        filename = "#{@submission.id}.#{@submission.extension}"
-      end
-
+      filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
       type = Mime::Type.lookup_by_extension(@submission.extension)
       
       send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
@@ -30,13 +27,14 @@ class SubmissionsController < ApplicationController
 
   # GET /submissions/new
   def new
-    @exercise = Exercise.find(params[:exercise]);
+    @exercise = Exercise.find(params[:exercise])
     load_course
 
     @user = current_user
+    @is_teacher = @course.has_teacher(current_user)
 
     # Authorization
-    return access_denied unless @user || @exercise.submit_without_login
+    return access_denied unless current_user || @exercise.submit_without_login
 
     # Check that instance is open
     unless @course_instance.active
@@ -44,28 +42,26 @@ class SubmissionsController < ApplicationController
       return
     end
 
+    # Find groups that the user is part of
+    if @user
+      @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, @user.id).joins(:users)
+    else
+      @available_groups = []
+    end
+    
     # Find group
-    if !params[:group].blank?
+    if params[:group]
+      # Group given as a parameter
       @group = Group.find(params[:group])
-      # TODO: authorization
-    elsif @user
-      @group = Group.find(:first, :conditions => ['exercise_id=? AND user_id=?', @exercise.id, @user.id], :joins => :users)
+      return access_denied unless @group.has_member?(current_user) || @is_teacher
+    elsif @available_groups.size > 0
+      @group = @available_groups[0] 
     end
 
-    unless @group
-      if (@exercise.groupsizemax <= 1 && @user)
-        # Create a group automatically
-        @group = Group.new({:exercise_id => @exercise.id, :name => @user.studentnumber})
-        @group.save
-        @group.users << @user
-
-        # Add user to the course
-        @course_instance.students << @user unless @course_instance.students.include?(@user)
-      else
-        # Redirect to group creation
-        redirect_to new_group_url(:exercise => @exercise.id)
-        return
-      end
+    if !@group && @exercise.groupsizemax > 1
+      # Redirect to group creation
+      redirect_to new_exercise_group(:exercise_id => @exercise.id)
+      return
     end
 
     @submission = Submission.new
@@ -76,11 +72,7 @@ class SubmissionsController < ApplicationController
     @exercise = @submission.exercise
     load_course
 
-    unless logged_in? || @exercise.submit_without_login
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless logged_in? || @exercise.submit_without_login
     
     # Check that instance is open
     unless @course_instance.active
@@ -89,6 +81,20 @@ class SubmissionsController < ApplicationController
       return
     end
 
+    
+    user = current_user
+    unless submission.group
+      if @exercise.groupsizemax <= 1 && current_user
+        # Create a group automatically
+        @group = Group.new({:course_instance_id => @course_instance.id, :name => user.studentnumber})
+        @group.save
+        @group.users << user
+
+        # Add user to the course
+        @course_instance.students << user unless @course_instance.students.include?(user)
+      end
+    end
+    
     # Check the file
     file = params[:file]
 
@@ -101,26 +107,23 @@ class SubmissionsController < ApplicationController
     end
 
     if @submission.save
-      render :action => 'thanks'
+      redirect_to submit_path(:exercise => @submission.exercise_id)
     else
-      flash[:error] = 'Failed'
-      redirect_to submit_path(:exercise => params[:submission][:exercise_id])
+      flash[:error] = 'Failed to submit'
     end
 
     # Auto assign
-    if @exercise.autoassign
-      @submission.group.submissions.each do |submission|
-        # Take the first submission that has been assigned to somebody
-        old_review = submission.reviews.first
-        unless old_review.nil?
-          new_review = @submission.assign_to(old_review.user)
-          Mailer.deliver_assignment(new_review)
-          break
-        end
-      end
-    end
+#     if @exercise.autoassign
+#       @submission.group.submissions.each do |submission|
+#         # Take the first submission that has been assigned to somebody
+#         old_review = submission.reviews.first
+#         unless old_review.nil?
+#           new_review = @submission.assign_to(old_review.user)
+#           Mailer.deliver_assignment(new_review)
+#           break
+#         end
+#       end
+#     end
   end
-
-
 
 end

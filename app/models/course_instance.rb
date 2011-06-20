@@ -1,7 +1,8 @@
 class CourseInstance < ActiveRecord::Base
   belongs_to :course
   has_many :exercises, {:order => :deadline, :dependent => :destroy}
-
+  has_many :groups
+  
   has_and_belongs_to_many :students, {:class_name => 'User', :join_table => 'course_instances_students', :order => :studentnumber}
   has_and_belongs_to_many :assistants, {:class_name => 'User', :join_table => 'assistants_course_instances', :order => :studentnumber}
   

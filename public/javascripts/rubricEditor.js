@@ -43,6 +43,7 @@ var rubricEditorView = {
 
 $(document).ready(function(){
   
+
   $('.phraseContent').editable(rubricEditorView.savePhrase, {
     type: 'textarea',
     rows: 3,
@@ -50,6 +51,10 @@ $(document).ready(function(){
     cancel: 'Cancel',
     submit: 'OK'
   });
+
+  $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
+  
+  $(".grading-options ul").sortable();
 
   
   // Quality levels are sortable
