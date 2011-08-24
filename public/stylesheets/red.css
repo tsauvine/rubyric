@@ -766,8 +766,8 @@ p.feedback-preview {
   padding: 1px;
 }
 
-.rubric-editor tr.phrase textarea {
-  width: 100%;
+.rubric-editor textarea {
+
 }
 
 .rubric-editor td.buttons {

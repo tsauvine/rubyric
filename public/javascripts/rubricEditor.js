@@ -7,28 +7,54 @@ var phrase_types_clipboard = [];
 
 var rubricEditorView = {
   
+  phraseCreate: function(event) {
+    var targetId = $(this).data('target-id');
+  }
+  
+  criterionEdit: function(event) {
+    var targetId = $(this).data('target-id');
+    $('#' + targetId).trigger('click');
+  },
+  
   /**
    * Activates a phrase editor
    */
-  editPhrase: function(event) {
+  phraseEdit: function(event) {
     var targetId = $(this).data('target-id');
-    var targetObject = $('#' + targetId);
+    $('#' + targetId).trigger('click');
     
+    /*
     var currentText = jQuery.trim(targetObject.html());
     
     var textarea = $('<textarea></textarea>', {width: '100%', rows: 5});
     textarea.html(currentText);
     
-    var okButton = $('<button>OK</button>').click({textarea: textarea}, rubricEditorView.savePhrase);
+    var okButton = $('<button>OK</button>').click({textarea: textarea}, rubricEditorView.phraseSave);
+    var cancelButton = $('<button>Cancel</button>').click({textarea: textarea}, rubricEditorView.phraseCancel);
     
     targetObject.html(textarea);
     targetObject.append(okButton);
-    
+    */
   },
   
-  savePhrase: function(event) {
-    event.data.textarea.html('kukkuu');
-    
+  criterionDelete: function(event) {
+    var targetId = $(this).data('target-id');
+    $('#' + targetId).remove();
+  },
+  
+  /**
+   * Removes the phrase td from the table. 
+   */
+  phraseDelete: function(event) {
+    var targetId = $(this).data('target-id');
+    $('#' + targetId).parent().remove();
+  },
+  
+  phraseSave: function(value, settings) {
+    console.log(this);
+    console.log(value);
+    console.log(settings);
+    return(value);
   },
   
   dropCriterionToSection: function(event, ui) {
@@ -48,13 +74,42 @@ var rubricEditorView = {
 
 
 $(document).ready(function(){
+  $(".edit-criterion-button").click(rubricEditorView.criterionEdit);
+  $(".delete-criterion-button").click(rubricEditorView.criterionDelete);
   
-  $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
+  $(".edit-phrase-button").click(rubricEditorView.phraseEdit);
+  $(".delete-phrase-button").click(rubricEditorView.phraseDelete);
+  
+//   $(".edit-criterion-button").click(rubricEditorView.editCriterion);
+  
+  $("td.phrase").editable(rubricEditorView.phraseSave,
+    {
+    type: 'textarea',
+    rows: 3,
+    onblur: 'ignore',
+    submit: 'Save',
+    cancel: 'Cancel'
+  });
+  
+  $("span.criterion").editable(rubricEditorView.phraseSave,
+    {
+    type: 'text',
+    onblur: 'ignore',
+    submit: 'Save',
+    cancel: 'Cancel'
+  });
+  
+  /*.editInPlace({
+    callback: function(){ alert('done editing') },
+    field_type: 'textarea',
+    show_buttons: true,
+    use_html: true
+  });*/
   
   $(".grading-options ul").sortable();
 
-  $("#rubric").sortable();
-  $("table.phrases tbody").sortable({connectWith: "table.phrases tbody"});
+  $("#rubric").sortable();  // Draggable criteria
+  $("table.phrases tbody").sortable({connectWith: "table.phrases tbody"});  // Draggable phrases
   
   
   

@@ -1,5 +1,6 @@
 <!-- rubric/edit.html.erb -->
 <% content_for :javascript do %>
+  <%= javascript_include_tag 'jquery.jeditable' %>
   <%= javascript_include_tag 'rubricEditor' %>
 <% end %>
 
@@ -32,12 +33,16 @@
   <!-- render :partial => 'rubric', :object => @exercise -->
 
   <% @section.items.each do |item| %>
-    <div class="criterion" data-id="<%= item.id %>">
+    <div class="criterion" id="criterion-container-<%= item.id %>" data-id="<%= item.id %>">
       <!-- Heading -->
       <h3>
-        <%= item.name.blank? ? '-' : item.name %>
-        <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
-        <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
+        <span class="criterion" id="criterion-name-<%= item.id %>"><%= item.name.blank? ? '-' : item.name %></span>
+        <span class="edit-criterion-button" id="edit-criterion-<%= item.id %>" data-target-id="criterion-name-<%= item.id %>">
+          <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
+        </span>
+        <span class="delete-criterion-button" id="delete-criterion-<%= item.id %>" data-target-id="criterion-container-<%= item.id %>">
+          <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
+        </span>
       </h3>
 
       <!-- Grading options -->
@@ -69,7 +74,9 @@
                   <span class="edit-phrase-button" id="edit-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">
                     <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase' %>
                   </span>
-                  <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase' %>
+                  <span class="delete-phrase-button" id="delete-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">
+                    <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase' %>
+                  </span>
                 </td>
               </tr>
             <% end %>
