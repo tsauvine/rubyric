@@ -479,7 +479,6 @@
                         textarea.width(settings.width);
                     }
                     $(this).append(textarea);
-                    $(this).append($('<br />'));
                     return(textarea);
                 }
             },

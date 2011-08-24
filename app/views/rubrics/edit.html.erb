@@ -4,6 +4,15 @@
   <%= javascript_include_tag 'rubricEditor' %>
 <% end %>
 
+<style>
+.ui-effects-transfer {
+  border: 2px dotted gray;
+}
+
+.dropHover {
+  background: #ff8;
+}
+</style>
 
 <h1>Editing rubric</h1>
 
@@ -21,7 +30,6 @@
       </tr>
     <% end %>
   <% end %>
-
 </table>
 
 <p>
@@ -31,7 +39,6 @@
 
 <div id="rubric" class="rubric rubric-editor">
   <!-- render :partial => 'rubric', :object => @exercise -->
-
   <% @section.items.each do |item| %>
     <div class="criterion" id="criterion-container-<%= item.id %>" data-id="<%= item.id %>">
       <!-- Heading -->

@@ -58,17 +58,9 @@ var rubricEditorView = {
   },
   
   dropCriterionToSection: function(event, ui) {
-    alert('ping');
-    // droppable: $(this)
-    // draggable: ui.draggable
-    
-    //droppable = $(this);
-    //draggable = ui.draggable;
-    
-    //draggable.remove();
-    criterion_div = ui.draggable.remove();
-    //$(this).append(ui.draggable);
-    //$(this).append(ui.draggable);
+    draggable = ui.draggable;
+    draggable.effect('transfer', { to: $(this), className: "ui-effects-transfer" }, 500);
+    draggable.remove();
   }
 };
 
@@ -99,20 +91,33 @@ $(document).ready(function(){
     cancel: 'Cancel'
   });
   
-  /*.editInPlace({
-    callback: function(){ alert('done editing') },
-    field_type: 'textarea',
-    show_buttons: true,
-    use_html: true
-  });*/
+  $('.phraseContent').editable(rubricEditorView.savePhrase, {
+    type: 'textarea',
+    rows: 3,
+    width: '100%',
+    cancel: 'Cancel',
+    submit: 'OK'
+  });
+
+  $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
   
   $(".grading-options ul").sortable();
 
-  $("#rubric").sortable();  // Draggable criteria
-  $("table.phrases tbody").sortable({connectWith: "table.phrases tbody"});  // Draggable phrases
-  
-  
-  
+  // Quality levels are sortable
+  $(".grading-options").sortable({containment: 'parent'});
+
+  // Criteria are sortable
+  $("#rubric").sortable(
+    // TODO: {containment: '#page'}
+  );
+
+  // Phrases are sortable
+  $("table.phrases tbody").sortable({
+    containment: '#rubric',
+    axis: 'y',
+    connectWith: "table.phrases tbody"
+  });
+ 
 //   $(".criterion").draggable({
 //                 revert: 'invalid',
 //                 helper: 'clone',
@@ -120,7 +125,13 @@ $(document).ready(function(){
 //   });
 
   
-  //$(".section-name").droppable({drop: rubricEditorView.dropCriterionToSection});
+  // Criteria can be dropped to section links
+  $(".section-name").droppable({
+    accept: '.criterion',
+    hoverClass: 'dropHover',
+    drop: rubricEditorView.dropCriterionToSection,
+    tolerance: 'pointer'
+  });
 
 });
 
