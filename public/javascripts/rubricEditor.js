@@ -7,9 +7,45 @@ var phrase_types_clipboard = [];
 
 var rubricEditorView = {
   
+  phraseEditableParams: {
+      type: 'textarea',
+      rows: 3,
+      onblur: 'ignore',
+      submit: 'Save',
+      cancel: 'Cancel'
+  },
+  
   phraseCreate: function(event) {
     var targetId = $(this).data('target-id');
-  }
+    var phrasesTable = $('#' + targetId);
+    
+    var row = $("<tr />");
+    var contentTd = $("<td class='phrase' />");
+    var buttonsTd = $("<td />");
+    var buttons = $("<img src='/images/edit.png' class='edit-phrase-button' /> <img src='/images/trash.png' class='delete-phrase-button'/> <img src='/images/updown.png' class='move-phrase-button' />");
+    //editButton.click(rubricEditorView.phraseEdit);
+    //deleteButton.click(rubricEditorView.phraseDelete);
+//     buttonsTd.append(editButton);
+//     buttonsTd.append(deleteButton);
+//     buttonsTd.append(moveButton);
+    buttonsTd.append(buttons);
+    row.append(contentTd);
+    row.append(buttonsTd);
+    
+    contentTd.editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams);
+    
+    /*
+    <td>
+      <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase', :class => 'edit-phrase-button', :id => "edit-phrase-#{phrase.id}", 'data-target-id' => "phrase-#{phrase.id}" %>
+      <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase', :class => 'delete-phrase-button', :id => "delete-phrase-#{phrase.id}", 'data-target-id' => "phrase-#{phrase.id}" %>
+      <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
+    </td>
+    */
+    
+    phrasesTable.append(row);
+    
+    contentTd.trigger('click');
+  },
   
   criterionEdit: function(event) {
     var targetId = $(this).data('target-id');
@@ -20,34 +56,21 @@ var rubricEditorView = {
    * Activates a phrase editor
    */
   phraseEdit: function(event) {
-    var targetId = $(this).data('target-id');
-    $('#' + targetId).trigger('click');
-    
-    /*
-    var currentText = jQuery.trim(targetObject.html());
-    
-    var textarea = $('<textarea></textarea>', {width: '100%', rows: 5});
-    textarea.html(currentText);
-    
-    var okButton = $('<button>OK</button>').click({textarea: textarea}, rubricEditorView.phraseSave);
-    var cancelButton = $('<button>Cancel</button>').click({textarea: textarea}, rubricEditorView.phraseCancel);
-    
-    targetObject.html(textarea);
-    targetObject.append(okButton);
-    */
+    var tr = $(this).parents('tr')[0];
+    $(tr).find('.phrase').trigger('click');
   },
   
   criterionDelete: function(event) {
-    var targetId = $(this).data('target-id');
-    $('#' + targetId).remove();
+    var tr = $(this).parents('tr')[0];
+    tr.remove();
   },
   
   /**
    * Removes the phrase td from the table. 
    */
   phraseDelete: function(event) {
-    var targetId = $(this).data('target-id');
-    $('#' + targetId).parent().remove();
+    var tr = $(this).parents('tr')[0];
+    $(tr).remove();
   },
   
   phraseSave: function(value, settings) {
@@ -68,20 +91,15 @@ var rubricEditorView = {
 $(document).ready(function(){
   $(".edit-criterion-button").click(rubricEditorView.criterionEdit);
   $(".delete-criterion-button").click(rubricEditorView.criterionDelete);
+  $(".create-criterion-button").click(rubricEditorView.criterionCreate);
   
-  $(".edit-phrase-button").click(rubricEditorView.phraseEdit);
-  $(".delete-phrase-button").click(rubricEditorView.phraseDelete);
+  $(".create-phrase-button").live('click', rubricEditorView.phraseCreate);
+  $(".edit-phrase-button").live('click', rubricEditorView.phraseEdit);
+  $(".delete-phrase-button").live('click', rubricEditorView.phraseDelete);
   
 //   $(".edit-criterion-button").click(rubricEditorView.editCriterion);
   
-  $("td.phrase").editable(rubricEditorView.phraseSave,
-    {
-    type: 'textarea',
-    rows: 3,
-    onblur: 'ignore',
-    submit: 'Save',
-    cancel: 'Cancel'
-  });
+  $("td.phrase").editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams);
   
   $("span.criterion").editable(rubricEditorView.phraseSave,
     {
@@ -91,14 +109,7 @@ $(document).ready(function(){
     cancel: 'Cancel'
   });
   
-  $('.phraseContent').editable(rubricEditorView.savePhrase, {
-    type: 'textarea',
-    rows: 3,
-    width: '100%',
-    cancel: 'Cancel',
-    submit: 'OK'
-  });
-
+  
   $(".edit-phrase-button").click(rubricEditorView.editPhrase);  
   
   $(".grading-options ul").sortable();

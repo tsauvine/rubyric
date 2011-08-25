@@ -74,26 +74,30 @@
           <tbody>
             <% item.phrases.each do |phrase|%>
               <tr>
-                <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>">
-                <%= h(phrase.content).gsub(/\n|\r/, '<br />') %>
-                </td>
+                <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>"><%= h(phrase.content).gsub(/\n|\r/, '<br />') %></td>
                 <td>
-                  <span class="edit-phrase-button" id="edit-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">
-                    <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase' %>
-                  </span>
-                  <span class="delete-phrase-button" id="delete-phrase-<%= phrase.id %>" data-target-id="phrase-<%= phrase.id %>">
-                    <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase' %>
-                  </span>
+                  <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase', :class => 'edit-phrase-button' %>
+                  <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase', :class => 'delete-phrase-button' %>
+                  <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
                 </td>
               </tr>
             <% end %>
           </tbody>
+          <tfoot>
+            <tr>
+              <td>
+                <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-#{item.id}" %>
+                <i>Add phrase</i>
+              </td>
+              <td></td>
+            </tr>
+          </tfoot>
         </table>
-        <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase' %>
+        
       </div>
     </div>
   <% end %>
   
-  <p><%= image_tag 'create.png' %>Add criterion</p>  
+  <h3><%= image_tag 'create.png' %> <i>Add criterion</i></h3>
 
 </div>
