@@ -4,7 +4,7 @@ class User < ActiveRecord::Base
 
   has_and_belongs_to_many :course_instances_assistant, {:class_name => 'CourseInstance', :join_table => 'course_instances_students', :order => :course_instance_id}
   has_and_belongs_to_many :course_instances_student, {:class_name => 'CourseInstance', :join_table => 'assistants_course_instances', :order => :course_instance_id}
-  has_and_belongs_to_many :courses_teacher, {:class_name => 'Course', :join_table => 'courses_teachers', :order => :course_id}
+  has_and_belongs_to_many :courses_teacher, {:class_name => 'Course', :join_table => 'courses_teachers', :order => :code}
 
   has_many :reviews, :order => 'id'               # reviews as a grader
 

@@ -67,6 +67,7 @@ class ApplicationController < ActionController::Base
 
     if @course_instance
       @course = @course_instance.course
+      
       @is_assistant = @course_instance.has_assistant(current_user)
     end
     

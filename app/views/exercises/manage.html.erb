@@ -6,7 +6,7 @@
   <%= @exercise.name %>
 </h1>
 
-<p><strong>Submit url: </strong><%= submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
+<p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
 
 <p><b>Deadline:</b>
 <% if @exercise.deadline.blank? %>

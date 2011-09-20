@@ -18,6 +18,7 @@ class GroupsController < ApplicationController
     @exercise = Exercise.find(params[:exercise])
     load_course
 
+    @is_teacher = @course.has_teacher(current_user)
     unless logged_in? || @exercise.submit_without_login
       redirect_to_login
       return
@@ -29,7 +30,7 @@ class GroupsController < ApplicationController
     @studentnumber = Array.new
     @email = Array.new
 
-    if (current_user)
+    if current_user && !@is_teacher
       @studentnumber[0] = current_user.studentnumber
       @email[0] = current_user.email
     end

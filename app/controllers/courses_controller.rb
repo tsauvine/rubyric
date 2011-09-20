@@ -4,11 +4,11 @@ class CoursesController < ApplicationController
   # GET /courses
   def index
     if is_admin?(current_user)
-      @courses = Course.find(:all)
+      @courses = Course.find(:all, :order => "code")
       @allow_create = true
     else
       # TODO: show own courses
-      @courses = Course.find(:all)
+      @courses = Course.find(:all, :order => "code")
     end
   end
 
@@ -65,17 +65,17 @@ class CoursesController < ApplicationController
   # DELETE /courses/1
   def destroy
     @course = Course.find(params[:id])
-    
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
     name = @course.name
-    if @course.destroy
-      flash[:success] = "#{name} was successfully deleted."
+
+    if @course.has_teacher(current_user) || is_admin?(current_user)
+      if @course.destroy
+        flash[:success] = "#{name} was successfully deleted."
+      end
+      redirect_to(courses_url)
     else
-      flash[:error] = "Unable to delete #{name}."
+      flash[:error] = "You are not authorized to delete #{name}."
+      redirect_to :action => :index
     end
-    
-    redirect_to(courses_url)
   end
 
   def teachers

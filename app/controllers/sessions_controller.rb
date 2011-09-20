@@ -30,7 +30,8 @@ class SessionsController < ApplicationController
     session[:logout_url] = request.env['HTTP_LOGOUTURL']
 
     if shibinfo[:login].blank? && shibinfo[:studentnumber].blank?
-      flash[:error] = "Shibboleth login failed"
+      flash[:error] = "Shibboleth login failed. No username or studentnumber was received."
+      logger.warn("Shibboleth login failed (missing attributes). #{shibinfo}")
       render :action => 'new'
       return
     end
@@ -39,9 +40,26 @@ class SessionsController < ApplicationController
     user = User.find_by_login(shibinfo[:login]) unless shibinfo[:login].blank?
 
     # If user was not found by login, search with student number.
+    # This happens when a student has been created with studentnumber as part of a group, and now logs in for the first time.
     if !user && !shibinfo[:studentnumber].blank?
       # Login must be null, otherwise the account may belong to someone else.
       user = User.find_by_studentnumber(shibinfo[:studentnumber], :conditions => "login IS NULL")
+    end
+    
+    # Aalto migration
+    if !user
+      new_parts = shibinfo[:login].split('@')
+      new_login = new_parts[0]
+      new_domain = new_parts[1]
+      
+      if new_domain == 'aalto.fi'
+        user = User.find_by_login(new_login + '@hut.fi')
+        
+        if user
+          logger.info("Aalto migration #{user.login} -> #{new_login}@aalto.fi (id #{user.id})")
+          user.login = new_login + '@aalto.fi'
+        end
+      end
     end
 
     # Create new account or update an existing
@@ -52,7 +70,7 @@ class SessionsController < ApplicationController
       if user.save
         logger.info("Created new user #{user.login} (#{user.studentnumber}) (shibboleth)")
       else
-        logger.info("Failed to create new user (shibboleth) #{shibinfo}")
+        logger.warn("Failed to create new user (shibboleth) #{shibinfo}. #{user.errors.full_messages.join('. ')}")
         flash[:error] = 'Failed to create new user'
         render :action => 'new'
         return

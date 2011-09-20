@@ -42,7 +42,7 @@ class ExercisesController < ApplicationController
       end
 
       #@groups = @exercise.groups
-      @groups = Group.find_all_by_exercise_id(@exercise.id, :include => [:users, {:submissions => {:reviews => :user}}])
+      @groups = Group.find_all_by_exercise_id(@exercise.id, :include => [:users, {:submissions => {:reviews => :user}}], :order => 'name, id')
 
       @graders = Array.new
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})

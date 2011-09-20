@@ -28,10 +28,11 @@ class SubmissionsController < ApplicationController
 
   # GET /submissions/new
   def new
-    @exercise = Exercise.find(params[:exercise]);
+    @exercise = Exercise.find(params[:exercise])
     load_course
 
     @user = current_user
+    @is_teacher = @course.has_teacher(current_user)
 
     # Authorization
     unless @user || @exercise.submit_without_login
@@ -47,14 +48,16 @@ class SubmissionsController < ApplicationController
 
     # Find group
     if !params[:group].blank?
-      @group = Group.find(params[:group])
-      # TODO: authorization
-    elsif @user
+      @group = Group.find(params[:group], :conditions => ['exercise_id=?' , @exercise.id])
+      
+      # Authorization
+      return access_denied unless @is_teacher || @group.has_member?(current_user) || @exercise.submit_without_login
+    elsif @user && !@is_teacher
       @group = Group.find(:first, :conditions => ['exercise_id=? AND user_id=?', @exercise.id, @user.id], :joins => :users)
     end
 
     unless @group
-      if (@exercise.groupsizemax <= 1 && @user)
+      if (@exercise.groupsizemax <= 1 && @user && !@is_teacher)
         # Create a group automatically
         @group = Group.new({:exercise_id => @exercise.id, :name => @user.studentnumber})
         @group.save
