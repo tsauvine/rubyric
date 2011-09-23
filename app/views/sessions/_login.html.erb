@@ -1,12 +1,15 @@
 <% @stylesheets << 'login' %>
 
 <div class="shibboleth-login">
-  <p class="hint">Log in using the authentication service of your home university</p>
+  <p class="hint">If you have a user account in Aalto university, use Aalto weblogin</p>
   <p>
-    <%= link_to 'TKK weblogin', "/Shibboleth.sso/tkk?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
-    <%= link_to 'Taik weblogin', "/Shibboleth.sso/taik?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
-    <%= link_to 'HY weblogin', "/Shibboleth.sso/hy?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
+    <%= link_to 'Aalto weblogin', "/Shibboleth.sso/aalto?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
   </p>
+</div>
+
+<div class="haka-login">
+  <p class="hint">If you have a user account in some other Finnish university, use Haka login</p>
+  <%= link_to(image_tag('haka_portrait_large.gif', {:alt => '[Haka Login]'}), "/Shibboleth.sso/wayf?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https'))%>
 </div>
 
 <div class="traditional-login">

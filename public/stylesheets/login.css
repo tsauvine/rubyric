@@ -6,7 +6,7 @@ div.shibboleth-login, div.shibboleth-login {
   */
 }
 
-div.shibboleth-login {
+div.shibboleth-login, div.haka-login {
   margin-bottom: 100px;
 }
 
@@ -19,6 +19,10 @@ div.shibboleth-login a {
   font-size: larger;
   margin: 1em 2em 1em 0em;
   text-decoration: none;
+}
+
+div.haka-login a {
+  margin: 1em 2em 1em 0em;
 }
 
 div.shibboleth-login a:hover {
