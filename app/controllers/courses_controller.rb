@@ -4,11 +4,11 @@ class CoursesController < ApplicationController
   # GET /courses
   def index
     if is_admin?(current_user)
-      @courses = Course.find(:all)
+      @courses = Course.find(:all, :order => "code")
       @allow_create = true
     else
       # TODO: show own courses
-      @courses = Course.find(:all)
+      @courses = Course.find(:all, :order => "code")
     end
   end
 
