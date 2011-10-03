@@ -1,3 +1,20 @@
 en:
   other_language_name: In Finnish
   other_language_code: fi
+
+  ##############
+  # Time & Date
+  ##############
+  
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      default: "%Y-%m-%d"
+      short: "%d %b"
+      long: "%Y-%m-%d"
+
+  time:
+    formats:
+      default: "%a %d %b %H:%M"
+      short: "%d %b %H:%M"
+      long: "%a %Y-%m-%d %H:%M:%S"
