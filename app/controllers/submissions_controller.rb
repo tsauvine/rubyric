@@ -124,5 +124,17 @@ class SubmissionsController < ApplicationController
       end
     end
   end
+  
+  # Assign to current user and start review
+  def review
+    @submission = Submission.find(params[:id])
+    @exercise = @submission.exercise
+    load_course
+    access_denied unless @course.has_teacher(current_user)
+    
+    review = @submission.assign_to(current_user)
+    
+    redirect_to edit_review_path(review)
+  end
 
 end
