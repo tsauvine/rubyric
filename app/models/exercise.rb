@@ -13,12 +13,15 @@ class Exercise < ActiveRecord::Base
   # Feedback grouping options: exercise, sections, categories
 
   # Assigns submissions evenly to the given users
-  # submissions: array of submission objects
-  # users: array of user objects
+  # submissions: array of submission ids
+  # users: array of user ids
   # exclusive: previous assignments are erased
-  def assign(submissions, users, exclusive = false)
+  def assign(submission_ids, user_ids, exclusive = false)
     counter = 0
-    n = users.size
+    n = user_ids.size
+    
+    users = User.find(user_ids)
+    submissions = Submission.find(submission_ids, :conditions => ['exercise_id = ?', self.id])
 
     submissions.each do |submission|
       assistant = users[counter % n]
@@ -287,4 +290,38 @@ class Exercise < ActiveRecord::Base
     return archive
   end
 
+  # Creates an example course, instance and submissions.
+  def create_example_submissions
+    example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
+    example_submission_file = nil unless File.exists?(example_submission_file)
+    
+    submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
+    FileUtils.makedirs(submission_path)
+    
+    # Create groups and submissions
+    for i in (1..10)
+      group = Group.create(:exercise_id => self.id, :name => "Group #{i}")
+      
+      user = User.find_by_studentnumber(i.to_s.rjust(5,'0'))
+      group.users << user if user
+      
+      submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
+      
+      FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file
+    end
+  end
+
+  
+  # Will be run in background by delayed job
+  def self.deliver_reviews(review_ids)
+    # Send all reviews
+    reviews = Review.find(:all, :conditions => {:id => review_ids, :status => 'mailing'})
+    
+    logger.info "Sending #{reviews.size} reviews"
+    
+    reviews.each do |review|
+      Mailer.deliver_review(review)
+    end
+  end
+  
 end

@@ -3,9 +3,7 @@
 <div class="shibboleth-login">
   <p class="hint">Log in using the authentication service of your home university</p>
   <p>
-    <%= link_to 'TKK weblogin', "/Shibboleth.sso/tkk?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
-    <%= link_to 'Taik weblogin', "/Shibboleth.sso/taik?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
-    <%= link_to 'HY weblogin', "/Shibboleth.sso/hy?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
+    <%= link_to 'Aalto weblogin', "/Shibboleth.sso/aalto?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https') %>
   </p>
 </div>
 

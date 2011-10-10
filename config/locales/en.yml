@@ -17,4 +17,4 @@ en:
     formats:
       default: "%a %d %b %H:%M"
       short: "%d %b %H:%M"
-      long: "%a %Y-%m-%d %H:%M:%S"
+      long: "%Y-%m-%d %H:%M:%S"

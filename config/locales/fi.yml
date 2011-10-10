@@ -23,6 +23,6 @@ fi:
     formats:
       default: "%a %d.%m. klo %H:%M"
       short: "%d.%m. klo %H:%M"
-      long: "%a %d.%m.%Y klo %H:%M:%S"
+      long: "%Y-%m-%d %H:%M:%S"
     am: "am"
     pm: "pm"
