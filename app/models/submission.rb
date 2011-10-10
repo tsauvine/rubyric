@@ -57,8 +57,7 @@ class Submission < ActiveRecord::Base
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
 
-    review = Review.new({:user => user, :submission => self})
-    review.save
+    review = Review.create({:user => user, :submission => self})
 
     return review
   end
@@ -77,7 +76,7 @@ class Submission < ActiveRecord::Base
     user = User.find(user) unless user.is_a?(User)
 
     # Remove other reviewers
-    Review.delete_all(["submission_id=? AND user_id!=?", id, user.id])
+    Review.delete_all(["submission_id=? AND user_id!=? AND status IS NULL", id, user.id])
 
     # Assign to user if he's not already in the list
     assign_to(user) if reviews.empty?

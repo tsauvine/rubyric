@@ -1,3 +1,28 @@
 fi:
   other_language_name: In English
   other_language_code: en
+  
+  ##############
+  # Time & Date
+  ##############
+  date:
+    formats:
+      # Use the strftime parameters for formats.
+      default: "%d.%m.%Y"
+      short: "%d.%m"
+      long: "%d.%m.%Y"
+    day_names: [sunnuntai, maanantai, tiistai, keskiviikko, torstai, perjantai, lauantai]
+    abbr_day_names: [su, ma, ti, ke, to, pe, la]
+    # Don't forget the nil at the beginning; there's no such thing as a 0th month
+    month_names: [~, Tammikuu, Helmikuu, Maaliskuu, Huhtikuu, Toukokuu, Kes&auml;kuu, Hein&auml;kuu, Elokuu, Syyskuu, Lokakuu, Marraskuu, Joulukuu]
+    abbr_month_names: [~, tammi, helmi, maalis, huhti, touko, kes&auml;, hein&auml;, elo, syys, loka, marras, joulu]
+    # Used in date_select and datime_select.
+    order: [ :year, :month, :day ]
+
+  time:
+    formats:
+      default: "%a %d.%m. klo %H:%M"
+      short: "%d.%m. klo %H:%M"
+      long: "%Y-%m-%d %H:%M:%S"
+    am: "am"
+    pm: "pm"

@@ -48,8 +48,12 @@ class ExercisesController < ApplicationController
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
       @graders << ['= Assistants =', 'assistants']
       @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-      @graders << ['= Students =', 'students']
-      @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
+      
+#       if @exercise.peer_review
+#         @graders << ['= Students =', 'students']
+#         @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
+#       end
+      
       render :action => 'manage'
     else
       # Student's or assistant's view
@@ -91,7 +95,7 @@ class ExercisesController < ApplicationController
     @histograms = []
     
     # All graders
-    histogram = @exercise.grade_distribution()
+    histogram = @exercise.grade_distribution
     total = 0
     histogram.each { |pair| total += pair[1] }
     @histograms << {:grader => 'All', :histogram => histogram, :total => total}
@@ -240,154 +244,83 @@ class ExercisesController < ApplicationController
       format.xml  { head :ok }
     end
   end
-
-  # Mails selected submissions and reviews
-  def send_selected_reviews
-    @exercise = Exercise.find(params[:eid])
+  
+  # Create example submissions
+  def create_submissions
+    @exercise = Exercise.find(params[:id])
     load_course
-
-    # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
-
-    # Iterate through submissions checkboxes
-    if params[:submissions_checkboxes]
-      params[:submissions_checkboxes].each do |id, value|
-        next unless value == '1'
-        submission = Submission.find(id) if value == '1'
-
-        # Send all reviews
-        submission.reviews.each do |review|
-          logger.info("sending review #{review.id}")
-          Mailer.deliver_review(review) if review && (review.status == 'finished' || review.status == 'mailed')
-        end
-      end
-    end
-
-    # Iterate through reviews checkboxes
-    if params[:reviews_checkboxes]
-      params[:reviews_checkboxes].each do |id, value|
-        next unless value == '1'
-        review = Review.find(id)
-        logger.info("sending review #{review.id}")
-        Mailer.deliver_review(review) if review && (review.status == 'finished' || review.status == 'mailed')
-      end
-    end
-
-    render :partial => 'group', :collection => @exercise.groups
+    
+    access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    @exercise.create_example_submissions
+    
+    redirect_to @exercise
   end
 
-  # Removes selected submissions and reviews
-  def remove_selected_submissions
-    @exercise = Exercise.find(params[:eid])
+  
+  def assign
+    @exercise = Exercise.find(params[:id])
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    # Iterate through submissions checkboxes
+    # Get ids of selected submissions
+    submission_ids = []
     if params[:submissions_checkboxes]
       params[:submissions_checkboxes].each do |id, value|
-        Submission.destroy(id) if value == '1'
+        submission_ids << Integer(id) if value == '1'
       end
     end
-
-    # Iterate through reviews checkboxes
+    
+    #Review.where(:submission_id => submission_ids, :status => ['finished', 'mailed']).select(:id).each do |review|
+    #  review_ids << review.id
+    #end
+    
+    # Get ids of selected reviews
+    review_ids = []
     if params[:reviews_checkboxes]
       params[:reviews_checkboxes].each do |id, value|
-        Review.destroy(id) if value == '1'
+        review_ids << Integer(id) if value == '1'
       end
     end
+    
+    if params[:assign]
+      # Assign
+      if params[:assistant] == 'assistants'
+        @exercise.assign(submission_ids, @course_instance.assistant_ids)
+      elsif params[:assistant] == 'students'
+        @exercise.assign(submission_ids, @course_instance.student_ids)
+      else
+        @exercise.assign(submission_ids, [Integer(params[:assistant])])
+      end
+      
+      redirect_to @exercise
+    elsif params[:mail]
+      if review_ids.empty?
+        flash[:error] = "No reviews were selected. Make sure to select reviews, not submissions."
+        
+        redirect_to @exercise
+      else
+        # Update status
+        Review.update_all("status='mailing'", :id => review_ids, :status => ['finished', 'mailed'])
+        
+        # Send reviews with delayed job
+        Exercise.delay.deliver_reviews(review_ids) unless review_ids.empty?
+        
+        flash[:success] = "Reviews will be mailed shortly. Status of the reviews will be updated to 'mailed' after they have been sent."
 
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-
-  # Assigns selected submissions to the selected user
-  def assign_submissions
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
-
-    # Select checked submissions
-    submissions = Array.new
-    params[:submissions_checkboxes].each do |id, value|
-      submissions << Submission.find(id) if value == '1'
-    end
-
-    exclusive = params[:exclusive] == 'true'
-
-    # Assign
-    if (params[:assistant] == 'assistants')
-      @exercise.assign(submissions, @course_instance.assistants, exclusive)
-    elsif (params[:assistant] == 'students')
-      @exercise.assign(submissions, @course_instance.students, exclusive)
+        redirect_to @exercise
+      end
+    elsif params[:delete]
+      Review.destroy(review_ids)
+      
+      redirect_to @exercise
     else
-      @exercise.assign(submissions, [User.find(params[:assistant])], exclusive)
+      redirect_to @exercise
     end
-
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-
-  # Assign selected submissions to the exclusively to the selected user.
-  # Existing reviews are deleted.
-  def assign_submissions_exclusive
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
-
-    params[:submissions_checkboxes].each do |id, value|
-      if value == '1' && !params[:assistant].empty?
-        logger.info("Assigning to #{params[:assistant]}")
-        Submission.find(id).assign_to_exclusive(params[:assistant])
-      end
-    end
-
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-  def assign_assistants_randomly
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
-
-    @exercise.assign_assistants_evenly
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-  def assign_assistants_evenly
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
-
-    @exercise.assign_assistants_evenly
-    render :partial => 'group', :collection => @exercise.groups
+    
+    #render :partial => 'group', :collection => @exercise.groups
   end
 
   def batch_assign
