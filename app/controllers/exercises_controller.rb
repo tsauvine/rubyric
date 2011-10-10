@@ -76,7 +76,7 @@ class ExercisesController < ApplicationController
       return
     end
 
-    @groups = @exercise.groups
+    @groups = Group.find_all_by_exercise_id(@exercise.id, :include => [:users, {:submissions => {:reviews => :user}}], :order => 'name, id')
   end
   
   def statistics
