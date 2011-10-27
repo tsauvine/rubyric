@@ -14,7 +14,7 @@ div.page {
 }
 
 div.content {
-  margin: 0em 0em 0em 16em;
+  margin: 0em 0em 1em 16em;
 }
 
 div.content-wide {
@@ -216,7 +216,7 @@ div.login a {
 /*************
  * Left navi
  *************/
- 
+
 .leftNavi {
   float: left;
   width: 14em;
