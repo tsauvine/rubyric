@@ -31,6 +31,14 @@ td.trash {
   text-align: right;
 }
 
+div.float {
+  float: left;
+  margin: 0em 1em 1em 0em;
+}
+
+div.float > h1:first-child, div.float > h2:first-child, div.float > h3:first-child {
+  margin-top: 0px;
+}
 
 div.clear {
   clear: both;

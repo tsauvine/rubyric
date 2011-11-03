@@ -57,8 +57,7 @@
           <%= select_tag 'assistant', options_for_select(@graders, :selected => nil) %>
           <%= submit_tag 'Assign', :name => 'assign' %>
           </p>
-          <p><%= # link_to 'Batch assign', exercise_batch_assign_path(@exercise) 
-          %></p>
+          <p><%= link_to 'Batch assign', batch_assign_exercise_path(@exercise) %></p>
         </td>
         <td>
           <p><%= submit_tag 'Mail selected reviews', :name => 'mail', :confirm => 'Feedback mails will be sent to the students.' %></p>
