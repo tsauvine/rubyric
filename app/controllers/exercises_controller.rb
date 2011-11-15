@@ -48,12 +48,12 @@ class ExercisesController < ApplicationController
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
       @graders << ['= Assistants =', 'assistants']
       @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-      
+
 #       if @exercise.peer_review
 #         @graders << ['= Students =', 'students']
 #         @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
 #       end
-      
+
       render :action => 'manage'
     else
       # Student's or assistant's view
@@ -78,34 +78,34 @@ class ExercisesController < ApplicationController
 
     @groups = Group.find_all_by_exercise_id(@exercise.id, :include => [:users, {:submissions => {:reviews => :user}}], :order => 'name, id')
   end
-  
+
   def statistics
     @exercise = Exercise.find(params[:id])
     load_course
-    
+
     # Authorization
     unless @course.has_teacher(current_user) || is_admin?(current_user)
       flash[:error] = "You are not allowed to view statistics"
       redirect_to @course
       return
     end
-    
+
     graders = @course.teachers + @course_instance.assistants
 
     @histograms = []
-    
+
     # All graders
     histogram = @exercise.grade_distribution
     total = 0
     histogram.each { |pair| total += pair[1] }
     @histograms << {:grader => 'All', :histogram => histogram, :total => total}
-    
+
     # Each grader
     graders.each do |grader|
       histogram  = @exercise.grade_distribution(grader)
       total = 0
       histogram.each { |pair| total += pair[1] }
-       
+
       @histograms << {:grader => grader.name, :histogram => histogram, :total => total}
     end
   end
@@ -145,7 +145,7 @@ class ExercisesController < ApplicationController
     file = params[:xml][:file] if params[:xml] && params[:xml][:file]
 
     # Check that a file is uploaded
-    unless [ActionController::UploadedStringIO, ActionController::UploadedTempfile].include?(file.class) and file.size.nonzero?
+    if file.nil?
       return
     end
 
@@ -244,20 +244,20 @@ class ExercisesController < ApplicationController
       format.xml  { head :ok }
     end
   end
-  
+
   # Create example submissions
   def create_submissions
     @exercise = Exercise.find(params[:id])
     load_course
-    
+
     access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     @exercise.create_example_submissions
-    
+
     redirect_to @exercise
   end
 
-  
+
   def assign
     @exercise = Exercise.find(params[:id])
     load_course
@@ -272,11 +272,11 @@ class ExercisesController < ApplicationController
         submission_ids << Integer(id) if value == '1'
       end
     end
-    
+
     #Review.where(:submission_id => submission_ids, :status => ['finished', 'mailed']).select(:id).each do |review|
     #  review_ids << review.id
     #end
-    
+
     # Get ids of selected reviews
     review_ids = []
     if params[:reviews_checkboxes]
@@ -284,7 +284,7 @@ class ExercisesController < ApplicationController
         review_ids << Integer(id) if value == '1'
       end
     end
-    
+
     if params[:assign]
       # Assign
       if params[:assistant] == 'assistants'
@@ -294,32 +294,32 @@ class ExercisesController < ApplicationController
       else
         @exercise.assign(submission_ids, [Integer(params[:assistant])])
       end
-      
+
       redirect_to @exercise
     elsif params[:mail]
       if review_ids.empty?
         flash[:error] = "No reviews were selected. Make sure to select reviews, not submissions."
-        
+
         redirect_to @exercise
       else
         # Update status
         Review.update_all("status='mailing'", :id => review_ids, :status => ['finished', 'mailed'])
-        
+
         # Send reviews with delayed job
         Exercise.delay.deliver_reviews(review_ids) unless review_ids.empty?
-        
+
         flash[:success] = "Reviews will be mailed shortly. Status of the reviews will be updated to 'mailed' after they have been sent."
 
         redirect_to @exercise
       end
     elsif params[:delete]
       Review.destroy(review_ids)
-      
+
       redirect_to @exercise
     else
       redirect_to @exercise
     end
-    
+
     #render :partial => 'group', :collection => @exercise.groups
   end
 
@@ -340,7 +340,7 @@ class ExercisesController < ApplicationController
       flash[:success] = "#{counter} new assignments"
       redirect_to @exercise
     end
-    
+
     if params[:csv] && params[:csv][:file]
       counter = @exercise.batch_assign(params[:csv][:file].read)
       flash[:success] = "#{counter} new assignments"
@@ -357,7 +357,7 @@ class ExercisesController < ApplicationController
      redirect_to @course
      return
     end
-    
+
     tempfile = @exercise.archive(:only_latest => true)
     send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
   end
