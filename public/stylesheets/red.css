@@ -422,6 +422,15 @@ table.histogram td {
   padding: .1em .5em;
 }
 
+table.users td {
+  padding-right: 1em;
+  border-bottom: 1px solid #eee;
+}
+
+table.users td:first-child {
+  padding-right: 0.2em;
+}
+
 /***********************************
  * Feedback editor (assistant view)
  ***********************************/

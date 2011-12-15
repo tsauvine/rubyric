@@ -1,6 +1,6 @@
 <tr id="user<%= user.id %>">
   <td><%= check_box_tag("selector#{user.id}", value = '1', false, {:class => 'check'}) %>
-  <td><%= link_to h(user.studentnumber), edit_user_path(user.id) %></td>
-  <td><%= link_to h(user.name), edit_user_path(user.id), :title => 'Edit' %></td>
-  <!-- td><%= link_to_remote image_tag('trash.png', :alt => 'Destroy'), :url => { :action => 'remove_user', :uid => user.id, :iid => iid }, :confirm => 'Are you sure?', :html => {:class => 'trash'} %></td -->
+  <td><%= h(user.studentnumber) %></td>
+  <td><%= h(user.name) %></td>
+  <td><%= h(user.email) %></td>
 </tr>

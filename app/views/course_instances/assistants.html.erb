@@ -5,7 +5,7 @@
 <% form_remote_tag :update => 'user_table', :url => {:action => 'remove_selected_assistants'}, :html => { :id => 'user_form' } do -%>
   <%= hidden_field_tag :course_instance_id, @course_instance.id %>
 
-  <table id="user_table">
+  <table id="user_table" class="users">
     <% if @course_instance.assistants.empty? %>
       <tr><td>No teaching assistants</td></tr>
     <% end %>
