@@ -32,10 +32,10 @@
   <% end %>
 </table>
 
-<p>
+<!--p>
   <%= link_to 'Save as XML', download_exercise_rubric_path(@exercise) %>
   <%= link_to 'Load XML', upload_exercise_rubric_path(@exercise) %>
-</p>
+</p-->
 
 <div id="rubric" class="rubric rubric-editor">
   <!-- render :partial => 'rubric', :object => @exercise -->
@@ -50,6 +50,7 @@
         <span class="delete-criterion-button" id="delete-criterion-<%= item.id %>" data-target-id="criterion-container-<%= item.id %>">
           <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
         </span>
+        <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
       </h3>
 
       <!-- Grading options -->
@@ -74,8 +75,13 @@
           <tbody>
             <% item.phrases.each do |phrase|%>
               <tr>
+                <td class="phraseType">
+                  <select class="phraseType" id="phraseType<%= phrase.id %>">
+                    <%= options_for_select(['Good', 'Bad', 'Neutral'], phrase.feedbacktype ) %>
+                  </select>
+                </td>
                 <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>"><%= h(phrase.content).gsub(/\n|\r/, '<br />') %></td>
-                <td>
+                <td class="buttons">
                   <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase', :class => 'edit-phrase-button' %>
                   <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase', :class => 'delete-phrase-button' %>
                   <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
@@ -83,21 +89,16 @@
               </tr>
             <% end %>
           </tbody>
-          <tfoot>
-            <tr>
-              <td>
-                <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-#{item.id}" %>
-                <i>Add phrase</i>
-              </td>
-              <td></td>
-            </tr>
-          </tfoot>
         </table>
-        
+
+        <div class="add-phrase">
+          <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-#{item.id}" %>
+          Add phrase
+        </div>
       </div>
     </div>
   <% end %>
-  
+
   <h3><%= image_tag 'create.png' %> <i>Add criterion</i></h3>
 
 </div>

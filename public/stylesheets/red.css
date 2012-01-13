@@ -232,7 +232,7 @@ div.login a {
 /*************
  * Left navi
  *************/
- 
+
 .leftNavi {
   float: left;
   width: 14em;
@@ -452,11 +452,13 @@ table.histogram td {
  * Feedback editor (assistant view)
  ***********************************/
 
+.rubric table.phrases, .rubric-editor .add-phrase {
+  font-size: .8em;
+}
+
 .rubric table.phrases {
   background: #F8F8F8;
   width: 100%;
-  font-size: .8em;
-/*  clear: both;*/
   margin: 0em 0em 0em 0em;
 }
 
@@ -763,16 +765,36 @@ p.feedback-preview {
 
 .rubric-editor .phrases td {
   border-bottom: 1px solid #808080;
+  border-right: none;
+  border-left: none;
   padding: 1px;
 }
+
+.rubric-editor .add-phrase {
+  visibility: hidden;
+}
+
+.rubric-editor td.phraseType {
+  width: 6em;
+  text-align: center;
+}
+
+.rubric-editor select.phraseType {
+  width: 5em;
+}
+
+.rubric-editor .criterion:hover .add-phrase {
+  visibility: visible;
+}
+
 
 .rubric-editor textarea {
 
 }
 
 .rubric-editor td.buttons {
-  width: 100px;
-  text-align: right;
+  width: 80px;
+  text-align: center;
 }
 
 .rubric-editor td.type-selection {

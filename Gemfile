@@ -26,7 +26,7 @@ gem 'pg'
 gem 'acts_as_list'
 gem 'authlogic'
 gem 'shoulda'
-gem "delayed_job", :git => 'git://github.com/collectiveidea/delayed_job.git'
+gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
 
 # Bundle gems for the local environment. Make sure to
 # put test-only gems in this group so their generators
