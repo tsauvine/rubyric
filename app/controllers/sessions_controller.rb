@@ -45,19 +45,29 @@ class SessionsController < ApplicationController
       # Login must be null, otherwise the account may belong to someone else.
       user = User.find_by_studentnumber(shibinfo[:studentnumber], :conditions => "login IS NULL")
     end
-    
+
     # Aalto migration
     if !user
       new_parts = shibinfo[:login].split('@')
       new_login = new_parts[0]
       new_domain = new_parts[1]
-      
+
       if new_domain == 'aalto.fi'
         user = User.find_by_login(new_login + '@hut.fi')
-        
+        #user = User.find(:first, :conditions => ["studentnumber = ? AND login LIKE '%hut.fi'", shibinfo[:studentnumber]])
+
         if user
           logger.info("Aalto migration #{user.login} -> #{new_login}@aalto.fi (id #{user.id})")
           user.login = new_login + '@aalto.fi'
+        else
+          # No HUT user was found with the same username. Check if one exists with the same studentnumber.
+          # Otherwise, we may try to create a new account with an existing studentnumber, which will not pass validation.
+          # This scenario happens if a student has a different username in Aalto than in HUT.
+          old_user = User.find(:first, :conditions => ["studentnumber = ? AND login LIKE '%hut.fi'", shibinfo[:studentnumber]])
+          if old_user
+            old_user.studentnumber += 'hut'
+            old_user.save
+          end
         end
       end
     end

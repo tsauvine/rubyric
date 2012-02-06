@@ -1,4 +1,4 @@
-div.shibboleth-login, div.shibboleth-login {
+div.shibboleth-login {
   /*
   border: 2px solid black;
   -moz-border-radius: 12px;
@@ -15,7 +15,7 @@ div.shibboleth-login a {
   -moz-border-radius: 12px;
   -webkit-border-radius: 12px;
   padding: 10px;
-  
+
   font-size: larger;
   margin: 1em 2em 1em 0em;
   text-decoration: none;
@@ -34,7 +34,7 @@ div.shibboleth-login .hint {
 }
 
 div.traditional-login {
-  
+
 }
 
 
