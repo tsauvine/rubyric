@@ -9,7 +9,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :submissions, :member => ['review']
   map.resources :reviews
   map.resources :feedbacks
-  map.resources :infos, :only => [:show]
+  map.resources :info, :only => [:show]
 
   # The priority is based upon order of creation: first created -> highest priority.
 
