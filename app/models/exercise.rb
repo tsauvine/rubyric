@@ -6,6 +6,7 @@ include REXML
 class Exercise < ActiveRecord::Base
   belongs_to :course_instance
   has_many :groups, :order => 'name, id'
+  has_many :submissions
   has_many :categories, {:dependent => :destroy, :order => 'position'}
 
   validates_presence_of :name
@@ -19,7 +20,7 @@ class Exercise < ActiveRecord::Base
   def assign(submission_ids, user_ids, exclusive = false)
     counter = 0
     n = user_ids.size
-    
+
     users = User.find(user_ids)
     submissions = Submission.find(submission_ids, :conditions => ['exercise_id = ?', self.id])
 
@@ -200,7 +201,7 @@ class Exercise < ActiveRecord::Base
 
     return output
   end
-  
+
   # Returs a grade distribution histogram [[grade,count],[grade,count],...]
   def grade_distribution(grader = nil)
     if grader
@@ -208,13 +209,13 @@ class Exercise < ActiveRecord::Base
     else
       reviews = Review.find(:all, :joins => 'FULL JOIN submissions ON reviews.submission_id = submissions.id ', :conditions => [ 'exercise_id = ?  AND calculated_grade IS NOT NULL', self.id ])
     end
-    
+
     # group reviews by grade  [ [grade,[review,review,...]], [grade,[review,review,...]], ...]
     reviews_by_grade = reviews.group_by{|review| review.calculated_grade}
-    
+
     # count reviews in each bin [ [grade, count], [grade,count], ... ]
     histogram = reviews_by_grade.collect { |grade, stats| [grade,stats.size] }
-    
+
     # sort by grade
     histogram.sort { |x,y| x[0] <=> y[0] }
   end
@@ -223,7 +224,7 @@ class Exercise < ActiveRecord::Base
   # csv: student, assistant
   def batch_assign(csv)
     counter = 0
-    
+
     # Make an array of lines
     array = csv.split(/\r?\n|\r(?!\n)/)
 
@@ -231,62 +232,62 @@ class Exercise < ActiveRecord::Base
       array.each do |line|
         parts = line.split(',',2).map { |s| s.strip }
         next if parts.size < 1
-        
+
         submission_studentnumber = parts[0]
         assistant_studentnumber = parts[1]
-        
+
         # Find submissions that belong to the student
         submissions = Submission.find(:all, :conditions => [ "groups.exercise_id = ? AND users.studentnumber = ?", self.id, submission_studentnumber], :joins => {:group => :users})
         grader = User.find_by_studentnumber(assistant_studentnumber)
-        
+
         next unless grader
-        
+
         # Assign those submissions
         submissions.each do |submission|
           counter += 1 if submission.assign_once_to(grader)
         end
       end
-      
+
       return counter
     end
   end
 
   def archive(options = {})
     only_latest = options.include? :only_latest
-    
+
     archive = Tempfile.new('rubyric-archive')
-    
+
     temp_dir = "/tmp"
-    
+
     # Create the actual content directory so that it has a sensible name in the archive
     content_dir_name = "rubyric-exercise-#{self.id}"
     unless File.directory? "#{temp_dir}/#{content_dir_name}"
       Dir.mkdir "#{temp_dir}/#{content_dir_name}"
     end
-        
+
     # Add contents
     groups.each do |group|
       group.submissions.each do |submission|
-        
+
         # Link the submissionn
         source_filename = submission.full_filename
         target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
         target_filename << ".#{submission.extension}" unless submission.extension.blank?
-        
+
         if File.exist?(source_filename)
           FileUtils.cp(source_filename, target_filename)
         end
-        
+
         # Take only one file per group?
         if only_latest
           break
         end
       end
     end
-        
+
     # Archive the folder
     system("tar -zc --directory #{temp_dir} --file #{archive.path()} #{content_dir_name}")
-    
+
     return archive
   end
 
@@ -294,34 +295,39 @@ class Exercise < ActiveRecord::Base
   def create_example_submissions
     example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
     example_submission_file = nil unless File.exists?(example_submission_file)
-    
+
     submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
     FileUtils.makedirs(submission_path)
-    
+
     # Create groups and submissions
     for i in (1..10)
       group = Group.create(:exercise_id => self.id, :name => "Group #{i}")
-      
+
       user = User.find_by_studentnumber(i.to_s.rjust(5,'0'))
       group.users << user if user
-      
+
       submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
-      
+
       FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file
     end
   end
 
-  
+
   # Will be run in background by delayed job
   def self.deliver_reviews(review_ids)
     # Send all reviews
     reviews = Review.find(:all, :conditions => {:id => review_ids, :status => 'mailing'})
-    
+
     logger.info "Sending #{reviews.size} reviews"
-    
+
     reviews.each do |review|
       Mailer.deliver_review(review)
     end
   end
-  
+
+  def disk_space
+    path = "#{SUBMISSIONS_PATH}/#{self.id}"
+    `du -s #{path}`.split("\t")[0].to_i
+  end
+
 end
