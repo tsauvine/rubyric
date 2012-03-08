@@ -54,6 +54,13 @@ class ExercisesController < ApplicationController
 #         @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
 #       end
 
+      # Count submissions per grader
+      @grader_workload = []
+      (@course.teachers + @course_instance.assistants).each do |grader|
+        count = Review.count(:conditions => ['exercise_id = ? AND user_id = ?', @exercise.id, grader.id], :joins => 'JOIN submissions ON reviews.submission_id = submissions.id')
+        @grader_workload << [grader, count]
+      end
+
       render :action => 'manage'
     else
       # Student's or assistant's view

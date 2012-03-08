@@ -1,9 +1,20 @@
+<tr class="spacer">
+  <td colspan="4"></td>
+</tr>
 <tr class="group" id="group<%= group.id %>">
   <td colspan="4">
     <!-- Students -->
     <%= (group.users.collect do |user| "<span>#{h(user.name)} (#{h(user.studentnumber)})</span>" end).join(', ') %>
   </td>
 </tr>
+<% if group.submissions.empty? %>
+  <tr class="submission">
+    <td>No submissions</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+<% end %>
 <%
 submission_counter = 0
 group.submissions.each do |submission|
