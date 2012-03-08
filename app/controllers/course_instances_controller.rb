@@ -1,6 +1,13 @@
 class CourseInstancesController < ApplicationController
   before_filter :login_required
 
+  def index
+    # Authorize
+    return access_denied unless is_admin?(current_user)
+
+    @course_instances = CourseInstance.all(:order => :created_at)
+  end
+
   # GET /course_instances/1
   def show
     @course_instance = CourseInstance.find(params[:id])

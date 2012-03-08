@@ -1,0 +1,31 @@
+<h2>Course Instances</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Course</th>
+      <th>Instance</th>
+      <th>Year</th>
+      <th>Exercises</th>
+      <th>Students</th>
+      <th>Groups</th>
+      <th>Submissions</th>
+      <th>Disk space</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @course_instances.each do |instance| %>
+      <tr>
+        <td><%= instance.course.code %> <%= instance.course.name %>
+        <td><%= instance.name %></td>
+        <td><%= instance.created_at %></td>
+        <td><%= instance.exercises.size %></td>
+        <td><%= instance.students.size %></td>
+        <td><%= instance.groups_count %></td>
+        <td><%= instance.submissions_count %></td>
+        <td><%= '%.1f' % (instance.disk_space / 1024) %></td>
+      </tr>
+    <% end %>
+
+  </tbody>
+</table>

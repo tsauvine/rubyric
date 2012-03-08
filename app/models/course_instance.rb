@@ -4,9 +4,9 @@ class CourseInstance < ActiveRecord::Base
 
   has_and_belongs_to_many :students, {:class_name => 'User', :join_table => 'course_instances_students', :order => :studentnumber}
   has_and_belongs_to_many :assistants, {:class_name => 'User', :join_table => 'assistants_course_instances', :order => :studentnumber}
-  
+
   validates_presence_of :name
-  
+
   # TODO:
   # attr_accessible :name, :description, :active
 
@@ -123,6 +123,24 @@ class CourseInstance < ActiveRecord::Base
 
     rescue
       return 0
+  end
+
+  def disk_space
+    sum = 0
+    exercises.each {|e| sum += e.disk_space }
+    sum
+  end
+
+  def groups_count
+    sum = 0
+    exercises.each {|e| sum += e.groups.size }
+    sum
+  end
+
+  def submissions_count
+    sum = 0
+    exercises.each {|e| sum += e.submissions.size }
+    sum
   end
 
 end
