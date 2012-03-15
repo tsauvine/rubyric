@@ -1,5 +1,5 @@
 == Install Ruby environment
-# Install ruby and rubygems
+# Install ruby 1.8 and rubygems
 
 
 == Clone the git repository
@@ -18,10 +18,11 @@ cp config/initializers/secret_token.rb.base config/initializers/secret_token.rb
 cp config/initializers/settings.base config/initializers/settings.rb
 cp config/database.yml.base config/database.yml
 
-# Create a database, and put password and username to config/database.yml. Database user must have rights to create databases for the next step to work.
+# Create a database, and put password and username to config/database.yml. The database user must have the privileges to create databases for the next step to work.
 
 # Initialize database (admin/admin user will be created. Remember to change the password.)
 rake db:setup
+
 
 == Start server
 
@@ -29,3 +30,6 @@ rake db:setup
 script/server
 
 # For production, we currently use Phusion Passenger (http://www.modrails.com/)
+
+# Start the background worker that sends the emails
+script/delayed_job start
