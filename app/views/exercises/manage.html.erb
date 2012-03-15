@@ -67,3 +67,24 @@
     </tfoot>
   </table>
 </form>
+
+
+<h2>Workload</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Grader</th>
+      <th>Reviews</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @grader_workload.each do |workload| %>
+      <tr>
+        <td><%= workload[0].name %></td>
+        <td><%= workload[1] %></td>
+      </tr>
+    <% end %>
+  </tbody>
+</table>
+
