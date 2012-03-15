@@ -2,14 +2,14 @@
 # The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
 #
 # Examples:
-#   
+#
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Major.create(:name => 'Daley', :city => cities.first)
 
 # Create admin
 user = User.new(:password => 'admin', :password_confirmation => 'admin', :firstname => 'Admin', :lastname => 'User', :email => '')
 user.login = 'admin'
-user.studentnumber = '12345'
+user.studentnumber = 'admin'
 user.admin = true
 user.save
 
@@ -22,7 +22,7 @@ for i in 1..2 do
   r.password_confirmation = "teacher#{i}"
   r.firstname = 'Teacher'
   r.lastname = i
-  r.email = "student#{i}@example.com"
+  r.email = "teacher#{i}@example.com"
   r.save
 end
 
@@ -56,5 +56,5 @@ end
 
 # Create courses
 course = Course.create(:code => '0.101', :name => 'Test')
-instance = CourseInstance.create(:name => 'Spring 2010', :course => course)
+instance = CourseInstance.create(:name => 'Spring 2012', :course => course)
 exercise = Exercise.create(:name => 'Exercise 1', :course_instance => instance)
