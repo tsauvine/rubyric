@@ -5,7 +5,7 @@
 ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.9' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.14' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
@@ -25,7 +25,7 @@ Rails::Initializer.run do |config|
   # config.gem "bj"
   # config.gem "hpricot", :version => '0.6', :source => "http://code.whytheluckystiff.net"
   # config.gem "aws-s3", :lib => "aws/s3"
-  config.gem "shoulda", :lib => "shoulda"
+  # config.gem "shoulda", :lib => "shoulda"
   config.gem 'delayed_job', :version => '~>2.0.4'
 
   # Only load the plugins named here, in the order given. By default, all plugins
@@ -68,6 +68,9 @@ Rails::Initializer.run do |config|
   # config.active_record.observers = :cacher, :garbage_collector
   #config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '*.yml')]
   #config.i18n.default_locale = :en
+
+  # Uncomment if running Rubyric in a subdirectory
+  # config.action_controller.relative_url_root = '/rubyric'
 end
 
 ActionMailer::Base.delivery_method = :sendmail
