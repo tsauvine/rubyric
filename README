@@ -1,21 +1,22 @@
-== Install Ruby environment
-# Install ruby 1.8 and rubygems
+== Install Ruby and Rails
+
+aptitude install ruby1.8 ruby1.8-dev rubygems
+gem install rake
+gem install -v=2.3.9 rails
+gem install -v=2.0.4 delayed_job
+gem install pg    # or some other database adapter
 
 
 == Clone the git repository
-git clone git@github.com:tsauvine/rubyric.git
+git clone git://github.com/tsauvine/rubyric.git
 
 
 == Install Rubyric
 
 cd rubyric
 
-# Install gems
-rake gems:install
-
 # Configure settings
-cp config/initializers/secret_token.rb.base config/initializers/secret_token.rb
-cp config/initializers/settings.base config/initializers/settings.rb
+cp config/initializers/settings.rb.base config/initializers/settings.rb
 cp config/database.yml.base config/database.yml
 
 # Create a database, and put password and username to config/database.yml. The database user must have the privileges to create databases for the next step to work.
