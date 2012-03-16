@@ -2,9 +2,12 @@
 
 aptitude install ruby1.8 ruby1.8-dev rubygems
 gem install rake
-gem install -v=2.3.9 rails
+gem install -v=2.3.14 rails
 gem install -v=2.0.4 delayed_job
-gem install pg    # or some other database adapter
+
+# Install database adapter (assuming PostgreSQL)
+aptitude install postgresql-server-dev-9.1  # or similar
+gem install pg
 
 
 == Clone the git repository
@@ -19,9 +22,10 @@ cd rubyric
 cp config/initializers/settings.rb.base config/initializers/settings.rb
 cp config/database.yml.base config/database.yml
 
-# Create a database, and put password and username to config/database.yml. The database user must have the privileges to create databases for the next step to work.
+# Create a database, and put password and username to config/database.yml.
 
-# Initialize database (admin/admin user will be created. Remember to change the password.)
+# Initialize database
+# (admin/admin user will be created. Remember to change the password.)
 rake db:setup
 
 
