@@ -128,7 +128,7 @@ div.navibar {
   width: 100%;
   height: 28px;
   font-size: 16px;
-  background: gray url("<%= asset_path 'naviBar.png' %>") repeat-x;
+  background: gray image-url("naviBar.png") repeat-x;
   position: absolute;
   bottom: 0px;
 }
@@ -152,7 +152,7 @@ div.navibar ul a {
   display: block;
   height: 100%;
   color: white;
-  background: url("<%= asset_path 'naviButtonC.png' %>") repeat-x;
+  background: image-url("naviButtonC.png") repeat-x;
   padding: 0px 6px;
   font-size: 12px;
   /* font-variant: small-caps; */
@@ -160,7 +160,7 @@ div.navibar ul a {
 }
 
 div.navibar a:hover {
-  background: url("<%= asset_path 'naviButtonCh.png' %>") repeat-x;
+  background: image-url("naviButtonCh.png") repeat-x;
 }
 
 div.navibar div.lang {
@@ -533,13 +533,13 @@ table.histogram td {
 }
 
 .rubric td.Good:hover {
-  background: url("<%= asset_path 'fbgood.png' %>") right repeat-y;
+  background: image-url("fbgood.png") right repeat-y;
 }
 .rubric td.Bad:hover {
-  background: url("<%= asset_path 'fbbad.png' %>") right repeat-y;
+  background: image-url("fbbad.png") right repeat-y;
 }
 .rubric td.Neutral:hover {
-  background: url("<%= asset_path 'fbneutral.png' %>") right repeat-y;
+  background: image-url("fbneutral.png") right repeat-y;
 }
 
 .rubric .grade {
@@ -889,7 +889,7 @@ p.feedback-preview {
   visibility: hidden;
   text-align: center;
   z-index: 1000;
-  background: url("<%= asset_path 'transparency.png' %>");
+  background: image-url("transparency.png");
 }
 
 
@@ -900,4 +900,3 @@ p.feedback-preview {
   border: 2px solid black;
   padding: 1em;
 }
-

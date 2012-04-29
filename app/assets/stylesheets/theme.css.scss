@@ -1,0 +1,17 @@
+div.topnavi {
+  width: 100%;
+  height: 40px;
+  background: red image-url("navbar.png") repeat-x;
+}
+
+div.topnavi img {
+  margin: 0px 0px 0px 20px;
+}
+
+.leftnavicolumn {
+  border-right: 1px solid gray;
+}
+
+.helpcolumn {
+  border-left: 1px solid gray;
+}
