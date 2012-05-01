@@ -1,90 +1,43 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-       "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-    <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-    <title>Rubyric
-      <%= '- ' + @exercise.name if @exercise %>
-    </title>
-    <%= csrf_meta_tag %>
-    <%= stylesheet_link_tag 'red' %>
-    <%= javascript_include_tag  :defaults %>
-    <%= yield(:javascript) %>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Rubyric
+    <%= '- ' + @exercise.name if @exercise %>
+  </title>
+  <%= csrf_meta_tag %>
+  <%= stylesheet_link_tag "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= yield(:javascript) %>
 </head>
+
 <body>
 
-<div id="header" class="header">
+<%= render :template => 'layouts/top' %>
 
-  <%= image_tag 'rubyric.png', {:alt => 'Rubyric', :id => 'logo'} %>
-
-  <div class="navibar">
-    <ul>
-      <% if !current_user %>
-        <li><%= link_to 'Log In', new_session_path %></li>
-      <% else %>
-        <li><%= link_to 'My preferences', edit_user_path(current_user.id) %></li>
-        <li><%= link_to 'Logout', logout_path %></li>
-      <% end %>
-    </ul>
-  </div>
-
-  <%= image_tag 'ruby.png', {:alt => '', :id => 'ruby'} %>
-</div>
-
-<div>
-  <!-- Breadcrumbs -->
-  <div class="breadcrumbs">
-    <ul>
-      <li class="first"><%= link_to 'Rubyric', root_url %></li>
-      <% if @course && !@course.new_record? %>
-        <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
+<div class="container-fluid">
+  <div class="row-fluid">
+    <!-- Content -->
+    <div class="span10">
+      <!-- Flash messages -->
+      <% if flash[:warning] %>
+        <p class="flash flashWarning"><%= flash[:warning] %></p>
       <% end %>
 
-      <% if @course_instance && !@course_instance.new_record? %>
-        <li>/ <%= link_to "#{@course_instance.name}", @course_instance %></li>
+      <% if flash[:success] %>
+        <p class="flash flashSuccess"><%= flash[:success] %></p>
       <% end %>
 
-      <% if @exercise && !@exercise.new_record? %>
-        <li>/ <%= link_to "#{@exercise.name}", @exercise %></li>
+      <% if flash[:error] %>
+        <p class="flash flashError"><%= flash[:error] %></p>
       <% end %>
-    </ul>
-  </div>
 
-  <!-- Login -->
-  <div class="login">
-    <%
-    user = current_user
-    if user
-    %>
-      <%= link_to "#{h(user.firstname)} #{h(user.lastname)} (#{h(user.studentnumber)})", edit_user_path(user.id) %>
-      <% #= link_to 'Logout', logout_url
-      %>
-    <% end %>
-  </div>
-</div>
+      <%= yield  %>
+    </div>
 
-<div class="clear"></div>
-
-<div class="page">
-  <!--div id="contextHelp">
-  </div-->
-
-  <div class="content-wide">
-    <!-- Flash messages -->
-    <% if flash[:warning] %>
-      <p class="flash flashWarning"><%= h flash[:warning] %></p>
-    <% end %>
-
-    <% if flash[:success] %>
-      <p class="flash flashSuccess"><%= h flash[:success] %></p>
-    <% end %>
-
-    <% if flash[:error] %>
-      <p class="flash flashError"><%= h flash[:error] %></p>
-    <% end %>
-
-    <%= yield  %>
+    <div class="span2 helpcolumn">
+      Help
+    </div>
   </div>
 </div>
 

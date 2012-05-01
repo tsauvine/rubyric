@@ -2,29 +2,29 @@ Rubyric::Application.routes.draw do
   resource :session do
     get 'shibboleth'
   end
-  
+
   resource :frontpage, :only => [:show], :controller => 'frontpage'
-  
+
   resources :users, :only => [:show, :edit, :update]
-  
+
   resources :courses do
     #post 'add_teachers'
     #post 'remove_selected_teachers'
-    
+
     resources :course_instances, :only => [:new, :create, :update]
     resources :teachers, :controller => 'courses/teachers'
   end
-  
+
   resources :course_instances, :only => [:show, :edit, :destroy] do
     resources :students, :controller => 'course_instances/students' do
     end
-    
+
     resources :assistants, :controller => 'course_instances/assistants' do
     end
-    
+
     resources :exercises, :only => [:new, :create, :update]
   end
-  
+
   resources :exercises, :only => [:show, :edit, :destroy] do
     get 'results'
     get 'statistics'
@@ -32,50 +32,50 @@ Rubyric::Application.routes.draw do
     post 'batch_assign'
     get 'archive'
     post 'delete_reviews'
-    
+
     resources :submissions, :controller => 'exercises' do
       collection do
         post :assign
       end
     end
-    
+
     resource :rubric, :only => [:edit] do
       resources :sections, :only => [:edit]
-      
+
       member do
         get 'download'
         get 'upload'
       end
     end
-    
+
     resources :groups
   end
-  
+
   match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
-    
+
   resources :submissions
-  
+
   resources :reviews do
-    member do 
+    member do
       get :finish
-      
+
     end
   end
-  
+
   resources :feedbacks, :only => [:edit]
 
 
   #match '/exercise/new/:instance' => 'exercises#new'
   match '/submit/:exercise' => 'submissions#new', :as => :submit
-  
+
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout
-  
+
   root :to => "frontpage#show"
-  
+
   # Install the default routes as the lowest priority.
   #match ':controller(/:action(/:id(.:format)))'
-  
+
   # The priority is based upon order of creation:
   # first created -> highest priority.
 
