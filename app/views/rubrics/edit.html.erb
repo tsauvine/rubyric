@@ -1,6 +1,8 @@
 <!-- rubric/edit.html.erb -->
 <% content_for :javascript do %>
   <%= javascript_include_tag 'jquery.jeditable' %>
+  <%= javascript_include_tag 'bootstrap-tab' %>
+  <%= javascript_include_tag 'handlebars-1.0.0.beta.6' %>
   <%= javascript_include_tag 'rubricEditor' %>
 <% end %>
 
@@ -14,100 +16,47 @@
 }
 </style>
 
+<script id="criterion-template" type="text/x-handlebars-template">
+<div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
+  <!-- Heading -->
+  <h3>
+    <span class="criterion" id="criterion-name-{{criterionId}}">{{criterionName}}</span>
+    <span class="edit-criterion-button" id="edit-criterion-{{criterionId}}" data-target-id="criterion-name-{{criterionId}}">
+      <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
+    </span>
+    <span class="delete-criterion-button" id="delete-criterion-{{criterionId}}" data-target-id="criterion-container-{{criterionId}}">
+      <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
+    </span>
+    <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
+  </h3>
+
+  <div class="clear"></div>
+
+  <div class="add-phrase">
+    <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-{{criterionId}}" %>
+    Add phrase
+  </div>
+
+</div>
+</script>
+
 <div class="page-header">
-  <h1>Editing rubric</h1>
+  <h1><%= @exercise.name %> - Editing rubric</h1>
 </div>
 
 <div class="tabbable">
-  <ul class="nav nav-tabs">
-    <li<%= ' class="active"'.html_safe unless @section %> data-toggle="tab">
+  <ul id="tabs" class="nav nav-tabs">
+    <li class="active">
       <a href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
     </li>
-
-    <% @exercise.categories.each do |category| %>
-      <% category.sections.each do |section| %>
-        <li<%= ' class="active"'.html_safe if @section && @section.id == section.id %> data-toggle="tab">
-          <a href="#tab<%= section.id %>" data-toggle="tab"><%= section.name %></a>
-        </li>
-      <% end %>
-    <% end %>
+    <li id="create-page-tab">
+      <a href="#" class="btn btn-small" id="create-page"><i class="icon-plus"></i> Create new page</a>
+    </li>
   </ul>
 
-
-  <!--
-  <div class="tab-content">
-  <div class="tab-pane active" id="tab1">
-  -->
-
-
-  <!--p>
-    <%= link_to 'Save as XML', download_exercise_rubric_path(@exercise) %>
-    <%= link_to 'Load XML', upload_exercise_rubric_path(@exercise) %>
-  </p-->
-
-  <div id="rubric" class="rubric rubric-editor">
-    <!-- render :partial => 'rubric', :object => @exercise -->
-    <% @section.items.each do |item| %>
-      <div class="criterion" id="criterion-container-<%= item.id %>" data-id="<%= item.id %>">
-        <!-- Heading -->
-        <h3>
-          <span class="criterion" id="criterion-name-<%= item.id %>"><%= item.name.blank? ? '-' : item.name %></span>
-          <span class="edit-criterion-button" id="edit-criterion-<%= item.id %>" data-target-id="criterion-name-<%= item.id %>">
-            <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
-          </span>
-          <span class="delete-criterion-button" id="delete-criterion-<%= item.id %>" data-target-id="criterion-container-<%= item.id %>">
-            <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
-          </span>
-          <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
-        </h3>
-
-        <!-- Grading options -->
-        <div class="grading-options">
-          <ul>
-            <% item.item_grading_options.each do |grading_option| %>
-              <li id="grade-<%= grading_option.id %>"><%= grading_option.text %>
-                <div class="criterion-grade-buttons">
-                  <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete quality level' %>
-                </div>
-              </li>
-            <% end %>
-          </ul>
-          <%= image_tag 'create.png', :alt => 'Add', :title => 'Add quality level' %>
-        </div>
-
-        <div class="clear"></div>
-
-        <!-- Phrases -->
-        <div class="phrases">
-          <table id="phrases-<%= item.id %>" class="phrases">
-            <tbody>
-              <% item.phrases.each do |phrase|%>
-                <tr>
-                  <td class="phraseType">
-                    <select class="phraseType" id="phraseType<%= phrase.id %>">
-                      <%= options_for_select(['Good', 'Bad', 'Neutral'], phrase.feedbacktype ) %>
-                    </select>
-                  </td>
-                  <td id="phrase-<%= phrase.id %>" class="phrase <%= phrase.feedbacktype %>"><%= h(phrase.content).gsub(/\n|\r/, '<br />') %></td>
-                  <td class="buttons">
-                    <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit phrase', :class => 'edit-phrase-button' %>
-                    <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete phrase', :class => 'delete-phrase-button' %>
-                    <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
-                  </td>
-                </tr>
-              <% end %>
-            </tbody>
-          </table>
-
-          <div class="add-phrase">
-            <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-#{item.id}" %>
-            Add phrase
-          </div>
-        </div>
-      </div>
-    <% end %>
-
-    <h3><%= image_tag 'create.png' %> <i>Add criterion</i></h3>
-
+  <div id="tab-contents" class="tab-content">
+    <div class="tab-pane active" id="tab-settings">
+      General settings
+    </div>
   </div>
 </div> <!-- /tabbable -->
