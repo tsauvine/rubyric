@@ -2,14 +2,18 @@
 
 <!-- Not enrolled -->
 <% if @courses_teacher.size < 1 && @instances_assistant.size < 1 && @instances_student.size < 1 %>
-  <h1 id="enroll-info"><%=t :frontpage_not_enrolled_heading %></h1>
+  <div class="page-header">
+    <h1 id="enroll-info"><%=t :frontpage_not_enrolled_heading %></h1>
+  </div>
 
   <%=t :frontpage_not_enrolled_info_html %>
 <% end %>
 
 <!-- As teacher -->
 <% unless @courses_teacher.empty? %>
-  <h1 id='courses-teacher'><%=t :frontpage_courses_teacher_heading %></h1>
+  <div class="page-header">
+    <h1 id='courses-teacher'><%=t :frontpage_courses_teacher_heading %></h1>
+  </div>
 
   <table>
     <% @courses_teacher.each do |course| %>
@@ -26,7 +30,7 @@
       </tr>
     <% end %>
   </table>
-  
+
   <p><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'new' %></p>
 <% end %>
 
