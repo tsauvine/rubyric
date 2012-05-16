@@ -4,7 +4,7 @@ ActionController::Routing::Routes.draw do |map|
   map.resources :groups
   map.resources :courses
   map.resources :course_instances, :except => [:index]
-  map.resources :exercises, :member => ['assign','results','statistics','batch_assign','create_submissions']
+  map.resources :exercises, :member => ['assign','results','statistics','batch_assign','create_submissions','assignments']
   map.resources :rubrics
   map.resources :submissions, :member => ['review']
   map.resources :reviews

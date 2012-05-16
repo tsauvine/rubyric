@@ -369,4 +369,23 @@ class ExercisesController < ApplicationController
     send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
   end
 
+  def assignments
+    @exercise = Exercise.find(params[:id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    @assignments = {}  # {group => [graders], gropu => [graders]}
+    @exercise.groups.each do |group|
+      graders = Set.new
+      group.submissions.each do |submission|
+        submission.reviews.each do |review|
+          graders << review.user
+        end
+      end
+
+      @assignments[group] = graders
+    end
+  end
+
 end
