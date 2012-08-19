@@ -16,28 +16,76 @@
 }
 </style>
 
+<script id="page-template" type="text/x-handlebars-template">
+<div class='tab-pane' id='page-{{id}}'>
+  <h2>{{name}}</h2>
+
+  <div class="rubric rubric-editor" id='rubric-{{id}}'>
+  </div>
+
+  <!-- Create criterion -->
+  <div class="btn create-criterion-button" data-page-id="{{id}}">
+    <i class="icon-plus"></i> Create new criterion
+  </div>
+</div>
+</script>
+
 <script id="criterion-template" type="text/x-handlebars-template">
 <div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
   <!-- Heading -->
   <h3>
     <span class="criterion" id="criterion-name-{{criterionId}}">{{criterionName}}</span>
-    <span class="edit-criterion-button" id="edit-criterion-{{criterionId}}" data-target-id="criterion-name-{{criterionId}}">
-      <%= image_tag 'edit.png', :alt => 'Edit', :title => 'Edit criterion' %>
-    </span>
-    <span class="delete-criterion-button" id="delete-criterion-{{criterionId}}" data-target-id="criterion-container-{{criterionId}}">
-      <%= image_tag 'trash.png', :alt => 'Delete', :title => 'Delete criterion' %>
-    </span>
-    <%= image_tag 'updown.png', :alt => 'Move', :title => 'Drag to move phrase' %>
+    <i class="icon-pencil edit-criterion-button" title="Edit criterion" id="edit-criterion-{{criterionId}}" data-target-id="criterion-name-{{criterionId}}"></i>
+    <i class="icon-trash delete-criterion-button" title="Delete criterion" id="delete-criterion-{{criterionId}}" data-target-id="criterion-container-{{criterionId}}"></i>
+    <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
   </h3>
 
   <div class="clear"></div>
 
-  <div class="add-phrase">
-    <%= image_tag 'create.png', :alt => 'Add phrase', :title => 'Add phrase', :class => 'create-phrase-button', 'data-target-id' => "phrases-{{criterionId}}" %>
-    Add phrase
-  </div>
+  <!-- Phrases -->
+  <div class="phrases">
+    <table class="phrases">
+      <tbody id="phrases-{{criterionId}}">
+        {{#each phrases}}
+          <tr>
+            <td class="phraseType">
+              <select class="phraseType" id="phraseType-{{id}}">
+                <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
+              </select>
+            </td>
+            <td id="phrase-{{id}}" class="phrase">{{content}}</td>
+            <td class="buttons">
+              <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
+              <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
+              <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
+            </td>
+          </tr>
+        {{/each}}
+      </tbody>
+    </table>
 
+    <!-- Create phrase -->
+    <div class="btn create-phrase-button" data-criterion-id="{{criterionId}}">
+      <i class="icon-plus"></i> Create new phrase
+    </div>
+  </div>
 </div>
+</script>
+
+<script id="phrase-template" type="text/x-handlebars-template">
+<tr>
+  <td class="phraseType">
+    <select class="phraseType" id="phraseType-{{id}}">
+      <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
+    </select>
+  </td>
+  <td id="phrase-{{id}}" class="phrase">{{content}}</td>
+  <td class="buttons">
+    <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
+    <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
+    <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
+  </td>
+</tr>
 </script>
 
 <div class="page-header">

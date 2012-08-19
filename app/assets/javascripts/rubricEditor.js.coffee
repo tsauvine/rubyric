@@ -3,65 +3,161 @@
 # phrases_clipboard = [];
 # phrase_types_clipboard = [];
 
+class Page
+  constructor: (@rubricEditor, @id) ->
+    @criteria = []
+
+  initializeDefault: () ->
+    @name = 'New page'
+    criterionId = @rubricEditor.nextCriterionId()
+    criterion = new Criterion(@rubricEditor, criterionId)
+    @rubricEditor.criteriaById[criterionId] = criterion
+    @criteria.push(criterion)
+    criterion.initializeDefault()
+
+  createDom: () ->
+    html = @rubricEditor.pageTemplate({id: @id, name: @name})
+    root = $(html)
+    rubric = root.find('.rubric')
+
+    for criterion in @criteria
+      rubric.append(criterion.createDom())
+
+    return root
+
+
+class Criterion
+  constructor: (@rubricEditor, @id) ->
+    @name = ''
+    @phrases = []
+    @editorActive = false
+
+  initializeDefault: () ->
+    @name = 'Criterion'
+    #@phrases.push(new Phrase(@rubricEditor, @rubricEditor.nextPhraseId(), "What went well"))
+    #@phrases.push(new Phrase(@rubricEditor, @rubricEditor.nextPhraseId(), "What could be improved"))
+
+  createDom: () ->
+    dom = $(@rubricEditor.criterionTemplate({criterionId: @id, criterionName: @name, phrases: [{id: 1, content: "Kukkuu"}]}))
+    @nameElement = dom.find('span.criterion')
+    @nameElement.click($.proxy(@activateEditor, this))
+
+    return dom
+
+  activateEditor: ->
+    console.log "Activate Criterion editor"
+
+    return if @editorActive || !@nameElement
+    @editorActive = true
+
+    okButton = $("<button>OK</button>")
+    cancelButton = $("<button>Cancel</button>")
+    @textfield = $("<input type='text' value='#{@name}' />")
+
+    okButton.click($.proxy(@save, this))
+    cancelButton.click($.proxy(@closeEditor, this))
+
+    @nameElement.empty()
+    @nameElement.append(@textfield)
+    @nameElement.append(okButton)
+    @nameElement.append(cancelButton)
+
+    @textfield.focus()
+
+  closeEditor: ->
+    console.log "Close Criterion editor"
+
+    return unless @nameElement
+    @nameElement.html(@name)
+    @editorActive = false
+
+  save: ->
+    console.log "Save Criterion"
+    @name = @textfield.val() if @textfield
+
+    this.closeEditor()
+
+class Phrase
+  constructor: (@rubricEditor, @id, @content) ->
+    @content = '' unless @content
+    @editorActive = false
+
+  createDom: () ->
+    dom = $(@rubricEditor.phraseTemplate({id: @id, content: @content}))
+    @tdElement = dom.find("td.phrase")
+    @tdElement.click($.proxy(@activateEditor, this))
+
+    return dom
+
+  activateEditor: ->
+    return if @editorActive || !@tdElement
+
+    @editorActive = true
+
+    okButton = $("<button>OK</button>")
+    cancelButton = $("<button>Cancel</button>")
+    @textarea = $("<textarea rows='3'>#{@content}</textarea><br />")
+
+    okButton.click($.proxy(@savePhrase, this))
+    cancelButton.click($.proxy(@closeEditor, this))
+
+    @tdElement.empty()
+    @tdElement.append(@textarea)
+    @tdElement.append(okButton)
+    @tdElement.append(cancelButton)
+
+    @textarea.focus()
+
+  closeEditor: ->
+    return unless @tdElement
+    @tdElement.html(@content)
+    @editorActive = false
+
+  savePhrase: ->
+    @content = @textarea.val() if @textarea
+
+    this.closeEditor()
+
+
 class RubricEditor
 
-  class Page
-    constructor: (@rubricEditor, @id) ->
-      @criteria = []
-
-    initializeDefault: () ->
-      @name = 'New page'
-      criterion = new Criterion(@rubricEditor, @rubricEditor.nextCriterionId())
-      @criteria.push(criterion)
-      criterion.initializeDefault()
-
-    createDom: () ->
-      root = $("<div class='tab-pane' id='tab-#{@id}'><h2>#{@name}</h2></div>")
-
-      for criterion in @criteria
-        root.append(criterion.createDom())
-
-      return root
-
-
-  class Criterion
-    constructor: (@rubricEditor, @id) ->
-      @phrases = []
-
-    initializeDefault: () ->
-      @name = 'Criterion'
-      @phrases.push(new Phrase(@rubricEditor, @rubricEditor.nextPhraseId(), "What went well"))
-      @phrases.push(new Phrase(@rubricEditor, @rubricEditor.nextPhraseId(), "What could be improved"))
-
-
-    createDom: () ->
-      html = @rubricEditor.criterionTemplate({criterionId: @id})
-
-      #root = $("<div><h2>#{@name}</h2></div>")
-
-      #for phrase in @phrases
-      #  root.append(phrase.createDom())
-
-      #return root
-
-  class Phrase
-    constructor: (@rubricEditor, @id, @text) ->
-
-    createDom: () ->
-
-
-
   constructor: () ->
-    # Handlebar templates
-    @criterionTemplate = Handlebars.compile($("#criterion-template").html());
+    @phraseEditableParams = {
+      type: 'textarea',
+      rows: 3,
+      onblur: 'ignore',
+      submit: 'Save',
+      cancel: 'Cancel'
+    }
 
-    # Register event listeners
-    $('#create-page').click($.proxy(@createPage, this))
+    # Handlebar templates
+    @pageTemplate = Handlebars.compile($("#page-template").html());
+    @criterionTemplate = Handlebars.compile($("#criterion-template").html());
+    @phraseTemplate = Handlebars.compile($("#phrase-template").html());
 
     @pages = []
+
+    # Indexes
+    @pagesById = {}
+    @criteriaById = {}
+    @phrasesById = {}
+
     @pageIdCounter = 0
     @criterionIdCounter = 0
     @phraseIdCounter = 0
+
+    # Register event listeners
+    $('#create-page').click($.proxy(@pageCreate, this))
+
+#     $(".edit-criterion-button").live('click', $.proxy(@criterionEdit, this))
+    $(".create-criterion-button").live('click', $.proxy(@criterionCreate, this))
+#     $(".delete-criterion-button").live('click', $.proxy(@criterionDelete, this))
+#
+    $(".create-phrase-button").live('click', $.proxy(@phraseCreate, this))
+#     $(".edit-phrase-button").live('click', $.proxy(@phraseEdit, this))
+#     $(".delete-phrase-button").live('click', $.proxy(@phraseDelete, this))
+
+
 
   nextPageId: () ->
     return @pageIdCounter++
@@ -74,22 +170,6 @@ class RubricEditor
 
 
   registerListeners: ->
-    phraseEditableParams = {
-      type: 'textarea',
-      rows: 3,
-      onblur: 'ignore',
-      submit: 'Save',
-      cancel: 'Cancel'
-    }
-
-    $(".edit-criterion-button").click(rubricEditorView.criterionEdit)
-    $(".delete-criterion-button").click(rubricEditorView.criterionDelete)
-    $(".create-criterion-button").click(rubricEditorView.criterionCreate)
-
-    $(".create-phrase-button").live('click', rubricEditorView.phraseCreate)
-    $(".edit-phrase-button").live('click', rubricEditorView.phraseEdit)
-    $(".delete-phrase-button").live('click', rubricEditorView.phraseDelete)
-
     $("td.phrase").editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams)
 
     $("span.criterion").editable(rubricEditorView.phraseSave, {
@@ -126,46 +206,74 @@ class RubricEditor
       tolerance: 'pointer'
     })
 
-
-  #
-  # Creates a new rubric page
-  #
-  createPage: ->
-    page = new Page(this, this.nextPageId())
-    page.initializeDefault()
-    @pages.push(page)
-
-    # Add tab
-    $('#create-page-tab').before("<li><a href='#tab-#{page.id}' data-toggle='tab'>#{page.name}</a></li>")
-
-    # Add tab content
-    $('#tab-contents').append(page.createDom())
-
-
   #
   # Loads rubric by AJAX
   #
   load: (url) ->
 
+  #
+  # Creates a new rubric page
+  #
+  pageCreate: ->
+    pageId = this.nextPageId()
+    page = new Page(this, pageId )
+    page.initializeDefault()
+    @pages.push(page)
+    @pagesById[pageId] = page
 
+    # Add tab
+    $('#create-page-tab').before("<li><a href='#page-#{page.id}' data-toggle='tab'>#{page.name}</a></li>")
 
+    # Add tab content
+    $('#tab-contents').append(page.createDom())
+
+  #
+  # Creates a new criterion
+  #
+  criterionCreate: (event) ->
+    pageId = $(event.target).data('page-id')
+
+    # Create criterion object
+    criterionId = this.nextCriterionId()
+    criterion = new Criterion(this, criterionId)
+
+    # Add to index
+    @criteriaById[criterionId] = criterion
+
+    # Add to criterion model
+    page = @pagesById[pageId]
+    page.criteria.push(criterion)
+
+    # Add to DOM
+    rubricDiv = $('#rubric-' + pageId)
+    rubricDiv.append(criterion.createDom())
+
+    criterion.activateEditor()
+
+  #
+  # Creates a new phrase
+  #
   phraseCreate: (event) ->
-    targetId = $(this).data('target-id')
-    phrasesTable = $('#' + targetId)
+    criterionId = $(event.target).data('criterion-id')
 
-    row = $("<tr />")
-    contentTd = $("<td class='phrase' />")
-    buttonsTd = $("<td />")
-    buttons = $("<img src='/images/edit.png' class='edit-phrase-button' /> <img src='/images/trash.png' class='delete-phrase-button'/> <img src='/images/updown.png' class='move-phrase-button' />")
-    buttonsTd.append(buttons)
-    row.append(contentTd)
-    row.append(buttonsTd)
+    # Create phrase object
+    phraseId = this.nextPhraseId()
+    phrase = new Phrase(this, phraseId)
 
-    contentTd.editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams)
+    # Add to index
+    @phrasesById[phraseId] = phrase
 
-    phrasesTable.append(row)
+    # Add to criterion model
+    criterion = @criteriaById[criterionId]
+    criterion.phrases.push(phrase)
 
-    contentTd.trigger('click')
+    # Add to DOM
+    phrasesTable = $('#phrases-' + criterionId)
+    phrasesTable.append(phrase.createDom())
+
+    phrase.activateEditor()
+#     contentTd.editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams)
+#     contentTd.trigger('click')
 
 
   criterionEdit: (event) ->

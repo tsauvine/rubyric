@@ -445,7 +445,11 @@ table.histogram td {
  ***********************************/
 
 .rubric table.phrases, .rubric-editor .add-phrase {
-  font-size: .8em;
+  /*font-size: .8em;*/
+}
+
+.rubric select {
+  margin: 0px;
 }
 
 .rubric table.phrases {
@@ -468,11 +472,13 @@ table.histogram td {
   background: #F0F0FF;
 }*/
 
+/*
 .rubric h3 {
   float: left;
   margin: 0em 2em 2px 0em;
   cursor: pointer;
 }
+*/
 
 .rubric .grading-options {
   margin: 0px 0px 2px 0px;
@@ -556,7 +562,7 @@ table.histogram td {
   width: 100%;
   height: 95%;
   font-family: sans-serif;
-  font-size: .8em;
+  /*font-size: .8em;*/
 }
 
 #textareas p {
@@ -568,7 +574,7 @@ table.histogram td {
 
 .rubricmenu {
   margin-bottom: 2em;
-  font-size: .9em;
+  /*font-size: .9em;*/
 }
 
 .rubricmenu tr.selected {
@@ -586,7 +592,7 @@ table.histogram td {
 }
 
 .rubricmenu .status {
-  font-size: .8em;
+  /*font-size: .8em;*/
   font-variant: small-caps;
 }
 
@@ -629,7 +635,7 @@ p.feedback-preview {
 }
 
 .rubric-editor .weight {
-  font-size: small;
+  /*font-size: small;*/
   color: black;
 }
 
@@ -702,7 +708,7 @@ p.feedback-preview {
 
 .rubric-editor .item .grading-options {
   margin-top: 1em;
-  font-size: .9em;
+  /*font-size: .9em;*/
 }
 
 .rubric-editor .itemGradingOption {
@@ -781,7 +787,7 @@ p.feedback-preview {
 
 
 .rubric-editor textarea {
-
+  width: 100%
 }
 
 .rubric-editor td.buttons {
