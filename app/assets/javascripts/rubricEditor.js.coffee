@@ -24,6 +24,11 @@ class Page
     root = $(html)
     rubric = root.find('.rubric')
 
+    # Criteria are sortable
+    rubric.sortable(
+      # {containment: '#page'}
+    )
+
     for criterion in @criteria
       rubric.append(criterion.createDom())
 
@@ -45,6 +50,17 @@ class Criterion
     dom = $(@rubricEditor.criterionTemplate({criterionId: @id, criterionName: @name, phrases: [{id: 1, content: "Kukkuu"}]}))
     @nameElement = dom.find('span.criterion')
     @nameElement.click($.proxy(@activateEditor, this))
+
+    # Quality levels are sortable
+    #$(".grading-options ul").sortable()
+    #$(".grading-options").sortable({containment: 'parent'})
+
+    # Phrases are sortable
+    dom.find("table.phrases tbody").sortable({
+      #containment: '#rubric',
+      axis: 'y',
+      connectWith: "table.phrases tbody"
+    })
 
     return dom
 
@@ -186,23 +202,6 @@ class RubricEditor
 #       })
 
 #     $(".edit-phrase-button").click($.proxy(@rubricEditorView, this))
-
-    $(".grading-options ul").sortable()
-
-    # Quality levels are sortable
-    $(".grading-options").sortable({containment: 'parent'})
-
-    # Criteria are sortable
-    $("#rubric").sortable(
-      # TODO: {containment: '#page'}
-    )
-
-    # Phrases are sortable
-    $("table.phrases tbody").sortable({
-      containment: '#rubric',
-      axis: 'y',
-      connectWith: "table.phrases tbody"
-    })
 
     # Criteria can be dropped to section links
     $(".section-name").droppable({
