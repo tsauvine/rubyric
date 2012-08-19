@@ -1,4 +1,7 @@
 #= require handlebars-1.0.0.beta.6
+#= require jquery.jeditable
+#= require jquery-ui-1.8.19.custom.min
+#= require bootstrap-tab
 #= require bootstrap-modal
 
 #// require bootstrap-dropdown
@@ -148,17 +151,9 @@ class RubricEditor
     @phraseIdCounter = 0
 
     # Register event listeners
-    $('#create-page').click($.proxy(@pageCreate, this))
-
-#     $(".edit-criterion-button").live('click', $.proxy(@criterionEdit, this))
-    $(".create-criterion-button").live('click', $.proxy(@criterionCreate, this))
-#     $(".delete-criterion-button").live('click', $.proxy(@criterionDelete, this))
-#
-    $(".create-phrase-button").live('click', $.proxy(@phraseCreate, this))
-#     $(".edit-phrase-button").live('click', $.proxy(@phraseEdit, this))
-#     $(".delete-phrase-button").live('click', $.proxy(@phraseDelete, this))
 
 
+    this.registerListeners()
 
   nextPageId: () ->
     return @pageIdCounter++
@@ -171,16 +166,26 @@ class RubricEditor
 
 
   registerListeners: ->
-    $("td.phrase").editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams)
+    $('#create-page').click($.proxy(@pageCreate, this))
 
-    $("span.criterion").editable(rubricEditorView.phraseSave, {
-        type: 'text',
-        onblur: 'ignore',
-        submit: 'Save',
-        cancel: 'Cancel'
-      })
+    $(document).on('click', '.create-criterion-button', $.proxy(@criterionCreate, this))
+    $(document).on('click', '.create-phrase-button', $.proxy(@phraseCreate, this))
+#     $(".edit-criterion-button").live('click', $.proxy(@criterionEdit, this))
+#     $(".delete-criterion-button").live('click', $.proxy(@criterionDelete, this))
+#     $(".edit-phrase-button").live('click', $.proxy(@phraseEdit, this))
+#     $(".delete-phrase-button").live('click', $.proxy(@phraseDelete, this))
 
-    $(".edit-phrase-button").click(rubricEditorView.editPhrase)
+
+#     $("td.phrase").editable(rubricEditorView.phraseSave, rubricEditorView.phraseEditableParams)
+
+#     $("span.criterion").editable(rubricEditorView.phraseSave, {
+#         type: 'text',
+#         onblur: 'ignore',
+#         submit: 'Save',
+#         cancel: 'Cancel'
+#       })
+
+#     $(".edit-phrase-button").click($.proxy(@rubricEditorView, this))
 
     $(".grading-options ul").sortable()
 
@@ -203,7 +208,7 @@ class RubricEditor
     $(".section-name").droppable({
       accept: '.criterion',
       hoverClass: 'dropHover',
-      drop: rubricEditorView.dropCriterionToSection,
+      drop: $.proxy(@dropCriterionToSection, this),
       tolerance: 'pointer'
     })
 
@@ -217,7 +222,7 @@ class RubricEditor
   #
   pageCreate: ->
     pageId = this.nextPageId()
-    page = new Page(this, pageId )
+    page = new Page(this, pageId)
     page.initializeDefault()
     @pages.push(page)
     @pagesById[pageId] = page
