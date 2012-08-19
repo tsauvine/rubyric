@@ -1,9 +1,10 @@
 fi:
   sessions_login_heading: "Kirjaudu"
   sessions_traditional_hint: "Kirjaudu erillisellä Rubyric-tunnuksella (testitunnukset)"
-  sessions_shibboleth_hint: "Kirjaudu kotiyliopiston tunnuksella (WebLogin)"
+  sessions_shibboleth_hint: "Suomalaisten korkeakoulujen käyttäjät voivat kirjautua kotiyliopiston tunnuksilla."
   sessions_login_button: "Kirjaudu"
   sessions_studentnumber_label: "Opiskelijanumero"
   sessions_password_label: "Salasana"
   sessions_remember_label: "Muista minut"
-  
+  sessions_create_account: "Rekisteröidy"
+  sessions_login_failed: "Virheellinen käyttäjänimi tai salasana"

@@ -1,9 +1,10 @@
 en:
   sessions_login_heading: "Login"
   sessions_traditional_hint: "Login using a Rubyric account (test accounts)"
-  sessions_shibboleth_hint: "Log in using the authentication service of your home university (WebLogin)"
+  sessions_shibboleth_hint: "Users from Finnish institutes can log in with HakaLogin"
   sessions_login_button: "Log in"
   sessions_studentnumber_label: "Student number"
   sessions_password_label: "Password"
   sessions_remember_label: "Remember me"
-  
+  sessions_create_account: "Create an account"
+  sessions_login_failed: "Invalid username or password"

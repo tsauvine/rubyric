@@ -1,7 +1,8 @@
-# texts_clipboard = [];
-# points_clipboard = [];
-# phrases_clipboard = [];
-# phrase_types_clipboard = [];
+#= require handlebars-1.0.0.beta.6
+#= require bootstrap-modal
+
+#// require bootstrap-dropdown
+#// require bootstrap-popover
 
 class Page
   constructor: (@rubricEditor, @id) ->

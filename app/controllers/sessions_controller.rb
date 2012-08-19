@@ -16,6 +16,7 @@ class SessionsController < ApplicationController
       redirect_back_or_default root_url
     else
       logger.info "Login failed. #{@session.errors.full_messages.join(',')}"
+      flash[:error] = t('sessions_login_failed')
       render :action => :new
     end
   end
