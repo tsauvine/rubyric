@@ -1,6 +1,8 @@
 <!-- submissions/new.html.erb -->
 
-<h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+</div>
 
 <% unless @exercise.submit_pre_message.blank? %>
   <p><%= @exercise.submit_pre_message %></p>
@@ -12,6 +14,7 @@
     <%= f.hidden_field :group_id, :value => @group.id %>
   <% end %>
 
+  <!-- Group -->
   <% if @exercise.groupsizemax > 1 %>
     <h2>Group members</h2>
     <table>
@@ -38,7 +41,7 @@
         <% end %>
       </tbody>
     </table>
-    
+
     <p>
       <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id) %>
       <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id) %>
@@ -46,9 +49,9 @@
         <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
       <% end %>
     </p>
-    
   <% end %>
 
+  <!-- Submissions -->
   <% if @group && @group.submissions.size > 0 %>
     <h2>Submissions</h2>
     <table>
@@ -61,11 +64,13 @@
     </table>
   <% end %>
 
+  <hr />
+
+  <!-- Upload -->
   <h2>Submit file</h2>
 
   <p><%= file_field_tag 'file' %></p>
 
   <p><%= f.submit 'Submit' %></p>
 
-<% end # form_for
-%>
+<% end %> <!-- /form -->

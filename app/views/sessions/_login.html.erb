@@ -14,7 +14,7 @@
     <%= form_for @session, :as => :session, :url => session_path do |f| %>
       <table>
         <tr>
-          <td style="text-align: right"><%= f.label :email, t(:sessions_email_label) %></td>
+          <td style="text-align: right"><%= f.label :email, 'Email' %></td>
           <td><%= f.text_field :email, :size => 12 %></td>
         </tr>
         <tr>

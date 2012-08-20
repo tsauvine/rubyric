@@ -1,5 +1,3 @@
-# NOTE: Rails must be restarted for changes to take effect. Restart mongrel or kill fcgid.
-
 # sets the upload root, relative to the RAILS_ROOT
 SUBMISSIONS_PATH = "/home/rubyric/submissions"
 
@@ -14,3 +12,14 @@ RUBYRIC_HOST = "rubyric.example.com"
 
 # Authentication
 FORCE_SSL = false
+
+# Shibboleth attribute names (attribute-map.xml)
+SHIB_ATTRIBUTES = {
+  :logout => 'Shib_logout-url',
+  :id => 'Shib_EP_PrincipalName',
+  :studentnumber => 'Shib_schac_PersonalUniqueCode',
+  :firstname => 'Shib_DisplayName',
+  :lastname => 'Shib_sn',
+  :email => 'Shib_mail',
+  :lang => 'Shib_preferredLanguage',
+}

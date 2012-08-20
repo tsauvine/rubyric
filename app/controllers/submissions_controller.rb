@@ -83,7 +83,7 @@ class SubmissionsController < ApplicationController
 
 
     user = current_user
-    unless submission.group
+    unless @submission.group
       if @exercise.groupsizemax <= 1 && current_user
         # Create a group automatically
         @group = Group.new({:course_instance_id => @course_instance.id, :name => user.studentnumber})
@@ -107,6 +107,7 @@ class SubmissionsController < ApplicationController
     end
 
     if @submission.save
+      flash[:success] = 'Submission was received'
       redirect_to submit_path(:exercise => @submission.exercise_id)
     else
       flash[:error] = 'Failed to submit'

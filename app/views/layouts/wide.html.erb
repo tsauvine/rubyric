@@ -21,15 +21,15 @@
     <div class="span10">
       <!-- Flash messages -->
       <% if flash[:warning] %>
-        <p class="flash flashWarning"><%= flash[:warning] %></p>
+        <div class="alert"><%= flash[:warning] %></div>
       <% end %>
 
       <% if flash[:success] %>
-        <p class="flash flashSuccess"><%= flash[:success] %></p>
+        <div class="alert alert-success"><%= flash[:success] %></div>
       <% end %>
 
       <% if flash[:error] %>
-        <p class="flash flashError"><%= flash[:error] %></p>
+        <div class="alert alert-error"><%= flash[:error] %></div>
       <% end %>
 
       <%= yield  %>

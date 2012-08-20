@@ -79,7 +79,7 @@ class Course < ActiveRecord::Base
     FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission2.id}.pdf")
 
     # Assign submission
-    exercise.assign([submission1], [teacher])
+    #exercise.assign([submission1], [teacher])
 
     # Create example rubric
     #exercise.load_xml(File.new(SUBMISSIONS_PATH + '/esimerkki.xml'))

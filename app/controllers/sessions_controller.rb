@@ -40,22 +40,20 @@ class SessionsController < ApplicationController
 
   def shibboleth
     shibinfo = {
-      :login => request.env['HTTP_EPPN'],
-      :studentnumber => (request.env['HTTP_SCHACPERSONALUNIQUECODE'] || '').split(':').last,
-      :firstname => request.env['HTTP_DISPLAYNAME'],
-      :lastname => request.env['HTTP_SN'],
-      :email => request.env['HTTP_MAIL'],
-      :organization => request.env['HTTP_SCHACHOMEORGANIZATION']
+      :login => request.env[SHIB_ATTRIBUTES[:id]],
+      :studentnumber => (request.env[SHIB_ATTRIBUTES[:studentnumber]] || '').split(':').last,
+      :firstname => request.env[SHIB_ATTRIBUTES[:firstname]],
+      :lastname => request.env[SHIB_ATTRIBUTES[:lastname]],
+      :email => request.env[SHIB_ATTRIBUTES[:email]],
     }
-    logout_url = request.env['HTTP_LOGOUTURL']
+    session[:logout_url] = request.env[SHIB_ATTRIBUTES[:logout]]
 
 #     shibinfo = {
-#       :login => '00002', #'student1@hut.fi',
-#       :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00002' || '').split(':').last,
+#       :login => '83632', #'student1@hut.fi',
+#       :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:83632' || '').split(':').last,
 #       :firstname => 'Teemu',
 #       :lastname => 'Teekkari',
-#       :email => 'tteekkar@cs.hut.fi',
-#       :organization => 'hut.fi'
+#       :email => 'tteekkar@cs.hut.fi'
 #     }
 #     logout_url= 'http://www.aalto.fi/'
 
@@ -90,14 +88,17 @@ class SessionsController < ApplicationController
       logger.debug "User not found. Trying to create."
 
       # New user
-      user = User.new(shibinfo)
+      user = User.new()
       user.login = shibinfo[:login]
       user.studentnumber = shibinfo[:studentnumber]
+      user.firstname = shibinfo[:firstname]
+      user.lastname = shibinfo[:lastname]
+      user.email = shibinfo[:email]
       user.organization = shibinfo[:organization]
-      if user.save
+      if user.save(:validate => false)
         logger.info("Created new user #{user.login} (#{user.studentnumber}) (shibboleth)")
       else
-        logger.info("Failed to create new user (shibboleth) #{shibinfo} Errors: #{user.errors}")
+        logger.info("Failed to create new user (shibboleth) #{shibinfo} Errors: #{user.errors.full_messages.join('. ')}")
         flash[:error] = 'Failed to create new user'
         render :action => 'new'
         return
@@ -120,12 +121,21 @@ class SessionsController < ApplicationController
     user.reset_persistence_token  # Authlogic won't work if persistence token is empty
     if Session.create(user)
       logger.info("Logged in #{user.login} (#{user.studentnumber}) (shibboleth)")
-
-      redirect_back_or_default root_url
     else
       logger.warn("Failed to create session for #{user.login} (#{user.studentnumber}) (shibboleth)")
       flash[:error] = 'Shibboleth login failed.'
       render :action => 'new'
+      return
+    end
+
+    # Demo registration
+    if (params[:demo])
+      # Create course
+      exercise = Course.create_example(user)
+      redirect_to exercise
+    else
+      # Redirect back
+      redirect_back_or_default(root_url)
     end
   end
 end
