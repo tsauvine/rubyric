@@ -26,6 +26,12 @@
   -->
 </div>
 
+<% if current_user %>
+  <div class="pull-right">
+    <%= link_to "Log out #{current_user.name}", session_path, :method => :delete %>
+  </div>
+<% end %>
+
 <!--
 <div>
   <div class="breadcrumbs">

@@ -31,9 +31,9 @@ group.submissions.each do |submission|
           <td>
             <%= check_box 'reviews_checkboxes', review.id, {:class => 'review_check ' + (review.status == 'finished' ? ' review_check_finished' : '')} %>
             <%= review.user.name %>
-            
+
             <% if ['unfinished','finished','mailed'].include?(review.status) %>
-              <%= link_to 'Edit review', finish_review_path(review.id), {:title => 'Edit review', :class => 'smallButton'} %>
+              <%= link_to 'Edit review', edit_review_path(review.id), {:title => 'Edit review', :class => 'smallButton'} %>
             <% else %>
               <%= link_to 'Edit review', edit_review_path(review.id), {:title => 'Edit review', :class => 'smallButton'} %>
             <% end %>

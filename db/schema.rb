@@ -64,8 +64,8 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
@@ -183,6 +183,7 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
     t.integer  "final_grade"
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"
+    t.text     "payload"
   end
 
   create_table "roles", :id => false, :force => true do |t|

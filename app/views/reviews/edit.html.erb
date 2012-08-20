@@ -1,60 +1,118 @@
 <!-- reviews/edit.html.erb -->
 
-<% form_for @review, :html => {:class => "feedback-editor"} do |f| %>
-  <h1>Review</h1>
+<script id="page-template" type="text/x-handlebars-template">
+<div class="tab-pane" id="page-{{id}}">
 
-  <p>
-    <!-- Group -->
-    Group:
-    <%= (@review.submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %>
-    -
-    <!-- View submission -->
-    <% unless @review.submission.extension.blank? %>
-    <%= link_to "#{@review.submission.filename}", {:controller => 'submissions', :action => 'show', :id => @review.submission.id} %>
-    <small>(<%= "#{@review.submission.created_at}" %>)</small>
-    <% end %>
-  </p>
+    <h2>{{name}}</h2>
 
-  <!-- Warning -->
-  <% if (@review.status == 'finished') %>
-    <div class="flash flashWarning">
-      Warning: This review has already been finished. Altering the review now will overwrite all manual modifications to the finished text.
+    <!-- Rubric -->
+    <div class="rubric">
     </div>
-  <% elsif (@review.status == 'mailed') %>
-    <div class="flash flashWarning">
-      This review has already been mailed and cannot be modified any more.
+
+    <!-- Textareas -->
+    <div class="textareas">
+      <div>
+        <p id="positiveCaption"><%= @exercise.positive_caption %></p>
+        <textarea class="good"></textarea>
+      </div>
+
+      <div>
+        <p id="negativeCaption"><%= @exercise.negative_caption %></p>
+        <textarea class="bad"></textarea>
+      </div>
+
+      <div>
+        <p id="commentsCaption"><%= @exercise.neutral_caption %></p>
+        <textarea class="neutral"></textarea>
+      </div>
     </div>
-  <% end %>
 
-  <!-- Notes to grader -->
-  <% unless @review.notes_to_grader.blank? %>
-    <div class="flash flashWarning">
-      <%= @review.notes_to_grader %>
-    </div>
-  <% end %>
+</div>
+</script>
 
-
+<script id="criterion-template" type="text/x-handlebars-template">
+<div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
+  <!-- Heading -->
+  <h3>{{criterionName}}</h3>
 
   <div class="clear"></div>
 
-  <div id="textareas">
-    <p id="positiveCaption">
-      <%= @exercise.positive_caption %><br />
-      <%= f.text_area :good, { :rows => 11 } %>
-    </p>
+  <!-- Phrases -->
+  <div class="phrases">
+    <table class="phrases">
+      <tbody id="phrases-{{criterionId}}">
+      </tbody>
+    </table>
+  </div>
+</div>
+</script>
 
-    <p id="negativeCaption">
-      <%= @exercise.negative_caption %><br />
-      <%= f.text_area :bad, { :rows => 11 } %>
-    </p>
+<script id="phrase-template" type="text/x-handlebars-template">
+<tr class="phrase">
+  <td id="phrase-{{id}}" class="phrase">{{content}}</td>
+</tr>
+</script>
 
-    <p id="commentsCaption">
-      <%= @exercise.neutral_caption %><br />
-      <%= f.text_area :neutral, { :rows => 11 } %>
-    </p>
-  </div><!-- /textareas -->
+<div class="tabbable tabs-left review-editor" id="review-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>">
+  <ul id="tabs" class="nav nav-tabs">
+    <li class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
+  </ul>
 
-<% end # form
-%>
+  <div id="tab-contents" class="tab-content">
 
-<p><%= link_to 'Back to menu', :controller => :exercises, :action => 'show', :id => @exercise.id, :anchor => "group#{@review.submission.group.id}" %></p>
+    <!-- Overview tab -->
+    <div class="tab-pane active" id="tab-overview">
+      <div class="row-fluid">
+        <h2>Review</h2>
+
+        <!-- Warnings -->
+        <% if (@review.status == 'finished') %>
+          <div class="alert">
+            Warning: This review has already been finished. Altering the review now will overwrite all manual modifications to the finished text.
+          </div>
+        <% elsif (@review.status == 'mailed') %>
+          <div class="alert">
+            This review has already been mailed and cannot be modified any more.
+          </div>
+        <% end %>
+
+        <!-- Notes to grader -->
+        <% unless @review.notes_to_grader.blank? %>
+          <div class="alert alert-info">
+            <%= @review.notes_to_grader %>
+          </div>
+        <% end %>
+
+        <div class="span4">
+          <!-- Group -->
+          <h3>Group</h3>
+
+          <table class="table">
+            <tbody>
+              <% @review.submission.group.users.each do |user| %>
+                <tr>
+                  <td><%= user.studentnumber %></td>
+                  <td><%= user.name %></td>
+                  <td><%= user.email %></td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+      <div class="row-fluid">
+        <div class="span4">
+          <!-- View submission -->
+          <h3>Submission</h3>
+
+          <% unless @review.submission.extension.blank? %>
+            <%= link_to "#{@review.submission.filename}", @review.submission %>
+            <small>(<%=l @review.submission.created_at %>)</small>
+          <% end %>
+        </div>
+      </div>
+    </div> <!-- /tab-overview -->
+  </div> <!-- /tab-contents -->
+</div> <!-- /tabbable -->
+
+<p><%= link_to 'Back to menu', exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}") %></p>
