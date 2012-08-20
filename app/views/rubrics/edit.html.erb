@@ -10,18 +10,25 @@
 
 .dropHover {
   background: #ff8;
+  border: 1px solid red;
 }
 </style>
 
 <script id="page-template" type="text/x-handlebars-template">
-<div class="tab-pane" id="page-{{id}}">
-  <h2>{{name}}</h2>
+<div class="tab-pane page" id="page-{{id}}">
+  <h2>
+    <span class="title">{{name}}</span>
+    <span class="buttons">
+      <i class="icon-pencil edit-page-button" title="Edit title"></i>
+      <i class="icon-trash delete-page-button" title="Delete page"></i>
+    </span>
+  </h2>
 
-  <div class="rubric rubric-editor" id="rubric-{{id}}">
+  <div class="rubric" id="rubric-{{id}}">
   </div>
 
   <!-- Create criterion -->
-  <div class="btn create-criterion-button" data-page-id="{{id}}">
+  <div class="btn create-criterion-button">
     <i class="icon-plus"></i> Create new criterion
   </div>
 </div>
@@ -31,10 +38,12 @@
 <div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
   <!-- Heading -->
   <h3>
-    <span class="criterion" id="criterion-name-{{criterionId}}">{{criterionName}}</span>
-    <i class="icon-pencil edit-criterion-button" title="Edit criterion" id="edit-criterion-{{criterionId}}" data-target-id="criterion-name-{{criterionId}}"></i>
-    <i class="icon-trash delete-criterion-button" title="Delete criterion" id="delete-criterion-{{criterionId}}" data-target-id="criterion-container-{{criterionId}}"></i>
-    <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
+    <span class="title" id="criterion-name-{{criterionId}}">{{criterionName}}</span>
+    <span class="buttons">
+      <i class="icon-pencil edit-criterion-button" title="Edit criterion" id="edit-criterion-{{criterionId}}" data-target-id="criterion-name-{{criterionId}}"></i>
+      <i class="icon-trash delete-criterion-button" title="Delete criterion" id="delete-criterion-{{criterionId}}" data-target-id="criterion-container-{{criterionId}}"></i>
+      <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
+    </span>
   </h3>
 
   <div class="clear"></div>
@@ -43,44 +52,49 @@
   <div class="phrases">
     <table class="phrases">
       <tbody id="phrases-{{criterionId}}">
-        {{#each phrases}}
-          <tr>
-            <td class="phraseType">
-              <select class="phraseType" id="phraseType-{{id}}">
-                <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
-              </select>
-            </td>
-            <td id="phrase-{{id}}" class="phrase">{{content}}</td>
-            <td class="buttons">
-              <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
-              <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
-              <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
-            </td>
-          </tr>
-        {{/each}}
       </tbody>
     </table>
 
     <!-- Create phrase -->
-    <div class="btn create-phrase-button" data-criterion-id="{{criterionId}}">
+    <div class="btn create-phrase-button buttons" data-criterion-id="{{criterionId}}">
       <i class="icon-plus"></i> Create new phrase
     </div>
   </div>
 </div>
 </script>
 
+<!--
+{{#each phrases}}
+  <tr>
+    <td class="phraseType">
+      <select class="phraseType" id="phraseType-{{id}}">
+        <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
+      </select>
+    </td>
+    <td id="phrase-{{id}}" class="phrase">{{content}}</td>
+    <td class="buttons">
+      <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
+      <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
+      <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
+    </td>
+  </tr>
+{{/each}}
+-->
+
 <script id="phrase-template" type="text/x-handlebars-template">
-<tr>
+<tr class="phrase">
   <td class="phraseType">
     <select class="phraseType" id="phraseType-{{id}}">
       <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
     </select>
   </td>
   <td id="phrase-{{id}}" class="phrase">{{content}}</td>
-  <td class="buttons">
-    <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
-    <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
-    <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
+  <td class="buttons-column">
+    <div class="buttons">
+      <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
+      <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
+      <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
+    </div>
   </td>
 </tr>
 </script>
@@ -89,13 +103,15 @@
   <h1><%= @exercise.name %> - Editing rubric</h1>
 </div>
 
-<div class="tabbable">
+<button id="save-button" class="btn btn-success">Save</button>
+
+<div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">
   <ul id="tabs" class="nav nav-tabs">
     <li class="active">
-      <a href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
+      <a id="tab-settings-link" href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
     </li>
     <li id="create-page-tab">
-      <a href="#" class="btn btn-small" id="create-page"><i class="icon-plus"></i> Create new page</a>
+      <a href="#" class="" id="create-page"><i class="icon-plus"></i> Create new page</a>
     </li>
   </ul>
 

@@ -8,34 +8,19 @@ class ReviewsController < ApplicationController
     @exercise = @review.submission.exercise
     load_course
 
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-    end
+    access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
   # GET /courses/1/edit
   def edit
-    @review = Review.find(params[:id], :include => {:feedbacks => :item_grades})
+    @review = Review.find(params[:id])
     @exercise = @review.submission.exercise
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    if params[:section]
-      @section = Section.find(params[:section], :include => {:items => :phrases})
-    else
-      @section  = @exercise.categories.first.sections.first
-    end
-
-    # TODO: unless @section...
-
-    @feedback = @review.find_feedback(@section.id) if @section
+    #@feedback = @review.find_feedback(@section.id) if @section
   end
 
   def finish
@@ -44,11 +29,7 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Check state
     if !['unfinished', 'finished', 'mailed'].include?(@review.status)
@@ -72,11 +53,7 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     unless ['unfinished','finished'].include?(@review.status)
       flash[:error] = 'This review cannot be modified any more'
@@ -114,11 +91,7 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email) || is_admin?(current_user)
 
     if @review.status == 'mailed'
       @review.status = 'finished'
@@ -137,11 +110,7 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Check that the review has not been mailed
     if @review.status == 'mailed'

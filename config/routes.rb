@@ -39,9 +39,7 @@ Rubyric::Application.routes.draw do
       end
     end
 
-    resource :rubric, :only => [:edit] do
-      resources :sections, :only => [:edit]
-
+    resource :rubric, :only => [:show, :edit, :update] do
       member do
         get 'download'
         get 'upload'

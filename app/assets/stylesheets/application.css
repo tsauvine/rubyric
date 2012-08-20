@@ -15,26 +15,19 @@
  * // require_tree .
  */
 
-/*
-img {
-  border: none;
-}
-
-td.trash {
-  width: 3em;
-  text-align: right;
-}
-*/
-
 div.clear {
   clear: both;
 }
 
-/*
-div.hidden {
-  visibility: hidden;
+.busy {
+  background: image_url("ajax-loader.gif") no-repeat center center;
 }
-*/
+
+.hint {
+  font-size: small;
+  color: gray;
+  font-style: italic;
+}
 
 /*
 .bold {
@@ -59,12 +52,6 @@ a.inactive {
 
 a.inactive:visited {
   color: gray;
-}
-
-.hint {
-  font-size: smaller;
-  color: gray;
-  font-style: italic;
 }
 
 ul.sparse li {
@@ -92,208 +79,6 @@ p.narrow, div.narrow {
 }
 */
 
-/******************
- * Header
- ******************/
-
-/*
-div.header {
-  height: 100px;
-  position: relative;
-  background: white;
-  border-bottom: 1px solid gray;
-  margin: 0px;
-  padding: 0px;
-}
-
-div.header #ruby {
-  display: block;
-  margin: 0px;
-  position: absolute;
-  top: 10px;
-  left: 10px;
-}
-
-div.header #logo {
-  display: block;
-  position: absolute;
-  top: 20px;
-  left: 90px;
-}
-
-div.navibar {
-  width: 100%;
-  height: 28px;
-  font-size: 16px;
-  background: gray image-url("naviBar.png") repeat-x;
-  position: absolute;
-  bottom: 0px;
-}
-
-div.navibar ul {
-  height: 100%;
-  margin: 0px 10px 0px 10px;
-  padding: 0px;
-  float: right;
-}
-
-div.navibar li {
-  display: block;
-  line-height: 28px;
-  float: left;
-  height: 28px;
-  margin: 0px 2px;
-}
-
-div.navibar ul a {
-  display: block;
-  height: 100%;
-  color: white;
-  background: image-url("naviButtonC.png") repeat-x;
-  padding: 0px 6px;
-  font-size: 12px;
-  text-decoration: none;
-}
-
-div.navibar a:hover {
-  background: image-url("naviButtonCh.png") repeat-x;
-}
-
-div.navibar div.lang {
-  height: 100%;
-  margin: 0px 10px 0px 10px;
-  padding: 0px;
-  float: right;
-  line-height: 28px;
-  color: white;
-}
-
-div.navibar div.lang a {
-  color: white;
-}
-*/
-
-/******************
- * Breadcrumbs
- ******************/
-
-/*
-div.breadcrumbs {
-  float: left;
-  margin: 2px 4px;
-}
-
-.breadcrumbs ul {
-  display: inline;
-  margin: 0px;
-  padding: 0px;
-  color: #808080;
-}
-
-.breadcrumbs li {
-  display: inline;
-  margin: 0px;
-  padding: 0px;
-}
-
-
-.breadcrumbs li:before {
-  content: " / ";
-}
-
-.breadcrumbs li.first:before {
-  content: "";
-}
-
-div.breadcrumbs a {
-  font-size: 12px;
-  color: #808080;
-  text-decoration: none;
-}
-
-div.breadcrumbs a:hover {
-  text-decoration: underline;
-}
-
-div.login {
-  float: right;
-  font-size: 12px;
-  color: #808080;
-  margin: 2px 10px 2px 4px;
-}
-
-div.login a {
-  color: #808080;
-}
-*/
-
-/*************
- * Left navi
- *************/
-
-/*
-.leftNavi {
-  float: left;
-  width: 14em;
-  padding: 0em 1em 1em 1em;
-}
-
-.leftNavi ul {
-  margin: 0px;
-  padding: 0px;
-}
-
-.leftNavi ul li {
-  list-style: none;
-  margin: 0px;
-  padding: 0px;
-  font-size: smaller;
-}
-
-.leftNavi > ul {
-  margin-bottom: 1em;
-}
-
-.leftNavi > ul > li {
-  font-weight: bold;
-}
-
-.leftNavi > ul ul {
-  margin-left: 1em;
-}
-*/
-
-/******************
- * Links
- ******************/
-
-/*
-a {
-  color: #00154c;
-}
-
-a:visited {
-  color: #324065;
-}
-
-a.new, .new {
-  color: green;
-  font-size: .9em;
-  font-variant: small-caps;
-}
-
-.button {
-  background: #D0D0D0;
-  border: 3px gray;
-  text-decoration: none;
-  padding: .2em
-}
-
-.smallButton {
-  margin: 0em .5em;
-  font-size: .9em;
-}
-*/
 
 /******************
  * Headings
@@ -336,37 +121,6 @@ h1 .hint, h2 .hint, h3 .hint {
   color: gray;
 }
 */
-
-/******************
- * Flash messages
- ******************/
-
-/*
-.flash {
-  padding: 4px;
-  margin: .6em 0em;
-  -moz-border-radius: 6px;
-}
-
-.flashWarning {
-  color: black;
-  background: #FFFFBB;
-  border: 1px solid #808000;
-}
-
-.flashSuccess {
-  color: black;
-  background: #BBFFBB;
-  border: 1px solid #008000;
-}
-
-.flashError {
-  color: black;
-  background: #FFBBBB;
-  border: 1px solid #B00000;
-}
-*/
-
 
 /******************
  * Help box
@@ -641,6 +395,32 @@ p.feedback-preview {
   color: black;
 }
 
+.rubric-editor .buttons i {
+  cursor: pointer;
+}
+
+.rubric-editor .buttons,
+.rubric-editor .criterion .create-phrase-button
+{
+  visibility: hidden;
+}
+
+.rubric-editor .page h2:hover .buttons,
+.rubric-editor .criterion:hover .buttons
+{
+  visibility: visible;
+}
+
+
+.rubric-editor td.buttons-column {
+  width: 80px;
+  text-align: center;
+}
+
+.rubric-editor textarea {
+  width: 100%
+}
+
 .rubric-editor .category {
   border: 1px solid gray;
   -moz-border-radius: 1em;
@@ -745,18 +525,6 @@ p.feedback-preview {
   cursor: pointer;
 }
 
-.rubric-editor .phrase span {
-  cursor: pointer;
-}
-
-.rubric-editor .criterion img {
-  visibility: hidden;
-}
-
-.rubric-editor .criterion:hover img {
-  visibility: visible;
-}
-
 .rubric-editor table.phrases {
   width: 100%;
   background: #f8f8f8;
@@ -770,10 +538,6 @@ p.feedback-preview {
   padding: 1px;
 }
 
-.rubric-editor .add-phrase {
-  visibility: hidden;
-}
-
 .rubric-editor td.phraseType {
   width: 6em;
   text-align: center;
@@ -783,33 +547,10 @@ p.feedback-preview {
   width: 5em;
 }
 
-.rubric-editor .criterion:hover .add-phrase {
-  visibility: visible;
-}
-
-
-.rubric-editor textarea {
-  width: 100%
-}
-
-.rubric-editor td.buttons {
-  width: 80px;
-  text-align: center;
-}
-
 .rubric-editor td.type-selection {
   width: 100px;
 }
 
-
-.rubric-editor div.buttons {
-  display: inline;
-  margin-left: 2em;
-}
-
-.rubric-editor .editable {
-  cursor: pointer;
-}
 
 /**************
  * Assignments

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110524122158) do
+ActiveRecord::Schema.define(:version => 20120820123726) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -94,6 +94,7 @@ ActiveRecord::Schema.define(:version => 20110524122158) do
     t.boolean  "submit_without_login",    :default => false
     t.string   "grading_mode",            :default => "average"
     t.boolean  "autoassign",              :default => true
+    t.text     "rubric"
   end
 
   create_table "feedbacks", :force => true do |t|

@@ -16,7 +16,7 @@ class Exercise < ActiveRecord::Base
   # exclusive: previous assignments are erased
   def assign(submission_ids, user_ids)
     #submissions = Submission.find(submission_ids)
-    
+
     counter = 0
     n = user_ids.size
 
@@ -198,7 +198,7 @@ class Exercise < ActiveRecord::Base
 
     return output
   end
-  
+
   # Returs a grade distribution histogram [[grade,count],[grade,count],...]
   def grade_distribution(grader = nil)
     if grader
@@ -206,13 +206,13 @@ class Exercise < ActiveRecord::Base
     else
       reviews = Review.find(:all, :joins => 'FULL JOIN submissions ON reviews.submission_id = submissions.id ', :conditions => [ 'exercise_id = ?  AND calculated_grade IS NOT NULL', self.id ])
     end
-    
+
     # group reviews by grade  [ [grade,[review,review,...]], [grade,[review,review,...]], ...]
     reviews_by_grade = reviews.group_by{|review| review.calculated_grade}
-    
+
     # count reviews in each bin [ [grade, count], [grade,count], ... ]
     histogram = reviews_by_grade.collect { |grade, stats| [grade,stats.size] }
-    
+
     # sort by grade
     histogram.sort { |x,y| x[0] <=> y[0] }
   end
@@ -221,7 +221,7 @@ class Exercise < ActiveRecord::Base
   # csv: student, assistant
   def batch_assign(csv)
     counter = 0
-    
+
     # Make an array of lines
     array = csv.split(/\r?\n|\r(?!\n)/)
 
@@ -229,63 +229,64 @@ class Exercise < ActiveRecord::Base
       array.each do |line|
         parts = line.split(',',2).map { |s| s.strip }
         next if parts.size < 1
-        
+
         submission_studentnumber = parts[0]
         assistant_studentnumber = parts[1]
-        
+
         # Find submissions that belong to the student
         submissions = Submission.find(:all, :conditions => [ "groups.exercise_id = ? AND users.studentnumber = ?", self.id, submission_studentnumber], :joins => {:group => :users})
         grader = User.find_by_studentnumber(assistant_studentnumber)
-        
+
         next unless grader
-        
+
         # Assign those submissions
         submissions.each do |submission|
           counter += 1 if submission.assign_once_to(grader)
         end
       end
-      
+
       return counter
     end
   end
 
   def archive(options = {})
     only_latest = options.include? :only_latest
-    
+
     archive = Tempfile.new('rubyric-archive')
-    
+
     # Make a temp directory. It is deleted automatically after the block returns.
     Dir.mktmpdir("rubyric") do |temp_dir|
       # Create the actual content directory so that it has a sensible name in the archive
       content_dir_name = "rubyric-exercise#{self.id}"
       Dir.mkdir "#{temp_dir}/#{content_dir_name}"
-        
+
       # Add contents
       groups.each do |group|
         group.submissions.each do |submission|
-          
+
           # Link the submissionn
           source_filename = submission.full_filename
           target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
           target_filename << ".#{submission.extension}" unless submission.extension.blank?
-          
+
           if File.exist?(source_filename)
             FileUtils.ln_s(source_filename, target_filename)
           end
-          
+
           # Take only one file per group?
           if only_latest
             break
           end
         end
       end
-        
+
       # Archive the folder
       #puts "tar -zcf #{archive.path()} #{content_dir_name}"
       system("tar -zc --directory #{temp_dir} --file #{archive.path()} #{content_dir_name}")
     end
-    
+
     return archive
   end
-  
+
+
 end

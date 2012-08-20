@@ -1,8 +1,6 @@
 <!-- reviews/edit.html.erb -->
 
-<% form_for @feedback, :url => {:controller => 'reviews', :action => 'update'}, :html => {:class => "feedback-editor"} do |f| %>
-  <%= hidden_field_tag :section, @section.id %>
-
+<% form_for @review, :html => {:class => "feedback-editor"} do |f| %>
   <h1>Review</h1>
 
   <p>
@@ -17,9 +15,6 @@
     <% end %>
   </p>
 
-  <!-- Menu -->
-  <%= render :partial => 'menu' %>
-
   <!-- Warning -->
   <% if (@review.status == 'finished') %>
     <div class="flash flashWarning">
@@ -30,7 +25,7 @@
       This review has already been mailed and cannot be modified any more.
     </div>
   <% end %>
-  
+
   <!-- Notes to grader -->
   <% unless @review.notes_to_grader.blank? %>
     <div class="flash flashWarning">
@@ -39,58 +34,6 @@
   <% end %>
 
 
-  <!--h2><%= @section.name %></h2-->
-
-  <% @section.items.each do |item| %>
-
-    <!-- Heading -->
-    <h3 onClick="$('phrases<%= item.id %>').toggle()" title="Click to hide/unhide phrases"><%= item.name.blank? ? '-&nbsp;' : item.name %></h3>
-
-    <!-- Grading options -->
-    <ul class="grading-options">
-      <%
-      selected_grading_option = nil
-      i = 0
-      item.item_grading_options.each do |grading_option|
-        if (@feedback.item_grades.include?(grading_option))
-          selected_grading_option = grading_option.id
-        end
-      %>
-        <li id="grade<%= item.id %>_<%= i %>" onClick='setGrade("<%= item.id %>", "<%= i %>", "<%= grading_option.id %>");' <%= @feedback.item_grades.include?(grading_option) ? "class='selected'" : '' %>><%= grading_option.text %></li>
-      <% i += 1; end %>
-    </ul>
-    <%= hidden_field_tag "item_grades[#{item.id}]", selected_grading_option %>
-
-    <div class="clear"></div>
-
-    <!-- Phrases -->
-    <table id="phrases<%= item.id %>" class="phrases">
-      <% item.phrases.each do |phrase|%>
-          <tr><td id="cell<%= phrase.id %>" class="<%= phrase.feedbacktype %>" onClick='addFeedback("cell<%= phrase.id %>", "<%= phrase.feedbacktype %>")'>
-            <%= h(phrase.content).gsub(/\n|\r/, '<br />') %>
-          </td></tr>
-      <% end %>
-    </table>
-  <% end # items
-  %>
-
-  <!-- Hide / Show all -->
-  <p>
-    <a href="#" onClick="$$('.phrases').each(function(e){e.hide()});return false;">Hide phrases</a>
-    <a href="#" onClick="$$('.phrases').each(function(e){e.show()});return false;">Show phrases</a>
-  </p>
-
-  <!-- Section grading options -->
-  <% if @section.section_grading_options.size > 0 %>
-    <p class="grade" style="float: left">
-      Grade:
-      <%= f.select("section_grading_option_id", @section.section_grading_options.collect {|g| [ g.text, g.id ] }, { :include_blank => true }, {:onchange => 'modified=true'}) %>
-    </p>
-  <% end %>
-
-  <% if (@review.status != 'mailed') %>
-    <%= f.submit 'Save and proceed -&gt;', :style=>'float: right;' %>
-  <% end %>
 
   <div class="clear"></div>
 
@@ -115,10 +58,3 @@
 %>
 
 <p><%= link_to 'Back to menu', :controller => :exercises, :action => 'show', :id => @exercise.id, :anchor => "group#{@review.submission.group.id}" %></p>
-
-
-<div id="overlay">
-  <div>
-    <p>Content you want the user to see goes here.</p>
-  </div>
-</div>
