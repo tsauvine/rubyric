@@ -10,15 +10,15 @@ class Submission < ActiveRecord::Base
   after_create :write_file
   #after_destroy :delete_file
 
-  
+
   def has_member?(user)
     group.has_member?(user)
   end
-  
+
   def has_reviewer?(user)
     Review.exists?(:submission_id => self.id, :user_id => user.id)
   end
-  
+
   # Setter for the form's file field.
   def file=(file_data)
     @file_data = file_data
@@ -45,8 +45,10 @@ class Submission < ActiveRecord::Base
     filename = "#{id}.#{extension}"
     FileUtils.makedirs(path)
 
-    File.open("#{path}/#{filename}", "wb") do |file|
-      file.write(@file_data.read)
+    if @file_data
+      File.open("#{path}/#{filename}", "wb") do |file|
+        file.write(@file_data.read)
+      end
     end
   end
 
@@ -68,12 +70,12 @@ class Submission < ActiveRecord::Base
 
     return review
   end
-  
+
   def assign_once_to(user)
     user = User.find(user) unless user.is_a?(User)
-    
+
     return false if Review.exists?(:user_id => user.id, :submission_id => self.id)
-    
+
     assign_to(user)
   end
 

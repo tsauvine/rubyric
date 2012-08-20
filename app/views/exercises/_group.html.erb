@@ -18,7 +18,10 @@ group.submissions.each do |submission|
 
     <!-- Reviews -->
     <% if submission.reviews.empty? %>
-      <td>Not assigned</td>
+      <td>
+        Not assigned
+        <%= link_to 'Create review', review_submission_path(submission.id) %>
+      </td>
       <td></td>
       <td></td>
       </tr>

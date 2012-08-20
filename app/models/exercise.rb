@@ -20,6 +20,8 @@ class Exercise < ActiveRecord::Base
     counter = 0
     n = user_ids.size
 
+    return if n < 1
+
     submission_ids.each do |submission_id|
       assistant_id = user_ids[counter % n]
 

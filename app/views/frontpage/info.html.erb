@@ -2,9 +2,20 @@
   <h1>Welcome to Rubyric</h1>
 </div>
 
-<p id="frontpage-intro"><%=t :frontpage_intro_html %></p>
+<div class="row">
+  <p id="frontpage-intro"><%=t :frontpage_intro_html %></p>
+</div>
+
+<div class="row">
+  <div class="span4">
+    <%= link_to 'Try now', new_user_path, :class => 'btn btn-large btn-primary' %>
+  </div>
+  <div class="span4">
+    <h1><%=t :frontpage_login_heading %></h1>
+
+    <%= render :partial => 'sessions/login' %>
+  </div>
+</div>
 
 
-<h1><%=t :frontpage_login_heading %></h1>
 
-<%= render :partial => 'sessions/login' %>

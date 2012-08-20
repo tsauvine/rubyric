@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
-  
+
   layout 'wide'
 
   def show
@@ -20,7 +20,7 @@ class SubmissionsController < ApplicationController
     else
       filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
       type = Mime::Type.lookup_by_extension(@submission.extension)
-      
+
       send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
     end
   end
@@ -48,14 +48,14 @@ class SubmissionsController < ApplicationController
     else
       @available_groups = []
     end
-    
+
     # Find group
     if params[:group]
       # Group given as a parameter
       @group = Group.find(params[:group])
       return access_denied unless @group.has_member?(current_user) || @is_teacher
     elsif @available_groups.size > 0
-      @group = @available_groups[0] 
+      @group = @available_groups[0]
     end
 
     if !@group && @exercise.groupsizemax > 1
@@ -73,7 +73,7 @@ class SubmissionsController < ApplicationController
     load_course
 
     return access_denied unless logged_in? || @exercise.submit_without_login
-    
+
     # Check that instance is open
     unless @course_instance.active
       flash[:error] = 'Submission rejected. Course instance is not active.'
@@ -81,7 +81,7 @@ class SubmissionsController < ApplicationController
       return
     end
 
-    
+
     user = current_user
     unless submission.group
       if @exercise.groupsizemax <= 1 && current_user
@@ -94,7 +94,7 @@ class SubmissionsController < ApplicationController
         @course_instance.students << user unless @course_instance.students.include?(user)
       end
     end
-    
+
     # Check the file
     file = params[:file]
 
@@ -124,6 +124,18 @@ class SubmissionsController < ApplicationController
 #         end
 #       end
 #     end
+  end
+
+  # Assign to current user and start review
+  def review
+    @submission = Submission.find(params[:id])
+    @exercise = @submission.exercise
+    load_course
+    return access_denied unless @course.has_teacher(current_user)
+
+    review = @submission.assign_to(current_user)
+
+    redirect_to edit_review_path(review)
   end
 
 end

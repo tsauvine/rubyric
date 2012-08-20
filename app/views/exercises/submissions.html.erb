@@ -3,11 +3,13 @@
   <%= javascript_include_tag 'submissions' %>
 <% end %>
 
-<h1>
-  <%= "#{@course.code} #{@course.name}" %> -
-  <%= "#{@course_instance.name}" %> -
-  <%= @exercise.name %>
-</h1>
+<div class="page-header">
+  <h1>
+    <%= "#{@course.code} #{@course.name}" %> -
+    <%= "#{@course_instance.name}" %> -
+    <%= @exercise.name %>
+  </h1>
+</div>
 
 <p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
 
@@ -50,7 +52,14 @@
         <td></td>
         <td></td>
       </tr>
-      
+
+      <tr class="spacer">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
       <tr>
         <td>
           <p>
@@ -58,12 +67,14 @@
           <%= select_tag 'assistant', options_for_select(@graders, :selected => nil) %>
           <%= submit_tag 'Assign', :name => 'assign' %>
           </p>
-          <p><%= link_to 'Batch assign', exercise_batch_assign_path(@exercise) %></p>
+          <!--p><%= link_to 'Batch assign', exercise_batch_assign_path(@exercise) %></p-->
         </td>
         <td>
           <p><%= submit_tag 'Mail selected reviews', :name => 'mail' %></p>
           <p><%= submit_tag 'Delete selected reviews...', :name => 'delete' %></p>
         </td>
+        <td></td>
+        <td></td>
       </tr>
     </tfoot>
   </table>
@@ -78,5 +89,5 @@
 <% end %>
 
 
-<p><%= link_to 'Download archive', exercise_archive_path(@exercise) %></p>
- 
+<!--p><%= link_to 'Download archive', exercise_archive_path(@exercise) %></p-->
+

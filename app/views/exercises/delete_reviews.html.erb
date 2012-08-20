@@ -1,4 +1,6 @@
-<h1>Delete reviews</h1>
+<div class="page-header">
+  <h1>Delete reviews</h1>
+</div>
 
 <%= form_tag exercise_delete_reviews_path(@exercise.id) do %>
   <table>
@@ -7,7 +9,7 @@
       <th>Reviewer</th>
       <th>Status</th>
     </thead>
-  
+
     <% @reviews.each do |review| %>
       <%= hidden_field_tag "reviews[#{review.id}]", '1' %>
       <tr>

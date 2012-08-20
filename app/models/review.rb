@@ -4,22 +4,7 @@ class Review < ActiveRecord::Base
 
   has_many :feedbacks, :dependent => :destroy
 
-  after_create :create_feedbacks
-
-
   # status: [empty], started, unfinished, finished, mailed
-
-  # Creates a feedback object for each section
-  def create_feedbacks
-    submission.exercise.categories.each do |category|
-      category.sections.each do |section|
-        feedback = Feedback.new
-        feedback.section_id = section.id
-        feedback.review_id = id
-        feedback.save
-      end
-    end
-  end
 
   # Returns the feedback object corresponding the section in question.
   # A new feedback object is created and saved automatically, if it didn't previously exist.
