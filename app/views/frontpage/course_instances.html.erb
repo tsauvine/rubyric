@@ -38,7 +38,9 @@
 
 <!-- As assistant -->
 <% unless @instances_assistant.empty? %>
-  <h1 id='courses-assistant'><%=t :frontpage_courses_assistant_heading %></h1>
+  <div class="page-header">
+    <h1 id='courses-assistant'><%=t :frontpage_courses_assistant_heading %></h1>
+  </div>
   <ul>
   <% @instances_assistant.each do |instance| %>
     <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
@@ -48,7 +50,9 @@
 
 <!-- As student -->
 <% unless @instances_student.empty? %>
-  <h1 id='courses-student'><%=t :frontpage_courses_student_heading %></h1>
+  <div class="page-header">
+    <h1 id='courses-student'><%=t :frontpage_courses_student_heading %></h1>
+  </div>
   <ul>
   <% @instances_student.each do |instance| %>
     <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>

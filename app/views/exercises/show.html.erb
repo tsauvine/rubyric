@@ -1,7 +1,9 @@
 <!-- exercises/show.html.erb -->
 
 <% if @reviews.size > 0 %>
-  <h1>My reviews</h1>
+  <div class="page-header">
+    <h1>My reviews</h1>
+  </div>
 
   <table class="assignments">
     <thead>
@@ -19,7 +21,9 @@
   </table>
 <% end %>
 
-<h1>My Submissions</h1>
+<div class="page-header">
+  <h1>My Submissions</h1>
+</div>
 
 <% if @group %>
   <table>

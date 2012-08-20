@@ -44,12 +44,12 @@ class ExercisesController < ApplicationController
       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
       @graders << ['= Assistants =', 'assistants']
       @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-      
+
       # if exercise.peer_review
       #  @graders << ['= Students =', 'students']
       #  @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
       # end
-      
+
       render :action => 'submissions'
     else
       # Student's or assistant's view
@@ -71,7 +71,7 @@ class ExercisesController < ApplicationController
 
     @exercise = Exercise.new
   end
-  
+
   # POST /exercises
   def create
     @exercise = Exercise.new(params[:exercise])
@@ -97,13 +97,15 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
-  
+
   # PUT /exercises/1
   def update
     @exercise = Exercise.find(params[:id])
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+
 
     if @exercise.update_attributes(params[:exercise])
       flash[:success] = 'Exercise was successfully updated.'
@@ -137,30 +139,30 @@ class ExercisesController < ApplicationController
 
     @groups = @exercise.groups
   end
-  
+
   def statistics
     @exercise = Exercise.find(params[:id])
     load_course
-    
+
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     graders = @course.teachers + @course_instance.assistants
 
     @histograms = []
-    
+
     # All graders
     histogram = @exercise.grade_distribution()
     total = 0
     histogram.each { |pair| total += pair[1] }
     @histograms << {:grader => 'All', :histogram => histogram, :total => total}
-    
+
     # Each grader
     graders.each do |grader|
       histogram  = @exercise.grade_distribution(grader)
       total = 0
       histogram.each { |pair| total += pair[1] }
-       
+
       @histograms << {:grader => grader.name, :histogram => histogram, :total => total}
     end
   end
@@ -199,7 +201,7 @@ class ExercisesController < ApplicationController
     #redirect_to :controller => 'exercises', :action => 'show', :id => @exercise.id
     #redirect_to @exercise
   end
-  
+
   # Mails selected submissions and reviews
   def send_selected_reviews
     @exercise = Exercise.find(params[:eid])
@@ -239,28 +241,28 @@ class ExercisesController < ApplicationController
 #   def remove_selected_submissions
 #     @exercise = Exercise.find(params[:eid])
 #     load_course
-# 
+#
 #     # Authorization
 #     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-# 
+#
 #     # Iterate through submissions checkboxes
 #     if params[:submissions_checkboxes]
 #       params[:submissions_checkboxes].each do |id, value|
 #         Submission.destroy(id) if value == '1'
 #       end
 #     end
-# 
+#
 #     # Iterate through reviews checkboxes
 #     if params[:reviews_checkboxes]
 #       params[:reviews_checkboxes].each do |id, value|
 #         Review.destroy(id) if value == '1'
 #       end
 #     end
-# 
+#
 #     render :partial => 'group', :collection => @exercise.groups
 #   end
 
-  
+
   # Assigns selected submissions to the selected user
   def assign
     @exercise = Exercise.find(params[:exercise_id])
@@ -276,7 +278,7 @@ class ExercisesController < ApplicationController
         submission_ids << Integer(id) if value == '1'
       end
     end
-    
+
     # Select checked reviews
     review_ids = Array.new
     if params[:reviews_checkboxes]
@@ -296,27 +298,27 @@ class ExercisesController < ApplicationController
       else
         @exercise.assign(submission_ids, [Integer(params[:assistant])])
       end
-      
+
       redirect_to @exercise
     elsif params[:mail]
-      
+
     elsif params[:delete]
       @reviews = Review.find(review_ids)
-      
+
       render :delete_reviews
     else
       redirect_to @exercise
     end
   end
-  
-   
+
+
   def delete_reviews
     @exercise = Exercise.find(params[:exercise_id])
     load_course
-    
+
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     # Read review list
     counter = 0
     if params[:reviews]
@@ -324,19 +326,19 @@ class ExercisesController < ApplicationController
       params[:reviews].each do |id, value|
         review_ids << Integer(id) if value == '1'
       end
-      
+
       # Delete reviews
       reviews = Review.find(review_ids)
       reviews.each do |review|
         review.destroy
       end
-      
+
       counter = review_ids.size
     end
-    
+
     redirect_to @exercise, :flash => {:success => "#{counter} reviews deleted" }
   end
-  
+
   def assign_assistants_randomly
     @exercise = Exercise.find(params[:eid])
     load_course
@@ -372,7 +374,7 @@ class ExercisesController < ApplicationController
       flash[:success] = "#{counter} new assignments"
       redirect_to @exercise
     end
-    
+
     if params[:csv] && params[:csv][:file]
       counter = @exercise.batch_assign(params[:csv][:file].read)
       flash[:success] = "#{counter} new assignments"
@@ -385,12 +387,12 @@ class ExercisesController < ApplicationController
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     tempfile = @exercise.archive(:only_latest => true)
     send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
     tempfile.unlink
   end
-  
+
   private
-  
+
 end

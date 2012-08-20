@@ -7,7 +7,7 @@ class GroupsController < ApplicationController
   def index
     @exercise = Exercise.find(params[:exercise_id])
     load_course
-    
+
     if @course.has_teacher(current_user)
       @groups = Group.find_by_course_instance(@course_instance.id).joins(:users)
     else
@@ -36,7 +36,7 @@ class GroupsController < ApplicationController
 
     @email_fields_count = @exercise.groupsizemax
     @email_fields_count -= 1 if logged_in?
-    
+
 #     if current_user
 #       #@studentnumber[0] = current_user.studentnumber
 #       @email[0] = current_user.email
@@ -44,15 +44,11 @@ class GroupsController < ApplicationController
   end
 
   # GET /groups/1/edit
-#   def edit
-#     @group = Group.find(params[:id])
-#
-#     unless is_admin?(current_user) || @group.has_member?(current_user)
-#       @heading = 'Unauthorized'
-#       @message = 'Course instance not specified'
-#       render :template => "shared/error"
-#     end
-#   end
+  def edit
+    @group = Group.find(params[:id])
+
+    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user)
+  end
 
   # POST /groups
   def create
@@ -92,28 +88,28 @@ class GroupsController < ApplicationController
 
   def join
     return access_denied unless logged_in?
-    
+
     invitation = GroupInvitation.where(:group_id => params[:id], :token => params[:token]).first
-    
+
     if invitation
       group = invitation.group
       exercise = invitation.exercise
-      
+
       # Add user to group
       group.users << current_user
-      
+
       # Delete invitation
       invitation.destroy
-      
+
       # Redirect to submit
       flash[:success] = 'You have been added to the group'
       redirect_to submit_path(:exercise => exercise.id, :group => group.id)
     else
       render :invalid_token
     end
-    
+
   end
-  
+
   # PUT /groups/1
   # PUT /groups/1.xml
 #   def update

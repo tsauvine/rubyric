@@ -16,39 +16,45 @@
 
   <!-- Group -->
   <% if @exercise.groupsizemax > 1 %>
-    <h2>Group members</h2>
-    <table>
-      <thead>
-        <tr>
-          <td>Name</td>
-          <td>Email</td>
-          <td></td>
-        </tr>
-      </thead>
-      <tbody>
-        <% @group.users.each do |student| %>
-          <tr>
-            <td><%= student.name %></td>
-            <td><%= student.email %></td>
-          </tr>
-        <% end %>
-        <% @group.group_invitations.each do |invitation| %>
-          <tr>
-            <td></td>
-            <td><%= invitation.email %></td>
-            <td>(invited)</td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+    <div class="row-fluid">
+      <div class="span4">
 
-    <p>
-      <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id) %>
-      <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id) %>
-      <% if @available_groups.size > 1 %>
-        <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
-      <% end %>
-    </p>
+        <h2>Group members</h2>
+        <table class="table">
+          <thead>
+            <tr>
+              <td>Name</td>
+              <td>Email</td>
+              <td></td>
+            </tr>
+          </thead>
+          <tbody>
+            <% @group.users.each do |student| %>
+              <tr>
+                <td><%= student.name %></td>
+                <td><%= student.email %></td>
+                <td></td>
+              </tr>
+            <% end %>
+            <% @group.group_invitations.each do |invitation| %>
+              <tr>
+                <td></td>
+                <td><%= invitation.email %></td>
+                <td>(invited)</td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+
+        <!--p>
+          <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id), :class => 'btn' %>
+          <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %>
+          <% if @available_groups.size > 1 %>
+            <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
+          <% end %>
+        </p-->
+      </div>
+    </div>
   <% end %>
 
   <!-- Submissions -->
@@ -62,9 +68,9 @@
         </tr>
       <% end %>
     </table>
-  <% end %>
 
-  <hr />
+    <hr />
+  <% end %>
 
   <!-- Upload -->
   <h2>Submit file</h2>

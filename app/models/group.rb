@@ -1,7 +1,7 @@
 class Group < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :course_instance
-  
+
   has_and_belongs_to_many :users
   has_many :group_invitations
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
@@ -42,7 +42,7 @@ class Group < ActiveRecord::Base
   def add_members_by_email(addresses, exercise)
     addresses.each do |address|
       user = User.find_by_email(address)
-      
+
       if user
         self.users << user unless self.users.include?(user)
       else
@@ -53,14 +53,14 @@ class Group < ActiveRecord::Base
           :token => Digest::SHA1.hexdigest([Time.now, rand].join),
           :email => address,
           :expires_at => Time.now + 1.weeks)
-        
+
         #GroupInvitationMailer.invitation(invitation.id).deliver
-        
+
         # Send invitation link with delayed_job
         GroupInvitationMailer.delay.invitation(invitation.id)
       end
     end
-    
+
   end
 
 end
