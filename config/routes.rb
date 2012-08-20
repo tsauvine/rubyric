@@ -60,7 +60,7 @@ Rubyric::Application.routes.draw do
   resources :reviews do
     member do
       get :finish
-
+      put :update_finish
     end
   end
 

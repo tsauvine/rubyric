@@ -79,14 +79,36 @@ class Review < ActiveRecord::Base
   # Collects feedback texts from all sections and and combines them into the final feedback.
   # This destroys the existing final feedback.
   def collect_feedback
-    case submission.exercise.feedbackgrouping
-      when 'sections'
-        self.feedback = collect_feedback_sections
-      when 'categories'
-        self.feedback = collect_feedback_categories
-      else
-        self.feedback = collect_feedback_exercise
+    rubric = JSON.parse(self.submission.exercise.rubric)
+
+    # Load rubric
+    rubric_pages = {}
+    rubric['pages'].each do |page|
+      rubric_pages[page['id']] = page['name']
     end
+
+    # Parse payload
+    feedback = JSON.parse(self.payload)
+
+    # Generate feedback text
+    text = ''
+    feedback['pages'].each do |page|
+      rubric_page = rubric_pages[page['id']]
+      if rubric_page
+        text << "== #{rubric_page} =="
+      end
+
+      text << "\n\n= Strengths =\n"
+      text << page['good']
+
+      text << "\n\n= Weaknesses =\n"
+      text << page['bad']
+
+      text << "\n\n= Neutral =\n"
+      text << page['neutral']
+    end
+
+    self.feedback = text
   end
 
   # Collects feedback from all sections and groups all positive feedback together, all neagtive feedback together, etc.

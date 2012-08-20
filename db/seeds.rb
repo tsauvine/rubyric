@@ -20,7 +20,7 @@ user.studentnumber = '123456'
 user.admin = true
 user.save
 
-user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '1', :email => 'student.2@example.com')
+user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '2', :email => 'student.2@example.com')
 user.login = 'student-2'
 user.studentnumber = '234567'
 user.admin = true

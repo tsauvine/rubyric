@@ -8,29 +8,34 @@
   <p><%= @course_instance.description %></p>
 <% end %>
 
+<div class="row-fluid">
+  <div class="span4">
 
-<h2><%=t :instance_exercises_heading %></h2>
-<p>
-<table>
-  <% if @course_instance.exercises.empty? %>
-    <p><%=t :instance_no_exercises %></p>
-  <% else %>
-    <% @course_instance.exercises.each do |exercise| %>
-      <tr>
-        <td><%= link_to exercise.name, exercise %></td>
-        <td>
-          <% unless exercise.deadline.nil? %>
-            <%=l exercise.deadline, :format => :short %>
-          <% end %>
-        </td>
-        <% if @allow_edit %>
-          <td><%= link_to exercise, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %></td>
+
+    <h2><%=t :instance_exercises_heading %></h2>
+    <p>
+    <table class="table">
+      <% if @course_instance.exercises.empty? %>
+        <p><%=t :instance_no_exercises %></p>
+      <% else %>
+        <% @course_instance.exercises.each do |exercise| %>
+          <tr>
+            <td><%= link_to exercise.name, exercise %></td>
+            <td>
+              <% unless exercise.deadline.nil? %>
+                <%=l exercise.deadline, :format => :short %>
+              <% end %>
+            </td>
+            <% if @allow_edit %>
+              <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
+            <% end %>
+          </tr>
         <% end %>
-      </tr>
-    <% end %>
-  <% end %>
-</table>
-</p>
+      <% end %>
+    </table>
+    </p>
+  </div>
+</div>
 
 <% if @allow_edit %>
   <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>

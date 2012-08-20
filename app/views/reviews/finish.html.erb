@@ -1,50 +1,69 @@
 <!-- reviews/finish.html.erb -->
 
-<h1>Review</h1>
+<div class="page-header">
+  <h1>Review</h1>
+</div>
 
-<% if (@review.status == 'mailed') %>
-  <div class="flash flashWarning">
-    This review has already been mailed and cannot be modified any more.
-  </div>
-<% end %>
-
-<p>
-  <!-- Group -->
-  Group:
-  <%= (@review.submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %>
-  -
-  <!-- View submission -->
-  <% unless @review.submission.extension.blank? %>
-  <%= link_to "#{@review.submission.filename}", {:controller => 'submissions', :action => 'show', :id => @review.submission.id} %>
-  <small>(<%= "#{@review.submission.created_at}" %>)</small>
+<div class="row">
+  <% if (@review.status == 'mailed') %>
+    <div class="alert">
+      This review has already been mailed and cannot be modified any more.
+    </div>
   <% end %>
-</p>
+</div>
 
-<!-- Menu -->
-<%= render :partial => 'menu' %>
+<div class="row-fluid">
+  <div class="span4">
+    <!-- Group -->
+    <h3>Group</h3>
+
+    <table class="table">
+      <tbody>
+        <% @review.submission.group.users.each do |user| %>
+          <tr>
+            <td><%= user.studentnumber %></td>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="span4">
+    <!-- View submission -->
+    <h3>Submission</h3>
+
+    <% unless @review.submission.extension.blank? %>
+      <%= link_to "#{@review.submission.filename}", @review.submission %>
+      <small>(<%=l @review.submission.created_at %>)</small>
+    <% end %>
+  </div>
+</div>
 
 <p>Grade: <%= @review.grade %></p>
 
 <% if (@review.status != 'mailed') %>
-  <% form_for @review, :url => {:controller => 'reviews', :action => 'update_finish', :id => params[:id]} do |f| %>
-    <%= f.text_area :feedback, { :rows => 40, :cols => 80 } %>
+  <%= form_for @review, :url => update_finish_review_path(@review.id) do |f| %>
+    <%= f.text_area :feedback, { :style => 'width: 600px; height: 600px;' } %>
 
     <p>
       <%= f.submit 'Save', :name => 'save' %>
 
+      <!--
       <% if @enable_mailing %>
         <%= f.submit 'Save + Mail', :name => 'mail' %>
       <% end %>
+      -->
     </p>
   <% end %>
 <% else %>
   <p class="feedback-preview"><%= @review.feedback.gsub("\n", "<br />\n") %></p>
 
-  <% if @enable_mailing %>
-    <%= button_to 'Reopen', { :action => 'reopen', :id => params[:id] } %>
-  <% end %>
+  <!-- if @enable_mailing >
+    < button_to 'Reopen', { :action => 'reopen', :id => params[:id] } >
+  < end -->
 <% end %>
 
 
 
-<p><%= link_to 'Back to menu', :controller => :exercises, :action => 'show', :id => @exercise.id, :anchor => "group#{@review.submission.group.id}" %></p>
+<p><%= link_to 'Back to menu', exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}") %></p>

@@ -36,9 +36,9 @@ group.submissions.each do |submission|
             <%= review.user.name %>
 
             <% if ['unfinished','finished','mailed'].include?(review.status) %>
-              <%= link_to 'Edit review', edit_review_path(review.id), {:title => 'Edit review', :class => 'smallButton'} %>
+              <%= link_to 'Edit review', finish_review_path(review.id), {:class => 'smallButton'} %>
             <% else %>
-              <%= link_to 'Edit review', edit_review_path(review.id), {:title => 'Edit review', :class => 'smallButton'} %>
+              <%= link_to 'Edit review', edit_review_path(review.id), {:class => 'smallButton'} %>
             <% end %>
           </td>
           <td><%= review.status %></td>

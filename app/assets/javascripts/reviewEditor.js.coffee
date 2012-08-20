@@ -27,7 +27,7 @@ class Page
       id: @id,
       good: @goodTextarea.val(),
       bad: @badTextarea.val(),
-      neutral: @badTextarea.val()
+      neutral: @neutralTextarea.val()
     }
 
     return json
@@ -156,7 +156,6 @@ class ReviewEditor
   # Parses the JSON data returned by the server. See loadRubric.
   #
   parseRubric: (data) ->
-    # FIXME: if rubric missing
     unless data
       alert('Rubric has not been prepared')
       return
@@ -188,8 +187,11 @@ class ReviewEditor
       data: {review: json_string},
       error: $.proxy(@onAjaxError, this)
       dataType: 'json'
-      #success: (data) =>
-      #  alert('Changes saved')
+      success: (data) =>
+        window.location.href = "#{@review_url}/finish"
+
+    #console.log "#{@review_url}/finish"
+
 
   #
   # Callback for AJAX errors
