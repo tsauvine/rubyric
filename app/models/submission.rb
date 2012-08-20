@@ -1,4 +1,4 @@
-require "ftools"
+# require "ftools"
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
@@ -32,7 +32,7 @@ class Submission < ActiveRecord::Base
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
-    File.makedirs(path)
+#     File.makedirs(path)
 
     if @file_data.is_a?(Tempfile)
       FileUtils.cp(@file_data.path, "#{path}/#{filename}")
@@ -61,12 +61,12 @@ class Submission < ActiveRecord::Base
 
     return review
   end
-  
+
   def assign_once_to(user)
     user = User.find(user) unless user.is_a?(User)
-    
+
     return false if Review.exists?(:user_id => user.id, :submission_id => self.id)
-    
+
     assign_to(user)
   end
 
