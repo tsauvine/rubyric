@@ -15,6 +15,7 @@
     <h1 id='courses-teacher'><%=t :frontpage_courses_teacher_heading %></h1>
   </div>
 
+  <p>
   <table>
     <% @courses_teacher.each do |course| %>
       <tr>
@@ -30,8 +31,9 @@
       </tr>
     <% end %>
   </table>
+  </p>
 
-  <p><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'new' %></p>
+  <p><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'btn btn-primary' %></p>
 <% end %>
 
 <!-- As assistant -->

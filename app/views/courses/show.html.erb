@@ -1,14 +1,16 @@
 <!-- courses/show.html.erb -->
 
-<h1><%=h @course.code %> <%=h @course.name %></h1>
+<div class="page-header">
+  <h1><%=h @course.code %> <%=h @course.name %></h1>
+</div>
 
 <h2><%=t :course_instances_heading %></h2>
 <% if @course.course_instances.empty? %>
   <p><%=t :course_no_instances %></p>
-  
+
   <% if @is_teacher %>
     <p>
-      <%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'new' %>
+      <%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %>
       <span class="hint"><%=t :course_no_instances_hint, :year => Time.now.year %></span>
     </p>
   <% end %>
@@ -26,13 +28,14 @@
 
     <% if @is_teacher %>
       <tr>
-        <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'new' %></td>
+        <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></td>
         <td></td>
       </tr>
     <% end %>
   </table>
 <% end %>
 
+<!--
 <% if @is_teacher %>
   <h2><%=t :course_teachers_heading %></h2>
 
@@ -42,3 +45,4 @@
 
   <p><%= link_to t(:Edit), course_teachers_path(@course), :class => 'edit' %></p>
 <% end %>
+-->

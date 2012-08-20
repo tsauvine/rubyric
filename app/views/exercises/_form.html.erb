@@ -1,42 +1,52 @@
-<% form_for([@course_instance,@exercise]) do |f| %>
-  <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
-
-  <table>
-    <tr>
-      <td>Name:</td>
-      <td><%= f.text_field :name %>
-        <% if @exercise.errors.on(:name) %>
-          <span class="error"><%= @exercise.errors.on(:name) %></span>
-        <% end %>
-      </td>
-    </tr>
-    <tr>
-      <td><%= f.label :deadline %>:</td>
-      <td><%= f.datetime_select :deadline %></td>
-    </tr>
-  </table>
-
-  <p>Group size: min <%= f.text_field :groupsizemin, :size => 2 %>, max <%= f.text_field :groupsizemax, :size => 2 %> members</p>
-
-  <p>
-    <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
-    <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
-    <%= f.check_box :anonymous_graders %> Anonymous graders<br />
-    <%= f.check_box :autoassign %> Assign resubmissions automatically
-  </p>
-
-  <!-- p>
-    Force same groups as in
-    <% #= select(:forcegroup, :id, @course_instance.exercises, { :include_blank => true })
-    %>
-    <%= f.collection_select('groups_from_exercise' , @course_instance.exercises, 'id', 'name', :include_blank => true) %>
-  </p -->
-
-  <h2>Message to be shown before submitting (HTML allowed):</h2>
-  <%= f.text_area :submit_pre_message, :rows => 3, :cols => 80 %>
-
-  <h2>Message to be shown after submitting (HTML allowed):</h2>
-  <%= f.text_area :submit_post_message, :rows => 3, :cols => 80 %>
-
-  <p><%= f.submit 'Save' %></p>
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'editExercise' %>
 <% end %>
+
+<div class="row">
+  <%= form_for([@course_instance,@exercise]) do |f| %>
+    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+
+    <table>
+      <tr>
+        <td>Name</td>
+        <td><%= f.text_field :name %>
+          <% if @exercise.errors[:name] %>
+            <span class="error"><%= @exercise.errors[:name][0] %></span>
+          <% end %>
+        </td>
+      </tr>
+      <tr>
+        <td><%= f.label :deadline %></td>
+        <td>
+          <%= f.text_field :deadline %>
+        </td>
+      </tr>
+    </table>
+
+    <p>Group size: min <%= f.text_field :groupsizemin, :size => 2 %>, max <%= f.text_field :groupsizemax, :size => 2 %> members</p>
+
+    <!--p>
+      <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
+      <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
+      <%= f.check_box :anonymous_graders %> Anonymous graders<br />
+      <%= f.check_box :autoassign %> Assign resubmissions automatically
+    </p-->
+
+    <!-- p>
+      Force same groups as in
+      <% #= select(:forcegroup, :id, @course_instance.exercises, { :include_blank => true })
+      %>
+      <%= f.collection_select('groups_from_exercise' , @course_instance.exercises, 'id', 'name', :include_blank => true) %>
+    </p -->
+
+    <!--
+    <h2>Message to be shown before submitting (HTML allowed):</h2>
+    <%= f.text_area :submit_pre_message, :rows => 3, :cols => 80 %>
+
+    <h2>Message to be shown after submitting (HTML allowed):</h2>
+    <%= f.text_area :submit_post_message, :rows => 3, :cols => 80 %>
+    -->
+
+    <p><%= f.submit 'Save' %></p>
+  <% end %>
+</div>

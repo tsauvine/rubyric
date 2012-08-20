@@ -1,5 +1,4 @@
 #= require handlebars-1.0.0.beta.6
-#= require jquery-ui-1.8.19.custom.min
 #= require bootstrap-tab
 #= require bootstrap-modal
 

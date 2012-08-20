@@ -1,6 +1,8 @@
 <!-- course_instance/show.html.erb -->
 
-<h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+</div>
 
 <% unless @course_instance.description.blank? %>
   <p><%= @course_instance.description %></p>
@@ -8,6 +10,7 @@
 
 
 <h2><%=t :instance_exercises_heading %></h2>
+<p>
 <table>
   <% if @course_instance.exercises.empty? %>
     <p><%=t :instance_no_exercises %></p>
@@ -27,12 +30,13 @@
     <% end %>
   <% end %>
 </table>
+</p>
 
 <% if @allow_edit %>
-  <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'new' %></p>
+  <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
 <% end %>
 
-
+<!--
 <% if @allow_edit %>
   <h2><%=t :instance_people_heading %></h2>
 
@@ -44,3 +48,4 @@
     <%= link_to t(:Edit), course_instance_assistants_path(@course_instance), :class => 'edit' %>
   </p>
 <% end %>
+-->

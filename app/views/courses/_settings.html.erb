@@ -7,7 +7,7 @@
         <% if @course.errors[:code].empty? %>
           <span class="hint"><%=t :course_code_hint %></span>
         <% else %>
-          <span class="error"><%= @course.errors[:code] %></span>
+          <span class="error"><%= @course.errors[:code][0] %></span>
         <% end %>
       </td>
     </tr>
@@ -18,7 +18,7 @@
         <% if @course.errors[:name].empty? %>
           <span class="hint"><%=t :course_name_hint %></span>
         <% else %>
-          <span class="error"><%= @course.errors[:name] %></span>
+          <span class="error"><%= @course.errors[:name][0] %></span>
         <% end %>
       </td>
     </tr>
@@ -28,12 +28,12 @@
       <td class="hint"><%=t :course_email_hint %></td>
     </tr>
   </table>
-  
+
   <% if @course.new_record? %>
     <p class="hint"><%=t :settings_changeable_later %></p>
     <p><%= f.submit t(:Create) %></p>
   <% else %>
     <p><%= f.submit t(:Save) %></p>
   <% end %>
-  
+
 <% end %>
