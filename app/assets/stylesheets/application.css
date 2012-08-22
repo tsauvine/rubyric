@@ -30,6 +30,10 @@ div.clear {
   font-style: italic;
 }
 
+.obfuscate {
+  display: none;
+}
+
 /*
 .bold {
   font-weight: bold;
@@ -191,10 +195,13 @@ table.histogram td {
  * Frontpage
  ******************/
 
-#frontpage-intro {
-  margin-bottom: 3em;
+.frontpage h3 {
+  color: #444;
 }
 
+.frontpage strong {
+  color: #a00;
+}
 
 
 /***********************************
