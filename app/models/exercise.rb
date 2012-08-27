@@ -196,8 +196,13 @@ class Exercise < ActiveRecord::Base
     feedback_grouping.add_text self.feedbackgrouping
 
     # Write the XML, intendation = 2 spaces
-    output = ""
-    doc.write(output, 2)
+    #output = ""
+    #doc.write(output, 0)
+
+    formatter = REXML::Formatters::Pretty.new
+    formatter.compact = true
+    formatter.width = 16384
+    output = formatter.write(doc.root, "")
 
     return output
   end
