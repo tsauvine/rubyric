@@ -17,5 +17,5 @@ Agent: <%= @env['HTTP_USER_AGENT']  %>
 = Params =
 <% for key, val in @params -%>
   <%= key %>
-  <%= val.to_yaml.to_a.join("\n") %>
+  <%= val %>
 <% end if @params -%>
