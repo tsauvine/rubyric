@@ -2,4 +2,11 @@
   <h1><%=t :sessions_login_heading %></h1>
 </div>
 
-<%= render :partial => 'login' %>
+<div class="row">
+  <div class="span4">
+    <%= render :partial => 'login' %>
+  </div>
+  <div class="span4">
+    <%= render :partial => 'shibboleth' %>
+  </div>
+</div>
