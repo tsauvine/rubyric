@@ -27,13 +27,15 @@ class InPlaceEditor
   # options:
   #   element: Element that will contain the editor. After editing, the element will contain the new value.
   #   value: initial value. Default: data('value')
+  #   emptyPlaceholder: content to be shown if entered value is empty
   #   type: 'textfield' (default), 'textarea'
   constructor: (@options, callback) ->
     element = options['element']
     type = options['type'] || 'textfield'
+    emptyPlaceholder = options['emptyPlaceholder'] || ''
 
     original_value = element.data('value')
-    initial_value = options['value'] || original_value  || ''
+    initial_value = options['value'] || original_value || ''
 
     # Create editor
     if 'textarea' == type
@@ -41,18 +43,22 @@ class InPlaceEditor
     else
       input = $("<input type='textfield' value='#{initial_value}' />")
 
+    displayValue = (value) ->
+      value = emptyPlaceholder if !value || value.length < 1
+      element.html(value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />'))
+
     # Event handlers
     okHandler = (event) =>
       new_value = input.val()
-      new_value_escaped = new_value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
-      #console.log new_value_escaped
-      element.html(new_value_escaped).data('value', new_value) # Replace the editor with the new text. Store the unescaped value in data.
+      displayValue(new_value)
+      element.data('value', new_value) # Replace the editor with the new text. Store the unescaped value in data.
       callback(new_value) if callback
       event.stopPropagation()
 
     cancelHandler = (event) ->
-      original_value_escaped = original_value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
-      element.html(original_value_escaped)  # Replace the editor with the original text.
+      #original_value_escaped = original_value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+      #element.html(original_value_escaped)  # Replace the editor with the original text.
+      displayValue(original_value)
       event.stopPropagation()
 
     # Make buttons
@@ -70,6 +76,9 @@ class InPlaceEditor
       event.stopPropagation()
 
     #input.blur(cancelHandler)
+
+    # Stop propagation of clicks to prevent reopening the editor
+    input.click (event) -> event.stopPropagation()
 
     # Replace original text with the editor
     element.empty()
@@ -221,7 +230,6 @@ class Criterion
 
   load_json: (data) ->
     @name = data['name']
-    console.log "Create criterion #{@name}"
     @id = @rubricEditor.nextCriterionId(parseInt(data['id']))
 
     for phrase_data in data['phrases']
@@ -308,7 +316,6 @@ class Phrase
 
   load_json: (data) ->
     @content = data['text']
-    console.log "Create phrase #{@content}"
     @id = @rubricEditor.nextPhraseId(parseInt(data['id']))
 
   to_json: ->
@@ -336,23 +343,82 @@ class Phrase
     @element.remove()
 
 
+class CategoriesEditor
+  constructor: (@rubricEditor) ->
+    @element = $('#feedback-categories')
+    @element.sortable({containment: 'parent', distance: 5, helper: 'clone'}) # helper:clone is a workaround for a problem where click is fired after dropping and jQuery crashes. It may be fixed in future versions of jQuery.
+
+    $('#create-category-button').click =>
+      this.addCategory('', {activateEditor: true})
+
+  setCategories: (new_categories) ->
+    $('#feedback-categories').empty()
+
+    # Make sure there is at least one category
+    new_categories.push('') if new_categories.length < 1
+
+    for category in new_categories
+      this.addCategory(category)
+
+  addCategory: (content, options) ->
+    options ||= {}
+
+    if !content || content.length < 1
+      visible_content = '<no title>'
+    else
+      visible_content = content
+
+    element = $(@rubricEditor.categoryTemplate({content: visible_content}))
+    td = element.find("td.category")
+    td.data('value', content)
+
+    activateEditor = -> new InPlaceEditor {element: td, emptyPlaceholder: '<no title>'}
+    td.click(activateEditor)
+    element.find('.edit-button').click(activateEditor)
+    element.find('.delete-button').click ->
+      element.remove()
+
+    @element.append(element)
+
+    activateEditor() if options['activateEditor']
+
+    return element
+
+  getCategories: ->
+    console.log "Get feedback categories"
+    categories = []
+    $('#feedback-categories td.category').each (index, element) ->
+      value = $(element).data('value')
+      console.log value
+      categories.push(value)
+
+    return categories
+
+
 class RubricEditor
 
   constructor: () ->
+    @saved = true
     @pageIdCounter = 0
     @criterionIdCounter = 0
     @phraseIdCounter = 0
 
     # Load Handlebar templates
-    @pageTemplate = Handlebars.compile($("#page-template").html());
-    @criterionTemplate = Handlebars.compile($("#criterion-template").html());
-    @phraseTemplate = Handlebars.compile($("#phrase-template").html());
+    @pageTemplate = Handlebars.compile($("#page-template").html())
+    @criterionTemplate = Handlebars.compile($("#criterion-template").html())
+    @phraseTemplate = Handlebars.compile($("#phrase-template").html())
+    @categoryTemplate = Handlebars.compile($("#category-template").html())
+
+    @categoriesEditor = new CategoriesEditor(this)
 
     @url = $('#rubric-editor').data('url')
-    console.log "URL: #{@url}"
 
     $('#create-page').click => @pageCreate()
     $('#save-button').click => @saveRubric()
+
+    $(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
+
+    this.setHelpTexts()
 
     this.loadRubric(@url)
 #     @phraseEditableParams = {
@@ -370,6 +436,13 @@ class RubricEditor
     #@criteriaById = {}
     #@phrasesById = {}
 
+  setHelpTexts: ->
+    $('.help-hover').each (index, element) =>
+      helpElementName = $(element).data('help')
+
+      $(element).mouseenter ->
+        $('#context-help > div').hide()
+        $("##{helpElementName}").show()
 
   nextPageId: (id) ->
     if id && id > @pageIdCounter
@@ -390,9 +463,18 @@ class RubricEditor
       return @phraseIdCounter++
 
   initializeDefault: ->
+    @gradingMode = 'average'
+    @finalComment = ''
+    @categoriesEditor.setCategories(['Strengths','Weaknesses','Other comments'])
+    this.updateGeneralSettings()
+
     page = new Page(this)
     page.initializeDefault()
     page.addToDom()
+
+  updateGeneralSettings: () ->
+    $("#grading-mode-#{@gradingMode}").attr('checked', true)
+    $('#final-comment').val(@finalComment)
 
   #
   # Creates a new rubric page
@@ -422,33 +504,46 @@ class RubricEditor
   # Parses the JSON data returned by the server. See loadRubric.
   #
   parseRubric: (data) ->
-    if data
-      for page_data in data['pages']
-        page = new Page(this)
-        page.load_json(page_data)
-        page.addToDom()
-    else
+    if !data
       this.initializeDefault()
+      return
+
+    @gradingMode = data['gradingMode'] || 'average'
+    @finalComment = data['finalComment'] || ''
+    this.updateGeneralSettings()
+    @categoriesEditor.setCategories(data['feedbackCategories'] || ['Strengths','Weaknesses','Other comments'])
+
+    for page_data in data['pages']
+      page = new Page(this)
+      page.load_json(page_data)
+      page.addToDom()
 
 
   #
   # Sends the JSON encoded rubric to the server by AJAX
   #
   saveRubric: () ->
-    #console.log JSON.stringify(@questionsByQuestionId, ['id','type'])
+    # Read general settings
+    gradingMode = $('input:checked', '#grading-mode').val()
+    finalComment = $('#final-comment').val()
+    feedbackCategories = @categoriesEditor.getCategories()
 
-    #for question_id, question of @questionsByQuestionId
-    #  console.log JSON.stringify(question, ['question_id','type'])
-
+    # Read page contents
     pages = []
-
-    $('#tab-contents .tab-pane').each (index, element) =>
+    $('#tab-contents .tab-pane').each (index, element) ->
       return if index == 0  # Skip settings page
 
       page = $(element).data('page')
       pages.push(page.to_json()) if page
 
-    json = {pages: pages}
+    # Generate JSON
+    json = {
+      version: 1
+      gradingMode: gradingMode
+      finalComment: finalComment
+      feedbackCategories: feedbackCategories
+      pages: pages
+    }
     json_string = JSON.stringify(json)
     #console.log json_string
 
@@ -460,6 +555,7 @@ class RubricEditor
       error: $.proxy(@onAjaxError, this)
       dataType: 'json'
       success: (data) =>
+        @saved = true
         alert('Changes saved')
 
 
@@ -476,158 +572,3 @@ class RubricEditor
 
 jQuery ->
   new RubricEditor
-
-
-  #
-  # Collects and concatenates the text nodes under an element (non-recursively).
-  # Other elements are replaced with '\n'. Returns a string.
-  #
-#   collectText(element) ->
-#     text = $A(element.childNodes).collect( (node) {
-#       return (node.nodeType == 3 ? node.nodeValue.strip() : '\n')
-#     }).join('')
-#     return text
-
-  #
-  # Copies item grading options to the clipboard.
-  #
-#  copyItemGrades(item_id) ->
-#     texts_clipboard = []
-#     points_clipboard = []
-#
-#     # Push the text to the clipboard
-#     elements = $$("#item-grades" + item_id + " .itemGradingOption")
-#     for (i = 0; i < elements.length; i++) {
-#       if (elements[i].firstChild) {
-#         texts_clipboard.push(elements[i].firstChild.data)
-#         points_clipboard.push('0')
-#       }
-#     }
-#
-#     # Flash the table
-#     source_element = $("item-grades" + item_id)
-#     new Effect.Highlight(source_element, {startcolor: "#f0f0f0", endcolor: "#ffffff", duration: .5, queue:{position: 'end', scope: 'copyscope', limit: 1}})
-
-
-  #
-  # Copies section grading options to the clipboard.
-  #
-#   copySectionGrades(section_id) ->
-#     # Push the text to the clipboard
-#     texts = $$("#section-grades" + section_id + " .sectionGradingText")
-#     points = $$("#section-grades" + section_id + " .sectionGradingPoints")
-#     texts_clipboard = []
-#     points_clipboard = []
-#
-#     for (i = 0; i < texts.length; i++) {
-#       texts_clipboard.push(texts[i].firstChild.data)
-#       points_clipboard.push(points[i].firstChild.data)
-#     }
-#
-#     # Flash the table
-#     source_element = $("section-grades" + section_id)
-#     new Effect.Highlight(source_element, {startcolor: "#f0f0f0", endcolor: "#ffffff", duration: .5, queue:{position: 'end', scope: 'copyscope', limit: 1}})
-
-
-#   copyPhrase(phrase_id) ->
-#     phrases_clipboard = []
-#     phrase_types_clipboard = []
-#
-#     element = $("phraseContent" + phrase_id)
-#     if (element) {
-#       phrases_clipboard.push(collectText(element))
-#     }
-#
-#     element = $("phraseType" + phrase_id)
-#     if (element) {
-#       phrase_types_clipboard.push(element.value)
-#     }
-#
-#     # Flash the row
-#     source_element = $("phraseElement" + phrase_id)
-#     new Effect.Highlight(source_element, {startcolor: "#ffffff", endcolor: "#f8f8f8", duration: .5, queue:{position: 'end', scope: 'copyphrasescope', limit: 1}})
-
-
-  #
-  # Copies multiple phrases to the clipboard.
-  #
-#   copyPhrases(item_id) ->
-#     phrases_clipboard = []
-#     phrase_types_clipboard = []
-#
-#     # Texts
-#     elements = $$("#phrases" + item_id + " .phraseContent")
-#     for (i = 0; i < elements.length; i++) {
-#       if (elements[i].firstChild) {
-#         phrases_clipboard.push(collectText(elements[i]))
-#       }
-#     }
-#
-#     # Types
-#     elements = $$("#phrases" + item_id + " .phraseType")
-#     for (i = 0; i < elements.length; i++) {
-#       if (elements[i]) {
-#         phrase_types_clipboard.push(elements[i].value)
-#       }
-#     }
-#
-#     # Flash the table
-#     source_element = $("phrases" + item_id)
-#     new Effect.Highlight(source_element, {startcolor: "#ffffff", endcolor: "#f8f8f8", duration: .5, queue:{position: 'end', scope: 'copyphrasescope', limit: 1}})
-
-#   copyItem(item_id) ->
-#     copyPhrases(item_id)
-#     copyItemGrades(item_id)
-
-
-#   pasteItemGrades(item_id) ->
-#     # Take the texts from the clipboard
-#     parameters = ""
-#     for (i = 0; i < texts_clipboard.length; i++) {
-#       parameters += "&text[" + i + "]" + "=" + encodeURIComponent(texts_clipboard[i])
-#     }
-#
-#     # Make the Ajax call
-#     new Ajax.Updater("item-grades" + item_id,
-#         "<%= url_for :only_path => true, :action => 'new_item_grading_options' %>?iid=" + item_id + parameters,
-#         { asynchronous:true,
-#           evalScripts:true,
-#           parameters:'authenticity_token=' + encodeURIComponent('<%= "#{form_authenticity_token}" %>')
-#         }
-#       )
-
-
-#   pasteSectionGrades(section_id) ->
-#     # Take the texts from the clipboard
-#     parameters = ""
-#     for (i = 0; i < texts_clipboard.length; i++) {
-#       parameters += "&text[" + i + "]" + "=" + encodeURIComponent(texts_clipboard[i])
-#       parameters += "&points[" + i + "]" + "=" + encodeURIComponent(points_clipboard[i])
-#     }
-#
-#     # Make the Ajax call
-#     new Ajax.Updater("section-grades" + section_id,
-#         "<%= url_for :only_path => true, :action => 'new_section_grading_options' %>?sid=" + section_id + parameters,
-#         { asynchronous:true,
-#           evalScripts:true,
-#           parameters:'authenticity_token=' + encodeURIComponent('<%= "#{form_authenticity_token}" %>')
-#         }
-#       )
-
-
-#   pastePhrases(item_id) ->
-#     # Take the texts from the clipboard
-#     parameters = ""
-#     for (i = 0; i < phrases_clipboard.length; i++) {
-#       parameters += "&text[" + i + "]" + "=" + encodeURIComponent(phrases_clipboard[i])
-#       parameters += "&type[" + i + "]" + "=" + encodeURIComponent(phrase_types_clipboard[i])
-#     }
-#
-#     # Make the Ajax call
-#     new Ajax.Updater("phrases" + item_id,
-#         "<%= url_for :only_path => true, :action => 'new_phrases' %>?iid=" + item_id + parameters,
-#         { asynchronous:true,
-#           evalScripts:true,
-#           parameters:'authenticity_token=' + encodeURIComponent('<%= "#{form_authenticity_token}" %>')
-#         }
-#       )

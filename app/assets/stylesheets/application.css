@@ -423,7 +423,8 @@ p.feedback-preview {
 }
 
 .rubric-editor .page h2:hover .buttons,
-.rubric-editor .criterion:hover .buttons
+.rubric-editor .criterion:hover .buttons,
+.rubric-editor tr:hover .buttons
 {
   visibility: visible;
 }
@@ -436,24 +437,6 @@ p.feedback-preview {
 
 .rubric-editor textarea {
   width: 100%
-}
-
-.rubric-editor .category {
-  border: 1px solid gray;
-  -moz-border-radius: 1em;
-  background: #ffebeb;
-  margin: 1em 0em 2em 0em;
-  padding: 1em;
-}
-
-.rubric-editor .category h1 {
-  font-size: 140%;
-  margin: .5em 0em .5em 0em;
-  font-weight: normal;
-}
-
-.rubric-editor .category h1 span {
-  cursor: pointer;
 }
 
 .rubric-editor .section {

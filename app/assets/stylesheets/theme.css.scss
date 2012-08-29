@@ -2,11 +2,22 @@ div.topnavi {
   width: 100%;
   height: 40px;
   background: red image-url("navbar.png") repeat-x;
+
+  > a.pull-right {
+    height: 40px;
+    line-height: 40px;
+    padding: 0px 6px;
+    margin: 0px 2px;
+    color: white;
+    border-left: 1px solid #c33;
+    border-right: 1px solid #c33;
+  }
+
+  img {
+    margin: 5px 0px 0px 20px;
+  }
 }
 
-div.topnavi img {
-  margin: 0px 0px 0px 20px;
-}
 
 /*
 .leftnavicolumn {

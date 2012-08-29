@@ -63,24 +63,6 @@
 </div>
 </script>
 
-<!--
-{{#each phrases}}
-  <tr>
-    <td class="phraseType">
-      <select class="phraseType" id="phraseType-{{id}}">
-        <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
-      </select>
-    </td>
-    <td id="phrase-{{id}}" class="phrase">{{content}}</td>
-    <td class="buttons">
-      <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
-      <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
-      <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
-    </td>
-  </tr>
-{{/each}}
--->
-
 <script id="phrase-template" type="text/x-handlebars-template">
 <tr class="phrase">
   <td class="phraseType">
@@ -99,25 +81,79 @@
 </tr>
 </script>
 
+<script id="category-template" type="text/x-handlebars-template">
+<tr class="category">
+  <td class="category">{{content}}</td>
+  <td class="buttons-column">
+    <div class="buttons">
+      <i class="icon-pencil edit-button" title="Edit"></i>
+      <i class="icon-trash delete-button" title="Delete"></i>
+      <i class="icon-resize-vertical move-button" title="Drag to move"></i>
+    </div>
+  </td>
+</tr>
+</script>
+
 <div class="page-header">
-  <h1><%= @exercise.name %> - Editing rubric</h1>
+  <h1><%= link_to @exercise.name, @exercise %> - Editing rubric</h1>
 </div>
 
-<button id="save-button" class="btn btn-success">Save</button>
+
 
 <div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">
-  <ul id="tabs" class="nav nav-tabs">
-    <li class="active">
-      <a id="tab-settings-link" href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
-    </li>
-    <li id="create-page-tab">
-      <a href="#" class="" id="create-page"><i class="icon-plus"></i> Create new page</a>
-    </li>
-  </ul>
+  <!-- Tabs -->
+  <div class="row-fluid">
+    <div class="span1">
+      <button id="save-button" class="btn btn-success">Save</button>
+    </div>
+    <div class="span11">
+      <ul id="tabs" class="nav nav-tabs">
+        <li class="active">
+          <a id="tab-settings-link" href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
+        </li>
+        <li id="create-page-tab">
+          <a href="#" class="" id="create-page"><i class="icon-plus"></i> Create new page</a>
+        </li>
+      </ul>
+    </div>
+  </div>
 
   <div id="tab-contents" class="tab-content">
     <div class="tab-pane active" id="tab-settings">
-      General settings
+      <div class="row-fluid">
+        <div class="span4 well">
+          <h3>Grading</h3>
+          <ul id="grading-mode" class="unstyled">
+            <li><label><input type="radio" name="grading-mode" id="grading-mode-no" value="no" /> No grade</label></li>
+            <li><label><input type="radio" name="grading-mode" id="grading-mode-average" value="average" /> Weighted average</label></li>
+            <li><label><input type="radio" name="grading-mode" id="grading-mode-sum" value="sum" /> Sum</label></li>
+          </ul>
+        </div>
+        <div class="span4 well">
+          <h3>Feedback categories</h3>
+          <table>
+            <tbody id="feedback-categories">
+            </tbody>
+          </table>
+
+          <div id="create-category-button" class="btn btn-small">
+            <i class="icon-plus"></i> Create category
+          </div>
+        </div>
+        <div class="span4 well">
+          <h3>Feedback email</h3>
+
+          <p>Final comment <i data-help="final-comment-help" class="icon-question-sign help-hover"></i></p>
+          <textarea id="final-comment"></textarea>
+        </div>
+      </div>
+      <%= link_to @exercise do %><i class="icon-circle-arrow-left"></i> Back to <%= @exercise.name %><% end %>
     </div>
   </div>
 </div> <!-- /tabbable -->
+
+<% content_for :help do %>
+  <div id="final-comment-help" class="hide">
+    Final comment is automatically added in the end of the feedback email.
+  </div>
+<% end %>
