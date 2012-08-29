@@ -49,7 +49,8 @@ class Course < ActiveRecord::Base
 
     # Creates an example course, instance and submissions.
   def self.create_example(teacher)
-    example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
+    example_submission_filename = "#{SUBMISSIONS_PATH}/example.pdf"
+    exists = File.exists?(example_submission_filename)
 
     course = Course.create(:code => '0.123', :name => 'Example course')
     course.teachers << teacher if teacher
@@ -71,12 +72,12 @@ class Course < ActiveRecord::Base
     group1 = Group.create(:exercise_id => exercise.id, :name => 'Group 1')
     group1.users << User.find_by_studentnumber('123456')
     submission1 = Submission.create(:exercise_id => exercise.id, :group_id => group1.id, :extension => 'pdf', :filename => 'example.pdf')
-    FileUtils.cp(example_submission_file, "#{submission_path}/#{submission1.id}.pdf")
+    FileUtils.cp(example_submission_filename, "#{submission_path}/#{submission1.id}.pdf") if exists
 
     group2 = Group.create(:exercise_id => exercise.id, :name => 'Group 2')
     group2.users << User.find_by_studentnumber('234567')
     submission2 = Submission.create(:exercise_id => exercise.id, :group_id => group2.id, :extension => 'pdf', :filename => 'example.pdf')
-    FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission2.id}.pdf")
+    FileUtils.ln_s(example_submission_filename, "#{submission_path}/#{submission2.id}.pdf") if exists
 
     # Assign submission
     #exercise.assign([submission1], [teacher])
