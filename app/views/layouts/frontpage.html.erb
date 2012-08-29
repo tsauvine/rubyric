@@ -17,7 +17,7 @@
 
 <div class="container">
   <!-- Content -->
-  <div class="span8">
+  <div class="row">
     <!-- Flash messages -->
     <% if flash[:warning] %>
       <div class="alert"><%= flash[:warning] %></div>
@@ -30,7 +30,6 @@
     <% if flash[:error] %>
       <div class="alert alert-error"><%= flash[:error] %></div>
     <% end %>
-
   </div>
 
   <%= yield  %>
