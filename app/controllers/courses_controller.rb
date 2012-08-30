@@ -1,6 +1,6 @@
 class CoursesController < ApplicationController
   before_filter :login_required #, :except => [:index, :show]
-  
+
   # GET /courses
   def index
     if is_admin?(current_user)
@@ -28,7 +28,7 @@ class CoursesController < ApplicationController
   def edit
     @course = Course.find(params[:id])
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     return access_denied unless @is_teacher
   end
 
@@ -38,13 +38,13 @@ class CoursesController < ApplicationController
 
     if @course.save
       @course.teachers << current_user
-    
+
       flash[:success] = t(:course_created_flash)
       redirect_to new_course_course_instance_path(:course_id => @course.id)
     else
       render :action => "new"
     end
-    
+
   end
 
   # PUT /courses/1
@@ -53,7 +53,7 @@ class CoursesController < ApplicationController
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
 
     return access_denied unless @is_teacher
-    
+
     if @course.update_attributes(params[:course])
       flash[:success] = t(:course_updated_flash)
       redirect_to(@course)
@@ -65,22 +65,22 @@ class CoursesController < ApplicationController
   # DELETE /courses/1
   def destroy
     @course = Course.find(params[:id])
-    
+
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     name = @course.name
     if @course.destroy
       flash[:success] = t(:course_deleted_flash, :name => name)
     else
       flash[:error] = t(:course_delete_failed_flash, :name => name)
     end
-    
+
     redirect_to(courses_url)
   end
 
   def teachers
     @course = Course.find(params[:id])
-    
+
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 

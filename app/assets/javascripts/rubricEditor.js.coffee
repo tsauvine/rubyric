@@ -100,26 +100,37 @@ class Page
     @id ||= @rubricEditor.nextPageId()
 
     @criteria = []
+    @grades = []
     @element = false  # The tab content div
 
   load_json: (data) ->
     @name = data['name']
-    console.log "Create page #{@name}"
+
     @id = @rubricEditor.nextPageId(parseInt(data['id']))
 
+    # Load criteria
     for criterion_data in data['criteria']
       criterion = new Criterion(@rubricEditor)
       criterion.load_json(criterion_data)
       @criteria.push(criterion)
 
+    # Load grades
+    if data['grades']
+      @grades = data['grades']
+
+
   to_json: ->
     criteria = []
+    grades = []
 
     @rubricDiv.find('div.criterion').each (index, element) =>
       criterion = $(element).data('criterion')
       criteria.push(criterion.to_json()) if criterion
 
-    return {id: @id, name: @name, criteria: criteria}
+    @gradesTable.find('td.category').each (index, element) =>
+      grades.push($(element).data('value'))
+
+    return {id: @id, name: @name, criteria: criteria, grades: grades}
 
   initializeDefault: () ->
     @name = 'Untitled page'
@@ -140,24 +151,38 @@ class Page
     @element.data('page', this)
     @rubricDiv = @element.find('.rubric')
     @titleSpan = @element.find('span.title')
+    @gradeInput = @element.find('input')
+    @gradesTable = @element.find('tbody.grading')
 
     @rubricDiv.data('page', this)
     @titleSpan.data('value', @name)
 
-    # Criteria are sortable
-    @rubricDiv.sortable(
-      {containment: '#rubric-editor', distance: 5}
-    )
+    # Criteria and grades are sortable
+    @rubricDiv.sortable {containment: '#rubric-editor', distance: 5}
+    @gradesTable.sortable {containment: 'parent', axis: 'y', distance: 5} # , helper: 'clone'
 
     # Attach event handlers
     @element.find('.create-criterion-button').click (event) => @clickCreateCriterion(event)
     @element.find('.delete-page-button').click => @deletePage()
     @element.find('.edit-page-button').click => @activateTitleEditor()
+    @element.find('.create-grade-button').click (event) => @clickCreateGrade(event)
+    @gradeInput.keyup (event) =>
+      switch event.keyCode
+        when 13  # enter
+          @clickCreateGrade(event)
+        when 27  # esc
+          @gradeInput.val('')
+      event.stopPropagation()
+
     @titleSpan.click => @activateTitleEditor()
 
     # Add criteria
     for criterion in @criteria
       @rubricDiv.append(criterion.createDom())
+
+    # Add grades
+    for grade in @grades
+      this.addGrade(grade)
 
     return @element
 
@@ -205,9 +230,6 @@ class Page
     # Create criterion object
     criterion = new Criterion(@rubricEditor)
 
-    # Add to index
-    #@criteriaById[criterionId] = criterion
-
     # Add to criterion model
     this.criteria.push(criterion)
 
@@ -216,9 +238,33 @@ class Page
 
     criterion.activateEditor()
 
+  clickCreateGrade: (event) ->
+    value = @gradeInput.val()
+
+    this.addGrade(value)
+
+    @gradeInput.val('')
+    @gradeInput.focus()
+    event.stopPropagation()
+
+  addGrade: (value) ->
+    element = $(@rubricEditor.categoryTemplate({content: value}))
+    td = element.find("td.category")
+    td.data('value', value)
+
+    activateEditor = -> new InPlaceEditor {element: td}
+
+    element.find('.delete-button').click -> element.remove()
+    element.find('.edit-button').click(activateEditor)
+    td.click(activateEditor)
+
+    @gradesTable.append(element)
+
+
 #   dropCriterionToSection: (event) ->
 #     console.log "Criterion was dropped into section tab"
 #     console.log event
+
 
 class Criterion
   constructor: (@rubricEditor, @id) ->
@@ -346,7 +392,7 @@ class Phrase
 class CategoriesEditor
   constructor: (@rubricEditor) ->
     @element = $('#feedback-categories')
-    @element.sortable({containment: 'parent', distance: 5, helper: 'clone'}) # helper:clone is a workaround for a problem where click is fired after dropping and jQuery crashes. It may be fixed in future versions of jQuery.
+    @element.sortable({containment: 'parent', axis: 'y', distance: 5, helper: 'clone'}) # helper:clone is a workaround for a problem where click is fired after dropping and jQuery crashes. It may be fixed in future versions of jQuery.
 
     $('#create-category-button').click =>
       this.addCategory('', {activateEditor: true})
@@ -385,12 +431,9 @@ class CategoriesEditor
     return element
 
   getCategories: ->
-    console.log "Get feedback categories"
     categories = []
     $('#feedback-categories td.category').each (index, element) ->
-      value = $(element).data('value')
-      console.log value
-      categories.push(value)
+      categories.push($(element).data('value'))
 
     return categories
 
