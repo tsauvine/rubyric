@@ -14,6 +14,7 @@ class Section < ActiveRecord::Base
   end
 
   def next_sibling()
+    return nil unless self.category
     index = self.category.sections.index(self)
 
     if index < self.category.sections.size - 1
