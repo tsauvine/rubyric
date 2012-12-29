@@ -29,15 +29,7 @@
       <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
       <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
       <%= f.check_box :anonymous_graders %> Anonymous graders<br />
-      <%= f.check_box :autoassign %> Assign resubmissions automatically
     </p-->
-
-    <!-- p>
-      Force same groups as in
-      <% #= select(:forcegroup, :id, @course_instance.exercises, { :include_blank => true })
-      %>
-      <%= f.collection_select('groups_from_exercise' , @course_instance.exercises, 'id', 'name', :include_blank => true) %>
-    </p -->
 
     <!--
     <h2>Message to be shown before submitting (HTML allowed):</h2>

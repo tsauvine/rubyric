@@ -18,26 +18,28 @@ class Group < ActiveRecord::Base
   # If some student is not found from the database, a new user is created.
   # The user will later take over that account when logging in with shibboleth.
   #
+  # OBSOLETE: studentnumber cannot be used as a unique identifier
+  #
   # members is an array of {:studentnumber, :email} hashes.
-  def add_members(members)
-    members.each do |member|
-      # Find user
-      user = User.find_by_studentnumber(member[:studentnumber])
-
-      unless user
-        # Create new user
-        user = User.new(:studentnumber => member[:studentnumber], :email => member[:email])
-        user.save
-      end
-
-      # Add to the group
-      self.users << user
-
-      # Add student to the course instance
-      collection = exercise.course_instance.students
-      collection << user unless collection.include?(user)
-    end
-  end
+#   def add_members(members)
+#     members.each do |member|
+#       # Find user
+#       user = User.find_by_studentnumber(member[:studentnumber])
+# 
+#       unless user
+#         # Create new user
+#         user = User.new(:studentnumber => member[:studentnumber], :email => member[:email])
+#         user.save
+#       end
+# 
+#       # Add to the group
+#       self.users << user
+# 
+#       # Add student to the course instance
+#       collection = exercise.course_instance.students
+#       collection << user unless collection.include?(user)
+#     end
+#   end
 
   # If matching email address if found, user is added to the group. Otherwise, an invitation link is sent to that address.
   #

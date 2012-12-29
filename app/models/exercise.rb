@@ -39,22 +39,7 @@ class Exercise < ActiveRecord::Base
   # Populates the rubric with some example data.
   # This erases the existing rubric.
   def initialize_example
-    # Destroy existing rubric
-    categories.clear
-
-    category = Category.new({:name => 'New part (click to edit)', :position => 1, :exercise_id => id})
-    category.save
-
-    section = Section.new({:name => 'New section (click to edit)', :position => 1})
-    category.sections << section
-
-    item = Item.new({:name => 'New item (click to edit)', :position => 1})
-    section.items << item
-
-    phrase1 = Phrase.new({:content => 'Feedback (click to edit)', :feedbacktype => 'Bad', :position => 1})
-    phrase2 = Phrase.new({:content => 'Feedback (click to edit)', :feedbacktype => 'Good', :position => 2})
-    item.phrases << phrase1
-    item.phrases << phrase2
+    # TODO
   end
 
   # Load rubric from an XML file.

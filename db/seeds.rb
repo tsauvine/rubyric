@@ -14,17 +14,17 @@ user.admin = true
 user.save
 
 # Example students
-# user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => 'Student', :lastname => '1', :email => 'student.1@example.com')
-# user.login = 'student-1'
-# user.studentnumber = '123456'
-# user.admin = true
-# user.save
-# 
-# user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '2', :email => 'student.2@example.com')
-# user.login = 'student-2'
-# user.studentnumber = '234567'
-# user.admin = true
-# user.save
+user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => 'Student', :lastname => '1', :email => 'student.1@example.com')
+user.login = 'student-1'
+user.studentnumber = '123456'
+user.admin = true
+user.save
+
+user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '2', :email => 'student.2@example.com')
+user.login = 'student-2'
+user.studentnumber = '234567'
+user.admin = true
+user.save
 
 # Create teachers
 for i in 1..2 do

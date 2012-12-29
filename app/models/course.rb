@@ -61,9 +61,6 @@ class Course < ActiveRecord::Base
       :name => 'Exercise 1',
       :deadline => Time.now + 1.year,
       :groupsizemax => 3,
-      :positive_caption => 'Strengths',
-      :negative_caption => 'Weaknesses',
-      :neutral_caption => 'Other comments'
     )
     
     # FIXME: makedirs may throw an exception
