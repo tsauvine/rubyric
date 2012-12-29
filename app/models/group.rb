@@ -6,6 +6,9 @@ class Group < ActiveRecord::Base
   has_many :group_invitations
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
 
+  has_many :group_reviewers
+  has_many :reviewers, :through => :group_reviewers, :class_name => 'User'
+
   def has_member?(user)
     user && users.include?(user)
   end

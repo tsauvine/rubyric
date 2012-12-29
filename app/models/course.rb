@@ -65,6 +65,8 @@ class Course < ActiveRecord::Base
       :negative_caption => 'Weaknesses',
       :neutral_caption => 'Other comments'
     )
+    
+    # FIXME: makedirs may throw an exception
     submission_path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     FileUtils.makedirs(submission_path)
 

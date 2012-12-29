@@ -11,29 +11,20 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20120820123726) do
+ActiveRecord::Schema.define(:version => 20121220141019) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_instance_id"
   end
 
-  create_table "categories", :force => true do |t|
-    t.string   "name"
-    t.integer  "position",    :default => 0
-    t.integer  "exercise_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "weight",      :default => 1.0
-  end
-
   create_table "course_instances", :force => true do |t|
     t.integer  "course_id"
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.text     "description"
     t.boolean  "active",      :default => true
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "course_instances_students", :id => false, :force => true do |t|
@@ -45,9 +36,9 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
     t.string   "code"
     t.string   "name"
     t.string   "css"
+    t.string   "email"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "email"
   end
 
   create_table "courses_teachers", :id => false, :force => true do |t|
@@ -76,37 +67,15 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
     t.datetime "deadline"
     t.integer  "groupsizemax",            :default => 1
     t.integer  "groupsizemin",            :default => 1
-    t.integer  "position",                :default => 0
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "groups_from_exercise"
-    t.string   "feedbackgrouping",        :default => "sections"
-    t.text     "finalcomment"
-    t.string   "positive_caption"
-    t.string   "negative_caption"
-    t.string   "neutral_caption"
     t.boolean  "anonymous_graders",       :default => false
     t.boolean  "anonymous_submissions",   :default => false
     t.text     "submit_post_message"
     t.text     "submit_pre_message"
     t.boolean  "grader_can_email"
-    t.boolean  "unregistered_can_submit"
     t.boolean  "submit_without_login",    :default => false
-    t.string   "grading_mode",            :default => "average"
-    t.boolean  "autoassign",              :default => true
     t.text     "rubric"
-  end
-
-  create_table "feedbacks", :force => true do |t|
-    t.integer  "review_id"
-    t.integer  "section_id"
-    t.text     "good"
-    t.text     "bad"
-    t.text     "neutral"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "section_grading_option_id"
-    t.string   "status",                    :limit => 16
   end
 
   create_table "group_invitations", :force => true do |t|
@@ -116,97 +85,51 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
     t.string  "email"
     t.date    "expires_at"
   end
-
   add_index "group_invitations", ["group_id", "token"], :name => "index_group_invitations_on_group_id_and_token"
 
+  create_table "group_reviewers", :force => true do |t|
+    t.integer "group_id", :null => false
+    t.integer "user_id",  :null => false
+  end
+
   create_table "groups", :force => true do |t|
+    t.integer  "course_instance_id"
     t.integer  "exercise_id"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.text     "name"
-    t.integer  "course_instance_id"
   end
 
   create_table "groups_users", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "user_id"
-  end
-
-  create_table "infos", :id => false, :force => true do |t|
-    t.integer "exercise_id"
-    t.string  "studentnumber"
-    t.text    "content"
-  end
-
-  add_index "infos", ["exercise_id", "studentnumber"], :name => "index_infos_on_exercise_id_and_studentnumber"
-
-  create_table "item_grades", :id => false, :force => true do |t|
-    t.integer "feedback_id"
-    t.integer "item_grading_option_id"
-  end
-
-  create_table "item_grading_options", :force => true do |t|
-    t.integer "item_id"
-    t.string  "text"
-    t.integer "points"
-    t.integer "position", :default => 0
-  end
-
-  create_table "items", :force => true do |t|
-    t.string   "name"
-    t.integer  "position",     :default => 0
-    t.integer  "section_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "instructions"
-  end
-
-  create_table "phrases", :force => true do |t|
-    t.text     "content"
-    t.integer  "position",                   :default => 0
-    t.integer  "item_id"
-    t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "feedbacktype", :limit => 32
+    t.string "studentnumber"
+    t.string "email"
   end
 
   create_table "reviews", :force => true do |t|
     t.integer  "user_id"
     t.integer  "submission_id"
+    t.text     "payload"
     t.text     "feedback"
     t.integer  "grade"
     t.string   "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "calculated_grade"
-    t.integer  "final_grade"
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"
-    t.text     "payload"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
-  create_table "roles", :id => false, :force => true do |t|
+  create_table "course_roles", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_id"
     t.string  "role"
   end
-
-  create_table "section_grading_options", :force => true do |t|
-    t.integer "section_id"
-    t.string  "text"
-    t.integer "points"
-    t.integer "position",   :default => 0
-  end
-
-  create_table "sections", :force => true do |t|
-    t.string   "name"
-    t.integer  "position",     :default => 0
-    t.text     "instructions"
-    t.integer  "category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "weight",       :default => 1.0
+  
+  create_table "course_instance_roles", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "course_instance_id"
+    t.string  "role"
   end
 
   create_table "sessions", :force => true do |t|
@@ -222,15 +145,10 @@ ActiveRecord::Schema.define(:version => 20120820123726) do
   create_table "submissions", :force => true do |t|
     t.integer  "exercise_id"
     t.integer  "group_id"
+    t.string   "filename"
     t.string   "extension"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "filename"
-  end
-
-  create_table "submissions_users", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "submission_id"
   end
 
   create_table "users", :force => true do |t|

@@ -20,7 +20,8 @@
     <!-- Left navigation -->
     <div class="span2 leftnavicolumn">
       <% if @course and !@course.new_record? %>
-        <ul class="nav nav-list">
+
+        <ul class="nav nav-list well">
           <li class="nav-header">Course</li>
           <li><%= link_to @course.name, course_path(@course) %></li>
           <% if @is_teacher || is_admin?(current_user) %>
@@ -66,6 +67,7 @@
 
         </ul>
       <% end %>
+
 
     </div> <!-- / left column -->
 

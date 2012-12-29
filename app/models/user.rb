@@ -12,7 +12,10 @@ class User < ActiveRecord::Base
   attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
 
   has_and_belongs_to_many :groups
-  has_many :reviews, :order => 'id'        # reviews as a grader
+  has_many :reviews, :order => 'id'          # reviews as a grader
+
+  # has_many :group_reviewers
+  # has_many :groups_to_review, :order => 'id', :through => :group_reviewers
 
   # TODO: filter inactive courses
   has_and_belongs_to_many :course_instances_student, {:class_name => 'CourseInstance', :join_table => 'course_instances_students', :order => :course_instance_id}

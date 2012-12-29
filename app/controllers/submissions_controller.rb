@@ -3,6 +3,7 @@ class SubmissionsController < ApplicationController
 
   layout 'wide'
 
+  # Download submission
   def show
     @submission = Submission.find(params[:id])
     @exercise = @submission.exercise
@@ -25,7 +26,7 @@ class SubmissionsController < ApplicationController
     end
   end
 
-  # GET /submissions/new
+  # Submit
   def new
     @exercise = Exercise.find(params[:exercise])
     load_course
@@ -49,7 +50,7 @@ class SubmissionsController < ApplicationController
       @available_groups = []
     end
 
-    # Find group
+    # Select group
     if params[:group]
       # Group given as a parameter
       @group = Group.find(params[:group])
@@ -58,8 +59,8 @@ class SubmissionsController < ApplicationController
       @group = @available_groups[0]
     end
 
+    # Redirect to create group if no group is selected
     if !@group && @exercise.groupsizemax > 1
-      # Redirect to group creation
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     end

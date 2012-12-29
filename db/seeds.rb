@@ -14,17 +14,17 @@ user.admin = true
 user.save
 
 # Example students
-user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => 'Student', :lastname => '1', :email => 'student.1@example.com')
-user.login = 'student-1'
-user.studentnumber = '123456'
-user.admin = true
-user.save
-
-user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '2', :email => 'student.2@example.com')
-user.login = 'student-2'
-user.studentnumber = '234567'
-user.admin = true
-user.save
+# user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => 'Student', :lastname => '1', :email => 'student.1@example.com')
+# user.login = 'student-1'
+# user.studentnumber = '123456'
+# user.admin = true
+# user.save
+# 
+# user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => 'Student', :lastname => '2', :email => 'student.2@example.com')
+# user.login = 'student-2'
+# user.studentnumber = '234567'
+# user.admin = true
+# user.save
 
 # Create teachers
 for i in 1..2 do
@@ -49,7 +49,7 @@ for i in 1..10 do
   r.password_confirmation = "student#{i}"
   r.firstname = 'Student'
   r.lastname = i
-  r.email = "student#{i}@example.com"
+  r.email = "tsauvine+s#{i}@gmail.com"
   r.save
 end
 
@@ -60,7 +60,7 @@ for i in 11..20 do
   r.login = r.studentnumber
   r.firstname = 'Assistant'
   r.lastname = i
-  r.email = "assistant#{i}@example.com"
+  r.email = "tsauvine+a#{i}@gmail.com"
   r.password = "assistant#{i}"
   r.password_confirmation = "assistant#{i}"
   r.save

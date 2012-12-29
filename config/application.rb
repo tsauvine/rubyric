@@ -41,7 +41,7 @@ module Rubyric
 
     # JavaScript files you want as :defaults (application.js is always included).
     #config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui rails)
-    config.assets.precompile += ['game.js','emulator.js']
+    # config.assets.precompile += ['game.js','emulator.js']
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,

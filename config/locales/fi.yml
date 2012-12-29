@@ -60,7 +60,7 @@ fi:
     month_names: [~, Tammikuu, Helmikuu, Maaliskuu, Huhtikuu, Toukokuu, Kes&auml;kuu, Hein&auml;kuu, Elokuu, Syyskuu, Lokakuu, Marraskuu, Joulukuu]
     abbr_month_names: [~, tammi, helmi, maalis, huhti, touko, kes&auml;, hein&auml;, elo, syys, loka, marras, joulu]
     # Used in date_select and datime_select.
-    order: [ :year, :month, :day ]
+    order: [ year, month, day ]
 
   time:
     formats:
