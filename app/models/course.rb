@@ -55,12 +55,11 @@ class Course < ActiveRecord::Base
     course = Course.create(:code => '0.123', :name => 'Example course')
     course.teachers << teacher if teacher
 
-    instance = CourseInstance.create(:course_id => course.id, :name => 'Fall 2012')
+    instance = CourseInstance.create(:course_id => course.id, :name => 'Fall 2012', :groupsizemax => 3)
     exercise = Exercise.create(
       :course_instance_id => instance.id,
       :name => 'Exercise 1',
       :deadline => Time.now + 1.year,
-      :groupsizemax => 3,
     )
     
     # FIXME: makedirs may throw an exception

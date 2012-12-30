@@ -6,6 +6,8 @@
 #   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
 #   Major.create(:name => 'Daley', :city => cities.first)
 
+example_organization = Organization.create(:name => 'Example', :domain => 'example.com')
+
 # Create admin
 user = User.new(:password => 'admin', :password_confirmation => 'admin', :firstname => 'Admin', :lastname => 'User', :email => 'admin@example.com')
 user.login = 'admin'
@@ -41,7 +43,7 @@ end
 
 
 # Create students
-for i in 1..10 do
+for i in 1..500 do
   r = User.new
   r.studentnumber = i.to_s.rjust(5, '0')
   r.login = r.studentnumber
@@ -50,6 +52,7 @@ for i in 1..10 do
   r.firstname = 'Student'
   r.lastname = i
   r.email = "tsauvine+s#{i}@gmail.com"
+  r.organization = example_organization
   r.save
 end
 

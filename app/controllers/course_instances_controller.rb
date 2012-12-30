@@ -187,4 +187,14 @@ class CourseInstancesController < ApplicationController
     render :partial => 'user', :collection => @course_instance.assistants, :locals => { :iid => @course_instance.id }
   end
 
+  
+  def create_example_groups
+    @course_instance = CourseInstance.find(params[:course_instance_id])
+    load_course
+    
+    @course_instance.create_example_groups
+    
+    redirect_to @course_instance
+  end
+  
 end

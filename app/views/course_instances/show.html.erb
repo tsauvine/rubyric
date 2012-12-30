@@ -9,9 +9,9 @@
 <% end %>
 
 <div class="row-fluid">
+
+  <!-- Exercises -->
   <div class="span4">
-
-
     <h2><%=t :instance_exercises_heading %></h2>
     <p>
     <table class="table">
@@ -34,12 +34,45 @@
       <% end %>
     </table>
     </p>
+  
+    <% if @allow_edit %>
+      <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
+    <% end %>
   </div>
 </div>
 
-<% if @allow_edit %>
-  <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
-<% end %>
+<hr />
+
+<div class="row-fluid">
+  <!-- Teachers -->
+  <div class="span3 well">
+    <h2>Instructors</h2>
+    <p class="hint">Instructors have full rights view and edit everything.</p>
+    <p>list of instructors</p>
+  </div>
+  
+  <!-- Reviewers -->
+  <div class="span3 well">
+    <h2>Reviewers</h2>
+    <p class="hint">Reviewers can view and review submissions assigned to them.</p>
+    <p>list of reviewers</p>
+  </div>
+  
+  <!-- Students -->
+  <div class="span3 well">
+    <h2>Students</h2>
+    <p><%= link_to course_instance_students_path(@course_instance) do %><%= @course_instance.students.size %> students<% end %></p>
+  </div>
+  
+  <!-- Groups -->
+  <div class="span3 well">
+    <h2>Groups</h2>
+    <p><%= link_to course_instance_groups_path(@course_instance) do %><%= @course_instance.groups.size %> groups<% end %></p>
+  </div>
+</div>
+
+  
+
 
 <!--
 <% if @allow_edit %>

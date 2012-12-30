@@ -16,13 +16,12 @@ Rubyric::Application.routes.draw do
   end
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
-    resources :students, :controller => 'course_instances/students' do
-    end
-
-    resources :assistants, :controller => 'course_instances/assistants' do
-    end
-
+    resources :groups, :controller => 'course_instances/groups'
+    resources :students, :controller => 'course_instances/students'
+    resources :assistants, :controller => 'course_instances/assistants'
     resources :exercises, :only => [:new, :create, :update]
+    
+    get :create_example_groups
   end
 
   resources :exercises, :only => [:show, :edit, :destroy] do
@@ -32,6 +31,8 @@ Rubyric::Application.routes.draw do
     post 'batch_assign'
     get 'archive'
     post 'delete_reviews'
+    
+    get :create_example_submissions
 
     resources :submissions, :controller => 'exercises' do
       collection do

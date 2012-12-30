@@ -275,5 +275,41 @@ class Exercise < ActiveRecord::Base
     return archive
   end
 
+  # Creates an example course, instance and submissions.
+  def create_example_submissions
+    #example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
+    #example_submission_file = nil unless File.exists?(example_submission_file)
+    example_submission_file = nil
 
+    submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
+    begin
+      FileUtils.makedirs(submission_path) if example_submission_file
+    rescue
+      example_submission_file = nil
+    end
+
+    # Create submissions
+    self.course_instance.groups.each do |group|
+      submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
+
+      FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file
+    end
+  end
+  
+  def disk_space
+    path = "#{SUBMISSIONS_PATH}/#{self.id}"
+    `du -s #{path}`.split("\t")[0].to_i
+  end
+  
+  # Will be run in background by delayed job
+  def self.deliver_reviews(review_ids)
+    # Send all reviews
+    reviews = Review.find(:all, :conditions => {:id => review_ids, :status => 'mailing'})
+
+    logger.info "Sending #{reviews.size} reviews"
+
+    reviews.each do |review|
+      Mailer.deliver_review(review)
+    end
+  end
 end

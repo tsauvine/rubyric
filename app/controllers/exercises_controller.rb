@@ -50,7 +50,7 @@ class ExercisesController < ApplicationController
       #  @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
       # end
 
-      render :action => 'submissions'
+      #render :action => 'submissions'
     else
       # Student's or assistant's view
 
@@ -393,6 +393,13 @@ class ExercisesController < ApplicationController
     tempfile.unlink
   end
 
-  private
+  def create_example_submissions
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+    
+    @exercise.create_example_submissions
+    
+    redirect_to @exercise
+  end
 
 end

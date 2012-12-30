@@ -22,6 +22,8 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.integer  "course_id"
     t.string   "name"
     t.text     "description"
+    t.integer  "groupsizemax",            :default => 1
+    t.integer  "groupsizemin",            :default => 1
     t.boolean  "active",      :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -65,8 +67,6 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.string   "name"
     t.integer  "course_instance_id"
     t.datetime "deadline"
-    t.integer  "groupsizemax",            :default => 1
-    t.integer  "groupsizemin",            :default => 1
     t.datetime "created_at"
     t.datetime "updated_at"
     t.boolean  "anonymous_graders",       :default => false
@@ -150,6 +150,11 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.datetime "created_at"
     t.datetime "updated_at"
   end
+  
+  create_table "organizations" do |t|
+    t.string "domain"
+    t.string "name"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "login"
@@ -159,6 +164,7 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.string   "lastname"
     t.string   "email"
     t.string   "studentnumber"
+    t.integer  "organization_id"
     t.boolean  "admin"
     t.datetime "created_at"
     t.datetime "updated_at"
