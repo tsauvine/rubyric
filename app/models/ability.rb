@@ -32,5 +32,10 @@ class Ability
       course && course.has_teacher(user)
     end
     
+    can :destroy, AssistantInvitation do |invitation|
+      course_instance = CourseInstance.find(invitation.target_id)
+      course_instance && course_instance.course.has_teacher(user)
+    end
+    
   end
 end

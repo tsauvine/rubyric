@@ -3,7 +3,7 @@ class AssistantInvitation < Invitation
   
   def accept(user)
     course_instance = CourseInstance.find(self.target_id)
-    course_instance.assistants << user unless course.assistants.include?(user)
+    course_instance.assistants << user unless course_instance.assistants.include?(user)
     self.destroy
   end
 end

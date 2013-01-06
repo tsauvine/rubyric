@@ -23,9 +23,9 @@ Rubyric::Application.routes.draw do
     resources :exercises, :only => [:new, :create, :update]
     
     resource :instructors, :only => [:show], :controller => 'course_instances/instructors'
-    resource :reviewers, :only => [:show], :controller => 'course_instances/reviewers'
+    resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
     
-    #resource :students, :controller => 'course_instances/students'
+    resource :students, :controller => 'course_instances/students'
     resource :groups, :only => [:show], :controller => 'course_instances/groups'
     
     get :create_example_groups

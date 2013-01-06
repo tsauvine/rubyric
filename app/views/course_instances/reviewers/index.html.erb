@@ -1,0 +1,106 @@
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'editInstructors' %>
+<% end %>
+
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+</div>
+
+<div class="row">
+  <div class="span4">
+    <h3>Reviewers</h3>
+
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="users" data-url="<%= course_instance_reviewers_path(@course) %>">
+        <% @course_instance.assistants.each do |user| %> 
+          <tr id="user-<%= user.id %>">
+            <td class="name"><%= user.name %></td>
+            <td class="email"><%= user.email %></td>
+            <td><a href="<%= course_instance_reviewer_path(@course_instance, user) %>" class="remove-user" data-id="<%= user.id %>"><i class="icon-trash"></i></a></td>
+          </tr>
+        <% end %>
+        
+        <% @invitations.each do |invitation| %> 
+          <tr id="invitation-<%= invitation.id %>">
+            <td class="name">(invited)</td>
+            <td class="email"><%= invitation.email %></td>
+            <td><a href="<%= invitation_path(invitation.id) %>" class="remove-invitation" data-id="<%= invitation.id %>"><i class="icon-trash"></i></a></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+
+<div class="row">
+  <div class="span4">
+    <h3>Add reviewer</h3>
+
+    <p class="hint">Search users by name or email. Enter email address to invite.</p>
+    
+    <p>
+      <input type="textfield" id="search-field">
+      <button id="search-button" data-url="<%= search_users_url() %>">Search</button>
+    </p>
+    
+    <div id="search-results-container">
+      <table class="table table-condensed">
+        <tbody id="search-results">
+        </tbody>
+      </table>
+    </div >
+  </div>
+</div>
+
+<!-- Confirm add user -->
+<div id="modal-add-user" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Add reviewer</h3>
+  </div>
+  <div class="modal-body">
+    <p>Add <strong><span id="confirm-add-user-name"></span></strong> as an reviewer to <strong><%= "#{@course.code} #{@course.name} (#{@course_instance.name})" %></strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <a href="#" class="btn btn-primary" id="confirm-add-user">OK</a>
+  </div>
+</div>
+
+<!-- Confirm remove user -->
+<div id="modal-remove-user" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Remove reviewer</h3>
+  </div>
+  <div class="modal-body">
+    <p>Remove <strong><span id="confirm-remove-user-name"></span></strong> from <strong><%= "#{@course.code} #{@course.name} (#{@course_instance.name})" %></strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <a href="#" class="btn btn-primary" id="confirm-remove-user">OK</a>
+  </div>
+</div>
+
+<!-- Confirm remove invitation -->
+<div id="modal-remove-invitation" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Cancel invitation</h3>
+  </div>
+  <div class="modal-body">
+    <p>Cancel invitation <strong><span id="confirm-remove-invitation-email"></span></strong>?</p>
+  </div>
+  <div class="modal-footer">
+    <a href="#" class="btn" data-dismiss="modal">Cancel</a>
+    <a href="#" class="btn btn-primary" id="confirm-remove-invitation">OK</a>
+  </div>
+</div>
