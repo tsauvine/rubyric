@@ -1,0 +1,30 @@
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+</div>
+
+<div class="row">
+  <div class="span12">
+    <table class="table table-condensed groups">
+      <thead>
+        <tr>
+          <th>Students</th>
+          <th>Reviewer</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @groups.each do |group| %>
+          <tr class="group" id="group<%= group.id %>">
+            <td><!-- Students -->
+              <%= (group.users.collect do |user| "#{user.name} (#{user.studentnumber})" end).join(', ') %>
+            </td>
+            <td><!-- Reviewers -->
+              <%= (group.reviewers.collect do |user| "#{user.name}" end).join(', ') %>
+            </td>
+          </tr>
+
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
