@@ -1,11 +1,11 @@
 Rubyric::Application.routes.draw do
-  resource :session do
+  resource :session, :only => [:new, :create, :destroy] do
     get 'shibboleth'
   end
 
   resource :frontpage, :only => [:show], :controller => 'frontpage'
 
-  resources :users do
+  resources :users, :except => [:index] do
     collection do
       get :search
     end
@@ -16,17 +16,17 @@ Rubyric::Application.routes.draw do
     #post 'remove_selected_teachers'
 
     resources :course_instances, :only => [:new, :create, :update]
-    resources :teachers, :controller => 'courses/teachers'
+    resources :teachers, :only => [:create, :destroy], :controller => 'courses/teachers'
   end
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
     resources :exercises, :only => [:new, :create, :update]
     
-    resource :instructors, :controller => 'course_instances/instructors'
-    resource :reviewers, :controller => 'course_instances/reviewers'
+    resource :instructors, :only => [:show], :controller => 'course_instances/instructors'
+    resource :reviewers, :only => [:show], :controller => 'course_instances/reviewers'
     
-    resource :students, :controller => 'course_instances/students'
-    resource :groups, :controller => 'course_instances/groups'
+    #resource :students, :controller => 'course_instances/students'
+    resource :groups, :only => [:show], :controller => 'course_instances/groups'
     
     get :create_example_groups
   end
@@ -41,11 +41,11 @@ Rubyric::Application.routes.draw do
     
     get :create_example_submissions
 
-    resources :submissions, :controller => 'exercises' do
-      collection do
-        post :assign
-      end
-    end
+    #resources :submissions, :controller => 'exercises' do
+    #  collection do
+    #    post :assign
+    #  end
+    #end
 
     resource :rubric, :only => [:show, :edit, :update] do
       member do
@@ -54,12 +54,12 @@ Rubyric::Application.routes.draw do
       end
     end
 
-    resources :groups
+    #resources :groups
   end
 
   match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
 
-  resources :invitations, :id => /[^\/]+/ do
+  resources :invitations, :only => [:show, :destroy], :id => /[^\/]+/ do
 #     member do
 #       get 'teacher'
 #       get 'assistant'
@@ -67,7 +67,7 @@ Rubyric::Application.routes.draw do
 #     end
   end
   
-  resources :submissions do
+  resources :submissions, :only => [:show, :new, :create] do
     member do
       get :review
     end
@@ -79,8 +79,6 @@ Rubyric::Application.routes.draw do
       put :update_finish
     end
   end
-
-  resources :feedbacks, :only => [:edit]
 
 
   #match '/exercise/new/:instance' => 'exercises#new'

@@ -22,8 +22,6 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.integer  "course_id"
     t.string   "name"
     t.text     "description"
-    t.integer  "groupsizemax",            :default => 1
-    t.integer  "groupsizemin",            :default => 1
     t.boolean  "active",      :default => true
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -69,6 +67,8 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.datetime "deadline"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.integer  "groupsizemax",            :default => 1
+    t.integer  "groupsizemin",            :default => 1
     t.boolean  "anonymous_graders",       :default => false
     t.boolean  "anonymous_submissions",   :default => false
     t.text     "submit_post_message"

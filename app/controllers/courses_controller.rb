@@ -78,28 +78,26 @@ class CoursesController < ApplicationController
     redirect_to(courses_url)
   end
 
-  def teachers
-    @course = Course.find(params[:id])
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-  end
-
- 
-
-  # Ajax action for deleting multiple teachers
-  def remove_selected_teachers
-    @course = Course.find(params[:course_id])
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    users = Array.new
-    @course.teachers.each do |user|
-      if params["selector#{user.id}"]
-        users << user
-      end
-    end
-    @course.remove_teachers(users)
-
-    render :partial => 'user', :collection => @course.teachers, :locals => { :cid => @course.id }
-  end
+#   def teachers
+#     @course = Course.find(params[:id])
+# 
+#     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+#   end
+# 
+#   # Ajax action for deleting multiple teachers
+#   def remove_selected_teachers
+#     @course = Course.find(params[:course_id])
+# 
+#     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+# 
+#     users = Array.new
+#     @course.teachers.each do |user|
+#       if params["selector#{user.id}"]
+#         users << user
+#       end
+#     end
+#     @course.remove_teachers(users)
+# 
+#     render :partial => 'user', :collection => @course.teachers, :locals => { :cid => @course.id }
+#   end
 end
