@@ -3,7 +3,7 @@ class User < ActiveRecord::Base
     c.login_field = :email
     #c.validate_password_field = false
     #c.validate_email_field = false
-    c.transition_from_restful_authentication = true
+    #c.transition_from_restful_authentication = true
   end
 
   validates_uniqueness_of :login, :allow_nil => true

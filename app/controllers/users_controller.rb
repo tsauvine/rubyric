@@ -58,4 +58,19 @@ class UsersController < ApplicationController
     render :action => 'edit'
   end
 
+  def search
+    return access_denied unless current_user && current_user.teacher?
+    
+    query = params[:query]
+    
+    if query.include? '@'
+      users = User.where(:email => query).order(:lastname).limit(100).all
+    else
+      users = User.where(["lower(firstname) LIKE ? OR lower(lastname) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%"]).order(:lastname).limit(100).all
+    end
+    
+    respond_to do |format|
+      format.json { render :json => users.as_json(:only => [ :id, :firstname, :lastname ]) }
+    end
+  end
 end

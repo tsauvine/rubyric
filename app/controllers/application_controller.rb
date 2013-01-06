@@ -97,6 +97,10 @@ class ApplicationController < ActionController::Base
     end
   end
   
+  rescue_from CanCan::AccessDenied do |exception|
+    access_denied
+  end
+  
   def access_denied
     if request.xhr?
       head :forbidden

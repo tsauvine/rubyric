@@ -81,11 +81,22 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
   create_table "group_invitations", :force => true do |t|
     t.integer "group_id"
     t.integer "exercise_id"
-    t.string  "token"
+    t.string  "token", :null => false
     t.string  "email"
     t.date    "expires_at"
   end
   add_index "group_invitations", ["group_id", "token"], :name => "index_group_invitations_on_group_id_and_token"
+  
+  create_table "invitations", :force => true do |t|
+    t.string  "token", :null => false
+    t.string  "type"
+    t.string  "email"
+    t.integer "target_id"
+    t.integer "inviter_id"
+    t.date    "expires_at"
+  end
+  add_index "invitations", ["token"], :name => "index_invitations_on_token"
+ 
 
   create_table "group_reviewers", :force => true do |t|
     t.integer "group_id", :null => false
@@ -151,7 +162,7 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.datetime "updated_at"
   end
   
-  create_table "organizations" do |t|
+  create_table "organizations", :force => true do |t|
     t.string "domain"
     t.string "name"
   end

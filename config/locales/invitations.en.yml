@@ -1,0 +1,5 @@
+fi:
+  teacher_invitation_message: "Sinut on lisätty opettajaksi"
+  assistant_invitation_message: "Sinut on lisätty arvioijaksi"
+  group_invitation_message: "Sinut on lisätty ryhmään"
+

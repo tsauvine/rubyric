@@ -84,36 +84,7 @@ class CoursesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
   end
 
-  # Ajax
-  def add_teacher
-    @course = Course.find(params[:course_id])
-
-    # Authorization
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    unless params[:studentnumber].blank?
-      user = User.find_by_studentnumber(params[:studentnumber])
-
-      if user
-        # Existing
-        @course.teachers << user
-      else
-        # Create new
-        logger.info("#{params[:studentnumber]} not found. Creating")
-        user = User.new
-        user.studentnumber = params[:studentnumber]
-        user.firstname = params[:firstname]
-        user.lastname = params[:lastname]
-        user.email = params[:email]
-        user.password = params[:password]
-        user.save
-
-        @course.teachers << user
-      end
-    end
-
-    render :partial => 'user', :collection => @course.teachers, :locals => { :cid => @course.id }
-  end
+ 
 
   # Ajax action for deleting multiple teachers
   def remove_selected_teachers

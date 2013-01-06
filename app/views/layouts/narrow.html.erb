@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <title>Rubyric
+    <%= "- #{@exercise.name}" if @exercise && !@exercise.new_record? %>
+  </title>
+  <%= csrf_meta_tag %>
+  <%= stylesheet_link_tag "application", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= yield(:javascript) %>
+</head>
+
+<body>
+
+<%= render :template => 'layouts/top' %>
+
+<div class="container">
+  <!-- Content -->
+  <div class="row">
+    <!-- Flash messages -->
+    <% if flash[:warning] %>
+      <div class="alert"><%= flash[:warning] %></div>
+    <% end %>
+
+    <% if flash[:success] %>
+      <div class="alert alert-success"><%= flash[:success] %></div>
+    <% end %>
+
+    <% if flash[:error] %>
+      <div class="alert alert-error"><%= flash[:error] %></div>
+    <% end %>
+  </div>
+
+  <%= yield  %>
+</div>
+
+</body>
+</html>

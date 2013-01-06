@@ -1,0 +1,22 @@
+<% @exercises.each do |exercise| %>
+  <h2><%= exercise.name %></h2>
+
+  <table>
+    <tr>
+      <% exercise.categories.each do |category| %>
+        <% category.sections.each do |section| %>
+          <td>
+            <h3><%= section.name %></h3>
+
+            <ul>
+              <% section.section_grading_options.each do |grade| %>
+                <li><%= grade.points %>: <%= grade.text %></li>
+              <% end %>
+            </ul>
+          </td>
+        <% end %>
+      <% end %>
+    </tr>
+  </table>
+
+<% end %>

@@ -1,0 +1,39 @@
+<!-- exercises/show.html.erb -->
+
+<% if @reviews.size > 0 %>
+  <div class="page-header">
+    <h1>My reviews</h1>
+  </div>
+
+  <table class="assignments">
+    <thead>
+      <tr>
+        <td>Students</td>
+        <td>Submission</td>
+        <td>Status</td>
+        <td>Grade</td>
+        <td></td>
+      </tr>
+    </thead>
+    <tbody id="submissions_table">
+      <%= render :partial => 'review', :collection => @reviews %>
+    </tbody>
+  </table>
+<% end %>
+
+<div class="page-header">
+  <h1>My Submissions</h1>
+</div>
+
+<% if @group %>
+  <table>
+    <% @group.submissions.each do |submission| %>
+      <tr>
+        <td><%= submission.created_at %></td>
+        <td>(<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)</td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<p><%= link_to 'New submission', submit_url(@exercise.id) %></p>

@@ -5,7 +5,11 @@ Rubyric::Application.routes.draw do
 
   resource :frontpage, :only => [:show], :controller => 'frontpage'
 
-  resources :users
+  resources :users do
+    collection do
+      get :search
+    end
+  end
 
   resources :courses do
     #post 'add_teachers'
@@ -16,10 +20,13 @@ Rubyric::Application.routes.draw do
   end
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
-    resources :groups, :controller => 'course_instances/groups'
-    resources :students, :controller => 'course_instances/students'
-    resources :assistants, :controller => 'course_instances/assistants'
     resources :exercises, :only => [:new, :create, :update]
+    
+    resource :instructors, :controller => 'course_instances/instructors'
+    resource :reviewers, :controller => 'course_instances/reviewers'
+    
+    resource :students, :controller => 'course_instances/students'
+    resource :groups, :controller => 'course_instances/groups'
     
     get :create_example_groups
   end
@@ -52,6 +59,14 @@ Rubyric::Application.routes.draw do
 
   match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
 
+  resources :invitations, :id => /[^\/]+/ do
+#     member do
+#       get 'teacher'
+#       get 'assistant'
+#       get 'group'
+#     end
+  end
+  
   resources :submissions do
     member do
       get :review

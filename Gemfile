@@ -33,6 +33,7 @@ gem 'jquery-rails'
 
 gem 'acts_as_list'
 gem 'authlogic'
+gem 'cancan'
 #gem 'shoulda'
 #gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
 gem 'delayed_job_active_record', :git => 'git://github.com/collectiveidea/delayed_job_active_record.git'

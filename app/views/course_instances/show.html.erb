@@ -1,4 +1,7 @@
 <!-- course_instance/show.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'courseInstanceView' %>
+<% end %>
 
 <div class="page-header">
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
@@ -48,7 +51,13 @@
   <div class="span3 well">
     <h2>Instructors</h2>
     <p class="hint">Instructors have full rights view and edit everything.</p>
-    <p>list of instructors</p>
+    <ul id="instructors">
+      <% @course.teachers.each do |teacher| %>
+        <li><%= teacher.name %></li>
+      <% end %>
+    </ul>
+
+    <%= link_to t(:Edit), course_instance_instructors_path(@course_instance) %>
   </div>
   
   <!-- Reviewers -->
@@ -70,20 +79,3 @@
     <p><%= link_to course_instance_groups_path(@course_instance) do %><%= @course_instance.groups.size %> groups<% end %></p>
   </div>
 </div>
-
-  
-
-
-<!--
-<% if @allow_edit %>
-  <h2><%=t :instance_people_heading %></h2>
-
-  <p><%= @course_instance.students.length %> <%=t :instance_n_students %>
-    <%= link_to t(:Edit), course_instance_students_path(@course_instance), :class => 'edit' %>
-  </p>
-
-  <p><%= @course_instance.assistants.length %> <%=t :instance_n_assistants %>
-    <%= link_to t(:Edit), course_instance_assistants_path(@course_instance), :class => 'edit' %>
-  </p>
-<% end %>
--->

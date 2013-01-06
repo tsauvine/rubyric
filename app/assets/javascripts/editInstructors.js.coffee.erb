@@ -1,0 +1,211 @@
+#= require handlebars-1.0.0.beta.6
+#= require bootstrap
+
+class UserEditor
+
+  constructor: () ->
+    @users_table = $('#users')
+    @search_results_table = $('#search-results')
+    @search_field = $('#search-field')
+    @search_button = $('#search-button')
+    @modal_add_user = $('#modal-add-user')
+    @modal_remove_user = $('#modal-remove-user')
+    @modal_remove_invitation = $('#modal-remove-invitation')
+    
+    @search_url = @search_button.data('url')
+    @users_url = @users_table.data('url')
+
+    @found_users = {} # 'id' -> {firstname: '', lastname: ''}
+    
+    # Attach event handlers
+    @search_button.click => @search()
+    @search_field.keypress (event) =>
+      @search() if event.keyCode == 13
+    
+    
+    $(document).on('click', '.add-user', $.proxy(@clickAddUser, this))
+    $('#confirm-add-user').click($.proxy(@clickConfirmAddUser, this))
+
+    $('#users a.remove-user').click((event) => return @clickRemoveUser(event))
+    $('#confirm-remove-user').click($.proxy(@clickConfirmRemoveUser, this))
+    
+    $(document).on('click', '.send-invitation-button', $.proxy(@clickSendInvitation, this))
+    $('#users a.remove-invitation').click((event) => return @clickRemoveInvitation(event))
+    $('#confirm-remove-invitation').click($.proxy(@clickConfirmRemoveInvitation, this))
+
+
+  search: () ->
+    query = @search_field.val()
+    return if query.length < 2
+    @query_string = query
+    
+    # Activate busy icon
+    @search_results_table.empty()
+    $('#search-results-container').addClass('busy')
+    
+    jQuery.get(@search_url, {query: query}, $.proxy(@parseSearchResults, this))
+  
+  
+  parseSearchResults: (data, textStatus, jqXHR) ->
+    $('#search-results-container').removeClass('busy')
+    
+    @found_users = {}
+    
+    if data.length < 1
+      # If query string looks like email, add invitation option
+      if @query_string && @query_string.match(/.+@.+\..+/)
+        @search_results_table.html("<tr><td>User not found. <button class='btn btn-small btn-primary send-invitation-button'>Send invitation</button></td></tr>")
+      else
+        @search_results_table.html("<tr><td><p class='hint'>No users found.</p></td></tr>")
+      
+    else
+      html = ""
+      for row in data
+        @found_users[row['id']] = {firstname: row['firstname'], lastname: row['lastname']}
+        html += "<tr><td>#{row['lastname']} #{row['firstname']}</td><td><button class='btn btn-mini add-user' data-id='#{row['id']}'><i class='icon-plus' /></button></td></tr>"
+      
+      @search_results_table.html(html)
+  
+  
+  clickAddUser: (event) ->
+    id = $(event.currentTarget).data('id')
+    user = @found_users[id]
+    return unless user
+  
+    # Ask confirmation
+    @modal_add_user.data('user-id', id)
+    $('#confirm-add-user-name').text("#{user.firstname} #{user.lastname}")
+    @modal_add_user.modal('show')
+
+
+  clickConfirmAddUser: () ->
+    id = @modal_add_user.data('user-id')
+    return unless id
+
+    # Busy icon
+    @users_table.addClass('busy')
+
+    $.ajax({
+      type: 'POST',
+      url: @users_url,
+      data: {user_id: id},
+      success: $.proxy(@userAdded, this)
+      error: $.proxy(@userAddError, this)
+    })
+    
+    @modal_add_user.modal('hide')
+
+
+  userAdded: (data, textStatus, jqXHR) ->
+    # Remove busy icon
+    @users_table.removeClass('busy')
+    
+    for row in data['added_users']
+      tr = $("<tr id='user-#{row['id']}'><td class='name'>#{row['firstname']} #{row['lastname']}</td><td>#{row['email']}</td><td></td></tr>")
+      @users_table.append(tr)
+    
+    for row in data['invited_users']
+      tr = $("<tr id='invitation-#{row['id']}'><td class='name'>(invited)</td><td>#{row['email']}</td><td></td></tr>")
+      @users_table.append(tr)
+
+
+  userAddError: () ->
+    # Remove busy icon
+    @users_table.removeClass('busy')
+
+  clickRemoveUser: (event) ->
+    event.preventDefault()
+    
+    id = $(event.currentTarget).data('id')
+    url = $(event.currentTarget).attr('href')
+  
+    # Ask confirmation
+    @modal_remove_user.data('url', url)
+    $('#confirm-remove-user-name').text($("#user-#{id} td.name").text())
+    @modal_remove_user.modal('show')
+  
+  
+  clickConfirmRemoveUser: () ->
+    url = @modal_remove_user.data('url')
+    return unless url
+
+    # Busy icon
+    @users_table.addClass('busy')
+
+    $.ajax({
+      type: 'DELETE',
+      url: url,
+      success: $.proxy(@userRemoved, this)
+      error: $.proxy(@userRemoveError, this)
+    })
+    
+    @modal_remove_user.modal('hide')
+
+
+  userRemoved: (data, textStatus, jqXHR) ->
+    @users_table.removeClass('busy')
+    
+    for row in data
+      $("#user-#{row}").remove()
+
+
+  clickRemoveInvitation: (event) ->
+    event.preventDefault()
+    
+    id = $(event.currentTarget).data('id')
+    url = $(event.currentTarget).attr('href')
+  
+    # Ask confirmation
+    @modal_remove_invitation.data('url', url)
+    $('#confirm-remove-invitation-email').text($("#invitation-#{id} td.email").text())
+    @modal_remove_invitation.modal('show')
+  
+  
+  clickConfirmRemoveInvitation: () ->
+    url = @modal_remove_invitation.data('url')
+    return unless url
+
+    # Busy icon
+    @users_table.addClass('busy')
+
+    $.ajax({
+      type: 'DELETE',
+      url: url,
+      success: $.proxy(@invitationRemoved, this)
+      error: $.proxy(@userRemoveError, this)
+    })
+    
+    @modal_remove_invitation.modal('hide')
+  
+  
+  invitationRemoved: (data, textStatus, jqXHR) ->
+    @users_table.removeClass('busy')
+    
+    for row in data
+      $("#invitation-#{row}").remove()
+  
+  
+  userRemoveError: (data, textStatus, jqXHR) ->
+    @users_table.removeClass('busy')
+    alert(data['responseText']) if data['responseText']
+    
+  
+  clickSendInvitation: ->
+    return unless @query_string
+    
+    # Busy icon
+    @users_table.addClass('busy')
+    
+    @search_field.val('')
+
+    $.ajax({
+      type: 'POST',
+      url: @users_url,
+      data: {email: @query_string},
+      success: $.proxy(@userAdded, this)
+      error: $.proxy(@userAddError, this)
+    })
+    
+
+jQuery ->
+  new UserEditor
