@@ -4,6 +4,7 @@ class Group < ActiveRecord::Base
 
   has_and_belongs_to_many :users
   has_many :group_invitations
+  
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
 
   has_many :group_reviewers
