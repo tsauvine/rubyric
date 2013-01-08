@@ -16,13 +16,12 @@ Rubyric::Application.routes.draw do
     #post 'remove_selected_teachers'
 
     resources :course_instances, :only => [:new, :create, :update]
-    resources :teachers, :only => [:create, :destroy], :controller => 'courses/teachers'
+    resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
   end
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
     resources :exercises, :only => [:new, :create, :update]
     
-    resource :instructors, :only => [:show], :controller => 'course_instances/instructors'
     resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
     
     resources :students, :only => [:index], :controller => 'course_instances/students'

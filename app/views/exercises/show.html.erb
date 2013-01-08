@@ -1,30 +1,46 @@
 <!-- exercises/show.html.erb -->
 
-<h2>1. Receive submissions</h2>
-
-<p>
-  Publish this link on the homepage of the course:<br />
-  <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
-</p>
-
-<p>
-<strong><%= @course_instance.groups.size %></strong> groups<br />
-<strong>N</strong> groups have submitted
-</p>
+<div class="page-header">
+  <h1><%= @course.code %> <%= @course.name %> - <%= @course_instance.name %> - <%= @exercise.name %></h1>
+</div>
 
 
-<h2>2. Assign reviewers</h2>
-
-
-<h2>3. Review</h2>
-
-<p>N of M submissions have been reviewed</p>
-
-
-<h2>4. Send feedback to students</h2>
-
-
-
-
-<h2>5. Results</h2>
+<table id="exercise-manager-frontpage">
+  <tbody>
+    <tr>
+      <td>Deadline</td>
+      <td>
+        <% if @exercise.deadline %>
+          <%= @exercise.deadline %>
+        <% else %>
+          <%= link_to 'Set deadline', edit_exercise_path(@exercise.id), :class => 'btn' %>
+        <% end %>
+      </td>
+    </tr>
+    <tr>
+      <td>Submit URL</td>
+      <td><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %></td>
+    </tr>
+    <tr>
+      <td>Rubric</td>
+      <td><%= link_to 'Edit rubric', exercise_rubric_path(@exercise.id), :class => 'btn' %></td>
+    </tr>
+    <tr>
+      <td>Submissions</td>
+      <td><strong>N</strong> groups of <%= @course_instance.groups.size %> have submitted.</td>
+    </tr>
+    <tr>
+      <td>Reviews</td>
+      <td>N of M submissions have been reviewed</td>
+    </tr>
+    <tr>
+      <td>Feedback mails</td>
+      <td>N of M reviews have been mailed</td>
+    </tr>
+    <tr>
+      <td>Results</td>
+      <td></td>
+    </tr>
+  </tbody>
+</table>
 

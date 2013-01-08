@@ -1,9 +1,8 @@
 class Courses::TeachersController < CoursesController
   before_filter :login_required
 
-  def show
-    @course_instance = CourseInstance.find(params[:course_instance_id])
-    load_course
+  def index
+    @course = Course.find(params[:course_id])
     
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 

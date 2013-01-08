@@ -2,8 +2,14 @@
 <html>
 <head>
   <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
-  <title>Rubyric
-    <%= "- #{@exercise.name}" if @exercise && !@exercise.new_record? %>
+  <title>
+    <% if @exercise && !@exercise.new_record? %>
+      <%= @exercise.name %> - Rubyric
+    <% elsif @course && !@course.new_record? %>
+      <%= @course.name %> - Rubyric
+    <% else %>
+      Rubyric
+    <% end %>
   </title>
   <%= csrf_meta_tag %>
   <%= stylesheet_link_tag "application", :media => "all" %>
@@ -22,26 +28,29 @@
       <% if @course and !@course.new_record? %>
 
         <ul class="nav nav-list well">
+          <!-- Course -->
           <li class="nav-header">Course</li>
           <li><%= link_to @course.name, course_path(@course) %></li>
-          <% if @is_teacher || is_admin?(current_user) %>
+          <% if can? :edit, @course %>
             <li><%= link_to edit_course_path(@course) do %><i class="icon-wrench"></i> Settings<% end %></li>
+            <li><%= link_to course_teachers_path(@course) do %><i class="icon-user"></i> Instructors<% end %></li>
           <% end %>
 
 
           <% if @course_instance and !@course_instance.new_record? %>
-            <!-- Selected instance -->
+            <!-- Instance -->
             <li class="nav-header">Instance</li>
             <li><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
-            <% if @is_teacher || is_admin?(current_user) %>
+            <% if can? :edit, @course_instance %>
               <li><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
+              <li><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-users"></i> Reviewers<% end %></li>
             <% end %>
 
             <% if @exercise and !@exercise.new_record?%>
-              <!-- Selected exercise -->
+              <!-- Exercise -->
               <li class="nav-header">Exercise</li>
               <li><%= link_to @exercise.name, exercise_path(@exercise) %></li>
-              <% if @is_teacher || is_admin?(current_user) %>
+              <% if can? :edit, @course_instance %>
                 <li><%= link_to edit_exercise_path(@exercise) do %><i class="icon-wrench"></i> Settings<% end %></li>
                 <li><%= link_to edit_exercise_rubric_path(@exercise) do %><i class="icon-th-list"></i> Rubric<% end %></li>
                 <!--li><%= link_to exercise_path(@exercise) do %><i class="icon-folder-open"></i> Submissions<% end %></li-->
@@ -59,16 +68,12 @@
             <!-- List of instances -->
             <li class="nav-header">Instances</li>
             <% @course.course_instances.each do |instance| %>
-              <ul>
-                <li><%= link_to instance.name, course_instance_path(instance) %></li>
-              </ul>
+              <li><%= link_to instance.name, course_instance_path(instance) %></li>
             <% end %>
           <% end %>
 
         </ul>
       <% end %>
-
-
     </div> <!-- / left column -->
 
     <!-- Content -->

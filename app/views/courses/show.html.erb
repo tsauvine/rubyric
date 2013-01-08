@@ -1,48 +1,55 @@
 <!-- courses/show.html.erb -->
 
 <div class="page-header">
-  <h1><%=h @course.code %> <%=h @course.name %></h1>
+  <h1><%= @course.code %> <%= @course.name %></h1>
 </div>
 
-<h2><%=t :course_instances_heading %></h2>
-<% if @course.course_instances.empty? %>
-  <p><%=t :course_no_instances %></p>
+<div class="row-fluid">
+  <div class="span4">
+    <h2><%=t :course_instances_heading %></h2>
+    <% if @course.course_instances.empty? %>
+      <p><%=t :course_no_instances %></p>
 
-  <% if @is_teacher %>
-    <p>
-      <%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %>
-      <span class="hint"><%=t :course_no_instances_hint, :year => Time.now.year %></span>
-    </p>
-  <% end %>
-<% else %>
-  <table>
-    <% @course.course_instances.each do |instance| %>
-      <tr>
-        <td><%= link_to instance.name, instance %></td>
+      <% if @is_teacher %>
+        <p>
+          <%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %>
+          <span class="hint"><%=t :course_no_instances_hint, :year => Time.now.year %></span>
+        </p>
+      <% end %>
+    <% else %>
+      <table>
+        <% @course.course_instances.each do |instance| %>
+          <tr>
+            <td><%= link_to instance.name, instance %></td>
+
+            <% if @is_teacher %>
+              <td class="trash"><%= link_to instance, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %></td>
+            <% end %>
+          </tr>
+        <% end %>
 
         <% if @is_teacher %>
-          <td class="trash"><%= link_to instance, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %></td>
+          <tr>
+            <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></td>
+            <td></td>
+          </tr>
         <% end %>
-      </tr>
+      </table>
     <% end %>
+  </div>
+    
+  <div class="span4 well">
+    <!-- Teachers -->
+    <h2>Instructors</h2>
+    <p class="hint">Instructors have full rights to view and edit everything.</p>
+    <ul id="instructors">
+      <% @course.teachers.each do |user| %>
+        <li><%= user.name %></li>
+      <% end %>
+    </ul>
 
-    <% if @is_teacher %>
-      <tr>
-        <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></td>
-        <td></td>
-      </tr>
+    <% if can? :edit, @course %>
+      <%= link_to t(:Edit), course_teachers_path(@course) %>
     <% end %>
-  </table>
-<% end %>
-
-<!--
-<% if @is_teacher %>
-  <h2><%=t :course_teachers_heading %></h2>
-
-  <% @course.teachers.each do |user| %>
-    <%= h user.name %><br />
-  <% end %>
-
-  <p><%= link_to t(:Edit), course_teachers_path(@course), :class => 'edit' %></p>
-<% end %>
--->
+  </div>
+</div>

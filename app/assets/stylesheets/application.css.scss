@@ -583,6 +583,18 @@ p.feedback-preview {
 }
 
 
+
+#exercise-manager-frontpage {
+  td {
+    padding-bottom: 2em;
+  }
+  td:first-child {
+    font-weight: bold;
+    padding-right: 2em;
+  }
+}
+
+
 /******************
  * Error messages
  ******************/
