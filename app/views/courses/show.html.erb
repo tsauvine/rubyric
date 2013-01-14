@@ -17,7 +17,8 @@
         </p>
       <% end %>
     <% else %>
-      <table>
+      <p>
+      <table class="table">
         <% @course.course_instances.each do |instance| %>
           <tr>
             <td><%= link_to instance.name, instance %></td>
@@ -27,18 +28,16 @@
             <% end %>
           </tr>
         <% end %>
-
-        <% if @is_teacher %>
-          <tr>
-            <td><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></td>
-            <td></td>
-          </tr>
-        <% end %>
       </table>
+      </p>
+    <% end %>
+    
+    <% if can? :edit, @course %>
+      <p><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></p>
     <% end %>
   </div>
     
-  <div class="span4 well">
+  <div class="span4">
     <!-- Teachers -->
     <h2>Instructors</h2>
     <p class="hint">Instructors have full rights to view and edit everything.</p>
