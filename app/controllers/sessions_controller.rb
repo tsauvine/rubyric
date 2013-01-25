@@ -1,3 +1,4 @@
+# Rubyric
 class SessionsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create]
   #before_filter :require_user, :only => :destroy
@@ -24,12 +25,10 @@ class SessionsController < ApplicationController
   end
 
   def destroy
+    return unless current_session
+    
     logout_url = session[:logout_url]
-
-    session = current_session
-    return unless session
-
-    session.destroy
+    current_session.destroy
     flash[:success] = "Logout successful"
 
     if logout_url
@@ -48,7 +47,7 @@ class SessionsController < ApplicationController
       :lastname => request.env[SHIB_ATTRIBUTES[:lastname]],
       :email => request.env[SHIB_ATTRIBUTES[:email]],
     }
-    session[:logout_url] = request.env[SHIB_ATTRIBUTES[:logout]]
+    logout_url = request.env[SHIB_ATTRIBUTES[:logout]]
 
 #     shibinfo = {
 #       :login => '83632', #'student1@hut.fi',
@@ -66,11 +65,10 @@ class SessionsController < ApplicationController
   def shibboleth_login(shibinfo, logout_url)
     if shibinfo[:login].blank? && shibinfo[:studentnumber].blank?
       flash[:error] = "Shibboleth login failed (no studentnumber or username received)."
+      logger.warn("Shibboleth login failed (missing attributes). #{shibinfo}")
       render :action => 'new'
       return
     end
-
-    session[:logout_url] = logout_url
 
     # Find user by username (eppn)
     unless shibinfo[:login].blank?
@@ -96,12 +94,13 @@ class SessionsController < ApplicationController
       user.firstname = shibinfo[:firstname]
       user.lastname = shibinfo[:lastname]
       user.email = shibinfo[:email]
-      user.organization = shibinfo[:organization]
+      user.reset_persistence_token
+      user.reset_single_access_token
       if user.save(:validate => false)
         logger.info("Created new user #{user.login} (#{user.studentnumber}) (shibboleth)")
       else
         logger.info("Failed to create new user (shibboleth) #{shibinfo} Errors: #{user.errors.full_messages.join('. ')}")
-        flash[:error] = 'Failed to create new user'
+        flash[:error] = "Failed to create new user. #{user.errors.full_messages.join('. ')}"
         render :action => 'new'
         return
       end
@@ -114,14 +113,13 @@ class SessionsController < ApplicationController
       user.firstname = shibinfo[:firstname] if user.firstname.blank?
       user.lastname = shibinfo[:lastname] if user.lastname.blank?
       user.email = shibinfo[:email] if user.email.blank?
-      user.organization = shibinfo[:organization] if user.organization.blank?
-
-      #user.save
+      user.reset_persistence_token if user.persistence_token.blank?  # Authlogic won't work if persistence token is empty
+      user.reset_single_access_token if user.single_access_token.blank?
     end
 
     # Create session
-    user.reset_persistence_token  # Authlogic won't work if persistence token is empty
     if Session.create(user)
+      session[:logout_url] = logout_url
       logger.info("Logged in #{user.login} (#{user.studentnumber}) (shibboleth)")
     else
       logger.warn("Failed to create session for #{user.login} (#{user.studentnumber}) (shibboleth)")

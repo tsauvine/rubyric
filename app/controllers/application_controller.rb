@@ -1,17 +1,22 @@
+# Rubyric
 class ApplicationController < ActionController::Base
-  protect_from_forgery
-
   helper :all # include all helpers, all the time
+  protect_from_forgery # See ActionController::RequestForgeryProtection for details
+  
   helper_method :current_session, :current_user, :logged_in?, :is_admin?
 
-  # SSL
   before_filter :redirect_to_ssl
+  before_filter :set_locale
+  before_filter :require_login?
+  
+  protected
+  
+  # Redirects from http to https if FORCE_SSL is set.
   def redirect_to_ssl
     redirect_to :protocol => "https://" if FORCE_SSL && !request.ssl?
   end
   
   # Locale
-  before_filter :set_locale
   def set_locale
     if params[:locale]  # Locale is given as a URL parameter
       I18n.locale = params[:locale]
@@ -30,9 +35,6 @@ class ApplicationController < ActionController::Base
       I18n.locale = session[:locale]
     end
   end
-
-
-  protected
 
   # If @exercise is defined, loads @course_instance and @course.
   # If @course_instance is defined, loads @course.
@@ -86,6 +88,11 @@ class ApplicationController < ActionController::Base
     user && user.admin
   end
   
+  # If require_login GET-parameter is set, this filter redirect to login. After successful login, user is redirected back to the original location.
+  def require_login?
+    login_required if params[:require_login] && !logged_in?
+  end
+
   def login_required
     unless current_user
       store_location
@@ -121,17 +128,6 @@ class ApplicationController < ActionController::Base
     
     return false
   end
-
-#   def require_no_user
-#     if current_user
-#       store_location
-#       
-#       flash[:error] = "You must be logged out to access"
-#       redirect_to root_url
-#       
-#       return false
-#     end
-#   end
   
   def store_location
     session[:return_to] = request.fullpath
