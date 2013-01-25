@@ -29,7 +29,7 @@
                 <%=l exercise.deadline, :format => :short %>
               <% end %>
             </td>
-            <% if can? :edit, @course %>
+            <% if can? :update, @course %>
               <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
             <% end %>
           </tr>
@@ -38,7 +38,7 @@
     </table>
     </p>
   
-    <% if can? :edit, @course %>
+    <% if can? :update, @course %>
       <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
     <% end %>
   </div>

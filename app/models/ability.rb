@@ -37,8 +37,12 @@ class Ability
       course_instance && course_instance.course.has_teacher(user)
     end
     
-    can :edit, Course do |course|
+    can :update, Course do |course|
       course.has_teacher(user)
+    end
+    
+    can :update, CourseInstance do |course_instance|
+      course_instance.course.has_teacher(user)
     end
     
   end

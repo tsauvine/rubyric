@@ -31,7 +31,7 @@
           <!-- Course -->
           <li class="nav-header">Course</li>
           <li><%= link_to @course.name, course_path(@course) %></li>
-          <% if can? :edit, @course %>
+          <% if can? :update, @course %>
             <li><%= link_to edit_course_path(@course) do %><i class="icon-wrench"></i> Settings<% end %></li>
             <li><%= link_to course_teachers_path(@course) do %><i class="icon-user"></i> Instructors<% end %></li>
           <% end %>
@@ -41,7 +41,7 @@
             <!-- Instance -->
             <li class="nav-header">Instance</li>
             <li><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
-            <% if can? :edit, @course_instance %>
+            <% if can? :update, @course_instance %>
               <li><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
               <li><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-users"></i> Reviewers<% end %></li>
             <% end %>
@@ -50,7 +50,7 @@
               <!-- Exercise -->
               <li class="nav-header">Exercise</li>
               <li><%= link_to @exercise.name, exercise_path(@exercise) %></li>
-              <% if can? :edit, @course_instance %>
+              <% if can? :update, @course_instance %>
                 <li><%= link_to edit_exercise_path(@exercise) do %><i class="icon-wrench"></i> Settings<% end %></li>
                 <li><%= link_to edit_exercise_rubric_path(@exercise) do %><i class="icon-th-list"></i> Rubric<% end %></li>
                 <!--li><%= link_to exercise_path(@exercise) do %><i class="icon-folder-open"></i> Submissions<% end %></li-->

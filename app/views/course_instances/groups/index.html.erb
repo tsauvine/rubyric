@@ -1,30 +1,25 @@
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'assignmentEditor.js' %>
+<% end %>
+
 <div class="page-header">
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<div class="row">
-  <div class="span12">
-    <table class="table table-condensed groups">
-      <thead>
-        <tr>
-          <th>Students</th>
-          <th>Reviewer</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% @groups.each do |group| %>
-          <tr class="group" id="group<%= group.id %>">
-            <td><!-- Students -->
-              <%= (group.users.collect do |user| "#{user.name} (#{user.studentnumber})" end).join(', ') %>
-            </td>
-            <td><!-- Reviewers -->
-              <%= (group.reviewers.collect do |user| "#{user.name}" end).join(', ') %>
-            </td>
-          </tr>
+<div id="groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
+  <table class="table">
+    <thead>
+      <tr>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody data-bind="foreach: groups">
+      <tr>
+        <td data-bind="foreach: students">
+          <span data-bind="text: name">
+        </td>
+      </tr>
+    </tbody>
+  </table>
 
-        <% end %>
-      </tbody>
-    </table>
-  </div>
 </div>
-

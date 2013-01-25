@@ -32,7 +32,7 @@
       </p>
     <% end %>
     
-    <% if can? :edit, @course %>
+    <% if can? :update, @course %>
       <p><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></p>
     <% end %>
   </div>
@@ -47,7 +47,7 @@
       <% end %>
     </ul>
 
-    <% if can? :edit, @course %>
+    <% if can? :update, @course %>
       <%= link_to t(:Edit), course_teachers_path(@course) %>
     <% end %>
   </div>
