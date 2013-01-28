@@ -6,20 +6,89 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<div id="groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
-  <table class="table">
+<div class="row-fluid busy" id="groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
+  <table class="table table-hover table-condensed">
     <thead>
       <tr>
         <th></th>
+        <th>Members</th>
+        <th>Reviewers</th>
+        <th></th>
       </tr>
     </thead>
-    <tbody data-bind="foreach: groups">
+    <tbody data-bind="foreach: { data: groups, as: 'group' }">
       <tr>
+        <td>
+          <input type="checkbox" data-bind="checked: selected" />
+        </td>
         <td data-bind="foreach: students">
-          <span data-bind="text: name">
+          <span data-bind="text: name" />
+        </td>
+        <td data-bind="foreach: reviewers">
+          <span class="label label-info">
+            <span data-bind="text: name"></span> <a data-bind="click: group.removeAssignment" href="#">&times;</a>
+          </span>
+        </td>
+        <td>
+          <button class="btn btn-small" data-bind="click: group.clickAssign">Add reviewer...</button>
         </td>
       </tr>
     </tbody>
   </table>
+</div>  
 
+<!-- Buttons -->
+<div class="row">
+  <div class="span6">
+    <p>
+      <button class="btn" data-bind="click: clickSelectAll">Select all</button>
+      <button class="btn" data-bind="click: clickSelectNone">Select none</button>
+    </p>
+    
+    <p>
+      <button class="btn" data-bind="click: clickAssign">Assign selected to</button>
+      <select data-bind="value: currentReviewer">
+        <option value="assistants">Assistants evenly</option>
+        <!-- ko foreach: reviewers -->
+        <option data-bind="text: name, value: id"></option>
+        <!-- /ko -->
+      </select>
+    </p>
+  </div>
+  
+  <div class="span6">
+    <h2>Reviewer workloads</h2>
+    
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Reviewer</th>
+          <th>Groups</th>
+        </tr>
+      </thead>
+      <tbody data-bind="foreach: reviewers">
+        <tr>
+          <td><span data-bind="text: name" /></td>
+          <td><span data-bind="text: assignments.length" /></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Assign modal -->
+<div id="modalAssign" class="modal hide">
+  <div class="modal-header">
+    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+    <h3>Assign group to reviewer</h3>
+  </div>
+  <div class="modal-body">
+    <p>Assign group to</p>
+    <ul data-bind="foreach: reviewers">
+      <li><a href="#" data-bind="click: $root.clickModalAssign"><span data-bind="text: name" /></a></li>
+    </ul>
+  </div>
+  <div class="modal-footer">
+    <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+  </div>
 </div>
