@@ -154,4 +154,15 @@ class CourseInstance < ActiveRecord::Base
       break if user_counter >= users.size
     end
   end
+  
+  # assignments: {group_id => [user_id, user_id, ...], group_id => ...}
+  def set_assignments(assignments)
+    Group.transaction do
+      self.groups.includes(:reviewers).find_each do |group|
+        group.reviewer_ids = assignments[group.id.to_s] || []
+        group.save
+      end
+    end
+    
+  end
 end

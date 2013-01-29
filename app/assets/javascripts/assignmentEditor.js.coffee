@@ -9,9 +9,7 @@ class User
     @lastname = data['lastname']
     @name = "#{@firstname} #{@lastname}"
     @studentnumber = data['studentnumber']
-    @assignments = ko.observableArray()  # TODO: load from server
-
-  #removeAssignment: (group) ->
+    @assignments = ko.observableArray()
     
 
 class Group
@@ -19,18 +17,31 @@ class Group
     @id = data['id']
     @selected = ko.observable(false)
 
+    # Set students
     @students = []
+    groupname = []
     for user_id in data['user_ids']
-      @students.push(users[user_id])
+      student = users[user_id]
+      @students.push(student)
+      groupname.push(student.name + ' (' + student.studentnumber + ')')
+      
+    @name = groupname.join(', ')
 
+    # Set reviewers
     @reviewers = ko.observableArray()
+    for user_id in data['reviewer_ids']
+      reviewer = users[user_id]
+      @reviewers.push(reviewer)
+      reviewer.assignments.push(this)
+    
 
   assignTo: (reviewer) ->
+    return if @reviewers.indexOf(reviewer) >= 0 # Ignore duplicates
+    
     @reviewers.push(reviewer)
     reviewer.assignments.push(this)
 
   removeAssignment: (reviewer) ->
-    console.log this
     @reviewers.remove(reviewer)
     reviewer.assignments.remove(this)
   
@@ -38,6 +49,7 @@ class Group
     modal = $('#modalAssign')
     modal.data('group', this)
     modal.modal()
+
 
 class AssignmentEditor
   constructor: (data) ->
@@ -63,6 +75,10 @@ class AssignmentEditor
     for group in data['groups']
       @groups.push(new Group(group, @users_by_id))
   
+    # Event handlers
+    $(document).on('click', '.removeAssignment', @removeAssignment)
+    #$(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
+  
   
   clickSelectAll: ->
     for group in @groups
@@ -75,26 +91,71 @@ class AssignmentEditor
   
   
   clickAssign: ->
-    user = @users_by_id[@currentReviewer()]
-    return unless user
+    if @currentReviewer() == 'assistants'
+      users = @assistants
+    else if @currentReviewer() == 'evenly'
+      users = @reviewers
+    else
+      user = @users_by_id[@currentReviewer()]
+      return unless user
+      users = [user]
+      
+    return if users.length < 1
     
+    index = 0
     for group in @groups
-     group.assignTo(user) if group.selected()
+      continue unless group.selected()
+      group.assignTo(users[index])
+      index++
+      index = 0 if index >= users.length
+  
   
   clickModalAssign: (user) ->
     modal = $('#modalAssign')
     group = modal.data('group')
-    console.log group
-    console.log user
     return unless group
   
     group.assignTo(user)
     
     modal.modal('hide')
+  
+  
+  removeAssignment: ->
+    group = ko.contextFor(this).$parent
+    reviewer = ko.dataFor(this)
     
+    group.removeAssignment(reviewer)
+    
+    return false
+  
+  
+  clickSave: ->
+    assignments = {}
+    
+    for group in @groups
+      assignments[group.id] = []
+      for reviewer in group.reviewers()
+        assignments[group.id].push(reviewer.id)
+  
+  
+    $('#save-button').addClass('busy')
+    url = $('#assign-groups').data('url')
+    
+    $.ajax
+      type: "PUT"
+      url: url
+      data: JSON.stringify({assignments: assignments})
+      contentType: 'application/json'
+      dataType: 'json'
+      error: (error) ->
+        $('#save-button').removeClass('busy')
+        #alert("Failed to save")
+      success: -> $('#save-button').removeClass('busy')
+      
+
 
 jQuery ->
-  $.getJSON $('#groups').data('url'), (data) ->
+  $.getJSON $('#assign-groups').data('url'), (data) ->
     assignmentEditor = new AssignmentEditor(data)
     ko.applyBindings(assignmentEditor)
-    $('#groups').removeClass('busy')
+    $('#assign-groups').removeClass('busy')

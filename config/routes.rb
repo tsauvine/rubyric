@@ -25,7 +25,7 @@ Rubyric::Application.routes.draw do
     resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
     
     resources :students, :only => [:index], :controller => 'course_instances/students'
-    resources :groups, :only => [:index], :controller => 'course_instances/groups'
+    resource :groups, :only => [:show, :update], :controller => 'course_instances/groups'
     
     get :create_example_groups
   end

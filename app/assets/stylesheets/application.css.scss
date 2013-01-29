@@ -21,7 +21,9 @@ div.clear {
 }
 
 .busy {
-  background: image_url("ajax-loader.gif") no-repeat center center;
+  background-image: image_url("ajax-loader.gif");
+  background-repeat: no-repeat;
+  background-position: center center; 
 }
 
 .hint {
@@ -665,3 +667,17 @@ p.feedback-preview {
 .ui-timepicker-div dl dd { margin: 0 10px 10px 65px; }
 .ui-timepicker-div td { font-size: 90%; }
 .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
+
+.assign-groups {
+  
+}
+
+table.table-hover {
+  td.hover-buttons {
+    visibility: hidden;
+  }
+
+  tr:hover td.hover-buttons {
+    visibility: visible;
+  }
+}

@@ -6,7 +6,21 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<div class="row-fluid busy" id="groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
+<% if @course_instance.assistants.empty? %>
+  <div class="alert alert-info">
+    In this view, you can assign groups to reviewers. If the course has no teaching assistants, you can skip this step.
+  </div>
+<% else %>
+  <div class="hint">
+    <p>In this view, you can assign groups to reviewers.</p>
+    <ul>
+      <li>Teaching assistants can only see groups that are assigned to them.</li>
+      <li>Teachers can see and review all groups.</li>
+    </ul>
+  </div>
+<% end %>
+
+<div class="row-fluid busy" id="assign-groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
   <table class="table table-hover table-condensed">
     <thead>
       <tr>
@@ -21,16 +35,15 @@
         <td>
           <input type="checkbox" data-bind="checked: selected" />
         </td>
-        <td data-bind="foreach: students">
-          <span data-bind="text: name" />
+        <td data-bind="text: name">
         </td>
         <td data-bind="foreach: reviewers">
           <span class="label label-info">
-            <span data-bind="text: name"></span> <a data-bind="click: group.removeAssignment" href="#">&times;</a>
+            <span data-bind="text: name"></span> <a class="removeAssignment" href="#">&times;</a>
           </span>
         </td>
-        <td>
-          <button class="btn btn-small" data-bind="click: group.clickAssign">Add reviewer...</button>
+        <td class="hover-buttons">
+          <button class="btn btn-small" data-bind="click: clickAssign">Add reviewer...</button>
         </td>
       </tr>
     </tbody>
@@ -49,6 +62,7 @@
       <button class="btn" data-bind="click: clickAssign">Assign selected to</button>
       <select data-bind="value: currentReviewer">
         <option value="assistants">Assistants evenly</option>
+        <option value="evenly">All staff evenly</option>
         <!-- ko foreach: reviewers -->
         <option data-bind="text: name, value: id"></option>
         <!-- /ko -->
@@ -69,11 +83,13 @@
       <tbody data-bind="foreach: reviewers">
         <tr>
           <td><span data-bind="text: name" /></td>
-          <td><span data-bind="text: assignments.length" /></td>
+          <td><span data-bind="text: assignments().length" /></td>
         </tr>
       </tbody>
     </table>
   </div>
+  
+  <button id="save-button" class="btn btn-primary" data-bind="click: clickSave">Save</button>
 </div>
 
 <!-- Assign modal -->
