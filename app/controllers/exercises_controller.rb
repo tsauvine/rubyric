@@ -38,7 +38,7 @@ class ExercisesController < ApplicationController
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
       #@groups = @exercise.groups
-      @groups = Group.includes([:users, {:submissions => {:reviews => :user}}]) #.where(:exercise_id => @exercise.id)
+      @groups = Group.where(:course_instance_id => @course_instance.id).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id})
 
 #       @graders = Array.new
 #       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
