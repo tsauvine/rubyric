@@ -53,7 +53,7 @@ Rubyric::Application.routes.draw do
       end
     end
 
-    #resources :groups
+    resources :groups
   end
 
   match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
