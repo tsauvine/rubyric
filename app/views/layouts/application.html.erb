@@ -43,7 +43,9 @@
             <li><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
             <% if can? :update, @course_instance %>
               <li><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
-              <li><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-users"></i> Reviewers<% end %></li>
+              <li><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-user"></i> Reviewers<% end %></li>
+              <li><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li>
+              <li><%= link_to course_instance_groups_path(@course_instance) do %><i class="icon-th"></i> Groups<% end %></li>
             <% end %>
 
             <% if @exercise and !@exercise.new_record?%>

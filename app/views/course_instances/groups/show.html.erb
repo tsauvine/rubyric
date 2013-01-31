@@ -6,13 +6,17 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<% if @course_instance.assistants.empty? %>
+<% if @course_instance.groups.empty? %>
+  <div class="alert alert-info">
+    There are no student groups yet. After students have formed groups, you can assign groups to reviewers here.
+  </div>
+<% elsif @course_instance.assistants.empty? %>
   <div class="alert alert-info">
     In this view, you can assign groups to reviewers. If the course has no teaching assistants, you can skip this step.
   </div>
 <% else %>
   <div class="hint">
-    <p>In this view, you can assign groups to reviewers.</p>
+    <p>Assign groups to reviewers</p>
     <ul>
       <li>Teaching assistants can only see groups that are assigned to them.</li>
       <li>Teachers can see and review all groups.</li>
@@ -59,7 +63,8 @@
     </p>
     
     <p>
-      <button class="btn" data-bind="click: clickAssign">Assign selected to</button>
+      Assign selected groups to
+      
       <select data-bind="value: currentReviewer">
         <option value="assistants">Assistants evenly</option>
         <option value="evenly">All staff evenly</option>
@@ -67,11 +72,14 @@
         <option data-bind="text: name, value: id"></option>
         <!-- /ko -->
       </select>
+      
+      <button class="btn" data-bind="click: clickAssign">Assign</button>
     </p>
   </div>
   
+  <!-- Workload -->
   <div class="span6">
-    <h2>Reviewer workloads</h2>
+    <h2>Workload</h2>
     
     <table class="table">
       <thead>
@@ -88,10 +96,11 @@
       </tbody>
     </table>
   </div>
-  
-  <button id="save-button" class="btn btn-primary" data-bind="click: clickSave">Save</button>
 </div>
 
+<div class="row">
+  <p><button id="save-button" class="btn btn-success btn-large" data-bind="click: clickSave">Save</button></p>
+</div>
 <!-- Assign modal -->
 <div id="modalAssign" class="modal hide">
   <div class="modal-header">
