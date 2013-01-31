@@ -1,10 +1,5 @@
 #= require handlebars-1.0.0.beta.6
-#= require bootstrap-tab
-#= require bootstrap-modal
-
-#// require bootstrap-dropdown
-#// require bootstrap-popover
-
+#= require bootstrap
 
 class Page
   constructor: (@rubricEditor) ->

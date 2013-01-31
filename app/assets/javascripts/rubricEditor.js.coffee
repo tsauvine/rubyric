@@ -1,11 +1,11 @@
 #= require handlebars-1.0.0.beta.6
-#= require jquery.jeditable
-#= require jquery-ui-1.8.19.custom.min
-#= require bootstrap-tab
-#= require bootstrap-modal
+#= require bootstrap
+#= require jquery.ui.sortable
 
 #// require bootstrap-dropdown
 #// require bootstrap-popover
+#// require jquery.jeditable
+#// require jquery-ui-1.8.19.custom.min
 
 # TODO:
 # grades

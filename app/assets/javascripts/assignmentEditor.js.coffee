@@ -54,6 +54,7 @@ class Group
 class AssignmentEditor
   constructor: (data) ->
     @currentReviewer = ko.observable()
+    @testi = ko.observable('testi')
     
     @users_by_id = {}
     @teachers = []
