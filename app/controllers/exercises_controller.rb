@@ -105,8 +105,6 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-
-
     if @exercise.update_attributes(params[:exercise])
       flash[:success] = 'Exercise was successfully updated.'
       redirect_to @exercise
@@ -339,28 +337,6 @@ class ExercisesController < ApplicationController
     redirect_to @exercise, :flash => {:success => "#{counter} reviews deleted" }
   end
 
-  def assign_assistants_randomly
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    @exercise.assign_assistants_evenly
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
-  def assign_assistants_evenly
-    @exercise = Exercise.find(params[:eid])
-    load_course
-
-    # Authorization
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    @exercise.assign_assistants_evenly
-    render :partial => 'group', :collection => @exercise.groups
-  end
-
   def batch_assign
     @exercise = Exercise.find(params[:exercise_id])
     load_course
@@ -396,7 +372,9 @@ class ExercisesController < ApplicationController
   def create_example_submissions
     @exercise = Exercise.find(params[:exercise_id])
     load_course
+    authorize! :update, @course_instance
     
+    @course_instance.create_example_groups if @course_instance.groups.empty?
     @exercise.create_example_submissions
     
     redirect_to @exercise

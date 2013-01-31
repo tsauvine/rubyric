@@ -275,11 +275,11 @@ class Exercise < ActiveRecord::Base
     return archive
   end
 
-  # Creates an example course, instance and submissions.
+  # Creates example submissions for existing groups.
   def create_example_submissions
-    #example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
-    #example_submission_file = nil unless File.exists?(example_submission_file)
-    example_submission_file = nil
+    example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
+    example_submission_file = nil unless File.exists?(example_submission_file)
+    #example_submission_file = nil
 
     submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
     begin
