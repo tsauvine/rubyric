@@ -13,6 +13,8 @@ RUBYRIC_HOST = "rubyric.example.com"
 # Authentication
 FORCE_SSL = false
 
+ENABLE_DELAYED_JOB = true
+
 # Shibboleth attribute names (attribute-map.xml)
 SHIB_ATTRIBUTES = {
   :logout => 'Shib_logout-url',

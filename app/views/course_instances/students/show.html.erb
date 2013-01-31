@@ -2,21 +2,25 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<table>
-  <thead>
-    <tr>
-      <th>Studentnumber</th>
-      <th>Name</th>
-      <th>Email</th>
-    </tr>
-  </thead>
-  <tbody>
-    <% @students.each do |student| %>
-      <tr>
-        <td><%= student.studentnumber %></td>
-        <td><%= student.name %></td>
-        <td><%= student.email %></td>
-      </tr>
-    <% end %>
-  </tbody>
-</table>
+<div class="row">
+  <div class="span6">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Studentnumber</th>
+          <th>Name</th>
+          <th>Email</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @students.each do |student| %>
+          <tr>
+            <td><%= student.studentnumber %></td>
+            <td><%= student.name %></td>
+            <td><%= student.email %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

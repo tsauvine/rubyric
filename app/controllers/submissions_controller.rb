@@ -60,7 +60,7 @@ class SubmissionsController < ApplicationController
     end
 
     # Redirect to create group if no group is selected
-    if !@group && @course_instance.groupsizemax > 1
+    if !@group && @exercise.groupsizemax > 1
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     end
@@ -85,7 +85,7 @@ class SubmissionsController < ApplicationController
 
     user = current_user
     unless @submission.group
-      if @course_instance.groupsizemax <= 1 && current_user
+      if @exercise.groupsizemax <= 1 && current_user
         # Create a group automatically
         @group = Group.create({:course_instance_id => @course_instance.id, :name => user.studentnumber})
         @group.users << user

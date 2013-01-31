@@ -18,23 +18,42 @@
     <h2><%=t :instance_exercises_heading %></h2>
     <p>
     <table class="table">
-      <% if @course_instance.exercises.empty? %>
-        <p><%=t :instance_no_exercises %></p>
-      <% else %>
-        <% @course_instance.exercises.each do |exercise| %>
-          <tr>
-            <td><%= link_to exercise.name, exercise %></td>
-            <td>
-              <% unless exercise.deadline.nil? %>
-                <%=l exercise.deadline, :format => :short %>
+      <thead>
+        <tr>
+          <th>Exercise</th>
+          <th>Deadline</th>
+          <th>Group size</th>
+          <% if can? :update, @course %>
+            <th></th>
+          <% end %>
+        </tr>
+      </thead>
+      <tbody>
+        <% if @course_instance.exercises.empty? %>
+          <p><%=t :instance_no_exercises %></p>
+        <% else %>
+          <% @course_instance.exercises.each do |exercise| %>
+            <tr>
+              <td><%= link_to exercise.name, exercise %></td>
+              <td>
+                <% unless exercise.deadline.nil? %>
+                  <%=l exercise.deadline, :format => :short %>
+                <% end %>
+              </td>
+              <td>
+                <% if exercise.groupsizemax > exercise.groupsizemin %>
+                  <%= exercise.groupsizemin %> - <%= exercise.groupsizemax %>
+                <% else %>
+                  <%= exercise.groupsizemin %>
+                <% end %>
+              </td>
+              <% if can? :update, @course %>
+                <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
               <% end %>
-            </td>
-            <% if can? :update, @course %>
-              <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
-            <% end %>
-          </tr>
+            </tr>
+          <% end %>
         <% end %>
-      <% end %>
+      </tbody>
     </table>
     </p>
   

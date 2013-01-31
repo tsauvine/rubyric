@@ -21,6 +21,18 @@
           <%= f.text_field :deadline %>
         </td>
       </tr>
+      <tr>
+        <td><%= f.label :deadline, 'Group size' %></td>
+        <td>
+          <%= f.text_field :groupsizemin, :class => 'input-small' %>
+          -
+          <%= f.text_field :groupsizemax, :class => 'input-small' %>
+        </td>
+        <td class="hint">
+          (min - max)
+        </td>
+      </tr>
+      
     </table>
 
     <!--p>

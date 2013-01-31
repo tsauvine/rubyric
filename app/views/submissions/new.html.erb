@@ -15,7 +15,7 @@
   <% end %>
 
   <!-- Group -->
-  <% if @course_instance.groupsizemax > 1 %>
+  <% if @exercise.groupsizemax > 1 %>
     <div class="row-fluid">
       <div class="span4">
 
@@ -46,6 +46,7 @@
           </tbody>
         </table>
 
+        <!--
         <p>
           <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id), :class => 'btn' %>
           <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %>
@@ -53,6 +54,7 @@
             <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
           <% end %>
         </p>
+        -->
       </div>
     </div>
   <% end %>

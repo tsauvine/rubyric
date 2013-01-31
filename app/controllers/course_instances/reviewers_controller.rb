@@ -33,7 +33,11 @@ class CourseInstances::ReviewersController < CourseInstancesController
       
       emails.each do |address|
         invitation = AssistantInvitation.create(:target_id => @course_instance.id, :email => address.strip, :expires_at => Time.now + 1.weeks)
-        InvitationMailer.delay.assistant_invitation(invitation.id)
+        if ENABLE_DELAYED_JOB
+          InvitationMailer.delay.assistant_invitation(invitation.id)
+        else
+          InvitationMailer.assistant_invitation(invitation.id).deliver
+        end
         
         invited_users << {id: invitation.id, email: address}
       end

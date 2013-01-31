@@ -34,7 +34,7 @@ class GroupsController < ApplicationController
     #@studentnumber = Array.new
     @email = Array.new
 
-    @email_fields_count = @course_instance.groupsizemax
+    @email_fields_count = @exercise.groupsizemax
     @email_fields_count -= 1 if logged_in?
 
 #     if current_user

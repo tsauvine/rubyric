@@ -144,7 +144,7 @@ class CourseInstance < ActiveRecord::Base
       group = Group.create(:course_instance_id => self.id, :name => "Group #{i}")
 
       # Add users to group
-      students_count = self.groupsizemin + rand(self.groupsizemax - self.groupsizemin + 1)
+      students_count = 1 + rand(3) # self.groupsizemin + rand(self.groupsizemax - self.groupsizemin + 1)
       for j in (0..students_count)
         user = users[user_counter]
         group.users << user if user

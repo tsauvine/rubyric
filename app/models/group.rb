@@ -14,34 +14,6 @@ class Group < ActiveRecord::Base
     user && users.include?(user)
   end
 
-  # Adds members to the group.
-  #
-  # If some student is not found from the database, a new user is created.
-  # The user will later take over that account when logging in with shibboleth.
-  #
-  # OBSOLETE: studentnumber cannot be used as a unique identifier
-  #
-  # members is an array of {:studentnumber, :email} hashes.
-#   def add_members(members)
-#     members.each do |member|
-#       # Find user
-#       user = User.find_by_studentnumber(member[:studentnumber])
-# 
-#       unless user
-#         # Create new user
-#         user = User.new(:studentnumber => member[:studentnumber], :email => member[:email])
-#         user.save
-#       end
-# 
-#       # Add to the group
-#       self.users << user
-# 
-#       # Add student to the course instance
-#       collection = exercise.course_instance.students
-#       collection << user unless collection.include?(user)
-#     end
-#   end
-
   # If matching email address if found, user is added to the group. Otherwise, an invitation link is sent to that address.
   #
   # members: array of email addresses
@@ -60,10 +32,12 @@ class Group < ActiveRecord::Base
           :email => address,
           :expires_at => Time.now + 1.weeks)
 
-        #GroupInvitationMailer.invitation(invitation.id).deliver
-
-        # Send invitation link with delayed_job
-        GroupInvitationMailer.delay.invitation(invitation.id)
+        # Send invitation link
+        if ENABLE_DELAYED_JOB
+          InvitationMailer.delay.group_invitation(invitation.id)
+        else
+          InvitationMailer.group_invitation(invitation.id).deliver
+        end
       end
     end
 
