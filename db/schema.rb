@@ -124,23 +124,13 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.text     "payload"
     t.text     "feedback"
     t.integer  "grade"
+    t.integer  "calculated_grade"
+    t.integer  "final_grade"
     t.string   "status"
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-
-  create_table "course_roles", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "course_id"
-    t.string  "role"
-  end
-  
-  create_table "course_instance_roles", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "course_instance_id"
-    t.string  "role"
   end
 
   create_table "sessions", :force => true do |t|
