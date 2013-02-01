@@ -15,7 +15,10 @@ FORCE_SSL = false
 
 ENABLE_DELAYED_JOB = true
 
+# ActionMailer::Base.smtp_settings = { address: 'mail.example.com' }
+
 # Shibboleth attribute names (attribute-map.xml)
+SHIB_PATH = "/Shibboleth.sso/DS?target="
 SHIB_ATTRIBUTES = {
   :logout => 'Shib_logout-url',
   :id => 'Shib_EP_PrincipalName',
