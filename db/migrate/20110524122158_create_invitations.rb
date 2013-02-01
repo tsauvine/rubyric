@@ -1,4 +1,4 @@
-class CreateGroupInvitations < ActiveRecord::Migration
+class CreateInvitations < ActiveRecord::Migration
   def self.up
     create_table :group_invitations do |t|
       t.references :group, :nil => false
