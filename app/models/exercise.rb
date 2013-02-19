@@ -8,6 +8,11 @@ class Exercise < ActiveRecord::Base
 
   validates_presence_of :name
 
+  def max_points
+    # TODO
+    1
+  end
+  
   # Feedback grouping options: exercise, sections, categories
 
   # Assigns submissions evenly to the given users

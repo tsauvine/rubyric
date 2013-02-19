@@ -81,7 +81,8 @@ Rubyric::Application.routes.draw do
 
 
   #match '/exercise/new/:instance' => 'exercises#new'
-  match '/submit/:exercise' => 'submissions#new', :as => :submit
+  match '/submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
+  match '/submit/:exercise' => 'submissions#create', :via => :post
 
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout

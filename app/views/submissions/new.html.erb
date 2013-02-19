@@ -1,3 +1,9 @@
+<% content_for(:meta) do %>
+  <meta name="max-points" value="<%= @exercise.max_points %>" />
+  <meta name="DC.title"><%= @exercise.name %></meta>
+  <meta name="DC.Description"><%= @exercise.submit_pre_message %></meta>
+<% end %>
+
 <!-- submissions/new.html.erb -->
 
 <div class="page-header">
@@ -8,11 +14,6 @@
   <p><%= @exercise.submit_pre_message %></p>
 <% end %>
 
-<%= form_for @submission, :html => { :multipart => true } do |f| %>
-  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-  <% if @group %>
-    <%= f.hidden_field :group_id, :value => @group.id %>
-  <% end %>
 
   <!-- Group -->
   <% if @exercise.groupsizemax > 1 %>
@@ -59,6 +60,7 @@
     </div>
   <% end %>
 
+  
   <!-- Submissions -->
   <% if @group && @group.submissions.size > 0 %>
     <h2>Submissions</h2>
@@ -74,11 +76,19 @@
     <hr />
   <% end %>
 
+  
+<%= form_for @submission, :html => { :multipart => true } do |f| %>
+  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+  <% if @group %>
+    <%= f.hidden_field :group_id, :value => @group.id %>
+  <% end %>
+
   <!-- Upload -->
   <h2>Submit file</h2>
+  <div id="exercise">
+    <p><%= file_field_tag 'file' %></p>
 
-  <p><%= file_field_tag 'file' %></p>
-
-  <p><%= f.submit 'Submit' %></p>
+    <p><%= f.submit 'Submit' %></p>
+  </div>
 
 <% end %> <!-- /form -->
