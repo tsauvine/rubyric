@@ -1,0 +1,50 @@
+http://tech.thereq.com/post/8193672425/draggable-sortable-editable-list-with-jquery-and
+http://practiceovertheory.com/blog/2009/08/07/sortable-lists-with-jquery-in-rails/
+http://webtempest.com/sortable-list-in-ruby-on-rails-3-almost-unobtrusive-jquery/
+
+drag scroll
+http://hitconsultants.com/dragscroll_scrollsync/scrollpane.html
+http://the-taylors.org/jquery.kinetic/
+http://www.azoffdesign.com/overscroll
+http://archive.plugins.jquery.com/project/jScrollTouch
+http://archive.plugins.jquery.com/project/Dragscrollable
+http://cubiq.org/iscroll-4
+
+mainossivun malli:
+http://www.quicktimesheets.com/
+
+
+= Before deployment =
+
+palautus
+ testaa: luo liian pieni ryhmä
+ virheilmoitus, jos vastaanottajan osoite on väärä
+ jos invitation mailin osoite on väärä, se pitäisi voida vaihtaa
+ pitäisi voida kutsua lisää jäseniä
+ join group message: Sinut on lisätty ryhmään. Voit palauttaa lisää...
+ isompi submit button
+ lisää opiskelijat students-listaan (create group, add member, invite)
+
+töiden jakaminen
+rubriikkieditori
+review editor
+mail reviews
+
+
+= Soon after deployment =
+
+submissions-sivulla lokalisoitu palautusaika
+palautussivun viesti
+
+Login-laatikkoon forgot password ja sign up-linkit
+
+Rubric editor:
+ - Grading scale editor
+ - Weights
+
+
+= Later =
+
+Show course instance: Näytä yleiskuva harjoitusten tilasta
+Show course instance: Create exercise, help text
+Rubric editor: help texts
