@@ -1,7 +1,16 @@
 class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
 
-  layout 'wide'
+  layout :set_layout
+
+  def set_layout
+    case params[:embed]
+    when 'embed'
+      'embed'
+    else
+      'wide'
+    end
+  end
 
   # Download submission
   def show
@@ -55,8 +64,11 @@ class SubmissionsController < ApplicationController
       # Group given as a parameter
       @group = Group.find(params[:group])
       return access_denied unless @group.has_member?(current_user) || @is_teacher
-    elsif @available_groups.size > 0
+    elsif @available_groups.size == 1
       @group = @available_groups[0]
+    elsif @exercise.groupsizemax > 1 && @available_groups.size != 1
+      render :action => 'select_group'
+      return 
     end
 
     # Redirect to create group if no group is selected

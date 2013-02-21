@@ -17,13 +17,17 @@ http://www.quicktimesheets.com/
 = Before deployment =
 
 palautus
- testaa: luo liian pieni ryhmä
  virheilmoitus, jos vastaanottajan osoite on väärä
- jos invitation mailin osoite on väärä, se pitäisi voida vaihtaa
- pitäisi voida kutsua lisää jäseniä
- join group message: Sinut on lisätty ryhmään. Voit palauttaa lisää...
- isompi submit button
  lisää opiskelijat students-listaan (create group, add member, invite)
+ palautussivun viesti
+
+opiskelijalta turhat jutut piiloon
+ 
+etusivu julkaisukuntoon
+ kuvat pois
+ haka-nappi ylös
+
+assarin näkymä
 
 töiden jakaminen
 rubriikkieditori
@@ -34,7 +38,7 @@ mail reviews
 = Soon after deployment =
 
 submissions-sivulla lokalisoitu palautusaika
-palautussivun viesti
+
 
 Login-laatikkoon forgot password ja sign up-linkit
 

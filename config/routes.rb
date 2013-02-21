@@ -1,94 +1,97 @@
-Rubyric::Application.routes.draw do
-  resource :session, :only => [:new, :create, :destroy] do
-    get 'shibboleth'
-  end
-
-  resource :frontpage, :only => [:show], :controller => 'frontpage'
-
-  resources :users, :except => [:index] do
-    collection do
-      get :search
+Rubyric::Application.routes.draw do 
+  scope "(:embed)" do
+      
+    resource :session, :only => [:new, :create, :destroy] do
+      get 'shibboleth'
     end
-  end
 
-  resources :courses do
-    #post 'add_teachers'
-    #post 'remove_selected_teachers'
+    resource :frontpage, :only => [:show], :controller => 'frontpage'
 
-    resources :course_instances, :only => [:new, :create, :update]
-    resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
-  end
-
-  resources :course_instances, :only => [:show, :edit, :destroy] do
-    resources :exercises, :only => [:new, :create, :update]
-    
-    resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
-    
-    resource :students, :only => [:show], :controller => 'course_instances/students'
-    resource :groups, :only => [:show, :update], :controller => 'course_instances/groups'
-    
-    get :create_example_groups
-  end
-
-  resources :exercises, :only => [:show, :edit, :destroy] do
-    get 'results'
-    get 'statistics'
-    get 'batch_assign'
-    post 'batch_assign'
-    get 'archive'
-    post 'delete_reviews'
-    
-    get :create_example_submissions
-
-    #resources :submissions, :controller => 'exercises' do
-    #  collection do
-    #    post :assign
-    #  end
-    #end
-
-    resource :rubric, :only => [:show, :edit, :update] do
-      member do
-        get 'download'
-        get 'upload'
+    resources :users, :except => [:index] do
+      collection do
+        get :search
       end
     end
 
-    resources :groups
-  end
+    resources :courses do
+      #post 'add_teachers'
+      #post 'remove_selected_teachers'
 
-  match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
-
-  resources :invitations, :only => [:show, :destroy], :id => /[^\/]+/ do
-#     member do
-#       get 'teacher'
-#       get 'assistant'
-#       get 'group'
-#     end
-  end
-  
-  resources :submissions, :only => [:show, :new, :create] do
-    member do
-      get :review
+      resources :course_instances, :only => [:new, :create, :update]
+      resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
     end
-  end
 
-  resources :reviews do
-    member do
-      get :finish
-      put :update_finish
+    resources :course_instances, :only => [:show, :edit, :destroy] do
+      resources :exercises, :only => [:new, :create, :update]
+      
+      resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
+      
+      resource :students, :only => [:show], :controller => 'course_instances/students'
+      resource :groups, :only => [:show, :update], :controller => 'course_instances/groups'
+      
+      get :create_example_groups
     end
+
+    resources :exercises, :only => [:show, :edit, :destroy] do
+      get 'results'
+      get 'statistics'
+      get 'batch_assign'
+      post 'batch_assign'
+      get 'archive'
+      post 'delete_reviews'
+      
+      get :create_example_submissions
+
+      #resources :submissions, :controller => 'exercises' do
+      #  collection do
+      #    post :assign
+      #  end
+      #end
+
+      resource :rubric, :only => [:show, :edit, :update] do
+        member do
+          get 'download'
+          get 'upload'
+        end
+      end
+
+      resources :groups
+    end
+
+    match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
+
+    resources :invitations, :only => [:show, :destroy], :id => /[^\/]+/ do
+  #     member do
+  #       get 'teacher'
+  #       get 'assistant'
+  #       get 'group'
+  #     end
+    end
+    
+    resources :submissions, :only => [:show, :new, :create] do
+      member do
+        get :review
+      end
+    end
+
+    resources :reviews do
+      member do
+        get :finish
+        put :update_finish
+      end
+    end
+
+
+    #match '/exercise/new/:instance' => 'exercises#new'
+    match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
+    match 'submit/:exercise' => 'submissions#create', :via => :post
+
+    match '/login' => 'sessions#new', :as => :login
+    match '/logout' => 'sessions#destroy', :as => :logout
+
+    root :to => "frontpage#show"
+
   end
-
-
-  #match '/exercise/new/:instance' => 'exercises#new'
-  match '/submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
-  match '/submit/:exercise' => 'submissions#create', :via => :post
-
-  match '/login' => 'sessions#new', :as => :login
-  match '/logout' => 'sessions#destroy', :as => :logout
-
-  root :to => "frontpage#show"
-
   # Install the default routes as the lowest priority.
   #match ':controller(/:action(/:id(.:format)))'
 
@@ -148,4 +151,5 @@ Rubyric::Application.routes.draw do
   # This is a legacy wild controller route that's not recommended for RESTful applications.
   # Note: This route will make all actions in every controller accessible via GET requests.
   #match ':controller(/:action(/:id(.:format)))'
+
 end

@@ -1,16 +1,61 @@
-<h1>Editing group</h1>
-
-<% form_for([@exercise,@group]) do |f| %>
-  <%= f.error_messages %>
-
-  <p>
-    <%= f.label :name %><br />
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.submit "Update" %>
-  </p>
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'groupEditor.js' %>
 <% end %>
 
-<%= link_to 'Show', @group %> |
-<%= link_to 'Back', groups_path %>
+
+<h1>Edit group</h1>
+
+<div>
+  <%= form_for [@exercise, @group] do |f| %>
+    <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+
+    <h2>Group members</h2>
+
+    <table>
+      <tbody>
+        <% @group.users.each do |user| %>
+          <tr>
+            <td>
+              <%= user.name %>,
+            </td>
+            <td>
+              <%= user.email %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% @group.group_invitations.each do |invitation| %>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <%= text_field_tag "invitations[#{invitation.id}]", invitation.email %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% (0...@email_fields_count).each do |i| %>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <%= text_field_tag "email[#{i}]" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p>
+      <%= link_to 'Cancel', submit_path(:exercise => @exercise.id, :group => @group.id), :class => 'btn' %>
+      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+    </p>
+  <% end %>
+</div>

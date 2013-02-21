@@ -11,11 +11,17 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20121220141019) do
+ActiveRecord::Schema.define(:version => 20130221183124) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_instance_id"
+  end
+
+  create_table "course_instance_roles", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "course_instance_id"
+    t.string  "role"
   end
 
   create_table "course_instances", :force => true do |t|
@@ -30,6 +36,12 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
   create_table "course_instances_students", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_instance_id"
+  end
+
+  create_table "course_roles", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "course_id"
+    t.string  "role"
   end
 
   create_table "courses", :force => true do |t|
@@ -57,6 +69,7 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.string   "locked_by"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "queue"
   end
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
@@ -67,36 +80,26 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.datetime "deadline"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "groupsizemax",            :default => 1
-    t.integer  "groupsizemin",            :default => 1
-    t.boolean  "anonymous_graders",       :default => false
-    t.boolean  "anonymous_submissions",   :default => false
+    t.integer  "groupsizemax",          :default => 1
+    t.integer  "groupsizemin",          :default => 1
+    t.boolean  "anonymous_graders",     :default => false
+    t.boolean  "anonymous_submissions", :default => false
     t.text     "submit_post_message"
     t.text     "submit_pre_message"
     t.boolean  "grader_can_email"
-    t.boolean  "submit_without_login",    :default => false
+    t.boolean  "submit_without_login",  :default => false
     t.text     "rubric"
   end
 
   create_table "group_invitations", :force => true do |t|
     t.integer "group_id"
     t.integer "exercise_id"
-    t.string  "token", :null => false
+    t.string  "token",       :null => false
     t.string  "email"
     t.date    "expires_at"
   end
+
   add_index "group_invitations", ["group_id", "token"], :name => "index_group_invitations_on_group_id_and_token"
-  
-  create_table "invitations", :force => true do |t|
-    t.string  "token", :null => false
-    t.string  "type"
-    t.string  "email"
-    t.integer "target_id"
-    t.integer "inviter_id"
-    t.date    "expires_at"
-  end
-  add_index "invitations", ["token"], :name => "index_invitations_on_token"
- 
 
   create_table "group_reviewers", :force => true do |t|
     t.integer "group_id", :null => false
@@ -114,8 +117,24 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
   create_table "groups_users", :id => false, :force => true do |t|
     t.integer "group_id"
     t.integer "user_id"
-    t.string "studentnumber"
-    t.string "email"
+    t.string  "studentnumber"
+    t.string  "email"
+  end
+
+  create_table "invitations", :force => true do |t|
+    t.string  "token",      :null => false
+    t.string  "type"
+    t.string  "email"
+    t.integer "target_id"
+    t.integer "inviter_id"
+    t.date    "expires_at"
+  end
+
+  add_index "invitations", ["token"], :name => "index_invitations_on_token"
+
+  create_table "organizations", :force => true do |t|
+    t.string "domain"
+    t.string "name"
   end
 
   create_table "reviews", :force => true do |t|
@@ -124,8 +143,6 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.text     "payload"
     t.text     "feedback"
     t.integer  "grade"
-    t.integer  "calculated_grade"
-    t.integer  "final_grade"
     t.string   "status"
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"
@@ -150,11 +167,6 @@ ActiveRecord::Schema.define(:version => 20121220141019) do
     t.string   "extension"
     t.datetime "created_at"
     t.datetime "updated_at"
-  end
-  
-  create_table "organizations", :force => true do |t|
-    t.string "domain"
-    t.string "name"
   end
 
   create_table "users", :force => true do |t|

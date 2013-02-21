@@ -1,7 +1,16 @@
 class GroupsController < ApplicationController
   before_filter :login_required, :only => [:index]
 
-  layout 'wide'
+  layout :set_layout
+
+  def set_layout
+    case params[:embed]
+    when 'embed'
+      'embed'
+    else
+      'wide'
+    end
+  end
 
   # GET /groups
   def index
@@ -25,7 +34,7 @@ class GroupsController < ApplicationController
     @exercise = Exercise.find(params[:exercise_id])
     load_course
 
-    # TODO: redirect to the correct IdP
+    # TODO: redirect to the correct IdP if using shibboleth
     return access_denied unless logged_in? || @exercise.submit_without_login
 
     @group = Group.new
@@ -47,7 +56,14 @@ class GroupsController < ApplicationController
   def edit
     @group = Group.find(params[:id])
 
-    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user)
+    if params[:exercise_id]
+      @exercise = Exercise.find(params[:exercise_id])
+      load_course
+    end
+    
+    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
+    
+    @email_fields_count = @exercise.groupsizemax - @group.users.size - @group.group_invitations.size
   end
 
   # POST /groups
@@ -86,6 +102,50 @@ class GroupsController < ApplicationController
 
   end
 
+  def update
+    @group = Group.find(params[:id])
+
+    if params[:exercise_id]
+      @exercise = Exercise.find(params[:exercise_id])
+      load_course
+    end
+    
+    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
+    
+    # New members
+    members = Array.new
+    if params[:email]
+      params[:email].each do |index, email|
+        members << email unless email.empty?
+      end
+      
+      @group.add_members_by_email(members, @exercise)
+    end
+
+    # Edit invitations
+    if params[:invitations]
+      params[:invitations].each do |id, email|
+        email.strip!
+        invitation = GroupInvitation.find(id)
+        if email.blank?
+          logger.info "DELETIGN INVITATION #{invitation.email}"
+          invitation.destroy
+        elsif email != invitation.email
+          invitation.email = email
+          invitation.save
+          
+          if ENABLE_DELAYED_JOB
+            InvitationMailer.delay.group_invitation(invitation.id)
+          else
+            InvitationMailer.group_invitation(invitation.id).deliver
+          end
+        end
+      end
+    end
+
+    redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
+  end
+  
   def join
     return access_denied unless logged_in?
 
@@ -110,31 +170,9 @@ class GroupsController < ApplicationController
 
   end
 
-  # PUT /groups/1
-  # PUT /groups/1.xml
-#   def update
-#     @group = Group.find(params[:id])
-#
-#     respond_to do |format|
-#       if @group.update_attributes(params[:group])
-#         flash[:notice] = 'Group was successfully updated.'
-#         format.html { redirect_to(@group) }
-#         format.xml  { head :ok }
-#       else
-#         format.html { render :action => "edit" }
-#         format.xml  { render :xml => @group.errors, :status => :unprocessable_entity }
-#       end
-#     end
-#   end
-
   # DELETE /groups/1
   # DELETE /groups/1.xml
   def destroy
-    unless logged_in?
-      redirect_to_login
-      return
-    end
-
     return access_denied unless is_admin?(current_user)
 
     @group = Group.find(params[:id])
@@ -142,37 +180,4 @@ class GroupsController < ApplicationController
     redirect_to(groups_url)
   end
 
-  # Ajax studentnumber checker
-  def check_studentnumber
-    user = User.find_by_studentnumber(params[:studentnumber])
-
-    if !params[:studentnumber].empty? && !user
-      render(:update) do |page|
-        page.replace_html 'helpBox', "Student #{params[:studentnumber]} is not registered. Make sure you didn't misspell."
-        page.select('#helpBox').first.show
-      end
-    else
-      render(:update) do |page|
-        page.select('#helpBox').first.hide
-      end
-    end
-  end
-
-  # Ajax email checker
-  def check_email
-    logger.info("Studentnumber: #{params[:studentnumber]}, Email: #{params[:email]}")
-
-    user = User.find_by_studentnumber(params[:studentnumber])
-
-    if user && !params[:email].empty? && user.email != params[:email]
-      render(:update) do |page|
-        page.replace_html 'helpBox', "Email address of student #{params[:studentnumber]} does not match the one in our database. Please check that you didn't misspell."
-        page.select('#helpBox').first.show
-      end
-    else
-      render(:update) do |page|
-        page.select('#helpBox').first.hide
-      end
-    end
-  end
 end
