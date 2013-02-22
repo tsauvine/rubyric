@@ -1,0 +1,15 @@
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+</div>
+
+<% unless @available_groups.empty? %>  
+  <ul>
+    <% @available_groups.each do |group| %>
+      <li><%= link_to group.users.collect {|user| user.name }.join(', '), submit_path(:exercise => @exercise.id, :group => group.id) %></li>
+    <% end %>
+  </ul>
+<% else%>
+  <p>This exercise is done in groups of <%= @exercise.groupsizemin %>-<%= @exercise.groupsizemax %>. One member should create a group and invite others.</p>
+<% end %>
+
+<p><%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %></p>
