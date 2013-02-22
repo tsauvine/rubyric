@@ -8,8 +8,8 @@
 /db/*.sqlite3
 /log
 /tmp
-submissions/
-test/coverage
-config/database.yml
-config/initializers/settings.rb
-config/initializers/secret_token.rb
+/submissions/
+/test/coverage
+/config/database.yml
+/config/initializers/settings.rb
+/config/initializers/secret_token.rb
