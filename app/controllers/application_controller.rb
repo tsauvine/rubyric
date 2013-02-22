@@ -36,13 +36,13 @@ class ApplicationController < ActionController::Base
     end
   end
   
-  def default_url_options(options={})
-    if params[:embed]
-      return { :embed => 'embed' }
-    else
-      return { :embed => false }
-    end
-  end
+#   def default_url_options(options={})
+#     if params[:embed]
+#       return { :embed => 'embed' }
+#     else
+#       return { :embed => false }
+#     end
+#   end
 
   # If @exercise is defined, loads @course_instance and @course.
   # If @course_instance is defined, loads @course.

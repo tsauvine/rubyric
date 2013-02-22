@@ -1,16 +1,16 @@
 class GroupsController < ApplicationController
   before_filter :login_required, :only => [:index]
 
-  layout :set_layout
-
-  def set_layout
-    case params[:embed]
-    when 'embed'
-      'embed'
-    else
-      'wide'
-    end
-  end
+  layout 'wide'
+# 
+#   def set_layout
+#     case params[:embed]
+#     when 'embed'
+#       'embed'
+#     else
+#       'wide'
+#     end
+#   end
 
   # GET /groups
   def index

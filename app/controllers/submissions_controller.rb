@@ -1,16 +1,16 @@
 class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
 
-  layout :set_layout
+  layout 'wide'
 
-  def set_layout
-    case params[:embed]
-    when 'embed'
-      'embed'
-    else
-      'wide'
-    end
-  end
+#   def set_layout
+#     case params[:embed]
+#     when 'embed'
+#       'embed'
+#     else
+#       'wide'
+#     end
+#   end
 
   # Download submission
   def show
