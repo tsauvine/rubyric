@@ -79,7 +79,9 @@
     -->
 
     <h3><%=t :frontpage_login_heading %></h3>
-    <%= render :partial => 'sessions/shibboleth' %>
+    <% if defined?(SHIB_PATH) %>
+      <%= render :partial => 'sessions/shibboleth' %>
+    <% end %>
     <%= render :partial => 'sessions/login' %>
 
     <!--

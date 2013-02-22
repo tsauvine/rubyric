@@ -6,7 +6,9 @@
   <div class="span4">
     <%= render :partial => 'login' %>
   </div>
-  <div class="span4">
-    <%= render :partial => 'shibboleth' %>
-  </div>
+  <% if defined?(SHIB_PATH) %>
+    <div class="span4">
+      <%= render :partial => 'shibboleth' %>
+    </div>
+  <% end %>
 </div>
