@@ -4,6 +4,7 @@ class CourseInstances::GroupsController < CourseInstancesController
   def show
     @course_instance = CourseInstance.find(params[:course_instance_id])
     load_course
+    authorize! :update, @course_instance
 
     groups = @course_instance.groups.includes([:users, :reviewers])
     

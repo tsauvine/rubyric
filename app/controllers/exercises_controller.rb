@@ -37,28 +37,21 @@ class ExercisesController < ApplicationController
       # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-      #@groups = @exercise.groups
       @groups = Group.where(:course_instance_id => @course_instance.id).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id})
-
-#       @graders = Array.new
-#       @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
-#       @graders << ['= Assistants =', 'assistants']
-#       @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-
-      # if exercise.peer_review
-      #  @graders << ['= Students =', 'students']
-      #  @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
-      # end
 
       render :action => 'submissions'
     else
       # Student's or assistant's view
 
       # Find reviews of the user
-      @reviews = Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
+      #@reviews = Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
 
       # Find groups of the user
-      @group = Group.find(:first, :conditions => ["user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN groups_users ON groups_users.group_id = id')
+      @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
+      puts "*** GROUPS ***"
+      puts @available_groups
+      
+      render :action => 'my_submissions'
     end
   end
 

@@ -59,35 +59,36 @@
   </div>
 </div>
 
-<hr />
-
-<div class="row-fluid">
-  <!-- Reviewers -->
-  <div class="span3 well">
-    <h2>Reviewers</h2>
-    <p class="hint">Reviewers (e.g. teaching assistants) can access submissions assigned to them.</p>
-    <ul id="reviewers">
-      <% if @course_instance.assistants.empty? %>
-        <li>No reviewers</li>
-      <% else %>
-        <% @course_instance.assistants.each do |user| %>
-          <li><%= user.name %></li>
+<% if @is_teacher %>
+  <hr />
+  <div class="row-fluid">
+    <!-- Reviewers -->
+    <div class="span3 well">
+      <h2>Reviewers</h2>
+      <p class="hint">Reviewers (e.g. teaching assistants) can access submissions assigned to them.</p>
+      <ul id="reviewers">
+        <% if @course_instance.assistants.empty? %>
+          <li>No reviewers</li>
+        <% else %>
+          <% @course_instance.assistants.each do |user| %>
+            <li><%= user.name %></li>
+          <% end %>
         <% end %>
-      <% end %>
-    </ul>
+      </ul>
 
-    <%= link_to t(:Edit), course_instance_reviewers_path(@course_instance) %>
+      <%= link_to t(:Edit), course_instance_reviewers_path(@course_instance) %>
+    </div>
+    
+    <!-- Students -->
+    <div class="span3 well">
+      <h2>Students</h2>
+      <p><%= link_to course_instance_students_path(@course_instance) do %><%= @course_instance.students.size %> students<% end %></p>
+    </div>
+    
+    <!-- Groups -->
+    <div class="span3 well">
+      <h2>Groups</h2>
+      <p><%= link_to course_instance_groups_path(@course_instance) do %><%= @course_instance.groups.size %> groups<% end %></p>
+    </div>
   </div>
-  
-  <!-- Students -->
-  <div class="span3 well">
-    <h2>Students</h2>
-    <p><%= link_to course_instance_students_path(@course_instance) do %><%= @course_instance.students.size %> students<% end %></p>
-  </div>
-  
-  <!-- Groups -->
-  <div class="span3 well">
-    <h2>Groups</h2>
-    <p><%= link_to course_instance_groups_path(@course_instance) do %><%= @course_instance.groups.size %> groups<% end %></p>
-  </div>
-</div>
+<% end %>

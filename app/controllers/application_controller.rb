@@ -123,7 +123,7 @@ class ApplicationController < ActionController::Base
     if request.xhr?
       head :forbidden
     elsif logged_in?
-      render :template => 'shared/forbidden', :status => 403
+      render :template => 'shared/forbidden', :status => 403, :layout => 'wide'
     else
       # If not logged in, redirect to login
       respond_to do |format|

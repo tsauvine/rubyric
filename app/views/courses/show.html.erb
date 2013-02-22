@@ -36,19 +36,21 @@
       <p><%= link_to t(:course_create_instance), new_course_course_instance_path(:course_id => @course.id), :class => 'btn btn-primary' %></p>
     <% end %>
   </div>
-    
-  <div class="span4">
-    <!-- Teachers -->
-    <h2>Instructors</h2>
-    <p class="hint">Instructors have full rights to view and edit everything.</p>
-    <ul id="instructors">
-      <% @course.teachers.each do |user| %>
-        <li><%= user.name %></li>
-      <% end %>
-    </ul>
+  
+  <% if @is_teacher %>
+    <div class="span4">
+      <!-- Teachers -->
+      <h2>Instructors</h2>
+      <p class="hint">Instructors have full rights to view and edit everything.</p>
+      <ul id="instructors">
+        <% @course.teachers.each do |user| %>
+          <li><%= user.name %></li>
+        <% end %>
+      </ul>
 
-    <% if can? :update, @course %>
-      <%= link_to t(:Edit), course_teachers_path(@course) %>
-    <% end %>
-  </div>
+      <% if can? :update, @course %>
+        <%= link_to t(:Edit), course_teachers_path(@course) %>
+      <% end %>
+    </div>
+  <% end %>
 </div>
