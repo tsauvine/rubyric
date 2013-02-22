@@ -105,8 +105,11 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       
-      # TODO: use shibboleth
-      redirect_to new_session_url
+      if defined?(SHIB_PATH)
+        redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
+      else
+        redirect_to new_session_url
+      end
       
       return false
     end
@@ -126,7 +129,12 @@ class ApplicationController < ActionController::Base
       respond_to do |format|
         format.html do
           store_location
-          redirect_to new_session_path
+          
+          if defined?(SHIB_PATH)
+            redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
+          else
+            redirect_to new_session_url
+          end
         end
         format.any do
           request_http_basic_authentication 'Web Password'
