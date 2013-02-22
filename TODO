@@ -17,16 +17,11 @@ http://www.quicktimesheets.com/
 = Before deployment =
 
 palautus
- virheilmoitus, jos vastaanottajan osoite on väärä
  lisää opiskelijat students-listaan (create group, add member, invite)
  palautussivun viesti
 
 opiskelijalta turhat jutut piiloon
  
-etusivu julkaisukuntoon
- kuvat pois
- haka-nappi ylös
-
 assarin näkymä
 
 töiden jakaminen

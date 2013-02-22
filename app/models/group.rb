@@ -36,7 +36,11 @@ class Group < ActiveRecord::Base
         if ENABLE_DELAYED_JOB
           InvitationMailer.delay.group_invitation(invitation.id)
         else
-          InvitationMailer.group_invitation(invitation.id).deliver
+          begin
+            InvitationMailer.group_invitation(invitation.id).deliver
+          rescue
+            # TODO
+          end
         end
       end
     end
