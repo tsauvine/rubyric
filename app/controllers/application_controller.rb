@@ -68,10 +68,10 @@ class ApplicationController < ActionController::Base
     begin
       # Send email
       if ERRORS_EMAIL && !(local_request? || exception.is_a?(ActionController::RoutingError))
-        ErrorMailer.deliver_snapshot(exception, clean_backtrace(exception), params, request)
+        ErrorMailer.snapshot(exception, clean_backtrace(exception), params, request).deliver
       end
     rescue => e
-      logger.error(e)
+      logger.error e
     end
   end
 
