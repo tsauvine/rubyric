@@ -681,3 +681,12 @@ table.table-hover {
     visibility: visible;
   }
 }
+
+div.hover-buttons {
+  visibility: hidden;
+  margin-left: 1em;
+}
+
+tr:hover div.hover-buttons {
+  visibility: visible;
+}

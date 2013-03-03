@@ -2,10 +2,8 @@
   <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
-<% unless @groups.empty? %>
+<% unless @assigned_groups.empty? %>
   <!-- Reviews -->
-  <h2>Groups</h2>
-  
   <table class="assignments">
     <thead>
       <tr>
@@ -16,36 +14,38 @@
       </tr>
     </thead>
     <tbody id="submissions_table">
-      <%= render :partial => 'group', :collection => @groups %>
+      <%= render :partial => 'group', :collection => @assigned_groups %>
     </tbody>
   </table>
   
-<% end %>
+<% else %>
   
-<% unless @available_groups.empty? %>
-  <!-- Submissions -->
-  <table>
-    <% @available_groups.each do |group| %>
-      <tr>
-        <td colspan='2'><%= group.users.collect {|user| user.name }.join(', ') %></td>
-      </tr>
-      
-      <% if group.submissions.empty? %>
+  <% unless @available_groups.empty? %>
+    <!-- Submissions -->
+    <table>
+      <% @available_groups.each do |group| %>
         <tr>
-          <td colspan='2'>No submissions</td>
+          <td colspan='2'><%= group.users.collect {|user| user.name }.join(', ') %></td>
         </tr>
-      <% else %>
-        <% group.submissions.each do |submission| %>
+        
+        <% if group.submissions.empty? %>
           <tr>
-            <td><%=l submission.created_at, :format => :long %></td>
-            <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+            <td colspan='2'>No submissions</td>
           </tr>
+        <% else %>
+          <% group.submissions.each do |submission| %>
+            <tr>
+              <td><%=l submission.created_at, :format => :long %></td>
+              <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+            </tr>
+          <% end %>
         <% end %>
       <% end %>
-    <% end %>
-  </table>
+    </table>
+  <% end %>
+
+  <hr />
+
+  <p><%= link_to 'New submission', submit_url(@exercise.id), :class => 'btn' %></p>
+
 <% end %>
-
-<hr />
-
-<p><%= link_to 'New submission', submit_url(@exercise.id), :class => 'btn' %></p>

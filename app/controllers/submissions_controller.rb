@@ -137,7 +137,7 @@ class SubmissionsController < ApplicationController
     @submission = Submission.find(params[:id])
     @exercise = @submission.exercise
     load_course
-    return access_denied unless @course.has_teacher(current_user)
+    return access_denied unless @course.has_teacher(current_user) || @submission.group.has_reviewer?(current_user)
 
     review = @submission.assign_to(current_user)
 

@@ -13,6 +13,10 @@ class Group < ActiveRecord::Base
   def has_member?(user)
     user && users.include?(user)
   end
+  
+  def has_reviewer?(user)
+    user && reviewers.include?(user)
+  end
 
   # If matching email address if found, user is added to the group. Otherwise, an invitation link is sent to that address.
   #

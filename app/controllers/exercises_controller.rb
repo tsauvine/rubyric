@@ -46,7 +46,7 @@ class ExercisesController < ApplicationController
       # Find reviews of the user
       assigned_group_ids = current_user.assigned_group_ids
       puts "Assigned groups: #{assigned_group_ids}"
-      @groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).all
+      @assigned_groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}, :reviews => {:user_id => current_user.id}).all
       
       #Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
 
