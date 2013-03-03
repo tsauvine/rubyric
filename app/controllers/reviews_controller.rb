@@ -10,6 +10,11 @@ class ReviewsController < ApplicationController
     load_course
 
     access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    respond_to do |format|
+      format.html {  }
+      format.json { render json: @review.payload }
+    end
   end
 
   # GET /courses/1/edit

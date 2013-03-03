@@ -1,58 +1,14 @@
 <!-- reviews/edit.html.erb -->
 
-<script id="page-template" type="text/x-handlebars-template"><div class="tab-pane" id="page-{{id}}">
-
-    <h2>{{name}}</h2>
-
-    <!-- Rubric -->
-    <div class="rubric">
-    </div>
-
-    <!-- Textareas -->
-    <div class="textareas">
-      <div>
-        <p id="positiveCaption"></p>
-        <textarea class="good"></textarea>
-      </div>
-
-      <div>
-        <p id="negativeCaption"></p>
-        <textarea class="bad"></textarea>
-      </div>
-
-      <div>
-        <p id="commentsCaption"></p>
-        <textarea class="neutral"></textarea>
-      </div>
-    </div>
-
-</div>
-</script>
-
-<script id="criterion-template" type="text/x-handlebars-template"><div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
-  <!-- Heading -->
-  <h3>{{criterionName}}</h3>
-
-  <div class="clear"></div>
-
-  <!-- Phrases -->
-  <div class="phrases">
-    <table class="phrases">
-      <tbody id="phrases-{{criterionId}}">
-      </tbody>
-    </table>
-  </div>
-</div>
-</script>
-
-<script id="phrase-template" type="text/x-handlebars-template"><tr class="phrase">
-  <td id="phrase-{{id}}" class="phrase">{{content}}</td>
-</tr>
-</script>
-
 <div class="tabbable review-editor" id="review-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>">
   <ul id="tabs" class="nav nav-tabs">
     <li class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
+    
+    <!-- ko foreach: pages -->
+      <li><a data-bind="text:name, attr:{ href:link }" data-toggle='tab'></a></li>
+    <!-- /ko -->
+    
+    <li><button class="btn btn-success" data-bind="click: clickFinish">Finish</button></li>
   </ul>
 
   <div id="tab-contents" class="tab-content">
@@ -80,7 +36,16 @@
           </div>
         <% end %>
 
-        <div class="span4">
+        <div class="span4 well">
+          <!-- View submission -->
+          <h3>Submission</h3>
+
+          <% unless @review.submission.extension.blank? %>
+            <%= link_to "#{@review.submission.filename}", @review.submission %>
+            <small>(<%=l @review.submission.created_at %>)</small>
+          <% end %>
+        </div>
+        <div class="span4 well">
           <!-- Group -->
           <h3>Group</h3>
 
@@ -97,18 +62,53 @@
           </table>
         </div>
       </div>
-      <div class="row-fluid">
-        <div class="span4">
-          <!-- View submission -->
-          <h3>Submission</h3>
+    </div> <!-- /tab-overview -->
+    
+    <!-- ko foreach: pages -->
+      <div class="tab-pane" data-bind="attr: { id: dom_id }">
+        <h2 data-bind="text: name"></h2>
 
-          <% unless @review.submission.extension.blank? %>
-            <%= link_to "#{@review.submission.filename}", @review.submission %>
-            <small>(<%=l @review.submission.created_at %>)</small>
-          <% end %>
+        <!-- Rubric -->
+        <div class="rubric" data-bind="foreach: criteria">
+          <div class="criterion">
+            <!-- Heading -->
+            <h3 data-bind="text: name"></h3>
+
+            <div class="clear"></div>
+
+            <!-- Phrases -->
+            <div class="phrases">
+              <table class="phrases">
+                <tbody data-bind="foreach: phrases">
+                  <tr class="phrase">
+                    <td class="phrase" data-bind="text: escaped_content, click: clickPhrase"></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Textareas -->
+        <div class="textareas">
+          <div>
+            <p data-bind="text: $root.feedbackCategories[0]"></p>
+            <textarea class="good" data-bind="text: goodFeedback"></textarea>
+          </div>
+
+          <div>
+            <p data-bind="text: $root.feedbackCategories[1]"></p>
+            <textarea class="bad" data-bind="text: badFeedback"></textarea>
+          </div>
+
+          <div>
+            <p data-bind="text: $root.feedbackCategories[2]"></p>
+            <textarea class="neutral" data-bind="text: neutralFeedback"></textarea>
+          </div>
         </div>
       </div>
-    </div> <!-- /tab-overview -->
+    <!-- /ko -->
+
   </div> <!-- /tab-contents -->
 </div> <!-- /tabbable -->
 

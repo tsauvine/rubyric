@@ -1,3 +1,4 @@
+# encoding: UTF-8
 class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader

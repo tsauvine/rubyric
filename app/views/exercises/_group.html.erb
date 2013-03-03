@@ -15,7 +15,9 @@
     <!-- Reviews -->
     <% if submission.reviews.empty? %>
       <td>
-        
+        <div class="hover-buttons pull-right">
+          <%= link_to 'Create review', review_submission_path(submission.id), :class => 'btn btn-mini' %>
+        </div>
       </td>
       <td></td>
       <td></td>

@@ -1,62 +1,54 @@
-#= require handlebars-1.0.0.beta.6
+#= require knockout-2.2.1
 #= require bootstrap
 
 class Page
   constructor: (@rubricEditor) ->
     @criteria = []
-    @element = false  # The tab content div
+    
+    @goodFeedback = ko.observable('')
+    @badFeedback = ko.observable('')
+    @neutralFeedback = ko.observable('')
 
   load_json: (data) ->
     @name = data['name']
     @id = parseInt(data['id'])
+    @dom_id = 'page-' + @id
+    @link = '#page-' + @id
 
     for criterion_data in data['criteria']
       criterion = new Criterion(@rubricEditor, this)
       criterion.load_json(criterion_data)
       @criteria.push(criterion)
 
+  load_review: (data) ->
+    @goodFeedback(data['good'])
+    @badFeedback(data['bad'])
+    @neutralFeedback(data['neutral'])
+
   to_json: ->
     # TODO: grade
 
     json = {
       id: @id,
-      good: @goodTextarea.val(),
-      bad: @badTextarea.val(),
-      neutral: @neutralTextarea.val()
+      good: @goodFeedback(),
+      bad: @badFeedback(),
+      neutral: @neutralFeedback()
     }
 
     return json
 
-  createDom: () ->
-    @element = $(@rubricEditor.pageTemplate({id: @id, name: @name}))
-    @element.data('page', this)
-
-    @rubricDiv = @element.find('.rubric')
-    @rubricDiv.data('page', this)
-
-    @goodTextarea = @element.find('textarea.good')
-    @badTextarea = @element.find('textarea.bad')
-    @neutralTextarea = @element.find('textarea.neutral')
-
-    # Attach event handlers
-
-    # Add criteria
-    for criterion in @criteria
-      @rubricDiv.append(criterion.createDom())
-
-    return @element
-
-
-  addToDom: ->
-    # Add tab
-    @tab = $("<li><a href='#page-#{@id}' data-toggle='tab'>#{@name}</a></li>")
-    $('#tabs').append(@tab)
-
-    # Add content
-    $('#tab-contents').append(this.createDom())
-
-  showTab: ->
-    @tab.find('a').tab('show')
+  addPhrase: (content, category) ->
+    switch category
+      when 2
+        @neutralFeedback(@neutralFeedback() + content + "\n")
+      when 1
+        @badFeedback(@badFeedback() + content + "\n")
+      else
+        @goodFeedback(@goodFeedback() + content + "\n")
+  
+  
+#   showTab: ->
+#     @tab.find('a').tab('show')
 
 
 class Criterion
@@ -67,22 +59,13 @@ class Criterion
   load_json: (data) ->
     @name = data['name']
     @id = parseInt(data['id'])
+    @dom_id = 'criterion-' + @id
 
     for phrase_data in data['phrases']
       phrase = new Phrase(@rubricEditor, @page)
       phrase.load_json(phrase_data)
       @phrases.push(phrase)
 
-  createDom: () ->
-    @element = $(@rubricEditor.criterionTemplate({criterionId: @id, criterionName: @name}))
-    @element.data('criterion', this)
-    @phrasesElement = @element.find('tbody')
-
-    # Add phrases
-    for phrase in @phrases
-      @phrasesElement.append(phrase.createDom())
-
-    return @element
 
 
 class Phrase
@@ -90,52 +73,26 @@ class Phrase
 
   load_json: (data) ->
     @content = data['text']
+    @escaped_content = @content.replace('\n','<br />')
+    
     @category = parseInt(data['category'])
     @id = parseInt(data['id'])
-
-  createDom: () ->
-    escaped_content = @content.replace('\n','<br />')
-    @element = $(@rubricEditor.phraseTemplate({id: @id, content: escaped_content}))
-    @element.data('phrase', this)
-
-    @phraseTd = @element.find("td.phrase")
-    @phraseTd.data('value', @content)
-    @phraseTd.click (event) => @clickPhrase()
-
-    @element.find('.delete-phrase-button').click => @deletePhrase()
-    @element.find('.edit-phrase-button').click => @activateEditor()
-
-    return @element
+    @dom_id = 'phrase-' + @id
 
   clickPhrase: ->
-    switch @category
-      when 2 then textarea = @page.neutralTextarea
-      when 1 then textarea = @page.badTextarea
-      else textarea = @page.goodTextarea
-
-    textarea.val(textarea.val() + @content + '\n')
+    @page.addPhrase(@content, @category)
 
 
 class ReviewEditor
 
   constructor: () ->
     @pages = []
-
-    # Load Handlebar templates
-    @pageTemplate = Handlebars.compile($("#page-template").html());
-    @criterionTemplate = Handlebars.compile($("#criterion-template").html());
-    @phraseTemplate = Handlebars.compile($("#phrase-template").html());
+    @pagesById = {}
 
     @rubric_url = $('#review-editor').data('rubric-url')
     @review_url = $('#review-editor').data('review-url')
 
     this.loadRubric(@rubric_url)
-
-
-  clickFinish: ->
-    this.save()
-
-    # TODO: redirect
 
 
   #
@@ -150,6 +107,18 @@ class ReviewEditor
       success: (data) =>
         this.parseRubric(data)
 
+  #
+  # Loads the review by AJAX
+  #
+  loadReview: (url) ->
+    $.ajax
+      type: 'GET'
+      url: url
+      error: $.proxy(@onAjaxError, this)
+      dataType: 'json'
+      success: (data) =>
+        this.parseReview(data)
+
 
   #
   # Parses the JSON data returned by the server. See loadRubric.
@@ -159,16 +128,27 @@ class ReviewEditor
       alert('Rubric has not been prepared')
       return
 
+    @feedbackCategories = data['feedbackCategories']
+
     for page_data in data['pages']
       page = new Page(this)
       page.load_json(page_data)
-      page.addToDom()
       @pages.push(page)
+      @pagesById[page.id] = page
 
-    # Add finish button
-    tab = $("<button class='btn btn-success'>Finish</button>")
-    tab.click => @clickFinish()
-    $('#tabs').append(tab)
+    this.loadReview(@review_url)
+
+  #
+  # Parses the JSON data returned by the server. See loadRubric.
+  #
+  parseReview: (data) ->
+    if data
+      for page_data in data['pages']
+        page = @pagesById[page_data['id']]
+        page.load_review(page_data) if page
+    
+    ko.applyBindings(this)
+
 
   save: ->
     pages_json = []
@@ -176,8 +156,7 @@ class ReviewEditor
     for page in @pages
       pages_json.push(page.to_json())
 
-    json = {pages: pages_json}
-    json_string = JSON.stringify(json)
+    json_string = JSON.stringify({pages: pages_json})
 
     # AJAX call
     $.ajax
@@ -187,10 +166,12 @@ class ReviewEditor
       error: $.proxy(@onAjaxError, this)
       dataType: 'json'
       success: (data) =>
-        window.location.href = "#{@review_url}/finish"
+        #window.location.href = "#{@review_url}/finish" # TODO
 
     #console.log "#{@review_url}/finish"
 
+  clickFinish: ->
+    this.save()
 
   #
   # Callback for AJAX errors

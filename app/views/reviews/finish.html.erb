@@ -13,7 +13,16 @@
 </div>
 
 <div class="row-fluid">
-  <div class="span4">
+  <div class="span4 well">
+    <!-- View submission -->
+    <h3>Submission</h3>
+
+    <% unless @review.submission.extension.blank? %>
+      <%= link_to "#{@review.submission.filename}", @review.submission %>
+      <small>(<%=l @review.submission.created_at %>)</small>
+    <% end %>
+  </div>
+  <div class="span4 well">
     <!-- Group -->
     <h3>Group</h3>
 
@@ -29,15 +38,6 @@
       </tbody>
     </table>
   </div>
-  <div class="span4">
-    <!-- View submission -->
-    <h3>Submission</h3>
-
-    <% unless @review.submission.extension.blank? %>
-      <%= link_to "#{@review.submission.filename}", @review.submission %>
-      <small>(<%=l @review.submission.created_at %>)</small>
-    <% end %>
-  </div>
 </div>
 
 <p>Grade: <%= @review.grade %></p>
@@ -47,7 +47,7 @@
     <%= f.text_area :feedback, { :style => 'width: 600px; height: 600px;' } %>
 
     <p>
-      <%= f.submit 'Save', :name => 'save' %>
+      <%= f.submit 'Save', :name => 'save', :class => 'btn btn-success' %>
 
       <!--
       <% if @enable_mailing %>
