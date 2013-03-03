@@ -18,7 +18,7 @@
           <th></th>
         </tr>
       </thead>
-      <tbody id="users" data-url="<%= course_instance_reviewers_path(@course) %>">
+      <tbody id="users" data-url="<%= course_instance_reviewers_path(@course_instance) %>">
         <% @course_instance.assistants.each do |user| %> 
           <tr id="user-<%= user.id %>">
             <td class="name"><%= user.name %></td>
