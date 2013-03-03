@@ -15,6 +15,7 @@ class Exercise < ActiveRecord::Base
   
   # Feedback grouping options: exercise, sections, categories
 
+  
   # Assigns submissions evenly to the given users
   # submission_ids: array of submission ids
   # users: array of user objects

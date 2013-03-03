@@ -160,41 +160,6 @@ class ExercisesController < ApplicationController
     end
   end
 
-  # Action for uploading an XML file
-  def upload
-    @exercise = Exercise.find(params[:id])
-    load_course
-
-    # Authorization
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    file = params[:xml][:file] if params[:xml] && params[:xml][:file]
-
-    # Check that a file is uploaded
-    # FIXME: check Rails 3 compatibility
-    unless [ActionController::UploadedStringIO, ActionController::UploadedTempfile].include?(file.class) and file.size.nonzero?
-      return
-    end
-
-    # Load xml
-    @exercise.load_xml(params[:xml][:file])
-
-    redirect_to :controller => 'rubrics', :action => 'edit', :id => @exercise.id
-  end
-
-  def download
-    @exercise = Exercise.find(params[:id])
-    load_course
-
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    xml = @exercise.generate_xml
-    send_data(xml, :filename => "#{@exercise.name}.xml", :type => 'text/xml')
-
-    #redirect_to :controller => 'exercises', :action => 'show', :id => @exercise.id
-    #redirect_to @exercise
-  end
-
   # Mails selected submissions and reviews
   def send_selected_reviews
     @exercise = Exercise.find(params[:eid])

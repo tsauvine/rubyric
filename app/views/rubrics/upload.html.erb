@@ -1,0 +1,10 @@
+<!-- exercises/upload.html.erb -->
+
+<h1>Upload rubric</h1>
+
+<%= form_tag upload_exercise_rubric_path, :multipart => true do %>
+  <p><%= file_field_tag :file %></p>
+  <p><%= submit_tag 'Upload', {:class => 'btn btn-primary', :confirm => 'Warning: Current rubric will be replaced.'} %></p>
+<% end %>
+
+<%= link_to 'Back', edit_exercise_rubric_path(@exercise) %>

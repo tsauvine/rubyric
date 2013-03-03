@@ -50,6 +50,7 @@ Rubyric::Application.routes.draw do
       member do
         get 'download'
         get 'upload'
+        post 'upload'
       end
     end
 

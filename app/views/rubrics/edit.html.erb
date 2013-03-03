@@ -14,8 +14,7 @@
 }
 </style>
 
-<script id="page-template" type="text/x-handlebars-template">
-<div class="tab-pane page" id="page-{{id}}">
+<script id="page-template" type="text/x-handlebars-template"><div class="tab-pane page" id="page-{{id}}">
   <h2>
     <span class="title">{{name}}</span>
     <span class="buttons">
@@ -48,8 +47,7 @@
 </div>
 </script>
 
-<script id="criterion-template" type="text/x-handlebars-template">
-<div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
+<script id="criterion-template" type="text/x-handlebars-template"><div class="criterion" id="criterion-container-{{criterionId}}" data-id="{{criterionId}}">
   <!-- Heading -->
   <h3>
     <span class="title" id="criterion-name-{{criterionId}}">{{criterionName}}</span>
@@ -77,8 +75,7 @@
 </div>
 </script>
 
-<script id="phrase-template" type="text/x-handlebars-template">
-<tr class="phrase">
+<script id="phrase-template" type="text/x-handlebars-template"><tr class="phrase">
   <td class="phraseType">
     <select class="phraseType" id="phraseType-{{id}}">
       <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
@@ -95,8 +92,7 @@
 </tr>
 </script>
 
-<script id="category-template" type="text/x-handlebars-template">
-<tr class="category">
+<script id="category-template" type="text/x-handlebars-template"><tr class="category">
   <td class="category">{{content}}</td>
   <td class="buttons-column">
     <div class="buttons">
