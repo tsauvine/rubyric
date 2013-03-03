@@ -166,7 +166,7 @@ class ReviewEditor
       error: $.proxy(@onAjaxError, this)
       dataType: 'json'
       success: (data) =>
-        #window.location.href = "#{@review_url}/finish" # TODO
+        window.location.href = "#{@review_url}/finish"
 
     #console.log "#{@review_url}/finish"
 

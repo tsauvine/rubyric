@@ -1,10 +1,10 @@
-<tr class="group" id="group<%= group.id %>">
+<tr class="group" id="group<%= assistant_group.id %>">
   <td colspan="4">
     <!-- Students -->
-    <%= (group.users.collect do |user| "#{h(user.name)} (#{h(user.studentnumber)})" end).join(', ') %>
+    <%= (assistant_group.users.collect do |user| "#{h(user.name)} (#{h(user.studentnumber)})" end).join(', ') %>
   </td>
 </tr>
-<% group.submissions.each do |submission| %>
+<% assistant_group.submissions.each do |submission| %>
   <tr class="submission" id="submission<%= submission.id %>">
     <td rowspan="<%= [submission.reviews.size,1].max %>">
       <!-- Submission -->
@@ -14,22 +14,17 @@
 
     <!-- Reviews -->
     <% row = 0; submission.reviews.each do |review| %>
-      <% next unless review.user == @user %>
         <% if (row > 0) %>
           <tr class="submission">
         <% end; row += 1 %>
         <td>
-          <%= check_box 'reviews_checkboxes', review.id, {:class => 'review_check ' + (review.status == 'finished' ? ' review_check_finished' : '')} %>
-
-          <% if ['unfinished','finished','mailed'].include?(review.status) %>
+          <% if review.user != current_user %>
+            <%= review.user.name %>
+          <% elsif ['unfinished','finished','mailed'].include?(review.status) %>
             <%= link_to review.user.name, finish_review_path(review.id) %>
           <% else %>
             <%= link_to review.user.name, edit_review_path(review.id) %>
           <% end %>
-          
-          <div class="hover-buttons pull-right">
-            <%= link_to 'Create review', review_submission_path(submission.id), :class => 'btn btn-mini' %>
-          </div>
         </td>
         <td><%= review.status %></td>
         <td class="grade"><%= review.grade %></td>
