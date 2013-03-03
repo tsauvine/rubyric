@@ -50,7 +50,7 @@ class ReviewsController < ApplicationController
     @review.save!
 
     respond_to do |format|
-      format.json { head :no_content }
+      format.json { render :text => '{"status": "ok"}' }
     end
 
 #     if next_section

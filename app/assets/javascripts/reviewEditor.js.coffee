@@ -90,6 +90,7 @@ class Phrase
 
   load_json: (data) ->
     @content = data['text']
+    @category = parseInt(data['category'])
     @id = parseInt(data['id'])
 
   createDom: () ->
@@ -107,7 +108,10 @@ class Phrase
     return @element
 
   clickPhrase: ->
-    textarea = @page.goodTextarea
+    switch @category
+      when 2 then textarea = @page.neutralTextarea
+      when 1 then textarea = @page.badTextarea
+      else textarea = @page.goodTextarea
 
     textarea.val(textarea.val() + @content + '\n')
 

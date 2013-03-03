@@ -98,13 +98,13 @@ class Review < ActiveRecord::Base
         text << "== #{rubric_page} =="
       end
 
-      text << "\n\n= Strengths =\n"
+      text << "\n\n= Hyvää =\n"
       text << page['good']
 
-      text << "\n\n= Weaknesses =\n"
+      text << "\n\n= Kehitettävää =\n"
       text << page['bad']
 
-      text << "\n\n= Neutral =\n"
+      text << "\n\n= Muuta =\n"
       text << page['neutral']
     end
 
