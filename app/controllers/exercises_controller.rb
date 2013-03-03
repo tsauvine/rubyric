@@ -44,12 +44,14 @@ class ExercisesController < ApplicationController
       # Student's or assistant's view
 
       # Find reviews of the user
-      #@reviews = Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
+      assigned_group_ids = current_user.assigned_group_ids
+      puts "Assigned groups: #{assigned_group_ids}"
+      @groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).all
+      
+      #Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
 
       # Find groups of the user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
-      puts "*** GROUPS ***"
-      puts @available_groups
       
       render :action => 'my_submissions'
     end

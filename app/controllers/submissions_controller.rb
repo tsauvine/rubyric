@@ -130,19 +130,6 @@ class SubmissionsController < ApplicationController
     else
       flash[:error] = 'Failed to submit'
     end
-
-    # Auto assign
-#     if @exercise.autoassign
-#       @submission.group.submissions.each do |submission|
-#         # Take the first submission that has been assigned to somebody
-#         old_review = submission.reviews.first
-#         unless old_review.nil?
-#           new_review = @submission.assign_to(old_review.user)
-#           Mailer.deliver_assignment(new_review)
-#           break
-#         end
-#       end
-#     end
   end
 
   # Assign to current user and start review

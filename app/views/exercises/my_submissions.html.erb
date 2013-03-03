@@ -2,8 +2,28 @@
   <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
-<!-- Submissions -->
+<% unless @groups.empty? %>
+  <!-- Reviews -->
+  <h2>Groups</h2>
+  
+  <table class="assignments">
+    <thead>
+      <tr>
+        <td>Submission</td>
+        <td>Review</td>
+        <td>Status</td>
+        <td>Grade</td>
+      </tr>
+    </thead>
+    <tbody id="submissions_table">
+      <%= render :partial => 'group', :collection => @groups %>
+    </tbody>
+  </table>
+  
+<% end %>
+  
 <% unless @available_groups.empty? %>
+  <!-- Submissions -->
   <table>
     <% @available_groups.each do |group| %>
       <tr>

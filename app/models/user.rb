@@ -14,6 +14,9 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :groups
   has_many :reviews, :order => 'id'          # reviews as a grader
 
+  has_many :group_reviewers
+  has_many :assigned_groups, :through => :group_reviewers, :source => :group
+
   # has_many :group_reviewers
   # has_many :groups_to_review, :order => 'id', :through => :group_reviewers
 
