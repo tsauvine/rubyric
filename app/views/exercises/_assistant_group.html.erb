@@ -1,0 +1,51 @@
+<tr class="group" id="group<%= group.id %>">
+  <td colspan="4">
+    <!-- Students -->
+    <%= (group.users.collect do |user| "#{h(user.name)} (#{h(user.studentnumber)})" end).join(', ') %>
+  </td>
+</tr>
+<% group.submissions.each do |submission| %>
+  <tr class="submission" id="submission<%= submission.id %>">
+    <td rowspan="<%= [submission.reviews.size,1].max %>">
+      <!-- Submission -->
+      <span <%= submission.late?(@exercise) ? 'class="late"'.html_safe : nil %>><%=l submission.created_at %></span>
+      (<%= link_to "#{submission.extension}", submission_path(submission.id), :title => submission.filename %>)
+    </td>
+
+    <!-- Reviews -->
+    <% row = 0; submission.reviews.each do |review| %>
+      <% next unless review.user == @user %>
+        <% if (row > 0) %>
+          <tr class="submission">
+        <% end; row += 1 %>
+        <td>
+          <%= check_box 'reviews_checkboxes', review.id, {:class => 'review_check ' + (review.status == 'finished' ? ' review_check_finished' : '')} %>
+
+          <% if ['unfinished','finished','mailed'].include?(review.status) %>
+            <%= link_to review.user.name, finish_review_path(review.id) %>
+          <% else %>
+            <%= link_to review.user.name, edit_review_path(review.id) %>
+          <% end %>
+          
+          <div class="hover-buttons pull-right">
+            <%= link_to 'Create review', review_submission_path(submission.id), :class => 'btn btn-mini' %>
+          </div>
+        </td>
+        <td><%= review.status %></td>
+        <td class="grade"><%= review.grade %></td>
+      </tr>
+    <% end # each
+    %>
+    <% if row == 0 %>
+      <td>
+        <div class="hover-buttons pull-right">
+          <%= link_to 'Create review', review_submission_path(submission.id), :class => 'btn btn-mini' %>
+        </div>
+      </td>
+      <td></td>
+      <td></td>
+      </tr>
+    <% end %>
+<% end %>
+
+<tr class="spacer"><td colspan="4"></td></tr>
