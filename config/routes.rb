@@ -4,12 +4,14 @@ Rubyric::Application.routes.draw do
   end
 
   resource :frontpage, :only => [:show], :controller => 'frontpage'
+  
 
   resources :users, :except => [:index] do
     collection do
       get :search
     end
   end
+  match 'preferences' => 'users#edit'
 
   resources :courses do
     #post 'add_teachers'

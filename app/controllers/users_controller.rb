@@ -1,6 +1,7 @@
-# RAILS 3
 class UsersController < ApplicationController
 
+  before_filter :login_required, :only => [:edit, :update]
+  
   # GET /users/1
 #   def show
 #     @user = User.find(params[:id])
@@ -39,9 +40,13 @@ class UsersController < ApplicationController
 
 
   def edit
-    @user = User.find(params[:id])
+    if params[:id]
+      @user = User.find(params[:id])
+    else
+      @user = current_user
+    end
 
-    return access_denied unless is_admin?(current_user) || @user == current_user
+    return access_denied unless @user == current_user || is_admin?(current_user)
   end
 
   def update
@@ -50,7 +55,9 @@ class UsersController < ApplicationController
     return access_denied unless is_admin?(current_user) || @user == current_user
 
     if @user.update_attributes(params[:user])
-      flash[:success] = "User #{@user.studentnumber} was successfully updated."
+      flash[:success] = 'Preferences saved'
+      redirect_to preferences_path
+      return
     else
       flash[:error] = 'Failed to update.'
     end

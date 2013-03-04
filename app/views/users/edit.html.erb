@@ -1,15 +1,18 @@
 <!-- users/show.html.erb -->
 
-<h1>Edit user</h1>
+<div class="page-header">
+  <% if @user == current_user %>
+    <h1>Preferences</h1>
+  <% else %>
+    <h1>Edit user</h1>
+  <% end %>
+</div>
 
-<% # = error_messages_for :user
-%>
-
-<% form_for @user do |f| %>
+<%= form_for @user do |f| %>
   <table>
     <tr>
       <td>Studentnumber:</td>
-      <td><%= h @user.studentnumber %></td>
+      <td><%= @user.studentnumber %></td>
     </tr>
     <tr>
       <td>E-mail:</td>
@@ -24,15 +27,8 @@
       <td><%= f.text_field :lastname %></td>
     </tr>
     <tr>
-      <td>Password</td>
-      <td><%= f.password_field :password %></td>
-    </tr>
-    <tr>
-      <td>Confirm password</td>
-      <td><%= f.password_field :password_confirmation %></td>
+      <td></td>
+      <td><%= f.submit "Update", :class => 'btn btn-primary' %></td>
     </tr>
   </table>
-
-  <%= f.submit "Update" %>
-
 <% end %>
