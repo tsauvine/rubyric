@@ -1,0 +1,55 @@
+<h1>Edit group</h1>
+
+<div>
+  <%= form_for [@course_instance, @group] do |f| %>
+    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+
+    <h2>Group members</h2>
+
+    <table>
+      <tbody>
+        <% @group.users.each do |user| %>
+          <tr>
+            <td>
+              <%= user.name %>,
+            </td>
+            <td>
+              <%= user.email %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% @group.group_invitations.each do |invitation| %>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <%= text_field_tag "invitations[#{invitation.id}]", invitation.email %>
+            </td>
+          </tr>
+        <% end %>
+        
+        <% (0...@email_fields_count).each do |i| %>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <%= text_field_tag "email[#{i}]" %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+
+    <p>
+      <%= link_to 'Cancel', course_instance_groups_path(:course_instance_id => @course_instance.id), :class => 'btn' %>
+      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+    </p>
+  <% end %>
+</div>
