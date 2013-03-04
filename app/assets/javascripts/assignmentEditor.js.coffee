@@ -16,6 +16,7 @@ class Group
   constructor: (data, users) ->
     @id = data['id']
     @selected = ko.observable(false)
+    @url = "/"
 
     # Set students
     @students = []

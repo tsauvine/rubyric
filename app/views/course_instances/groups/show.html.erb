@@ -39,7 +39,7 @@
         <td>
           <input type="checkbox" data-bind="checked: selected" />
         </td>
-        <td data-bind="text: name">
+        <td><a data-bind="text: name, attr: {href: url}"></a>
         </td>
         <td data-bind="foreach: reviewers">
           <span class="label label-info">

@@ -10,6 +10,8 @@ class Group < ActiveRecord::Base
   has_many :group_reviewers
   has_many :reviewers, :through => :group_reviewers, :source => :user, :class_name => 'User'
 
+  attr_accessor :url
+  
   def has_member?(user)
     user && users.include?(user)
   end

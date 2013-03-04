@@ -58,8 +58,10 @@ class GroupsController < ApplicationController
 
     if params[:exercise_id]
       @exercise = Exercise.find(params[:exercise_id])
-      load_course
+    elsif params[:course_instance_id]
+      @course_instance = CourseInstance.find(params[:course_instance_id])
     end
+    load_course
     
     return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
     
