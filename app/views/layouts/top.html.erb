@@ -1,35 +1,16 @@
-<div class="topnavi">
-  <%= link_to root_path do image_tag 'logo.png', :alt => 'Rubyric' end %>
-
-  <!--
-  <div class="login">
-    <%
-    user = current_user
-    if user
-    %>
-      <%= link_to "#{h(user.firstname)} #{h(user.lastname)} (#{h(user.studentnumber)})", edit_user_path(user.id) %>
-      <% #= link_to 'Logout', logout_url
-      %>
-    <% end %>
-  </div>
-
-  <div class="navibar">
-    <ul>
-      <% if !current_user %>
-        <li><%= link_to 'Log In', new_session_path %></li>
-      <% else %>
-        <li><%= link_to 'My preferences', edit_user_path(current_user.id) %></li>
-        <li><%= link_to 'Logout', logout_path %></li>
+<div class="navbar">
+  <div class="navbar-inner">
+    <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    
+    <ul class="nav pull-right">
+      <% if current_user %>
+        <li><%= link_to "My preferences", preferences_path, :class => 'pull-right' %></li>
+        <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete, :class => 'pull-right' %></li>
       <% end %>
     </ul>
   </div>
-  -->
-
-  <% if current_user %>
-    <%= link_to "Log out #{current_user.name}", session_path, :method => :delete, :class => 'pull-right' %>
-  <% end %>
-
 </div>
+
 <!--
 <div>
   <div class="breadcrumbs">

@@ -28,3 +28,50 @@ div.topnavi {
   border-left: 1px solid gray;
 }
 */
+
+/* Bootstrap navbar tweaks */
+
+.navbar-inner {
+  background: red image-url("navbar.png") repeat-x;
+  border: none;
+  -webkit-border-radius: 0px;
+     -moz-border-radius: 0px;
+          border-radius: 0px;
+}
+
+.navbar {
+  .brand {
+    color: white;
+    text-shadow: 0 1px 0 #000;
+  }
+
+  a.brand {
+    margin: 0px;
+    padding: 0px;
+  }
+  
+  img {
+    margin: 5px;
+    padding: 0px;
+  }
+  
+  .divider-vertical {
+    border-left: 1px solid #c33;
+    border-right: none;
+  }
+
+  .nav > li > a {
+    color: #fff;
+    text-shadow: none;
+  }
+
+  .nav > li > a:hover {
+    color: #fff;
+    text-decoration: underline;
+  }
+}
+
+.navbar-link, .navbar-text {
+  color: #fff;
+}
+
