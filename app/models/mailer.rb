@@ -11,7 +11,7 @@ class Mailer < ActionMailer::Base
 
     unless exercise.anonymous_graders
       grader = review.user
-      @body['grader'] = grader
+      @grader = grader
       @from = grader.email
     else
       @from = course.email

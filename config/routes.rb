@@ -81,6 +81,7 @@ Rubyric::Application.routes.draw do
     member do
       get :finish
       put :update_finish
+      get :reopen  # FIXME: should be POST
     end
   end
 

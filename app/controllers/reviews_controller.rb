@@ -126,10 +126,10 @@ class ReviewsController < ApplicationController
       return
     end
 
-#     if params[:mail] && (@course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email))
-#       # Mail immediately
-#       Mailer.deliver_review(@review)
-#     end
+   if params[:mail] && (@course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email))
+     # Mail immediately
+     FeedbackMailer.review(@review).deliver
+   end
 
     redirect_to @exercise
   end
@@ -147,7 +147,7 @@ class ReviewsController < ApplicationController
       @review.save
     end
 
-    redirect_to :action => 'finish', :id => @review.id
+    redirect_to finish_review_path(@review)
   end
 
 end

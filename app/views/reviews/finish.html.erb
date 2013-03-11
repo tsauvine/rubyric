@@ -49,21 +49,17 @@
     <p>
       <%= f.submit 'Save', :name => 'save', :class => 'btn btn-success' %>
 
-      <!--
       <% if @enable_mailing %>
-        <%= f.submit 'Save + Mail', :name => 'mail' %>
+        <%= f.submit 'Save + Mail', :name => 'mail', :class => 'btn' %>
       <% end %>
-      -->
     </p>
   <% end %>
 <% else %>
   <p class="feedback-preview"><%= @review.feedback.gsub("\n", "<br />\n") %></p>
 
-  <!-- if @enable_mailing >
-    < button_to 'Reopen', { :action => 'reopen', :id => params[:id] } >
-  < end -->
+  <% if @enable_mailing %>
+    <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn' %>
+  <% end %>
 <% end %>
-
-
 
 <p><%= link_to 'Back to menu', exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}") %></p>
