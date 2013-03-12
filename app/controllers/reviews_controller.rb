@@ -6,13 +6,16 @@ class ReviewsController < ApplicationController
   # GET /reviews/1
   def show
     @review = Review.find(params[:id])
-    @exercise = @review.submission.exercise
+    @grader = @review.user
+    @submission = @review.submission
+    @group = @submission.group
+    @exercise = @submission.exercise
     load_course
 
-    access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
     
     respond_to do |format|
-      format.html {  }
+      format.html { render :action => 'show', :layout => 'wide' }
       format.json { render json: @review.payload }
     end
   end

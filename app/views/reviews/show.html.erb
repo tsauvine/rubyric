@@ -1,6 +1,24 @@
 <!-- reviews/show.html.erb -->
 
-<h1>Review</h1>
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+</div>
 
-<p><% #= link_to 'Back', courses_path
-%></p>
+<p>
+  Submission:
+  <%=l @submission.created_at, :format => :long %>
+  (<%= link_to "#{@submission.extension}", @submission %>)
+</p>
+
+<% unless @exercise.anonymous_graders %>
+  <p>Reviewer: <%= @grader.firstname %> <%= @grader.lastname %></p>
+<% end %>
+
+<% unless @review.grade.blank? || @exercise.grading_mode == 'none' %>
+  <p>Grade: <%= @review.grade %></p>
+<% end %>
+
+
+<p class="feedback-preview"><%= @review.feedback.gsub("\n", "<br />\n").html_safe %></p>
+
+<p><%= link_to 'Back', submit_url(@exercise.id) %></p>
