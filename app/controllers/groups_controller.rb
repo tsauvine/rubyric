@@ -132,10 +132,12 @@ class GroupsController < ApplicationController
         email.strip!
         invitation = GroupInvitation.find(id)
         if email.blank?
-          logger.info "DELETIGN INVITATION #{invitation.email}"
           invitation.destroy
         elsif email != invitation.email
+          # TODO: move to model
           invitation.email = email
+          invitation.token = Digest::SHA1.hexdigest([Time.now, rand].join)
+          invitation.expires_at = Time.now + 1.weeks
           invitation.save
           
           if ENABLE_DELAYED_JOB
