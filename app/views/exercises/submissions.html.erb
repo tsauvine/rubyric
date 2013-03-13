@@ -7,7 +7,21 @@
   </h1>
 </div>
 
-<p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
+<% if @groups.empty? %>
+  <!-- No groups warning -->
+  <div class="alert alert-info">
+    No submissions have been received yet. 
+    Ask students to submit their work in this address: <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
+  </div>
+<% end %>
+
+<% if @groups.empty? %>
+  <!-- No rubric warning  -->
+  <div class="alert alert-info">
+    The grading rubric has not been prepared. <%= link_to 'Edit rubric', edit_exercise_rubric_path(@exercise), :class => 'btn btn-primary' %>
+  </div>
+<% end %>
+
 
 <p>
   <b>Deadline:</b>
@@ -18,50 +32,63 @@
   <% end %>
 </p>
 
-<h2>Submissions</h2>
+<p>
+  <strong>Group size: </strong>
+  <% if @exercise.groupsizemax > @exercise.groupsizemin %>
+    <%= @exercise.groupsizemin %> - <%= @exercise.groupsizemax %>
+  <% else %>
+    <%= @exercise.groupsizemin %>
+  <% end %>
+</p>
 
-<table class="assignments">
-  <thead>
-    <tr>
-      <td>Submission</td>
-      <td>Review</td>
-      <td>Status</td>
-      <td>Grade</td>
-    </tr>
-  </thead>
-  <tbody id="submissions_table">
-    <%= render :partial => 'group', :collection => @groups %>
-  </tbody>
-  <tfoot>
-    <tr>
-      <td>
-      </td>
-      <td>
-        <button class="btn" id="reviews-select-all" onClick="return false;">Select all</button>
-        <button class="btn" id="reviews-select-finished" onClick="return false;">Select finished</button>
-        <button class="btn" id="reviews-select-none" onClick="return false;">Select none</button>
-      </td>
-      <td></td>
-      <td></td>
-    </tr>
+<p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Give this link to students.</span></p>
+  
+<% unless @groups.empty? %>
+  <h2>Submissions</h2>
 
-    <tr class="spacer">
-      <td></td>
-      <td></td>
-      <td></td>
-      <td></td>
-    </tr>
+  <table class="assignments">
+    <thead>
+      <tr>
+        <td>Submission</td>
+        <td>Review</td>
+        <td>Status</td>
+        <td>Grade</td>
+      </tr>
+    </thead>
+    <tbody id="submissions_table">
+      <%= render :partial => 'group', :collection => @groups %>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td>
+        </td>
+        <td>
+          <button class="btn" id="reviews-select-all" onClick="return false;">Select all</button>
+          <button class="btn" id="reviews-select-finished" onClick="return false;">Select finished</button>
+          <button class="btn" id="reviews-select-none" onClick="return false;">Select none</button>
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
 
-    <tr>
-      <td>
-      </td>
-      <td>
-        <p>
-          <%= submit_tag 'Mail selected reviews', :name => 'mail', :class => 'btn' %>
-        </p>
-      </td>
-      <td></td>
-      <td></td>
-    </tr>
-  </tfoot>
-</table>
+      <tr class="spacer">
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+      </tr>
+
+      <tr>
+        <td>
+        </td>
+        <td>
+          <p>
+            <%= submit_tag 'Mail selected reviews', :name => 'mail', :class => 'btn' %>
+          </p>
+        </td>
+        <td></td>
+        <td></td>
+      </tr>
+    </tfoot>
+  </table>
+<% end %>
