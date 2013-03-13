@@ -1,4 +1,3 @@
-#= require handlebars-1.0.0.beta.6.js
 #= require knockout-2.2.1
 #= require bootstrap
 

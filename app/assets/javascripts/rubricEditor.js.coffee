@@ -1,11 +1,7 @@
-#= require handlebars-1.0.0.beta.6
+#= require knockout-2.2.1
 #= require bootstrap
 #= require jquery.ui.sortable
-
-#// require bootstrap-dropdown
-#// require bootstrap-popover
-#// require jquery.jeditable
-#// require jquery-ui-1.8.19.custom.min
+#= require knockout-sortable-0.7.3
 
 # TODO:
 # grades
@@ -20,6 +16,85 @@
 # quality levels
 # cut'n'paste
 # feedback grouping
+
+
+ko.bindingHandlers.editable = {
+  init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+    allBindings = allBindingsAccessor()
+    type = allBindings.type || 'textfield'
+#     emptyPlaceholder = allBindings.emptyPlaceholder || ''
+
+    $(element).click ->
+      self = $(this)
+      original_value = ko.utils.unwrapObservable(valueAccessor())
+      
+      #initial_value = options['value'] || original_value || ''
+
+      # Create editor
+      if 'textarea' == type
+        input = $("<textarea>#{original_value}</textarea>")
+      else
+        input = $("<input type='textfield' value='#{original_value}' />")
+
+#       displayValue = (value) ->
+#         value = emptyPlaceholder if !value || value.length < 1
+#         self.html(value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />'))
+# 
+      # Event handlers
+      okHandler = (event) =>
+        valueAccessor()(new String(input.val()))
+        event.stopPropagation()
+
+      cancelHandler = (event) ->
+        valueAccessor()(new String(original_value))
+        event.stopPropagation()
+
+      # Make buttons
+      ok = $('<button>OK</button>').click(okHandler)
+      cancel = $('<button>Cancel</button>').click(cancelHandler)
+
+      # Attach event handlers
+      input.keyup (event) ->
+        switch event.keyCode
+          when 13
+            okHandler(event) unless type == 'textarea'
+          when 27 then cancelHandler(event)
+
+        # Prevent esc from closing the dialog
+        event.stopPropagation()
+
+      #input.blur(cancelHandler)
+
+      # Stop propagation of clicks to prevent reopening the editor
+      input.click (event) -> event.stopPropagation()
+
+      # Replace original text with the editor
+      self.empty()
+      self.append(input)
+      self.append('<br />') if 'textarea' == type
+      self.append(ok)
+      self.append(cancel)
+
+      # Set focus to the editor
+      input.focus()
+      input.select()
+
+      return self
+  
+  
+  update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+    value = ko.utils.unwrapObservable(valueAccessor())
+    
+    # Show placeholder if empty
+    value = (allBindingsAccessor().placeholder || '') if !value || value.length < 1
+    
+    # Replace <, > and newlines
+    value = value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+
+    $(element).html(value)
+  
+}
+
 
 
 class InPlaceEditor
@@ -96,54 +171,71 @@ class InPlaceEditor
 
 
 class Page
-  constructor: (@rubricEditor, @id) ->
-    @id ||= @rubricEditor.nextPageId()
+  constructor: (@rubricEditor, data) ->
+    @id = ko.observable()
+    @name = ko.observable()
+    @criteria = ko.observableArray()
+    @grades = ko.observableArray()
+    
+    @tabUrl = ko.computed(() ->
+        return "#page-#{@id()}"
+      , this)
+    @tabId = ko.computed(() ->
+        return "page-#{@id()}"
+      , this)
+    @tabLinkId = ko.computed(() ->
+        return "page-#{@id()}-link"
+      , this)
 
-    @criteria = []
-    @grades = []
-    @element = false  # The tab content div
+    
+    if data
+      this.load_json(data)
+    else
+      this.initializeDefault()
+    
+    #@element = false  # The tab content div
+
+
+  initializeDefault: () ->
+    @id = @rubricEditor.nextPageId()
+    @name('Untitled page')
+
+    criterion = new Criterion(@rubricEditor, this)
+    criterion.name('Criterion 1')
+    @criteria.push(criterion)
+
+    criterion = new Criterion(@rubricEditor, this)
+    criterion.name('Criterion 2')
+    @criteria.push(criterion)
+
 
   load_json: (data) ->
-    @name = data['name']
-
     @id = @rubricEditor.nextPageId(parseInt(data['id']))
+    @name(data['name'])
 
     # Load criteria
     for criterion_data in data['criteria']
-      criterion = new Criterion(@rubricEditor)
-      criterion.load_json(criterion_data)
+      criterion = new Criterion(@rubricEditor, this, criterion_data)
       @criteria.push(criterion)
 
     # Load grades
     if data['grades']
-      @grades = data['grades']
+      @grades.push(data['grades'])
 
 
   to_json: ->
     criteria = []
     grades = []
 
-    @rubricDiv.find('div.criterion').each (index, element) =>
-      criterion = $(element).data('criterion')
-      criteria.push(criterion.to_json()) if criterion
+    for criterion in @criteria()
+      criteria.push(criterion.to_json())
 
-    @gradesTable.find('td.category').each (index, element) =>
-      grades.push($(element).data('value'))
+    for grade in @grades()
+      grades.push(grade)
 
-    return {id: @id, name: @name, criteria: criteria, grades: grades}
+    return {id: @id, name: @name(), criteria: criteria, grades: grades}
 
-  initializeDefault: () ->
-    @name = 'Untitled page'
 
-    criterion = new Criterion(@rubricEditor)
-    criterion.initializeDefault()
-    criterion.name = 'Criterion 1'
-    @criteria.push(criterion)
-
-    criterion = new Criterion(@rubricEditor)
-    criterion.initializeDefault()
-    criterion.name = 'Criterion 2'
-    @criteria.push(criterion)
 
 
   createDom: () ->
@@ -203,51 +295,47 @@ class Page
     # Add content
     $('#tab-contents').append(this.createDom())
 
+
   showTab: ->
-    @tab.find('a').tab('show')
+    $('#' + @tabLinkId).tab('show')
 
 
   activateTitleEditor: ->
-    new InPlaceEditor {element: @titleSpan}, (new_value) =>
-      @name = new_value
-      @tab.find('a').text(new_value)
+    #new InPlaceEditor {element: @titleSpan}, (new_value) =>
+    #  @name = new_value
+    #  @tab.find('a').text(new_value)
 
   #
   # Deltes this page
   #
   deletePage: ->
+    @rubricEditor.remove(this)
+    
     # Activate first tab
     $('#tab-settings-link').tab('show')
-
-    # Remove from DOM
-    @tab.remove()
-    @element.remove()
 
   #
   # Event handler: User clicks the 'Create criterion' button
   #
   clickCreateCriterion: (event) ->
-    # Create criterion object
-    criterion = new Criterion(@rubricEditor)
-
-    # Add to criterion model
-    this.criteria.push(criterion)
-
-    # Add to DOM
-    @rubricDiv.append(criterion.createDom())
+    criterion = new Criterion(@rubricEditor, this)
+    @criteria.push(criterion)
 
     criterion.activateEditor()
 
   clickCreateGrade: (event) ->
-    value = @gradeInput.val()
-
-    this.addGrade(value)
-
-    @gradeInput.val('')
-    @gradeInput.focus()
-    event.stopPropagation()
+    @grades.push()
+#     value = @gradeInput.val()
+# 
+#     this.addGrade(value)
+# 
+#     @gradeInput.val('')
+#     @gradeInput.focus()
+#     event.stopPropagation()
 
   addGrade: (value) ->
+    # TODO
+    return
     element = $(@rubricEditor.categoryTemplate({content: value}))
     td = element.find("td.category")
     td.data('value', value)
@@ -267,39 +355,46 @@ class Page
 
 
 class Criterion
-  constructor: (@rubricEditor, @id) ->
-    @id ||= @rubricEditor.nextCriterionId()
+  constructor: (@rubricEditor, @page, data) ->
+    @name = ko.observable()
+    @phrases = ko.observableArray()
+    
+    if data
+      this.loadJson(data)
+    else
+      this.initializeDefault()
+    
+    
+  initializeDefault: () ->
+    @id = @rubricEditor.nextCriterionId()
+    
+    phrase = new Phrase(@rubricEditor, this)
+    phrase.content("What went well")
+    @phrases.push(phrase)
 
-    @name = 'Criterion'
-    @phrases = []
-    #@editorActive = false
-
+    phrase = new Phrase(@rubricEditor, this)
+    phrase.content("What could be improved")
+    @phrases.push(phrase)
+    
+    
   load_json: (data) ->
-    @name = data['name']
+    @name(data['name'])
     @id = @rubricEditor.nextCriterionId(parseInt(data['id']))
 
     for phrase_data in data['phrases']
-      phrase = new Phrase(@rubricEditor)
-      phrase.load_json(phrase_data)
+      phrase = new Phrase(@rubricEditor, this, phrase_data)
       @phrases.push(phrase)
+
 
   to_json: ->
     phrases = []
 
-    @phrasesElement.find('tr.phrase').each (index, element) =>
-      phrase = $(element).data('phrase')
-      phrases.push(phrase.to_json()) if phrase
+    for phrase in @phrases()
+      phrases.push(phrase.to_json())
 
-    return {id: @id, name: @name, phrases: phrases}
+    return {id: @id, name: @name(), phrases: phrases}
 
-  initializeDefault: () ->
-    phrase = new Phrase(@rubricEditor)
-    phrase.content = "What went well"
-    @phrases.push(phrase)
-
-    phrase = new Phrase(@rubricEditor)
-    phrase.content = "What could be improved"
-    @phrases.push(phrase)
+  
 
   createDom: () ->
     @element = $(@rubricEditor.criterionTemplate({criterionId: @id, criterionName: @name}))
@@ -334,38 +429,40 @@ class Criterion
 
     return @element
 
+
   activateEditor: ->
-    new InPlaceEditor {element: @nameElement}, (new_value) =>
-      @name = new_value
+    #new InPlaceEditor {element: @nameElement}, (new_value) =>
+    #  @name = new_value
 
   clickCreatePhrase: ->
-    # Create criterion object
     phrase = new Phrase(@rubricEditor)
-
-    # Add to criterion model
-    this.phrases.push(phrase)
-
-    # Add to DOM
-    @phrasesElement.append(phrase.createDom())
+    @this.phrases.push(phrase)
 
     phrase.activateEditor()
 
+
   deleteCriterion: ->
-    @element.remove()
+    @page.criteria.remove(this)
 
 
 class Phrase
-  constructor: (@rubricEditor, @id) ->
-    @id ||= @rubricEditor.nextPhraseId()
-    @content = ''
-    #@editorActive = false
+  constructor: (@rubricEditor, @criterion, data) ->
+    @content = ko.observable()
+    
+    if data
+      this.loadJson(data)
+    else
+      @id = @rubricEditor.nextPhraseId()
+
 
   load_json: (data) ->
-    @content = data['text']
     @id = @rubricEditor.nextPhraseId(parseInt(data['id']))
+    @content(data['text'])
+
 
   to_json: ->
-    return {id: @id, text: @content} # TODO: type
+    return {id: @id, text: @content()} # TODO: type
+
 
   createDom: () ->
     escaped_content = @content.replace('\n','<br />')
@@ -382,11 +479,11 @@ class Phrase
     return @element
 
   activateEditor: ->
-    new InPlaceEditor {element: @phraseTd, type: 'textarea'}, (new_value) =>
-      @content = new_value
+    #new InPlaceEditor {element: @phraseTd, type: 'textarea'}, (new_value) =>
+    #  @content = new_value
 
   deletePhrase: ->
-    @element.remove()
+    @criterion.phrases.remove(this)
 
 
 class CategoriesEditor
@@ -394,8 +491,8 @@ class CategoriesEditor
     @element = $('#feedback-categories')
     @element.sortable({containment: 'parent', axis: 'y', distance: 5, helper: 'clone'}) # helper:clone is a workaround for a problem where click is fired after dropping and jQuery crashes. It may be fixed in future versions of jQuery.
 
-    $('#create-category-button').click =>
-      this.addCategory('', {activateEditor: true})
+    #$('#create-category-button').click =>
+    #  this.addCategory('', {activateEditor: true})
 
   setCategories: (new_categories) ->
     $('#feedback-categories').empty()
@@ -445,19 +542,15 @@ class RubricEditor
     @pageIdCounter = 0
     @criterionIdCounter = 0
     @phraseIdCounter = 0
+    
+    @gradingMode = ko.observable('average')
+    @feedbackCategories = ko.observableArray()
+    @finalComment = ko.observable('')
+    @pages = ko.observableArray()
 
-    # Load Handlebar templates
-    @pageTemplate = Handlebars.compile($("#page-template").html())
-    @criterionTemplate = Handlebars.compile($("#criterion-template").html())
-    @phraseTemplate = Handlebars.compile($("#phrase-template").html())
-    @categoryTemplate = Handlebars.compile($("#category-template").html())
-
-    @categoriesEditor = new CategoriesEditor(this)
+    #@categoriesEditor = new CategoriesEditor(this)
 
     @url = $('#rubric-editor').data('url')
-
-    $('#create-page').click => @pageCreate()
-    $('#save-button').click => @saveRubric()
 
     $(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
 
@@ -472,13 +565,6 @@ class RubricEditor
 #       cancel: 'Cancel'
 #     }
 
-    #@pages = []
-
-    # Indexes
-    #@pagesById = {}
-    #@criteriaById = {}
-    #@phrasesById = {}
-
   setHelpTexts: ->
     $('.help-hover').each (index, element) =>
       helpElementName = $(element).data('help')
@@ -488,48 +574,48 @@ class RubricEditor
         $("##{helpElementName}").show()
 
   nextPageId: (id) ->
-    if id && id > @pageIdCounter
-      return @pageIdCounter = id
+    if id
+      @pageIdCounter = id if id > @pageIdCounter
+      return @pageIdCounter
     else
       return @pageIdCounter++
 
   nextCriterionId: (id) ->
-    if id && id > @criterionIdCounter
-      return @criterionIdCounter = id
+    if id 
+      @criterionIdCounter = id if id > @criterionIdCounter
+      return @criterionIdCounter
     else
       return @criterionIdCounter++
 
   nextPhraseId: (id) ->
-    if id && id > @phraseIdCounter
-      return @phraseIdCounter = id
+    if id
+      @phraseIdCounter = id if id > @phraseIdCounter
+      return @phraseIdCounter
     else
       return @phraseIdCounter++
 
   initializeDefault: ->
-    @gradingMode = 'average'
-    @finalComment = ''
-    @categoriesEditor.setCategories(['Strengths','Weaknesses','Other comments'])
-    this.updateGeneralSettings()
+    @gradingMode('average')
+    @finalComment('')
+    @feedbackCategories(['Strengths','Weaknesses','Other comments'])
 
     page = new Page(this)
-    page.initializeDefault()
-    page.addToDom()
+    @pages.push(page)
 
-  updateGeneralSettings: () ->
-    $("#grading-mode-#{@gradingMode}").attr('checked', true)
-    $('#final-comment').val(@finalComment)
 
   #
   # Creates a new rubric page
   #
-  pageCreate: ->
+  clickCreatePage: ->
     page = new Page(this)
     page.initializeDefault()
-    page.addToDom()
     page.showTab()
     page.activateTitleEditor()
-    #@pages.push(page)
-    #@pagesById[pageId] = page
+    @pages.push(page)
+
+  clickCreateCategory: ->
+    @feedbackCategories.push('')
+    # TODO: activate editor
 
   #
   # Loads the rubric by AJAX
@@ -549,42 +635,37 @@ class RubricEditor
   parseRubric: (data) ->
     if !data
       this.initializeDefault()
-      return
+    else
+      @gradingMode(data['gradingMode'] || 'average')
+      @finalComment(data['finalComment'] || '')
+      
+      if data['feedbackCategories']
+        @feedbackCategories(data['feedbackCategories'])
+      else
+        @feedbackCategories(['Strengths','Weaknesses','Other comments'])
 
-    @gradingMode = data['gradingMode'] || 'average'
-    @finalComment = data['finalComment'] || ''
-    this.updateGeneralSettings()
-    @categoriesEditor.setCategories(data['feedbackCategories'] || ['Strengths','Weaknesses','Other comments'])
-
-    for page_data in data['pages']
-      page = new Page(this)
-      page.load_json(page_data)
-      page.addToDom()
+      for page_data in data['pages']
+        page = new Page(this)
+        page.load_json(page_data)
+        @pages.push(page)
+    
+    ko.applyBindings(this)
 
 
   #
   # Sends the JSON encoded rubric to the server by AJAX
   #
-  saveRubric: () ->
-    # Read general settings
-    gradingMode = $('input:checked', '#grading-mode').val()
-    finalComment = $('#final-comment').val()
-    feedbackCategories = @categoriesEditor.getCategories()
-
-    # Read page contents
-    pages = []
-    $('#tab-contents .tab-pane').each (index, element) ->
-      return if index == 0  # Skip settings page
-
-      page = $(element).data('page')
-      pages.push(page.to_json()) if page
-
+  clickSaveRubric: () ->
     # Generate JSON
+    pages = []
+    for page in @pages
+      pages.push(page.to_json())
+
     json = {
       version: 1
-      gradingMode: gradingMode
-      finalComment: finalComment
-      feedbackCategories: feedbackCategories
+      gradingMode: @gradingMode()
+      finalComment: @finalComment()
+      feedbackCategories: @feedbackCategories()
       pages: pages
     }
     json_string = JSON.stringify(json)
