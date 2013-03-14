@@ -85,30 +85,64 @@ class Review < ActiveRecord::Base
     # Load rubric
     rubric_pages = {}
     rubric['pages'].each do |page|
-      rubric_pages[page['id']] = page['name']
+      rubric_pages[page['id']] = page
     end
+    
+    grading_mode = rubric['gradingMode']
+    final_comment = rubric['finalComment']
+    feedback_categories = rubric['feedbackCategories']
 
     # Parse payload
-    feedback = JSON.parse(self.payload)
+    review = JSON.parse(self.payload)
 
     # Generate feedback text
     text = ''
-    feedback['pages'].each do |page|
+    grade_sum = 0.0
+    grade_counter = 0
+    review['pages'].each do |page|
       rubric_page = rubric_pages[page['id']]
-      if rubric_page
-        text << "== #{rubric_page} =="
+      
+      text << "== #{rubric_page['name']} ==" if rubric_page['name']
+      
+      feedback = page['feedback'] || []
+      grade = page['grade']
+
+      text << "\n\n= #{feedback_categories[0]} =\n" unless feedback_categories[0].blank?
+      text << feedback[0]
+
+      text << "\n\n= #{feedback_categories[1]} =\n" unless feedback_categories[0].blank?
+      text << feedback[1]
+
+      text << "\n\n= #{feedback_categories[2]} =\n" unless feedback_categories[0].blank?
+      text << feedback[2]
+      
+      text << "\n\n"
+      
+      if grade
+        int_grade = grade.to_i
+        #if grade # is number
+          grade_sum += int_grade
+        #else
+        #  manual grade
+        #end
       end
-
-      text << "\n\n= Hyvää =\n"
-      text << page['good']
-
-      text << "\n\n= Kehitettävää =\n"
-      text << page['bad']
-
-      text << "\n\n= Muuta =\n"
-      text << page['neutral']
+      
+      grade_counter += 1
     end
+    
+    # Final comment
+    text << final_comment if final_comment
 
+    # Calculate grade
+    case grading_mode
+    when 'average'
+      self.grade = grade_sum / grade_counter
+    when 'sum'
+      self.grade = grade_sum
+    else
+      self.grade = nil
+    end
+    
     self.feedback = text
   end
 

@@ -81,13 +81,19 @@
               <table class="phrases">
                 <tbody data-bind="foreach: phrases">
                   <tr class="phrase">
-                    <td class="phrase" data-bind="text: escaped_content, click: clickPhrase"></td>
+                    <td class="phrase" data-bind="html: escaped_content, click: clickPhrase"></td>
                   </tr>
                 </tbody>
               </table>
             </div>
           </div>
         </div>
+        
+        <!-- Grades -->
+        <p>
+          <h3>Grade</h3>
+          <select data-bind="options: grades, value: grade, optionsCaption: 'Choose grade...'"></select>
+        </p>
 
         <!-- Textareas -->
         <div class="textareas">

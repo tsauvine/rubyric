@@ -4,6 +4,8 @@
 class Page
   constructor: (@rubricEditor) ->
     @criteria = []
+    @grades = []
+    @grade = ko.observable()
     
     @goodFeedback = ko.observable('')
     @badFeedback = ko.observable('')
@@ -19,26 +21,29 @@ class Page
       criterion = new Criterion(@rubricEditor, this)
       criterion.load_json(criterion_data)
       @criteria.push(criterion)
+    
+    for grade in data['grades']
+      @grades.push(grade)
 
   load_review: (data) ->
-    @goodFeedback(data['good'])
-    @badFeedback(data['bad'])
-    @neutralFeedback(data['neutral'])
+    if data['feedback'] && data['feedback'].length > 2
+      @goodFeedback(data['feedback'][0])
+      @badFeedback(data['feedback'][1])
+      @neutralFeedback(data['feedback'][2])
 
   to_json: ->
-    # TODO: grade
-
     json = {
       id: @id,
-      good: @goodFeedback(),
-      bad: @badFeedback(),
-      neutral: @neutralFeedback()
+      feedback: [@goodFeedback(), @badFeedback(), @neutralFeedback()],
+      grade: @grade()
     }
 
     return json
 
   addPhrase: (content, category) ->
-    switch category
+    categoryIndex = @rubricEditor.feedbackCategoriesIndex[category]
+    
+    switch categoryIndex
       when 2
         @neutralFeedback(@neutralFeedback() + content + "\n")
       when 1
@@ -54,11 +59,10 @@ class Page
 class Criterion
   constructor: (@rubricEditor, @page) ->
     @phrases = []
-    #@editorActive = false
 
   load_json: (data) ->
-    @name = data['name']
     @id = parseInt(data['id'])
+    @name = data['name']
     @dom_id = 'criterion-' + @id
 
     for phrase_data in data['phrases']
@@ -72,11 +76,11 @@ class Phrase
   constructor: (@rubricEditor, @page) ->
 
   load_json: (data) ->
-    @content = data['text']
-    @escaped_content = @content.replace('\n','<br />')
-    
-    @category = parseInt(data['category'])
     @id = parseInt(data['id'])
+    @category = data['category']
+    @content = data['text']
+    @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+    
     @dom_id = 'phrase-' + @id
 
   clickPhrase: ->
@@ -88,6 +92,12 @@ class ReviewEditor
   constructor: () ->
     @pages = []
     @pagesById = {}
+    
+    @feedbackCategories = []
+    @feedbackCategories.push(false)
+    @feedbackCategoriesIndex = {}
+    @gradingMode = 'none'
+    @finalComment = ''
 
     @rubric_url = $('#review-editor').data('rubric-url')
     @review_url = $('#review-editor').data('review-url')
@@ -128,7 +138,11 @@ class ReviewEditor
       alert('Rubric has not been prepared')
       return
 
-    @feedbackCategories = data['feedbackCategories']
+    if data['feedbackCategories']
+      category_counter = 0
+      for category in data['feedbackCategories']
+        @feedbackCategories.push(category)
+        @feedbackCategoriesIndex[category] = category_counter++
 
     for page_data in data['pages']
       page = new Page(this)
