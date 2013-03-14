@@ -20,33 +20,37 @@
 
 ko.bindingHandlers.editable = {
   init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-    allBindings = allBindingsAccessor()
-    type = allBindings.type || 'textfield'
-#     emptyPlaceholder = allBindings.emptyPlaceholder || ''
-
     $(element).click ->
-      self = $(this)
-      original_value = ko.utils.unwrapObservable(valueAccessor())
-      
-      #initial_value = options['value'] || original_value || ''
+      valueAccessor().editorActive(true)
+  
+  
+  update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+    options = valueAccessor()
+    el = $(element)
 
+    if ko.utils.unwrapObservable(options.editorActive)
+      type = ko.utils.unwrapObservable(options.type) || 'textfield'
+      original_value = ko.utils.unwrapObservable(options.value)
+      
+      #ko.utils.registerEventHandler element, "change", () ->
+      #  observable = editorActive;
+      #  observable($(element).datepicker("getDate"));
+    
       # Create editor
       if 'textarea' == type
         input = $("<textarea>#{original_value}</textarea>")
       else
         input = $("<input type='textfield' value='#{original_value}' />")
 
-#       displayValue = (value) ->
-#         value = emptyPlaceholder if !value || value.length < 1
-#         self.html(value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />'))
-# 
       # Event handlers
       okHandler = (event) =>
-        valueAccessor()(new String(input.val()))
+        options.value(new String(input.val()))
+        options.editorActive(false)
         event.stopPropagation()
 
       cancelHandler = (event) ->
-        valueAccessor()(new String(original_value))
+        options.value(new String(original_value))
+        options.editorActive(false)
         event.stopPropagation()
 
       # Make buttons
@@ -63,111 +67,42 @@ ko.bindingHandlers.editable = {
         # Prevent esc from closing the dialog
         event.stopPropagation()
 
+      # Close on blur
       #input.blur(cancelHandler)
 
-      # Stop propagation of clicks to prevent reopening the editor
+      # Stop propagation of clicks to prevent reopening the editor when clicking the input
       input.click (event) -> event.stopPropagation()
 
       # Replace original text with the editor
-      self.empty()
-      self.append(input)
-      self.append('<br />') if 'textarea' == type
-      self.append(ok)
-      self.append(cancel)
+      el.empty()
+      el.append(input)
+      el.append('<br />') if 'textarea' == type
+      el.append(ok)
+      el.append(cancel)
 
       # Set focus to the editor
       input.focus()
       input.select()
 
-      return self
-  
-  
-  update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-    value = ko.utils.unwrapObservable(valueAccessor())
+      # handle disposal (if KO removes by the template binding)
+      #ko.utils.domNodeDisposal.addDisposeCallback(element, () ->
+        # TODO
+        #$(element).editable("destroy")
+      #)
     
-    # Show placeholder if empty
-    value = (allBindingsAccessor().placeholder || '') if !value || value.length < 1
-    
-    # Replace <, > and newlines
-    value = value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
-
-    $(element).html(value)
-  
-}
-
-
-
-class InPlaceEditor
-  # After editing, the new un-escaped value will be placed in data('value')
-  # options:
-  #   element: Element that will contain the editor. After editing, the element will contain the new value.
-  #   value: initial value. Default: data('value')
-  #   emptyPlaceholder: content to be shown if entered value is empty
-  #   type: 'textfield' (default), 'textarea'
-  constructor: (@options, callback) ->
-    element = options['element']
-    type = options['type'] || 'textfield'
-    emptyPlaceholder = options['emptyPlaceholder'] || ''
-
-    original_value = element.data('value')
-    initial_value = options['value'] || original_value || ''
-
-    # Create editor
-    if 'textarea' == type
-      input = $("<textarea>#{initial_value}</textarea>")
     else
-      input = $("<input type='textfield' value='#{initial_value}' />")
+      placeholder = ko.utils.unwrapObservable(options.placeholder) || '-'
+      value = ko.utils.unwrapObservable(options.value)
+      
+      # Show placeholder if value is empty
+      value = placeholder if placeholder && (!value || value.length < 1)
+      
+      # Escape nasty characters
+      value = value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
 
-    displayValue = (value) ->
-      value = emptyPlaceholder if !value || value.length < 1
-      element.html(value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />'))
+      el.html(value)
 
-    # Event handlers
-    okHandler = (event) =>
-      new_value = input.val()
-      displayValue(new_value)
-      element.data('value', new_value) # Replace the editor with the new text. Store the unescaped value in data.
-      callback(new_value) if callback
-      event.stopPropagation()
-
-    cancelHandler = (event) ->
-      #original_value_escaped = original_value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
-      #element.html(original_value_escaped)  # Replace the editor with the original text.
-      displayValue(original_value)
-      event.stopPropagation()
-
-    # Make buttons
-    ok = $('<button>OK</button>').click(okHandler)
-    cancel = $('<button>Cancel</button>').click(cancelHandler)
-
-    # Attach event handlers
-    input.keyup (event) ->
-      switch event.keyCode
-        when 13
-          okHandler(event) unless type == 'textarea'
-        when 27 then cancelHandler(event)
-
-      # Prevent esc from closing the dialog
-      event.stopPropagation()
-
-    #input.blur(cancelHandler)
-
-    # Stop propagation of clicks to prevent reopening the editor
-    input.click (event) -> event.stopPropagation()
-
-    # Replace original text with the editor
-    element.empty()
-    element.append(input)
-    element.append('<br />') if 'textarea' == type
-    element.append(ok)
-    element.append(cancel)
-
-    # Set focus to the editor
-    input.focus()
-    input.select()
-
-    return element
-
+}
 
 
 class Page
@@ -176,7 +111,13 @@ class Page
     @name = ko.observable()
     @criteria = ko.observableArray()
     @grades = ko.observableArray()
+    @editorActive = ko.observable(false)
     
+    if data
+      this.load_json(data)
+    else
+      this.initializeDefault()
+      
     @tabUrl = ko.computed(() ->
         return "#page-#{@id()}"
       , this)
@@ -186,18 +127,13 @@ class Page
     @tabLinkId = ko.computed(() ->
         return "page-#{@id()}-link"
       , this)
-
     
-    if data
-      this.load_json(data)
-    else
-      this.initializeDefault()
     
     #@element = false  # The tab content div
 
 
   initializeDefault: () ->
-    @id = @rubricEditor.nextPageId()
+    @id(@rubricEditor.nextPageId())
     @name('Untitled page')
 
     criterion = new Criterion(@rubricEditor, this)
@@ -210,7 +146,7 @@ class Page
 
 
   load_json: (data) ->
-    @id = @rubricEditor.nextPageId(parseInt(data['id']))
+    @id(@rubricEditor.nextPageId(parseInt(data['id'])))
     @name(data['name'])
 
     # Load criteria
@@ -233,7 +169,7 @@ class Page
     for grade in @grades()
       grades.push(grade)
 
-    return {id: @id, name: @name(), criteria: criteria, grades: grades}
+    return {id: @id(), name: @name(), criteria: criteria, grades: grades}
 
 
 
@@ -279,11 +215,6 @@ class Page
     return @element
 
 
-  addToDom: ->
-    # Add tab
-    @tab = $("<li><a href='#page-#{@id}' data-toggle='tab'>#{@name}</a></li>")
-    $('#create-page-tab').before(@tab)
-
     # TODO: Criteria can be dropped into page tabs
 #     @tab.droppable({
 #       accept: '.criterion',
@@ -292,12 +223,9 @@ class Page
 #       tolerance: 'pointer'
 #     })
 
-    # Add content
-    $('#tab-contents').append(this.createDom())
-
 
   showTab: ->
-    $('#' + @tabLinkId).tab('show')
+    $('#' + @tabLinkId()).tab('show')
 
 
   activateTitleEditor: ->
@@ -309,7 +237,7 @@ class Page
   # Deltes this page
   #
   deletePage: ->
-    @rubricEditor.remove(this)
+    @rubricEditor.pages.remove(this)
     
     # Activate first tab
     $('#tab-settings-link').tab('show')
@@ -348,6 +276,8 @@ class Page
 
     @gradesTable.append(element)
 
+  activateEditor: ->
+    @editorActive(true)
 
 #   dropCriterionToSection: (event) ->
 #     console.log "Criterion was dropped into section tab"
@@ -358,6 +288,7 @@ class Criterion
   constructor: (@rubricEditor, @page, data) ->
     @name = ko.observable()
     @phrases = ko.observableArray()
+    @editorActive = ko.observable(false)
     
     if data
       this.loadJson(data)
@@ -431,12 +362,11 @@ class Criterion
 
 
   activateEditor: ->
-    #new InPlaceEditor {element: @nameElement}, (new_value) =>
-    #  @name = new_value
+    @editorActive(true)
 
   clickCreatePhrase: ->
-    phrase = new Phrase(@rubricEditor)
-    @this.phrases.push(phrase)
+    phrase = new Phrase(@rubricEditor, this)
+    @phrases.push(phrase)
 
     phrase.activateEditor()
 
@@ -448,6 +378,7 @@ class Criterion
 class Phrase
   constructor: (@rubricEditor, @criterion, data) ->
     @content = ko.observable()
+    @editorActive = ko.observable(false)
     
     if data
       this.loadJson(data)
@@ -463,24 +394,8 @@ class Phrase
   to_json: ->
     return {id: @id, text: @content()} # TODO: type
 
-
-  createDom: () ->
-    escaped_content = @content.replace('\n','<br />')
-    @element = $(@rubricEditor.phraseTemplate({id: @id, content: escaped_content}))
-    @element.data('phrase', this)
-
-    @phraseTd = @element.find("td.phrase")
-    @phraseTd.data('value', @content)
-    @phraseTd.click (event) => @activateEditor()
-
-    @element.find('.delete-phrase-button').click => @deletePhrase()
-    @element.find('.edit-phrase-button').click => @activateEditor()
-
-    return @element
-
   activateEditor: ->
-    #new InPlaceEditor {element: @phraseTd, type: 'textarea'}, (new_value) =>
-    #  @content = new_value
+    @editorActive(true)
 
   deletePhrase: ->
     @criterion.phrases.remove(this)
@@ -608,10 +523,9 @@ class RubricEditor
   #
   clickCreatePage: ->
     page = new Page(this)
-    page.initializeDefault()
-    page.showTab()
-    page.activateTitleEditor()
+    page.activateEditor()
     @pages.push(page)
+    page.showTab()
 
   clickCreateCategory: ->
     @feedbackCategories.push('')

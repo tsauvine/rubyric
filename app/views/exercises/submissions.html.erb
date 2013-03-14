@@ -11,7 +11,8 @@
   <!-- No groups warning -->
   <div class="alert alert-info">
     No submissions have been received yet. 
-    Ask students to submit their work in this address: <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
+    Give the following link to students for submitting:
+    <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
   </div>
 <% end %>
 

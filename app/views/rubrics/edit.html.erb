@@ -87,21 +87,21 @@
     <!-- ko foreach: pages -->
       <div class="tab-pane page" data-bind="attr: { id: tabId }">
         <h2>
-          <span class="title" data-bind="text: name"></span>
+          <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled page'}"></span>
           <span class="buttons">
-            <i class="icon-pencil edit-page-button" title="Edit title"></i>
-            <i class="icon-trash delete-page-button" title="Delete page"></i>
+            <i class="icon-pencil edit-page-button" title="Edit title" data-bind="click: activateEditor"></i>
+            <i class="icon-trash delete-page-button" title="Delete page" data-bind="click: deletePage"></i>
           </span>
         </h2>
 
-        <div class="rubric" data-bind="sortable: criteria">
+        <div class="rubric" data-bind="sortable: {data: criteria, options: {containment: '#rubric-editor', axis: 'y', distance: 5} }">
           <div class="criterion">
             <!-- Heading -->
             <h3>
-              <span class="title" data-bind="text: name"></span>
+              <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled Criterion' }"></span>
               <span class="buttons">
-                <i class="icon-pencil edit-criterion-button" title="Edit criterion"></i>
-                <i class="icon-trash delete-criterion-button" title="Delete criterion"></i>
+                <i class="icon-pencil edit-criterion-button" title="Edit criterion" data-bind="click: activateEditor"></i>
+                <i class="icon-trash delete-criterion-button" title="Delete criterion" data-bind="click: deleteCriterion"></i>
                 <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
               </span>
             </h3>
@@ -110,19 +110,19 @@
 
             <!-- Phrases -->
             <div class="phrases">
-              <table class="phrases" data-bind="sortable: phrases">
-                <tbody>
+              <table class="phrases">
+                <tbody data-bind="sortable: { data: phrases, connectClass: 'phrases-container', options: {containment: '#rubric-editor', axis: 'y', distance: 5} }" class="phrases-container">
                   <tr class="phrase">
                     <td class="phraseType">
                       <select class="phraseType">
                         <%= options_for_select(['Good', 'Bad', 'Neutral']) %>
                       </select>
                     </td>
-                    <td class="phrase" data-bind="editable: content, type: 'textarea', placeholder: 'click to edit'"></td>
+                    <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit'}"></td>
                     <td class="buttons-column">
                       <div class="buttons">
-                        <i class="icon-pencil edit-phrase-button" title="Edit phrase"></i>
-                        <i class="icon-trash delete-phrase-button" title="Delete phrase"></i>
+                        <i class="icon-pencil edit-phrase-button" title="Edit phrase" data-bind="click: activateEditor"></i>
+                        <i class="icon-trash delete-phrase-button" title="Delete phrase" data-bind="click: deletePhrase"></i>
                         <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
                       </div>
                     </td>
