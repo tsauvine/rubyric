@@ -150,4 +150,17 @@ class ReviewsController < ApplicationController
     redirect_to :action => 'finish', :id => @review.id
   end
 
+  def annotation
+    @review = Review.find(params[:id])
+    @submission = @review.submission
+    @exercise = @submission.exercise
+    load_course
+    
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    @page_count = @submission.page_count
+    
+    render :action => 'annotation', :layout => 'annotation'
+  end
+
 end

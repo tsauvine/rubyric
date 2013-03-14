@@ -79,6 +79,7 @@ Rubyric::Application.routes.draw do
     member do
       get :finish
       put :update_finish
+      get :annotation
     end
   end
 

@@ -22,16 +22,23 @@ class SubmissionsController < ApplicationController
     return access_denied unless @submission.group.has_member?(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
-
-    unless File.exist?(@submission.full_filename)
-      # TODO: better error message
-      @heading = 'File not found'
-      render :template => "shared/error"
-    else
-      filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
-      type = Mime::Type.lookup_by_extension(@submission.extension)
-
-      send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
+    filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
+    type = Mime::Type.lookup_by_extension(@submission.extension)
+    
+    respond_to do |format|
+      format.html do
+        unless File.exist?(@submission.full_filename)
+          # TODO: better error message
+          @heading = 'File not found'
+          render :template => "shared/error"
+        else
+          send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
+        end
+      end
+        
+      format.png do
+        send_file @submission.png_path(params[:page], params[:zoom]), :type => 'image/png', :filename => "#{@submission.id}.png", :disposition => 'inline'
+      end
     end
   end
 

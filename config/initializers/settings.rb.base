@@ -1,6 +1,8 @@
 # sets the upload root, relative to the RAILS_ROOT
 SUBMISSIONS_PATH = "/home/rubyric/submissions"
 
+PDF_CACHE_PATH = "/home/rubyric/pdf_cache"
+
 # Where to send error reports. Set to nil to disable.
 ERRORS_EMAIL = "admin@example.com"
 

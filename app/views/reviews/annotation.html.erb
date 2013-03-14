@@ -1,0 +1,14 @@
+<%= content_for :javascript do %>
+  <%= javascript_include_tag 'annotationEditor' %>
+<% end %>
+
+<h1>Annotation</h1> 
+
+<div class="annotation-editor" id="annotation-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">
+
+  <!-- ko foreach: submission_pages --->
+    <div>
+      <img data-bind="attr: { src: src, alt: alt }" />
+    </div>
+  <!-- /ko -->
+</div>

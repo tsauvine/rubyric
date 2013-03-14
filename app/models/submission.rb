@@ -95,5 +95,64 @@ class Submission < ActiveRecord::Base
     ex ||= self.exercise
     ex.deadline && self.created_at > ex.deadline
   end
+  
+  # Returns the path of the png rendeing of the submission
+  # This method blocks until the png is rendered and available.
+  # returns false if the png cannot be rendered
+  def png_path(page_number, zoom)
+    page_number ||= 0
+    page_number = page_number.to_i
+    
+    zoom ||= 1.0
+    zoom = zoom.to_f
+    zoom = 0.01 if zoom < 0.01
+    zoom = 10.0 if zoom > 10.0
+    
+    submission_path = self.full_filename()
+    
+    # Create renderings path
+    FileUtils.makedirs PDF_CACHE_PATH unless File.exists? PDF_CACHE_PATH
+    
+    png_path = "#{PDF_CACHE_PATH}/#{id}-#{page_number}-#{(zoom * 100).to_i}.png"
+    png_exists = File.exist? png_path
+    
+    if png_exists
+      return png_path
+    else
+      # Convert pdf to png
+      density = 72 * zoom * 1.5
+      command = "convert -antialias -density #{density} #{submission_path}[#{page_number}] #{png_path}"
+      #puts command
+      system(command)  # This blocks until the png is rendered
+    end
+    
+    # TODO: remove obsolete renderings from cache
+    
+    return png_path
+  end
+
+  def page_count
+    # http://pdf-toolkit.rubyforge.org/
+    # https://github.com/yob/pdf-reader
+    
+    count = 1
+    submission_path = self.full_filename()
+    Open3.popen3('pdfinfo', submission_path) do |stdin, stdout, stderr, wait_thr|
+      while line = stdout.gets
+        next unless line =~ /^Pages/ 
+        parts = line.split(':')
+        next if parts.size < 2
+        
+        count = parts[1].strip.to_i
+        break
+      end
+      
+      exit_status = wait_thr.value
+    end
+    
+    # TODO: save page count in the DB
+    
+    return count
+  end
 
 end
