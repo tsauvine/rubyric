@@ -295,7 +295,7 @@ class Exercise < ActiveRecord::Base
     end
 
     # Create submissions
-    self.course_instance.groups.each do |group|
+    self.course_instance(true).groups.each do |group|
       submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
 
       FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file

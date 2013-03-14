@@ -37,7 +37,7 @@ class ExercisesController < ApplicationController
       # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-      @groups = Group.where(:course_instance_id => @course_instance.id).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id})
+      @groups = Group.where(:course_instance_id => @course_instance.id).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).order('groups.id')
 
       render :action => 'submissions'
     else
@@ -45,8 +45,7 @@ class ExercisesController < ApplicationController
 
       # Find reviews of the user
       assigned_group_ids = current_user.assigned_group_ids
-      puts "Assigned groups: #{assigned_group_ids}"
-      @assigned_groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).all
+      @assigned_groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).order('groups.id').all
       
       #Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
 
@@ -334,7 +333,7 @@ class ExercisesController < ApplicationController
     load_course
     authorize! :update, @course_instance
     
-    @course_instance.create_example_groups if @course_instance.groups.empty?
+    @course_instance.create_example_groups(10) if @course_instance.groups.empty?
     @exercise.create_example_submissions
     
     redirect_to @exercise

@@ -6,6 +6,8 @@ class User < ActiveRecord::Base
     #c.transition_from_restful_authentication = true
   end
 
+  belongs_to :organization
+  
   validates_uniqueness_of :login, :allow_nil => true
   validates_uniqueness_of :email, :allow_nil => true
 

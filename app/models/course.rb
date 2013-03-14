@@ -70,17 +70,16 @@ class Course < ActiveRecord::Base
     FileUtils.makedirs(submission_path)
 
     # Create groups and submissions
-    group1 = Group.create(:exercise_id => exercise.id, :name => 'Group 1')
-    group1.users << User.find_by_studentnumber('123456')
-    submission1 = Submission.create(:exercise_id => exercise.id, :group_id => group1.id, :extension => 'pdf', :filename => 'example.pdf')
-    FileUtils.cp(example_submission_filename, "#{submission_path}/#{submission1.id}.pdf") if exists
+#     group1 = Group.create(:exercise_id => exercise.id, :name => 'Group 1')
+#     group1.users << User.find_by_studentnumber('123456')
+#     submission1 = Submission.create(:exercise_id => exercise.id, :group_id => group1.id, :extension => 'pdf', :filename => 'example.pdf')
+#     FileUtils.cp(example_submission_filename, "#{submission_path}/#{submission1.id}.pdf") if exists
 
-    group2 = Group.create(:exercise_id => exercise.id, :name => 'Group 2')
-    group2.users << User.find_by_studentnumber('234567')
-    submission2 = Submission.create(:exercise_id => exercise.id, :group_id => group2.id, :extension => 'pdf', :filename => 'example.pdf')
-    
+#     group2 = Group.create(:exercise_id => exercise.id, :name => 'Group 2')
+#     group2.users << User.find_by_studentnumber('234567')
+#     submission2 = Submission.create(:exercise_id => exercise.id, :group_id => group2.id, :extension => 'pdf', :filename => 'example.pdf')
+#     FileUtils.ln_s(example_submission_filename, "#{submission_path}/#{submission2.id}.pdf") if exists
     # FIXME: ln_s may throw an exception
-    FileUtils.ln_s(example_submission_filename, "#{submission_path}/#{submission2.id}.pdf") if exists
 
     # TODO: Create example rubric
     #exercise.load_xml(File.new(SUBMISSIONS_PATH + '/esimerkki.xml'))

@@ -18,45 +18,45 @@ user.admin = true
 user.save
 
 # Example students
-user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => "Student", :lastname => "1", :email => 'student.1@example.com')
-user.login = 'student-1'
-user.studentnumber = '123456'
-user.organization = example_organization
-user.save
-
-user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => "Student", :lastname => "2", :email => 'student.2@example.com')
-user.login = 'student-2'
-user.studentnumber = '234567'
-user.organization = example_organization
-user.save
+# user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => "Student", :lastname => "1", :email => 'student.1@example.com')
+# user.login = 'student-1'
+# user.studentnumber = '123456'
+# user.organization = example_organization
+# user.save
+# 
+# user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => "Student", :lastname => "2", :email => 'student.2@example.com')
+# user.login = 'student-2'
+# user.studentnumber = '234567'
+# user.organization = example_organization
+# user.save
 
 # Create courses
-example_courses = []
-for i in 1..2 do
-  course = Course.create(:code => "0.#{100 + i}", :name => 'Test')
-  instance = CourseInstance.create(:name => "Spring #{Time.now.year}", :course => course)
-  exercise = Exercise.create(:name => 'Exercise 1', :course_instance => instance)
-  
-  example_courses[i] = course
-end
+# example_courses = []
+# for i in 1..2 do
+#   course = Course.create(:code => "0.#{100 + i}", :name => 'Test')
+#   instance = CourseInstance.create(:name => "Spring #{Time.now.year}", :course => course)
+#   exercise = Exercise.create(:name => 'Exercise 1', :course_instance => instance)
+#   
+#   example_courses[i] = course
+# end
 
 # Create teachers
-for i in 1..2 do
-  user = User.new
-  user.studentnumber = '1' + i.to_s.rjust(4, '0')
-  user.login = user.studentnumber
-  user.password = "teacher#{i}"
-  user.password_confirmation = "teacher#{i}"
-  user.firstname = 'Teacher'
-  user.lastname = i
-  user.email = "teacher#{i}@example.com"
-  user.organization = example_organization
-  user.save
-  
-  if example_courses[i]
-    example_courses[i].teachers << user
-  end
-end
+# for i in 1..2 do
+#   user = User.new
+#   user.studentnumber = '1' + i.to_s.rjust(4, '0')
+#   user.login = user.studentnumber
+#   user.password = "teacher#{i}"
+#   user.password_confirmation = "teacher#{i}"
+#   user.firstname = 'Teacher'
+#   user.lastname = i
+#   user.email = "teacher#{i}@example.com"
+#   user.organization = example_organization
+#   user.save
+#   
+#   if example_courses[i]
+#     example_courses[i].teachers << user
+#   end
+# end
 
 
 # Create students

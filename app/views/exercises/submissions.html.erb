@@ -10,16 +10,22 @@
 <% if @groups.empty? %>
   <!-- No groups warning -->
   <div class="alert alert-info">
-    No submissions have been received yet. 
-    Give the following link to students for submitting:
-    <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
+    <p>
+      No submissions have been received yet. 
+      Give the following link to students for submitting:
+      <%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %>
+    </p>
+  
+    <p>
+      or <%= link_to 'Generate example submissions', exercise_create_example_submissions_path(@exercise), :class => 'btn' %>
+    </p>
   </div>
 <% end %>
 
-<% if @groups.empty? %>
+<% if @exercise.rubric.blank? %>
   <!-- No rubric warning  -->
   <div class="alert alert-info">
-    The grading rubric has not been prepared. <%= link_to 'Edit rubric', edit_exercise_rubric_path(@exercise), :class => 'btn btn-primary' %>
+    The grading rubric has not been prepared. <%= link_to 'Edit rubric', edit_exercise_rubric_path(@exercise), :class => 'btn' %>
   </div>
 <% end %>
 
