@@ -30,7 +30,7 @@ class RubricsController < ApplicationController
     @exercise.save!
 
     respond_to do |format|
-      format.json { head :no_content }
+      format.json { render :json => { :status => 'ok' } }
     end
   end
 
