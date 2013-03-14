@@ -54,6 +54,6 @@ en:
 
   time:
     formats:
-      default: "%a %d %b %H:%M"
+      default: "%Y-%m-%d %H:%M:%S"
       short: "%d %b %H:%M"
       long: "%a %Y-%m-%d %H:%M:%S"

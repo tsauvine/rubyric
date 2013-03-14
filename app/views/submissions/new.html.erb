@@ -69,6 +69,13 @@
         <tr>
           <td><%=l submission.created_at, :format => :long %></td>
           <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+          <td>
+            <% submission.reviews.each do |review| %>
+              <% if review.status == 'mailed' %>
+                <%= link_to 'Feedback', review %>
+              <% end %>
+            <% end %>
+          </td>
         </tr>
       <% end %>
     </table>

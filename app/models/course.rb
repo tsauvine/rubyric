@@ -55,11 +55,13 @@ class Course < ActiveRecord::Base
     course = Course.create(:code => '0.123', :name => 'Example course')
     course.teachers << teacher if teacher
 
-    instance = CourseInstance.create(:course_id => course.id, :name => 'Fall 2012')
+    instance = CourseInstance.create(:course_id => course.id, :name => Time.now.year)
+    t = Time.now + 2.months
+    deadline = Time.mktime(t.year, t.month, t.day)
     exercise = Exercise.create(
       :course_instance_id => instance.id,
       :name => 'Exercise 1',
-      :deadline => Time.now + 1.year,
+      :deadline => deadline,
       :groupsizemax => 3
     )
     
@@ -76,12 +78,11 @@ class Course < ActiveRecord::Base
     group2 = Group.create(:exercise_id => exercise.id, :name => 'Group 2')
     group2.users << User.find_by_studentnumber('234567')
     submission2 = Submission.create(:exercise_id => exercise.id, :group_id => group2.id, :extension => 'pdf', :filename => 'example.pdf')
+    
+    # FIXME: ln_s may throw an exception
     FileUtils.ln_s(example_submission_filename, "#{submission_path}/#{submission2.id}.pdf") if exists
 
-    # Assign submission
-    #exercise.assign([submission1], [teacher])
-
-    # Create example rubric
+    # TODO: Create example rubric
     #exercise.load_xml(File.new(SUBMISSIONS_PATH + '/esimerkki.xml'))
 
     return exercise

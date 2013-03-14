@@ -1,4 +1,3 @@
-#= require handlebars-1.0.0.beta.6.js
 #= require knockout-2.2.1
 #= require bootstrap
 
@@ -16,7 +15,7 @@ class Group
   constructor: (data, users) ->
     @id = data['id']
     @selected = ko.observable(false)
-    @url = "/"
+    @url = data['url']
 
     # Set students
     @students = []
@@ -27,6 +26,7 @@ class Group
       groupname.push(student.name + ' (' + student.studentnumber + ')')
       
     @name = groupname.join(', ')
+    @name = 'Untitled group' if @name.length < 1
 
     # Set reviewers
     @reviewers = ko.observableArray()

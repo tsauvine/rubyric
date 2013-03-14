@@ -58,14 +58,16 @@ class GroupsController < ApplicationController
 
     if params[:exercise_id]
       @exercise = Exercise.find(params[:exercise_id])
+      @email_fields_count = @exercise.groupsizemax - @group.users.size - @group.group_invitations.size
     elsif params[:course_instance_id]
       @course_instance = CourseInstance.find(params[:course_instance_id])
+      @email_fields_count = 0
     end
     load_course
     
     return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
     
-    @email_fields_count = @exercise.groupsizemax - @group.users.size - @group.group_invitations.size
+    
   end
 
   # POST /groups
@@ -130,10 +132,12 @@ class GroupsController < ApplicationController
         email.strip!
         invitation = GroupInvitation.find(id)
         if email.blank?
-          logger.info "DELETIGN INVITATION #{invitation.email}"
           invitation.destroy
         elsif email != invitation.email
+          # TODO: move to model
           invitation.email = email
+          invitation.token = Digest::SHA1.hexdigest([Time.now, rand].join)
+          invitation.expires_at = Time.now + 1.weeks
           invitation.save
           
           if ENABLE_DELAYED_JOB

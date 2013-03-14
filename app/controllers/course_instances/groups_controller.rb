@@ -3,14 +3,14 @@ class CourseInstances::GroupsController < GroupsController
 
   layout 'application'
   
-  def show
+  def index
     @course_instance = CourseInstance.find(params[:course_instance_id])
     load_course
     authorize! :update, @course_instance
 
     groups = @course_instance.groups.includes([:users, :reviewers])
     groups.each do |group|
-      group.url = "/" # TODO
+      group.url = edit_course_instance_group_path(:course_instance_id => @course_instance.id, :id => group.id)
     end
     
     user_ids = groups.collect {|group| group.user_ids }
@@ -18,7 +18,7 @@ class CourseInstances::GroupsController < GroupsController
     user_ids << @course.teacher_ids
     users = User.find(user_ids)
     
-    response = { groups: groups.as_json(:only => [:id, :url], :methods => [:user_ids, :reviewer_ids]), users: users.as_json(:only => [:id, :studentnumber, :firstname, :lastname] ), assistants: @course_instance.assistant_ids, teachers: @course.teacher_ids }
+    response = { groups: groups.as_json(:only => [:id], :methods => [:user_ids, :reviewer_ids, :url]), users: users.as_json(:only => [:id, :studentnumber, :firstname, :lastname] ), assistants: @course_instance.assistant_ids, teachers: @course.teacher_ids }
     
     respond_to do |format|
       format.html { }
