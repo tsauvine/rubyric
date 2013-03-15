@@ -79,8 +79,6 @@ class Review < ActiveRecord::Base
         grade_index[raw_grade] = index
       end
     end
-    logger.info "NUMERIC GRADING: #{numeric_grading}"
-    logger.info "NO GRADING: #{no_grading}"
   
     # Generate feedback text
     text = ''
@@ -146,8 +144,6 @@ class Review < ActiveRecord::Base
           self.grade = (grade_sum / grade_counter).round if grade_sum && grade_counter > 0
         else
           avg_grade_index = (grade_index_sum / grade_counter).round
-          logger.info "AVG INDEX: #{avg_grade_index}"
-          logger.info "GRADE: #{rubric['grades'][avg_grade_index]}"
           
           self.grade = rubric['grades'][avg_grade_index]
         end

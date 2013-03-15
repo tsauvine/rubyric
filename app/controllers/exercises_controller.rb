@@ -160,26 +160,12 @@ class ExercisesController < ApplicationController
   end
 
   # Mails selected submissions and reviews
-  def send_selected_reviews
-    @exercise = Exercise.find(params[:eid])
+  def send_reviews
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    # Iterate through submissions checkboxes
-    if params[:submissions_checkboxes]
-      params[:submissions_checkboxes].each do |id, value|
-        next unless value == '1'
-        submission = Submission.find(id) if value == '1'
-
-        # Send all reviews
-        submission.reviews.each do |review|
-          logger.info("sending review #{review.id}")
-          Mailer.deliver_review(review) if review && (review.status == 'finished' || review.status == 'mailed')
-        end
-      end
-    end
 
     # Iterate through reviews checkboxes
     if params[:reviews_checkboxes]
@@ -187,11 +173,11 @@ class ExercisesController < ApplicationController
         next unless value == '1'
         review = Review.find(id)
         logger.info("sending review #{review.id}")
-        Mailer.deliver_review(review) if review && (review.status == 'finished' || review.status == 'mailed')
+        FeedbackMailer.review(review).deliver if review && (review.status == 'finished' || review.status == 'mailed')
       end
     end
 
-    render :partial => 'group', :collection => @exercise.groups
+    redirect_to @exercise
   end
 
   # Removes selected submissions and reviews

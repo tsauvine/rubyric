@@ -1,4 +1,9 @@
 <!-- exercises/submissions.html.erb -->
+
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'submissions.js' %>
+<% end %>
+
 <div class="page-header">
   <h1>
     <%= "#{@course.code} #{@course.name}" %>
@@ -53,6 +58,8 @@
 <% unless @groups.empty? %>
   <h2>Submissions</h2>
 
+  <%= form_tag exercise_send_reviews_path(@exercise) %>
+  
   <table class="assignments">
     <thead>
       <tr>
@@ -70,9 +77,9 @@
         <td>
         </td>
         <td>
-          <button class="btn" id="reviews-select-all" onClick="return false;">Select all</button>
-          <button class="btn" id="reviews-select-finished" onClick="return false;">Select finished</button>
-          <button class="btn" id="reviews-select-none" onClick="return false;">Select none</button>
+          <button class="btn" id="reviews-select-all" onclick="return false;"> Select all</button>
+          <button class="btn" id="reviews-select-finished" onclick="return false;">Select finished</button>
+          <button class="btn" id="reviews-select-none" onclick="return false;">Select none</button>
         </td>
         <td></td>
         <td></td>

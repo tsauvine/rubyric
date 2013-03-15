@@ -62,7 +62,7 @@
 <% else %>
   <p>Grade: <%= @review.grade %></p>
 
-  <p class="feedback-preview"><%= @review.feedback.gsub("\n", "<br />\n").html_safe %></p>
+  <p class="feedback-preview"><%= @review.feedback.gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
 
   <% if @enable_mailing %>
     <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn' %>

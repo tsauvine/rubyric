@@ -41,6 +41,7 @@ Rubyric::Application.routes.draw do
     post 'batch_assign'
     get 'archive'
     post 'delete_reviews'
+    post 'send_reviews'
     
     get :create_example_submissions
 
