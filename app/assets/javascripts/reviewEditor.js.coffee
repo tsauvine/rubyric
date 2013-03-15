@@ -4,7 +4,6 @@
 class Page
   constructor: (@rubricEditor) ->
     @criteria = []
-    @grades = []
     @grade = ko.observable()
     
     @goodFeedback = ko.observable('')
@@ -13,7 +12,7 @@ class Page
 
   load_json: (data) ->
     @name = data['name']
-    @id = parseInt(data['id'])
+    @id = data['id']
     @dom_id = 'page-' + @id
     @link = '#page-' + @id
 
@@ -21,15 +20,15 @@ class Page
       criterion = new Criterion(@rubricEditor, this)
       criterion.load_json(criterion_data)
       @criteria.push(criterion)
-    
-    for grade in data['grades']
-      @grades.push(grade)
-
+  
   load_review: (data) ->
     if data['feedback'] && data['feedback'].length > 2
       @goodFeedback(data['feedback'][0])
       @badFeedback(data['feedback'][1])
       @neutralFeedback(data['feedback'][2])
+    
+    if data['grade']
+      @grade(data['grade'])
 
   to_json: ->
     json = {
@@ -61,7 +60,7 @@ class Criterion
     @phrases = []
 
   load_json: (data) ->
-    @id = parseInt(data['id'])
+    @id = data['id']
     @name = data['name']
     @dom_id = 'criterion-' + @id
 
@@ -76,7 +75,7 @@ class Phrase
   constructor: (@rubricEditor, @page) ->
 
   load_json: (data) ->
-    @id = parseInt(data['id'])
+    @id = data['id']
     @category = data['category']
     @content = data['text']
     @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
@@ -94,8 +93,8 @@ class ReviewEditor
     @pagesById = {}
     
     @feedbackCategories = []
-    @feedbackCategories.push(false)
     @feedbackCategoriesIndex = {}
+    @grades = []
     @gradingMode = 'none'
     @finalComment = ''
 
@@ -143,6 +142,11 @@ class ReviewEditor
       for category in data['feedbackCategories']
         @feedbackCategories.push(category)
         @feedbackCategoriesIndex[category] = category_counter++
+
+    if data['grades']
+      @grades.push(null)
+      for grade in data['grades']
+        @grades.push(grade)
 
     for page_data in data['pages']
       page = new Page(this)

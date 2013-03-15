@@ -40,10 +40,15 @@
   </div>
 </div>
 
-<p>Grade: <%= @review.grade %></p>
-
 <% if (@review.status != 'mailed') %>
   <%= form_for @review, :url => update_finish_review_path(@review.id) do |f| %>
+    <% unless @grade_options.empty? %>
+      <p>
+        Grade:
+        <%= f.select(:grade, @grade_options) %>
+      </p>
+    <% end %>
+  
     <%= f.text_area :feedback, { :style => 'width: 600px; height: 600px;' } %>
 
     <p>
@@ -55,6 +60,8 @@
     </p>
   <% end %>
 <% else %>
+  <p>Grade: <%= @review.grade %></p>
+
   <p class="feedback-preview"><%= @review.feedback.gsub("\n", "<br />\n").html_safe %></p>
 
   <% if @enable_mailing %>

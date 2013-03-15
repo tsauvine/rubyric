@@ -54,21 +54,11 @@ class ReviewsController < ApplicationController
 
     @review.payload = params[:review]
     @review.collect_feedback
-    @review.status = 'finished'
     @review.save!
 
     respond_to do |format|
       format.json { render :text => '{"status": "ok"}' }
     end
-
-#     if next_section
-#       redirect_to({:controller => 'reviews', :action => 'edit', :id => params[:id], :section => next_section})
-#     elsif @review.status == 'unfinished'
-#       redirect_to({:controller => 'reviews', :action => 'finish', :id => params[:id]})
-#     else
-#       flash[:warning] = 'Finish grading by selecting one grading option for each item and section'
-#       redirect_to({:controller => 'reviews', :action => 'edit', :id => params[:id], :section => params[:section]})
-#     end
   end
 
   def finish
@@ -89,11 +79,20 @@ class ReviewsController < ApplicationController
     # Mail button
     @enable_mailing = @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email)
 
+    @grade_options = []
+    grades = @exercise.rubric_content()['grades']
+    if grades && grades.size() > 0
+      @grade_options << ''
+      grades.each do |grade|
+        @grade_options << grade
+      end
+    end
+    
     # Collect feedback from sections and calculate grade
-    if @review.status == 'unfinished'
+    #if @review.status == 'unfinished'
       #@review.collect_feedback
       #@review.calculate_grade
-    end
+    #end
 
 
     render :action => 'finish', :layout => 'wide'
@@ -107,14 +106,12 @@ class ReviewsController < ApplicationController
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    unless ['unfinished','finished'].include?(@review.status)
-      flash[:error] = 'This review cannot be modified any more'
-      render :action => 'finish', :layout => 'wide'
-      return
-    end
+#     unless ['unfinished','finished'].include?(@review.status)
+#       flash[:error] = 'This review cannot be modified any more'
+#       render :action => 'finish', :layout => 'wide'
+#       return
+#     end
 
-    # Update status
-    #@review.calculate_grade
 
 #     if params[:mail]
 #       @review.status = 'mailed'

@@ -7,32 +7,6 @@ class Review < ActiveRecord::Base
 
   # status: [empty], started, unfinished, finished, mailed
 
-  # Returns the feedback object corresponding the section in question.
-  # A new feedback object is created and saved automatically, if it didn't previously exist.
-  def find_feedback(section_id)
-    self.feedbacks.each do |feedback|
-      return feedback if feedback.section_id == section_id
-    end
-
-    # Feedback wasn't found. This means that someone has altered the rubric. Create a new feedback object.
-    feedback = Feedback.new
-    feedback.section_id = section_id  # TODO: Check that this section belongs to the exercise
-    feedback.review_id = id
-    self.feedbacks << feedback
-
-    return feedback
-  end
-
-  # Returns true if all section feedbacks are finished
-  def sections_finished?
-    self.feedbacks.each do |feedback|
-      return false if feedback.status != 'finished'
-    end
-
-    return true
-  end
-
-
   def calculate_grade
     categories_counter = 0
     category_points_counter = 0
@@ -75,13 +49,13 @@ class Review < ActiveRecord::Base
     self.grade = grade.round unless grade.blank?    # Will be deprecated
     self.calculated_grade = grade.round unless grade.blank?
   end
-
-
+  
   # Collects feedback texts from all sections and and combines them into the final feedback.
   # This destroys the existing final feedback.
   def collect_feedback
     rubric = JSON.parse(self.submission.exercise.rubric)
-
+    review = JSON.parse(self.payload)
+    
     # Load rubric
     rubric_pages = {}
     rubric['pages'].each do |page|
@@ -92,39 +66,63 @@ class Review < ActiveRecord::Base
     final_comment = rubric['finalComment']
     feedback_categories = rubric['feedbackCategories']
 
-    # Parse payload
-    review = JSON.parse(self.payload)
-
+    # Prepare grading
+    grade_index = {}           # grade_value => array index, for getting array index by grade value, for calculating average verbal grade
+    numeric_grading = false    # Numerical or verbal grading
+    no_grading = true          # Is there grading at all?
+    if rubric['grades']
+      no_grading = false if rubric['grades'].size > 0
+      
+      rubric['grades'].each_with_index do |raw_grade, index|
+        numeric_grading = true if raw_grade.is_a?(Numeric)  # If there is at least one numerical grade, numerical grading is used
+        
+        grade_index[raw_grade] = index
+      end
+    end
+    logger.info "NUMERIC GRADING: #{numeric_grading}"
+    logger.info "NO GRADING: #{no_grading}"
+  
     # Generate feedback text
     text = ''
     grade_sum = 0.0
+    grade_index_sum = 0.0
     grade_counter = 0
-    review['pages'].each do |page|
-      rubric_page = rubric_pages[page['id']]
+    all_grades_set = true
+    review['pages'].each do |feedback_page|
+      rubric_page = rubric_pages[feedback_page['id']]
       
-      text << "== #{rubric_page['name']} ==" if rubric_page['name']
+      text << "== #{rubric_page['name']} ==\n" if rubric_page['name']
       
-      feedback = page['feedback'] || []
-      grade = page['grade']
+      feedback = feedback_page['feedback'] || []
+      grade = feedback_page['grade']
 
-      text << "\n\n= #{feedback_categories[0]} =\n" unless feedback_categories[0].blank?
-      text << feedback[0]
+      unless feedback[0].blank?
+        text << "\n= #{feedback_categories[0]} =\n" unless feedback_categories[0].blank?
+        text << feedback[0]
+      end
 
-      text << "\n\n= #{feedback_categories[1]} =\n" unless feedback_categories[0].blank?
-      text << feedback[1]
+      unless feedback[1].blank?
+        text << "\n= #{feedback_categories[1]} =\n" unless feedback_categories[1].blank?
+        text << feedback[1]
+      end
 
-      text << "\n\n= #{feedback_categories[2]} =\n" unless feedback_categories[0].blank?
-      text << feedback[2]
-      
+      unless feedback[2].blank?
+        text << "\n= #{feedback_categories[2]} =\n" unless feedback_categories[2].blank?
+        text << feedback[2]
+      end
+        
       text << "\n\n"
       
       if grade
-        int_grade = grade.to_i
-        #if grade # is number
-          grade_sum += int_grade
-        #else
-        #  manual grade
-        #end
+        grade_index_sum += grade_index[grade]  # Calculate average index
+        
+        if grade.is_a?(Numeric) && grade_sum
+          grade_sum += grade     # Calculate average value
+        else
+          grade_sum = false      # If a non-numeric grade value is encountered, average value cannot be calculated
+        end
+      else
+        all_grades_set = false
       end
       
       grade_counter += 1
@@ -132,18 +130,37 @@ class Review < ActiveRecord::Base
     
     # Final comment
     text << final_comment if final_comment
-
+    self.feedback = text
+    
+    
     # Calculate grade
-    case grading_mode
-    when 'average'
-      self.grade = grade_sum / grade_counter
-    when 'sum'
-      self.grade = grade_sum
+    self.grade = nil
+
+    grading_finished = all_grades_set || no_grading
+    
+    if grading_finished && !no_grading
+      case grading_mode
+      when 'average'
+        
+        if numeric_grading
+          self.grade = (grade_sum / grade_counter).round if grade_sum && grade_counter > 0
+        else
+          avg_grade_index = (grade_index_sum / grade_counter).round
+          logger.info "AVG INDEX: #{avg_grade_index}"
+          logger.info "GRADE: #{rubric['grades'][avg_grade_index]}"
+          
+          self.grade = rubric['grades'][avg_grade_index]
+        end
+        
+      when 'sum'
+        self.grade = grade_sum
+      end
+      
+      self.status = 'unfinished'
     else
-      self.grade = nil
+      self.status = 'started'
     end
     
-    self.feedback = text
   end
 
   # Collects feedback from all sections and groups all positive feedback together, all neagtive feedback together, etc.

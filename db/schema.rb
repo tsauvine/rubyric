@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130305144853) do
+ActiveRecord::Schema.define(:version => 20130315113615) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -142,7 +142,7 @@ ActiveRecord::Schema.define(:version => 20130305144853) do
     t.integer  "submission_id"
     t.text     "payload"
     t.text     "feedback"
-    t.integer  "grade"
+    t.string   "grade"
     t.string   "status"
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"

@@ -47,12 +47,34 @@
       <div class="row-fluid">
         <div class="span4 well">
           <h3>Grading</h3>
+          
+          <p><em>Scale:</em></p>
+          <table>
+            <tbody class="grading" data-bind="sortable: {data: grades, connectClass: 'grading'} ">
+              <tr>
+                <td data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<grade missing>'}"></td>
+                <td class="buttons-column">
+                  <div class="buttons">
+                    <i class="icon-pencil edit-grade-button" title="Edit grade" data-bind="click: activateEditor"></i>
+                    <i class="icon-trash delete-phrase-button" title="Delete grade" data-bind="click: deleteGrade"></i>
+                    <i class="icon-resize-vertical move-phrase-button" title="Drag to move grade"></i>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            <button class="btn btn-small create-grade-button" data-bind="click: createGrade"><i class="icon-plus"></i> Add grade</button>
+          </p>
+          
+          <p><em>Mode:</em></p>
           <ul id="grading-mode" class="unstyled">
             <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="no" /> No grade</label></li>
-            <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="average" /> Weighted average</label></li>
-            <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="sum" /> Sum</label></li>
+            <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="average" /> Mean</label></li>
+            <!--li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="sum" /> Sum</label></li-->
           </ul>
         </div>
+        
         <div class="span4 well">
           <h3>Feedback categories</h3>
           <table>
@@ -144,30 +166,6 @@
         <!-- Create criterion -->
         <div class="btn create-criterion-button" data-bind="click: clickCreateCriterion">
           <i class="icon-plus"></i> Create new criterion
-        </div>
-
-        <!-- Grading -->
-        <div class="row-fluid">
-          <div class="span4 grading well">
-            <h2>Grading</h2>
-            <table>
-              <tbody class="grading" data-bind="sortable: {data: grades, connectClass: 'grading'} ">
-                <tr>
-                  <td data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<grade missing>'}"></td>
-                  <td class="buttons-column">
-                    <div class="buttons">
-                      <i class="icon-pencil edit-grade-button" title="Edit grade" data-bind="click: activateEditor"></i>
-                      <i class="icon-trash delete-phrase-button" title="Delete grade" data-bind="click: deleteGrade"></i>
-                      <i class="icon-resize-vertical move-phrase-button" title="Drag to move grade"></i>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-            <p>
-              <button class="btn btn-small create-grade-button" data-bind="click: createGrade"><i class="icon-plus"></i> Add grade</button>
-            </p>
-          </div>
         </div>
       </div>
     <!-- /ko -->

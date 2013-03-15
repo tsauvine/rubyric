@@ -90,10 +90,12 @@
         </div>
         
         <!-- Grades -->
-        <p>
-          <h3>Grade</h3>
-          <select data-bind="options: grades, value: grade, optionsCaption: 'Choose grade...'"></select>
-        </p>
+        <div data-bind="if: $root.grades.length > 1">
+          <p>
+            <h3>Grade</h3>
+            <select data-bind="options: $root.grades, value: grade"></select>
+          </p>
+        </div>
 
         <!-- Textareas -->
         <div class="textareas">

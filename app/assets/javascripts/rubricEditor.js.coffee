@@ -109,7 +109,6 @@ class Page
     @id = ko.observable()
     @name = ko.observable('')
     @criteria = ko.observableArray()
-    @grades = ko.observableArray()
     @editorActive = ko.observable(false)
     
     #if data
@@ -153,23 +152,14 @@ class Page
       criterion = new Criterion(@rubricEditor, this, criterion_data)
       @criteria.push(criterion)
 
-    # Load grades
-    if data['grades']
-      for grade in data['grades']
-        @grades.push(new Grade(grade, @grades))
-
 
   to_json: ->
     criteria = []
-    grades = []
 
     for criterion in @criteria()
       criteria.push(criterion.to_json())
 
-    for grade in @grades()
-      grades.push(grade.to_json())
-
-    return {id: @id(), name: @name(), criteria: criteria, grades: grades}
+    return {id: @id(), name: @name(), criteria: criteria}
 
     # TODO: Criteria can be dropped into page tabs
 #     @tab.droppable({
@@ -201,12 +191,6 @@ class Page
     @criteria.push(criterion)
 
     criterion.activateEditor()
-
-  createGrade: () ->
-    grade = new Grade('', @grades)
-    @grades.push(grade)
-    grade.activateEditor()
-
 
   activateEditor: ->
     @editorActive(true)
@@ -307,7 +291,12 @@ class Grade
     @editorActive = ko.observable(false)
   
   to_json: () ->
-    return @value()
+    value = @value()
+    
+    if isNaN(value)
+      return value
+    else
+      return parseFloat(value)
   
   activateEditor: ->
     @editorActive(true)
@@ -325,6 +314,7 @@ class RubricEditor
     @criterionIdCounter = 0
     @phraseIdCounter = 0
     
+    @grades = ko.observableArray()
     @gradingMode = ko.observable('average')
     @feedbackCategories = ko.observableArray()
     @feedbackCategoriesIndex = {}              # string => Grade, needed for setting phrase categories when loading rubric
@@ -390,7 +380,11 @@ class RubricEditor
 
   clickCreateCategory: ->
     @feedbackCategories.push('')
-    # TODO: activate editor
+
+  createGrade: () ->
+    grade = new Grade('', @grades)
+    @grades.push(grade)
+    grade.activateEditor()
 
   #
   # Loads the rubric by AJAX
@@ -414,15 +408,21 @@ class RubricEditor
       @gradingMode(data['gradingMode'] || 'average')
       @finalComment(data['finalComment'] || '')
       
+      # Load feedback categories
       if data['feedbackCategories']
         for category in data['feedbackCategories']
           grade = new Grade(category)
           @feedbackCategories.push(grade)
           @feedbackCategoriesIndex[category] = grade
-          
       else
         @feedbackCategories([new Grade('Strengths'),new Grade('Weaknesses'),new Grade('Other comments')])
 
+      # Load grades
+      if data['grades']
+        for grade in data['grades']
+          @grades.push(new Grade(grade.toString(), @grades))
+
+      # Load pages
       for page_data in data['pages']
         page = new Page(this)
         page.load_json(page_data)
@@ -436,20 +436,17 @@ class RubricEditor
   #
   clickSaveRubric: () ->
     # Generate JSON
-    pages = []
-    for page in @pages()
-      pages.push(page.to_json())
-
-    categories = []
-    for category in @feedbackCategories()
-      categories.push(category.to_json())
+    pages = @pages().map (page) -> page.to_json()
+    categories = @feedbackCategories().map (category) -> category.to_json()
+    grades = @grades().map (grade) -> grade.to_json()
 
     json = {
-      version: 1
-      gradingMode: @gradingMode()
-      finalComment: @finalComment()
-      feedbackCategories: categories
+      version: 2
       pages: pages
+      grades: grades
+      gradingMode: @gradingMode()
+      feedbackCategories: categories
+      finalComment: @finalComment()
     }
     json_string = JSON.stringify(json)
 

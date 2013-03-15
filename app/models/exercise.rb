@@ -42,6 +42,10 @@ class Exercise < ActiveRecord::Base
     end
   end
 
+  def rubric_content
+    JSON.parse(self.rubric)
+  end
+  
   # Populates the rubric with some example data.
   # This erases the existing rubric.
   def initialize_example
