@@ -105,11 +105,12 @@ class ApplicationController < ActionController::Base
     unless current_user
       store_location
       
-      if defined?(SHIB_PATH)
-        redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
-      else
+      # FIXME: make this course specific
+#       if defined?(SHIB_PATH)
+#         redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
+#       else
         redirect_to new_session_url
-      end
+#       end
       
       return false
     end
@@ -130,11 +131,11 @@ class ApplicationController < ActionController::Base
         format.html do
           store_location
           
-          if defined?(SHIB_PATH)
+#           if defined?(SHIB_PATH)
             redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
-          else
-            redirect_to new_session_url
-          end
+#           else
+#             redirect_to new_session_url
+#           end
         end
         format.any do
           request_http_basic_authentication 'Web Password'

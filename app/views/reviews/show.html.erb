@@ -14,7 +14,7 @@
   <p>Reviewer: <%= @grader.firstname %> <%= @grader.lastname %></p>
 <% end %>
 
-<% unless @review.grade.blank? || @exercise.grading_mode == 'none' %>
+<% unless @review.grade.blank? %>
   <p>Grade: <%= @review.grade %></p>
 <% end %>
 
