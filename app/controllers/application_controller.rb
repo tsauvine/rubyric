@@ -132,9 +132,9 @@ class ApplicationController < ActionController::Base
           store_location
           
 #           if defined?(SHIB_PATH)
-            redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
+#             redirect_to SHIB_PATH + shibboleth_session_url(:protocol => 'https')
 #           else
-#             redirect_to new_session_url
+            redirect_to new_session_url
 #           end
         end
         format.any do
