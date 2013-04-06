@@ -18,23 +18,24 @@ http://www.quicktimesheets.com/
 
 assarin näkymä
 
+feedback mailer, delayed job
+
+test mailer, test delayed job
+
 error mailer
 
 palautus
  lisää opiskelijat students-listaan (create group, add member, invite)
  palautussivun customoitu viesti
 
-testaa töiden jakaminen
-mail reviews
-
-submissions-sivulla lokalisoitu palautusaika
-
 Rubric editor
- Grading scale editor
  Weights
 
-
+finish review osaksi review editoria
+ 
 = Later =
+
+view review: näytä assarin nimi
 
 group editor for students
 group editor for teacher

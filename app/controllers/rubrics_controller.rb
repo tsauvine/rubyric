@@ -53,18 +53,11 @@ class RubricsController < ApplicationController
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    # file = params[:xml][:file] if params[:xml] && params[:xml][:file]
-
-    # Check that a file is uploaded
-    # FIXME: check Rails 3 compatibility
-#     unless [ActionController::UploadedStringIO, ActionController::UploadedTempfile].include?(file.class) and file.size.nonzero?
-#       return
-#     end
-
     # Load xml
     if params[:file] && !params[:file].blank?
       #@exercise.load_json(params[:file])
-      @exercise.rubric = params[:file].read
+      @exercise.load_xml1(params[:file].read)
+      #@exercise.rubric = params[:file].read
       @exercise.save
       redirect_to edit_exercise_rubric_path(@exercise)
     end

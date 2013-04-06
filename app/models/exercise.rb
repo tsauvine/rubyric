@@ -52,85 +52,102 @@ class Exercise < ActiveRecord::Base
     # TODO
   end
 
+  #{ "version":2,
+  #  "pages":[
+  #    {"id":0,"name":"Sivu 1",
+  #     "criteria":[{"id":0,"name":"Kriteeri 1.1","phrases":[{"id":0,"text":"Mikä meni hyvin\nToinen rivi","category":"Hyvää"},{"id":1,"text":"<b>Mikä meni huonosti</b>","category":"Kehitettävää"},{"id":8,"text":"Jotain muuta","category":"Muuta"}]},{"id":1,"name":"Kriteeri 1.2","phrases":[{"id":8,"text":"Olipa hyvä","category":"Hyvää"},{"id":8,"text":"Olipa huono","category":"Kehitettävää"}]}]},
+  #  ],
+  
+  # "grades":["Failed",1,2,3,4,5],
+  # "gradingMode":"average",
+  # "feedbackCategories":["Hyvää","Kehitettävää","Muuta"],
+  # "finalComment":"Loppukaneetti\n<b>Toinen rivi</b>"
+  # }
+  
   # Load rubric from an XML file.
   # This erases the existing rubric.
-  def load_xml(file)
-    # Destroy existing rubric
-    categories.clear
-
+  def load_xml1(file)
     # Parse XML
     doc = REXML::Document.new(file)
 
-    category_counter = 0
+    page_counter = 0
+    criterion_counter = 0
+    phrase_counter = 0
+    pages = []
+    rubric = {version: 2, pages: pages}
+    
+    # Categories
+    positive_caption_element = XPath.first(doc, "/rubric/positive-caption")
+    positive_caption = 'Strengths'
+    positive_caption = positive_caption_element.text.strip if positive_caption_element and positive_caption_element.text
+
+    negative_caption_element = XPath.first(doc, "/rubric/negative-caption")
+    negative_caption = 'Weknesses'
+    negative_caption = negative_caption_element.text.strip if negative_caption_element and negative_caption_element.text
+
+    neutral_caption_element = XPath.first(doc, "/rubric/neutral-caption")
+    neutral_caption = 'Other comments'
+    neutral_caption = neutral_caption_element.text.strip if neutral_caption_element and neutral_caption_element.text
+
+    rubric['feedbackCategories'] = [positive_caption, negative_caption, neutral_caption]
+    
+    # Final comment
+    final_comment_element = XPath.first(doc, "/rubric/final-comment")
+    finalcomment = ''
+    finalcomment = final_comment_element.text.strip if final_comment_element and final_comment_element.text
+    
+    rubric['finalComment'] = finalcomment
+    
+    rubric['gradingMode'] = 'average'
 
     # Categories
     doc.each_element('rubric/category') do |category|
-      category_counter += 1
-      new_category = Category.new({:name => category.attributes['name'], :position => category_counter})
-      new_category.weight = category.attributes['weight'] if category.attributes['weight']
-      categories << new_category
-      section_counter = 0
-      sgo_counter = 0
-
       # Sections
       category.each_element('section') do |section|
-        section_counter += 1
-        new_section = Section.new({:name => section.attributes['name'], :position => section_counter})
-        new_section.weight = section.attributes['weight'] if section.attributes['weight']
-        new_category.sections << new_section
-        item_counter = 0
+        criteria = []
+        
+        new_page = {id: page_counter, name: section.attributes['name'], criteria: criteria}
+        new_page['weight'] = section.attributes['weight'] if section.attributes['weight']
+        page_counter += 1
 
         #Items
         section.each_element('item') do |item|
-          item_counter += 1
-          new_item = Item.new({:name => item.attributes['name'], :position => item_counter})
-          new_section.items << new_item
-          phrase_counter = 0
-          igo_counter = 0
+          phrases = []
+          new_criterion = {id: criterion_counter, name: item.attributes['name'], phrases: phrases}
+          criteria << new_criterion
+          criterion_counter += 1
 
           # Phrases
           item.each_element('phrase') do |phrase|
+            case phrase.attributes['type']
+            when 'Neutral'
+              category_index = 2
+            when 'Bad'
+              category_index = 1
+            else # Good
+              category_index = 0
+            end
+            
+            phrases << {id: phrase_counter, text: phrase.text.strip, category: rubric['feedbackCategories'][category_index]}
             phrase_counter += 1
-            new_phrase = Phrase.new({:content => phrase.text.strip, :feedbacktype => phrase.attributes['type'], :position => phrase_counter})
-            new_item.phrases << new_phrase
           end
 
           # Item grading options
-          item.each_element('grade') do |grading_option|
-            igo_counter += 1
-            new_grading_option = ItemGradingOption.new({:text => grading_option.text.strip, :position => igo_counter})
-            new_item.item_grading_options << new_grading_option
-          end
+          #item.each_element('grade') do |grading_option|
+          #  igo_counter += 1
+          #  new_grading_option = ItemGradingOption.new({:text => grading_option.text.strip, :position => igo_counter})
+          #  new_item.item_grading_options << new_grading_option
+          #end
         end # items
 
         # Section grading options
+        rubric['grades'] = grades = []
         section.each_element('grade') do |grading_option|
-          sgo_counter += 1
-          new_grading_option = SectionGradingOption.new({:text => grading_option.text.strip, :points => grading_option.attributes['points'], :position => sgo_counter})
-          new_section.section_grading_options << new_grading_option
+          grades << grading_option.text.strip
         end
 
       end # sections
     end # categories
-
-    # Properties
-    positive_caption_element = XPath.first(doc, "/rubric/positive-caption")
-    self.positive_caption = positive_caption_element.text.strip if positive_caption_element and positive_caption_element.text
-
-    negative_caption_element = XPath.first(doc, "/rubric/negative-caption")
-    self.negative_caption = negative_caption_element.text.strip if negative_caption_element and negative_caption_element.text
-
-    neutral_caption_element = XPath.first(doc, "/rubric/neutral-caption")
-    self.neutral_caption = neutral_caption_element.text.strip if neutral_caption_element and neutral_caption_element.text
-
-    feedback_grouping_element = XPath.first(doc, "/rubric/feedback-grouping")
-    self.feedbackgrouping = feedback_grouping_element.text.strip if feedback_grouping_element and feedback_grouping_element.text
-
-    final_comment_element = XPath.first(doc, "/rubric/final-comment")
-    self.finalcomment = final_comment_element.text.strip if final_comment_element and final_comment_element.text
-
-    # Save
-    save
   end
 
 

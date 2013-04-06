@@ -167,15 +167,13 @@ class ExercisesController < ApplicationController
     # Authorization
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    # Iterate through reviews checkboxes
-    if params[:reviews_checkboxes]
-      params[:reviews_checkboxes].each do |id, value|
-        next unless value == '1'
-        review = Review.find(id)
-        logger.info("sending review #{review.id}")
-        FeedbackMailer.review(review).deliver if review && (review.status == 'finished' || review.status == 'mailed')
-      end
-    end
+    # Collect selected review ids
+    review_ids = (params[:reviews_checkboxes] || []).reject {|id, value| value != '1'}.keys
+    
+    
+#     review = Review.find(id)
+#     logger.info("sending review #{review.id}")
+#     FeedbackMailer.review(review).deliver if review && (review.status == 'finished' || review.status == 'mailed')
 
     redirect_to @exercise
   end
