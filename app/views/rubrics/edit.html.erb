@@ -80,7 +80,7 @@
           <table>
             <tbody id="feedback-categories" data-bind="foreach: feedbackCategories">
               <tr class="category">
-                <td class="category" data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<no name>'}"></td>
+                <td class="category" data-bind="editable: {value: name, editorActive: editorActive, placeholder: '<no name>'}"></td>
                 <td class="buttons-column">
                   <div class="buttons">
                     <i class="icon-pencil edit-button" title="Edit" data-bind="click: activateEditor"></i>
@@ -139,7 +139,7 @@
                 <tbody data-bind="sortable: { data: phrases, connectClass: 'phrases-container', options: {containment: '#rubric-editor', axis: 'y', distance: 5} }" class="phrases-container">
                   <tr class="phrase">
                     <td class="phraseType">
-                      <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'value', value: category">
+                      <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'name', value: category">
                         <option data-bind="text: $data.value"></option>
                       </select>
                     </td>

@@ -3,11 +3,6 @@
 #= require jquery.ui.sortable
 #= require knockout-sortable-0.7.3
 
-# TODO:
-# grades
-# grading mode
-# final comment
-#
 # TODO
 # preview (grader)
 # preview (mail)
@@ -125,13 +120,10 @@ class Page
     @tabLinkId = ko.computed(() ->
         return "page-#{@id()}-link"
       , this)
-    
-    
-    #@element = false  # The tab content div
 
 
   initializeDefault: () ->
-    @id(@rubricEditor.nextPageId())
+    @id(@rubricEditor.nextId('page'))
     @name('Untitled page')
 
     criterion = new Criterion(@rubricEditor, this)
@@ -144,20 +136,16 @@ class Page
 
 
   load_json: (data) ->
-    @id(@rubricEditor.nextPageId(parseInt(data['id'])))
+    @id(@rubricEditor.nextId('page', parseInt(data['id'])))
     @name(data['name'])
 
     # Load criteria
     for criterion_data in data['criteria']
-      criterion = new Criterion(@rubricEditor, this, criterion_data)
-      @criteria.push(criterion)
+      @criteria.push(new Criterion(@rubricEditor, this, criterion_data))
 
 
   to_json: ->
-    criteria = []
-
-    for criterion in @criteria()
-      criteria.push(criterion.to_json())
+    criteria = @criteria().map (criterion) -> criterion.to_json()
 
     return {id: @id(), name: @name(), criteria: criteria}
 
@@ -180,8 +168,7 @@ class Page
   deletePage: ->
     @rubricEditor.pages.remove(this)
     
-    # Activate first tab
-    $('#tab-settings-link').tab('show')
+    $('#tab-settings-link').tab('show')  # Activate first tab
 
   #
   # Event handler: User clicks the 'Create criterion' button
@@ -209,7 +196,7 @@ class Criterion
     
     
   initializeDefault: () ->
-    @id = @rubricEditor.nextCriterionId()
+    @id = @rubricEditor.nextId('criterion')
     
     phrase = new Phrase(@rubricEditor, this)
     phrase.content("What went well")
@@ -224,24 +211,21 @@ class Criterion
     
   load_json: (data) ->
     @name(data['name'])
-    @id = @rubricEditor.nextCriterionId(parseInt(data['id']))
+    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
 
     for phrase_data in data['phrases']
-      phrase = new Phrase(@rubricEditor, this, phrase_data)
-      @phrases.push(phrase)
+      @phrases.push(new Phrase(@rubricEditor, this, phrase_data))
 
 
   to_json: ->
-    phrases = []
-
-    for phrase in @phrases()
-      phrases.push(phrase.to_json())
+    phrases = @phrases().map (phrase) -> phrase.to_json()
 
     return {id: @id, name: @name(), phrases: phrases}
 
   
   activateEditor: ->
     @editorActive(true)
+
 
   clickCreatePhrase: ->
     phrase = new Phrase(@rubricEditor, this)
@@ -263,19 +247,19 @@ class Phrase
     if data
       this.load_json(data)
     else
-      @id = @rubricEditor.nextPhraseId()
+      @id = @rubricEditor.nextId('phrase')
 
 
   load_json: (data) ->
-    @id = @rubricEditor.nextPhraseId(parseInt(data['id']))
+    @id = @rubricEditor.nextId('phrase', parseInt(data['id']))
     @content(data['text'])
 
-    category = @rubricEditor.feedbackCategoriesIndex[data['category']]
+    category = @rubricEditor.feedbackCategoriesById[data['category']]
     @category(category)
 
 
   to_json: ->
-    category = if @category() then @category().value() else ''
+    category = if @category() then @category().id else undefined
     return {id: @id, text: @content(), category: category}
 
   activateEditor: ->
@@ -290,7 +274,8 @@ class Grade
     @value = ko.observable(data || '')
     @editorActive = ko.observable(false)
   
-  to_json: () ->
+  # Returns a number if the value can be interpreted as a number, otherwise returns the value as a string
+  to_json: ->
     value = @value()
     
     if isNaN(value)
@@ -304,7 +289,25 @@ class Grade
   deleteGrade: () ->
     return unless @container
     @container.remove(this)
+
+
+class FeedbackCategory
+  constructor: (@rubricEditor, data) ->
+    @name = ko.observable('')
+    @editorActive = ko.observable(false)
   
+    if data
+      @name(data['name'])
+      @id = @rubricEditor.nextId('feedbackCategory', data['id'])
+    else
+      @id = @rubricEditor.nextId('feedbackCategory')
+  
+  to_json: ->
+    return {id: @id, name: @name()}
+  
+  activateEditor: ->
+    @editorActive(true)
+
 
 class RubricEditor
 
@@ -313,11 +316,13 @@ class RubricEditor
     @pageIdCounter = 0
     @criterionIdCounter = 0
     @phraseIdCounter = 0
+    @feedbackCategoryIdCounter = 0
+    @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
-    @grades = ko.observableArray()
-    @gradingMode = ko.observable('average')
-    @feedbackCategories = ko.observableArray()
-    @feedbackCategoriesIndex = {}              # string => Grade, needed for setting phrase categories when loading rubric
+    @grades = ko.observableArray()             # Array of Grade objects
+    @gradingMode = ko.observable('average')    # String
+    @feedbackCategories = ko.observableArray() # Array of FeedbackCategory objects
+    @feedbackCategoriesById = {}               # id => FeedbackCategory
     @finalComment = ko.observable('')
     @pages = ko.observableArray()
 
@@ -337,31 +342,40 @@ class RubricEditor
         $('#context-help > div').hide()
         $("##{helpElementName}").show()
 
-  nextPageId: (id) ->
-    if id
-      @pageIdCounter = id if id > @pageIdCounter
-      return @pageIdCounter
+  # nextId('counter') returns the next available id number for 'counter'
+  # nextId('counter', newId) increases the counter to newId and returns newId. If next available id is higher than newId, the counter is not increased.
+  nextId: (counterName, idNumber) ->
+    if idNumber
+      @idCounters[counterName] = idNumber if idNumber > @idCounters[counterName]
+      return idNumber
     else
-      return @pageIdCounter++
+      return @idCounters[counterName]++
 
-  nextCriterionId: (id) ->
-    if id 
-      @criterionIdCounter = id if id > @criterionIdCounter
-      return @criterionIdCounter
-    else
-      return @criterionIdCounter++
+#   nextPageId: (id) ->
+#     if id
+#       @pageIdCounter = id if id > @pageIdCounter
+#       return @pageIdCounter
+#     else
+#       return @pageIdCounter++
 
-  nextPhraseId: (id) ->
-    if id
-      @phraseIdCounter = id if id > @phraseIdCounter
-      return @phraseIdCounter
-    else
-      return @phraseIdCounter++
+#   nextCriterionId: (id) ->
+#     if id 
+#       @criterionIdCounter = id if id > @criterionIdCounter
+#       return @criterionIdCounter
+#     else
+#       return @criterionIdCounter++
+
+#   nextPhraseId: (id) ->
+#     if id
+#       @phraseIdCounter = id if id > @phraseIdCounter
+#       return @phraseIdCounter
+#     else
+#       return @phraseIdCounter++
 
   initializeDefault: ->
     @gradingMode('average')
     @finalComment('')
-    @feedbackCategories([new Grade('Strengths'),new Grade('Weaknesses'),new Grade('Other comments')])
+    @feedbackCategories([new FeedbackCategory(this,'Strengths'),new FeedbackCategory(this,'Weaknesses'),new FeedbackCategory(this,'Other comments')])
 
     page = new Page(this)
     page.initializeDefault()
@@ -378,8 +392,8 @@ class RubricEditor
     page.showTab()
     page.activateEditor()
 
-  clickCreateCategory: ->
-    @feedbackCategories.push('')
+#   clickCreateCategory: ->
+#     @feedbackCategories.push('')
 
   createGrade: () ->
     grade = new Grade('', @grades)
@@ -410,12 +424,12 @@ class RubricEditor
       
       # Load feedback categories
       if data['feedbackCategories']
-        for category in data['feedbackCategories']
-          grade = new Grade(category)
-          @feedbackCategories.push(grade)
-          @feedbackCategoriesIndex[category] = grade
+        for raw_category in data['feedbackCategories']
+          category = new FeedbackCategory(this, raw_category)
+          @feedbackCategories.push(category)
+          @feedbackCategoriesById[category.id] = category
       else
-        @feedbackCategories([new Grade('Strengths'),new Grade('Weaknesses'),new Grade('Other comments')])
+        @feedbackCategories([new FeedbackCategory(this, 'Strengths'),new FeedbackCategory(this, 'Weaknesses'),new FeedbackCategory(this, 'Other comments')])
 
       # Load grades
       if data['grades']
@@ -443,9 +457,9 @@ class RubricEditor
     json = {
       version: 2
       pages: pages
+      feedbackCategories: categories
       grades: grades
       gradingMode: @gradingMode()
-      feedbackCategories: categories
       finalComment: @finalComment()
     }
     json_string = JSON.stringify(json)
