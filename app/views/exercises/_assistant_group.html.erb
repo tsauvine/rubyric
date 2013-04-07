@@ -20,7 +20,7 @@
         <td>
           <% if review.user != current_user %>
             <%= review.user.name %>
-          <% elsif ['unfinished','finished','mailed'].include?(review.status) %>
+          <% elsif ['mailed','invalidated'].include?(review.status) %>
             <%= link_to review.user.name, finish_review_path(review.id) %>
           <% else %>
             <%= link_to review.user.name, edit_review_path(review.id) %>

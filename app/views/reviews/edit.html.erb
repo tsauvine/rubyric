@@ -124,7 +124,6 @@
         <p class="hint">This is the final feedback text that is sent to the students by email.</p>
         
         <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
-        <!--textarea style="width: 600px; height: 600px;" data-bind="value: finishedText"></textarea-->
         
         <div data-bind="if: $root.grades.length > 1">
           <h3>Final Grade</h3>
