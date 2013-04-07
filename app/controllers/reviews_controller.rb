@@ -29,7 +29,6 @@ class ReviewsController < ApplicationController
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    #@feedback = @review.find_feedback(@section.id) if @section
     render :action => 'edit', :layout => 'review'
   end
 
@@ -43,22 +42,38 @@ class ReviewsController < ApplicationController
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Check that the review has not been mailed
-#     if @review.status == 'mailed'
-#       respond_to do |format|
-#         format.json { head :no_content } # TODO: error message
-#         #redirect_to({:controller => 'reviews', :action => 'edit', :id => params[:id], :section => params[:section]})
-#       end
-#
-#       return
-#     end
+    if @review.status == 'mailed'
+      respond_to do |format|
+        format.json { head :no_content } # TODO: error message
+        format.html {
+          flash[:error] = 'Review has already been mailed and cannot be edited any more'
+          redirect_to @exercise
+        }
+      end
 
-    @review.payload = params[:review]
-    @review.collect_feedback
-    @review.save!
-
-    respond_to do |format|
-      format.json { render :text => '{"status": "ok"}' }
+      return
     end
+
+    if @review.update_attributes(params[:review])
+      respond_to do |format|
+        format.json { head :no_content } # TODO: ok
+        format.html {
+          redirect_to @exercise
+        }
+      end
+    else
+      respond_to do |format|
+        format.json { head :no_content } # TODO: error message
+        format.html {
+          flash[:error] = 'Failed to update review'
+          redirect_to @exercise
+        }
+      end
+    end
+    
+#     respond_to do |format|
+#       format.json { render :text => '{"status": "ok"}' }
+#     end
   end
 
   def finish

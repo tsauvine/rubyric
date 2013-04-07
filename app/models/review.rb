@@ -5,8 +5,9 @@ class Review < ActiveRecord::Base
 
   has_many :feedbacks, :dependent => :destroy
 
-  # status: [empty], started, unfinished, finished, mailed
+  # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
+  
   def calculate_grade
     categories_counter = 0
     category_points_counter = 0
