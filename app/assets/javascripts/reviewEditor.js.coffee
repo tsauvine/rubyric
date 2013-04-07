@@ -135,7 +135,6 @@ class ReviewEditor
     @finishedText($('#review_feedback').val())
     
     finalGrade = $('#review_grade').val()
-    console.log "Load grade (#{finalGrade})"
     @finalGrade(finalGrade) if finalGrade != ''
     
     status = $('#review_status').val()
@@ -208,14 +207,11 @@ class ReviewEditor
     
     # Set grade
     finalGrade = @finalGrade()
-    console.log "finalGrade (#{finalGrade})"
     
     if finalGrade? && finalGrade != false
       $('#review_grade').val(finalGrade)
-      console.log "setting finalGrade (#{finalGrade})"
     else
       $('#review_grade').val('')
-      console.log "setting finalGrade to empty string"
     
     # Set status
     if @finalizing() 
