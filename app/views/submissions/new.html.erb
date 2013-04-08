@@ -62,10 +62,10 @@
 
   
   <!-- Submissions -->
-  <% if @group && @group.submissions.size > 0 %>
+  <% unless @submissions.empty? %>
     <h2>Submissions</h2>
     <table>
-      <% @group.submissions.each do |submission| %>
+      <% @submissions.each do |submission| %>
         <tr>
           <td><%=l submission.created_at, :format => :long %></td>
           <td>(<%= link_to "#{submission.extension}", submission %>)</td>

@@ -83,6 +83,8 @@ class SubmissionsController < ApplicationController
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     end
+    
+    @submissions = Submission.where(:group_id => @group.id, :exercise_id => @exercise.id).order('created_at DESC').all
 
     @submission = Submission.new
   end
