@@ -89,7 +89,7 @@ class Exercise < ActiveRecord::Base
     neutral_caption = 'Other comments'
     neutral_caption = neutral_caption_element.text.strip if neutral_caption_element and neutral_caption_element.text
 
-    rubric['feedbackCategories'] = [positive_caption, negative_caption, neutral_caption]
+    rubric['feedbackCategories'] = [{id: 0, name: positive_caption}, {id: 1, name: negative_caption}, {id: 2, name: neutral_caption}]
     
     # Final comment
     final_comment_element = XPath.first(doc, "/rubric/final-comment")
@@ -108,6 +108,7 @@ class Exercise < ActiveRecord::Base
         
         new_page = {id: page_counter, name: section.attributes['name'], criteria: criteria}
         new_page['weight'] = section.attributes['weight'] if section.attributes['weight']
+        pages << new_page
         page_counter += 1
 
         #Items
@@ -121,14 +122,14 @@ class Exercise < ActiveRecord::Base
           item.each_element('phrase') do |phrase|
             case phrase.attributes['type']
             when 'Neutral'
-              category_index = 2
+              categoryId = 2
             when 'Bad'
-              category_index = 1
+              categoryId = 1
             else # Good
-              category_index = 0
+              categoryId = 0
             end
             
-            phrases << {id: phrase_counter, text: phrase.text.strip, category: rubric['feedbackCategories'][category_index]}
+            phrases << {id: phrase_counter, text: phrase.text.strip, category: categoryId}
             phrase_counter += 1
           end
 
@@ -148,6 +149,8 @@ class Exercise < ActiveRecord::Base
 
       end # sections
     end # categories
+    
+    self.rubric = rubric.to_json
   end
 
 
