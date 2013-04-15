@@ -20,7 +20,7 @@ class ReviewsController < ApplicationController
     end
   end
 
-  # GET /courses/1/edit
+  # GET /reviews/1/edit
   def edit
     @review = Review.find(params[:id])
     @exercise = @review.submission.exercise
@@ -29,7 +29,6 @@ class ReviewsController < ApplicationController
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    #@feedback = @review.find_feedback(@section.id) if @section
     render :action => 'edit', :layout => 'review'
   end
 
@@ -147,7 +146,7 @@ class ReviewsController < ApplicationController
       @review.save
     end
 
-    redirect_to finish_review_path(@review)
+    redirect_to edit_review_path(@review)
   end
 
   def annotation

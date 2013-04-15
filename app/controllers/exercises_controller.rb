@@ -169,12 +169,8 @@ class ExercisesController < ApplicationController
 
     # Collect selected review ids
     review_ids = (params[:reviews_checkboxes] || []).reject {|id, value| value != '1'}.keys
+    @exercise.deliver_reviews(review_ids)
     
-    
-#     review = Review.find(id)
-#     logger.info("sending review #{review.id}")
-#     FeedbackMailer.review(review).deliver if review && (review.status == 'finished' || review.status == 'mailed')
-
     redirect_to @exercise
   end
 

@@ -328,15 +328,21 @@ class Exercise < ActiveRecord::Base
     `du -s #{path}`.split("\t")[0].to_i
   end
   
-  # Will be run in background by delayed job
-  def self.deliver_reviews(review_ids)
-    # Send all reviews
-    reviews = Review.find(:all, :conditions => {:id => review_ids, :status => 'mailing'})
-
-    logger.info "Sending #{reviews.size} reviews"
-
-    reviews.each do |review|
-      Mailer.deliver_review(review)
+  
+  # Schedules review mails to be sent.
+  # If ENABLE_DELAYED_JOB is true, mails are sent by delayed_job, otherwise immediately.
+  # review_ids: array of ids or a singular id
+  def deliver_reviews(review_ids)
+    Review.where(:id => review_ids, :status => 'finished').update_all(:status => 'mailing')
+    
+    if ENABLE_DELAYED_JOB
+      # Send a warning to admin if delayed_job queue is long
+      ErrorMailer.long_mail_queue.deliver if Delayed::Job.count > 1
+      
+      Review.delay.deliver_reviews(review_ids)
+    else
+      Review.deliver_reviews(review_ids)
     end
   end
+  
 end

@@ -4,4 +4,4 @@ Your submission was graded by <%= @grader.firstname %> <%= @grader.lastname %><%
 
 Grade: <%= @review.grade %><% end %>
 
-<%= word_wrap @review.feedback, 76 %>
+<%= (word_wrap @review.feedback, 76).html_safe %>

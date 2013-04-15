@@ -29,10 +29,11 @@ palautus
  palautussivun customoitu viesti
 
 Rubric editor
- Weights
+ weights
 
-finish review osaksi review editoria
- 
+reopen menee finish-näkymään
+
+
 = Later =
 
 view review: näytä assarin nimi
@@ -55,3 +56,5 @@ opettajan pitäisi voida poistaa ryhmä
 reviewers-näkymässä ryhmien lukumäärä
 
 Login-laatikkoon forgot password ja sign up-linkit
+
+pitäisi voida siirtää palautus toiseen harjoitukseen, jos on submitattu väärään

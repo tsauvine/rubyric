@@ -247,4 +247,10 @@ class Review < ActiveRecord::Base
     return text
   end
 
+  def self.deliver_reviews(review_ids)
+    Review.where(:id => review_ids, :status => 'mailing').find_each do |review|
+      FeedbackMailer.review(review).deliver
+    end
+  end
+  
 end
