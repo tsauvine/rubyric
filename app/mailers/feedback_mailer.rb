@@ -7,14 +7,12 @@ class FeedbackMailer < ActionMailer::Base
     @exercise = @review.submission.exercise
     @course_instance = @exercise.course_instance
     @course = @course_instance.course
+    @grader = @review.user
 
-    @exercise.anonymous_graders = true
-    unless @exercise.anonymous_graders
-      @grader = @review.user
-    #  from = grader.email
-    else
-      from = @course.email
-    end
+    from = @course.email
+#     unless @exercise.anonymous_graders
+#       from = @grader.email
+#     end
     # @headers = {"Reply-to" => course.email}
 
     # Collect receiver addresses
@@ -26,7 +24,9 @@ class FeedbackMailer < ActionMailer::Base
     
     subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
     
-    mail(:to => recipients, :from => from, :subject => subject)
+    I18n.with_locale(@course_instance.locale || I18n.locale) do
+      mail(:to => recipients, :from => from, :subject => subject)
+    end
 
     # Set status
     review.status = 'mailed'

@@ -16,6 +16,13 @@ http://www.quicktimesheets.com/
 
 = Soon =
 
+group invitation mailer: invalid recipient address syntax, jäävät jonoon
+eri jono feedback maileille
+poista group invitationit, jotka ovat vanhentuneet
+edit review: jos on finished, niin mene suoraan finalize-tabiin
+reopenin pitäisi forkata ja invalidoida
+mailing-status: ei voi editoida, mailauksen voi perua
+
 assarin näkymä
 
 feedback mailer, delayed job

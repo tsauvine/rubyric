@@ -10,6 +10,8 @@ en:
   Edit: "Edit"
   Cancel: "Cancel"
   
+  Reviewer: 'Reviewer'
+  Grade: 'Grade'
   
   #################
   # Active Record

@@ -1,7 +1,7 @@
-<%= "#{@course.code} #{@course.name} - #{@course_instance.name} - #{@exercise.name}" %><% unless @exercise.anonymous_graders %>
+<%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %><% unless @exercise.anonymous_graders %>
 
-Your submission was graded by <%= @grader.firstname %> <%= @grader.lastname %><% end %><% unless @review.grade.blank? %>
+<%=t :Reviewer %>: <%= @grader.firstname %> <%= @grader.lastname %> (<%= @grader.email %>)<% end %><% unless @review.grade.blank? %>
 
-Grade: <%= @review.grade %><% end %>
+<%=t :Grade %>: <%= @review.grade %><% end %>
 
 <%= (word_wrap @review.feedback, 76).html_safe %>
