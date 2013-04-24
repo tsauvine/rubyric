@@ -66,8 +66,6 @@ class GroupsController < ApplicationController
     load_course
     
     return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
-    
-    
   end
 
   # POST /groups
@@ -129,22 +127,12 @@ class GroupsController < ApplicationController
     # Edit invitations
     if params[:invitations]
       params[:invitations].each do |id, email|
-        email.strip!
         invitation = GroupInvitation.find(id)
+        email.strip!
         if email.blank?
           invitation.destroy
         elsif email != invitation.email
-          # TODO: move to model
-          invitation.email = email
-          invitation.token = Digest::SHA1.hexdigest([Time.now, rand].join)
-          invitation.expires_at = Time.now + 1.weeks
-          invitation.save
-          
-          if ENABLE_DELAYED_JOB
-            InvitationMailer.delay.group_invitation(invitation.id)
-          else
-            InvitationMailer.group_invitation(invitation.id).deliver
-          end
+          invitation.update_email(email)
         end
       end
     end

@@ -34,20 +34,9 @@ class Group < ActiveRecord::Base
         invitation = GroupInvitation.create(
           :group_id => self.id,
           :exercise_id => exercise.id,
-          :token => Digest::SHA1.hexdigest([Time.now, rand].join),
-          :email => address,
-          :expires_at => Time.now + 1.weeks)
+          :email => address)
 
-        # Send invitation link
-        if ENABLE_DELAYED_JOB
-          InvitationMailer.delay.group_invitation(invitation.id)
-        else
-          begin
-            InvitationMailer.group_invitation(invitation.id).deliver
-          rescue
-            # TODO
-          end
-        end
+        GroupInvitation.send_invitation(invitation.id)
       end
     end
 
