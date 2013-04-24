@@ -9,9 +9,10 @@ class InvitationMailer < ActionMailer::Base
     @course_instance = @group.course_instance
     @course = @course_instance.course
     
-    subject = "#{@course.code} #{@course.name} - Join group"
-    
-    mail(:to => @invitation.email, :subject => subject)
+    I18n.with_locale(@course_instance.locale || I18n.locale) do
+      subject = t('invitation_mailer.group_invitation.subject', :course => "#{@course.code} #{@course.name}")
+      mail(:to => @invitation.email, :subject => subject)
+    end
   end
   
   

@@ -1,5 +1,11 @@
-fi:
-  teacher_invitation_message: "Sinut on lisätty opettajaksi"
-  assistant_invitation_message: "Sinut on lisätty arvioijaksi"
-  group_invitation_message: "Sinut on lisätty ryhmään"
+en:
+  teacher_invitation_message: "You have been added as an instructor"
+  assistant_invitation_message: "You have been added as a reviewer"
 
+  invitation_mailer:
+    group_invitation:
+      subject: "%{course} - Join group"
+      you_have_been_added: "You have been invited to the following group:"
+      please_confirm: "Please confirm by visiting the following link:"
+      group_invitation_message: "You have been added to the group"
+    

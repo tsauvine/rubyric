@@ -1,10 +1,10 @@
 <%= @course.code %> <%= @course.name %>
 
-You have been added to the following group:
+<%=t '.you_have_been_added' %>
 <% @group.users.each do |user| %>  <%= user.name %>
 <% end %><% @group.group_invitations.each do |invitation| %>  <%= invitation.email %>
 <% end %>
 
-Please confirm by visiting the following link:
+<%=t '.please_confirm' %>
 
 <%= join_group_url(:id => @group.id, :token => @invitation.token, :protocol => 'https://') %>
