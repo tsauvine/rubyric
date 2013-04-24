@@ -250,8 +250,14 @@ class Review < ActiveRecord::Base
 
   def self.deliver_reviews(review_ids)
     Review.where(:id => review_ids, :status => 'mailing').find_each do |review|
-      FeedbackMailer.review(review).deliver
+      begin
+        FeedbackMailer.review(review).deliver
+      rescue Exception => e
+        logger.error "Failed to deliver feedback mail #{review.id}"
+        logger.error e
+      end
     end
   end
+  handle_asynchronously :deliver_reviews if ENABLE_DELAYED_JOB
   
 end

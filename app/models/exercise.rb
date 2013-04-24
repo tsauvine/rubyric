@@ -336,16 +336,11 @@ class Exercise < ActiveRecord::Base
   # If ENABLE_DELAYED_JOB is true, mails are sent by delayed_job, otherwise immediately.
   # review_ids: array of ids or a singular id
   def deliver_reviews(review_ids)
-    Review.where(:id => review_ids, :status => 'finished').update_all(:status => 'mailing')
+    # Send a warning to admin if delayed_job queue is long
+    ErrorMailer.long_mail_queue.deliver if Delayed::Job.count > 1
     
-    if ENABLE_DELAYED_JOB
-      # Send a warning to admin if delayed_job queue is long
-      ErrorMailer.long_mail_queue.deliver if Delayed::Job.count > 1
-      
-      Review.delay.deliver_reviews(review_ids)
-    else
-      Review.deliver_reviews(review_ids)
-    end
+    Review.where(:id => review_ids, :status => 'finished').update_all(:status => 'mailing')
+    Review.deliver_reviews(review_ids)
   end
   
 end
