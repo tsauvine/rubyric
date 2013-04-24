@@ -16,8 +16,8 @@
   <tbody>
     <% @course_instances.each do |instance| %>
       <tr>
-        <td><%= instance.course.code %> <%= instance.course.name %>
-        <td><%= instance.name %></td>
+        <td><%= h instance.course.code %> <%= h instance.course.name %>
+        <td><%= h instance.name %></td>
         <td><%= instance.created_at %></td>
         <td><%= instance.exercises.size %></td>
         <td><%= instance.students.size %></td>

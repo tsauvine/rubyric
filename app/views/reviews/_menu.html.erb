@@ -2,14 +2,14 @@
 <table class="rubricmenu">
   <% @exercise.categories.each do |category| %>
     <tr>
-      <td class="bold"><%= category.name %></td>
+      <td class="bold"><%= h category.name %></td>
     </tr>
     <% category.sections.each do |section|
     feedback = @review.find_feedback(section.id)
     %>
       <tr<%= @section && @section.id == section.id ? ' class="selected"' : '' %>>
         <td class="section-name<%= @section && @section.id == section.id ? ' selected' : '' %>">
-          <%= link_to section.name, {:action => 'edit', :section => section.id}, :class => (@section && @section.id == section.id ? 'selected' : ''), :onclick => "return !modified || confirm('You have not saved the feedback. Proceed?')" %>
+          <%= link_to h(section.name), {:action => 'edit', :section => section.id}, :class => (@section && @section.id == section.id ? 'selected' : ''), :onclick => "return !modified || confirm('You have not saved the feedback. Proceed?')" %>
         </td>
         <td class='status <%= status_color(feedback.status) %>'>
           <%= status_text(feedback.status) %>

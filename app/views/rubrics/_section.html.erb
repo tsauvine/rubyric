@@ -1,6 +1,6 @@
 <div class="section" id="sectionElement<%= section.id %>">
   <h2>
-    <span id="sectionName<%= section.id %>"><%= section.name %></span>
+    <span id="sectionName<%= section.id %>"><%= h section.name %></span>
     <%= in_place_editor "sectionName#{section.id}", {:url => url_for(:action => "rename_section", :id => section.id)}  %>
 
     <span class="weight">(weight: <span id="sectionWeight<%= section.id %>"><%= section.weight %></span>)</span>

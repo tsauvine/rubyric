@@ -1,6 +1,6 @@
 <!-- groups/new.html.erb -->
 
-<h1>Create a group for <%= "#{@course.code} #{@course.name} / #{@course_instance.name} / #{@exercise.name}" %></h1>
+<h1>Create a group for <%= "#{h @course.code} #{h @course.name} / #{h @course_instance.name} / #{h @exercise.name}" %></h1>
 
 <div style="float: left">
   <%= error_messages_for :submission %>
