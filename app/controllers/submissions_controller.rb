@@ -1,23 +1,17 @@
 class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
+  before_filter :load_submission, :except => [:new]
 
   layout 'wide'
 
-#   def set_layout
-#     case params[:embed]
-#     when 'embed'
-#       'embed'
-#     else
-#       'wide'
-#     end
-#   end
-
-  # Download submission
-  def show
+  def load_submission
     @submission = Submission.find(params[:id])
     @exercise = @submission.exercise
     load_course
+  end
 
+  # Download submission
+  def show
     # TODO: @submission.has_reviewer(current_user)
     return access_denied unless @submission.group.has_member?(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
 
@@ -90,10 +84,6 @@ class SubmissionsController < ApplicationController
   end
 
   def create
-    @submission = Submission.new(params[:submission])
-    @exercise = @submission.exercise
-    load_course
-
     return access_denied unless logged_in? || @exercise.submit_without_login
 
     # Check that instance is open
@@ -143,9 +133,6 @@ class SubmissionsController < ApplicationController
 
   # Assign to current user and start review
   def review
-    @submission = Submission.find(params[:id])
-    @exercise = @submission.exercise
-    load_course
     return access_denied unless @course.has_teacher(current_user) || @submission.group.has_reviewer?(current_user)
 
     review = @submission.assign_to(current_user)
@@ -153,4 +140,29 @@ class SubmissionsController < ApplicationController
     redirect_to edit_review_path(review)
   end
 
+  def move
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    if params[:target]
+      target = Exercise.find(params[:target])
+      @submission.move(target)
+      
+      redirect_to @exercise
+    end
+  end
+  
+  def confirm_delete
+    return access_denied unless @submission.group.has_member?(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
+  end
+    
+  # DELETE /submissions/1
+  def destroy
+    return access_denied unless @submission.group.has_member?(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
+    return access_denied unless @submission.reviews.empty?
+
+    @submission.destroy
+
+    redirect_to @exercise
+  end
+  
 end

@@ -52,6 +52,17 @@ class Submission < ActiveRecord::Base
     end
   end
 
+  def move(target_exercise)
+    # Move file
+    target_path = "#{SUBMISSIONS_PATH}/#{target_exercise.id}"
+    FileUtils.makedirs(target_path)
+    FileUtils.mv(full_filename, "#{target_path}/")
+    
+    # Move submission
+    self.exercise_id = target_exercise.id
+    save()
+  end
+  
   #def delete_file
   #  FileUtils.rm_rf("#{SUBMISSIONS_PATH}/#{id}")
   #end

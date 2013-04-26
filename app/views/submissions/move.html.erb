@@ -1,0 +1,32 @@
+<div class="page-header">
+  <h1>Move submission</h1>
+</div>
+
+<div class="row-fluid">
+  <div class="span6">
+    <p class="hint">Move submission to</p>
+  
+    <%= form_tag move_submission_path do %>
+      
+      <ul class="unstyled">
+        <% @course_instance.exercises.each do |exercise| %>
+          <% next if @submission.exercise == exercise %>
+          <li>
+            <label>
+              <%= radio_button_tag :target, exercise.id %>
+              <%= exercise.name %>
+            </label>
+          </li>
+        <% end %>
+      </ul>
+      
+      <%= submit_tag 'Move', :class => 'btn btn-primary' %>
+    <% end %>
+
+  </div>
+  <div class="span6">
+    <%= render 'submission_info_box' %>
+  </div>
+</div>
+
+<p><%= link_to :Cancel, @exercise %></p>

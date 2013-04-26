@@ -10,6 +10,16 @@
       <!-- Submission -->
       <span <%= submission.late?(@exercise) ? 'class="late"'.html_safe : nil %>><%=l submission.created_at %></span>
       (<%= link_to "#{submission.extension}", submission_path(submission.id), :title => submission.filename %>)
+      
+      <div class="dropdown pull-right">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+          <li>
+            <%= link_to 'Move submission...', move_submission_path(submission), :tabindex => '-1' %>
+            <%= link_to 'Delete submission...', confirm_delete_submission_path(submission), :tabindex => '-1' %>
+          </li>
+        </ul>
+      </div>
     </td>
 
     <!-- Reviews -->

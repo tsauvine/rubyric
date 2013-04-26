@@ -14,27 +14,38 @@ mainossivun malli:
 http://www.quicktimesheets.com/
 
 
+
+
 = Soon =
 
-group invitation mailer: invalid recipient address syntax, jäävät jonoon
+pitäisi voida siirtää palautus toiseen harjoitukseen, jos on submitattu väärään
 
-eri jono feedback maileille
+exercise lakkaa ottamasta palautuksia määräajan jälkeen
 
-poista group invitationit, jotka ovat vanhentuneet
+tuotannossa esimerkkiopiskelijoiden mailiosoitteet: student1@example.com
 
-edit review: jos on finished, niin mene suoraan finalize-tabiin
+mailer erroreista mailia adminille
 
-reopenin pitäisi forkata ja invalidoida
+assarin näkymä: tarkista UX
 
-mailing-status: ei voi editoida, mailauksen voi perua
 
-assarin näkymä
+= Later =
 
-feedback mailer, delayed job
+error mailer: korjaa
+
+reopen menee finish-näkymään
+
+view review: näytä assarin nimi
 
 test mailer, test delayed job
 
-error mailer
+edit review: jos on finished, niin mene suoraan finalize-tabiin
+
+poista group invitationit, jotka ovat vanhentuneet
+
+reopenin pitäisi forkata ja invalidoida review
+
+mailing-status: ei voi editoida, mailauksen voi perua
 
 palautus
  lisää opiskelijat students-listaan (create group, add member, invite)
@@ -42,13 +53,6 @@ palautus
 
 Rubric editor
  weights
-
-reopen menee finish-näkymään
-
-
-= Later =
-
-view review: näytä assarin nimi
 
 group editor for students
 group editor for teacher
@@ -69,6 +73,6 @@ reviewers-näkymässä ryhmien lukumäärä
 
 Login-laatikkoon forgot password ja sign up-linkit
 
-pitäisi voida siirtää palautus toiseen harjoitukseen, jos on submitattu väärään
-
 etusivu (logged in): ohjeita ja videoita
+
+eri jono feedback maileille

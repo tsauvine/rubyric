@@ -1,0 +1,38 @@
+<div class="well">
+  <h4>Submission:</h4>
+  <p>
+    <%= link_to @submission.filename, @submission %><br />
+    <%=l @submission.created_at %><br />
+  </p>
+
+  <h4>Group:</h4>
+  <p>
+    <table class="table table-condensed">
+      <tbody>
+        <% @submission.group.users.each do |user| %>
+          <tr>
+            <td><%= user.studentnumber %></td>
+            <td><%= user.name %></td>
+            <td><%= user.email %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </p>
+
+  <h4>Reviews:</h4>
+  <% if @submission.reviews.empty? %>
+    <p>No reviews</p>
+  <% else %>
+    <table class="table table-condensed">
+      <tbody>
+        <tr>
+          <% @submission.reviews.each do |review| %>
+            <td><%= review.user.name %></td>
+            <td><%= review.status %></td>
+          <% end %>
+        </tr>
+      </tbody>
+    </table>
+  <% end %>
+</div>

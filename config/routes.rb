@@ -72,9 +72,11 @@ Rubyric::Application.routes.draw do
 #     end
   end
   
-  resources :submissions, :only => [:show, :new, :create] do
+  resources :submissions, :only => [:show, :new, :create, :destroy] do
     member do
       get :review
+      get :confirm_delete
+      match 'move' => 'submissions#move', :via => [:get, :post]
     end
   end
 
