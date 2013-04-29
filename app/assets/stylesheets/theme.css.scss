@@ -2,7 +2,6 @@ div.topnavi {
   width: 100%;
   height: 40px;
   background: red image-url("navbar.png") repeat-x;
-  filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)" !important;
 
   > a.pull-right {
     height: 40px;
@@ -34,6 +33,7 @@ div.topnavi {
 
 .navbar-inner {
   background: red image-url("navbar.png") repeat-x;
+  filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)" !important;
   border: none;
   -webkit-border-radius: 0px;
      -moz-border-radius: 0px;
