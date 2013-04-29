@@ -2,6 +2,7 @@ div.topnavi {
   width: 100%;
   height: 40px;
   background: red image-url("navbar.png") repeat-x;
+  -ms-filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)";
 
   > a.pull-right {
     height: 40px;
