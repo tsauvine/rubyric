@@ -84,6 +84,9 @@ class SubmissionsController < ApplicationController
   end
 
   def create
+    @submission = Submission.new(params[:submission])
+    @exercise = @submission.exercise
+    load_course
     return access_denied unless logged_in? || @exercise.submit_without_login
 
     # Check that instance is open
