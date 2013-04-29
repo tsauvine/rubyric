@@ -1,6 +1,6 @@
 class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
-  before_filter :load_submission, :except => [:new]
+  before_filter :load_submission, :except => [:new, :create]
 
   layout 'wide'
 
