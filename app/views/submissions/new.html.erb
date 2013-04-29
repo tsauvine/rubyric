@@ -1,6 +1,6 @@
 <!-- submissions/new.html.erb -->
 
-<h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+<h1><%= "#{h @course.code} #{h @course.name} (#{h @course_instance.name}) - #{h @exercise.name}" %></h1>
 
 <% unless @exercise.submit_pre_message.blank? %>
   <p><%= @exercise.submit_pre_message %></p>
@@ -19,7 +19,7 @@
       <tbody>
         <% @group.users.each do |student| %>
           <tr>
-            <td><%= student.studentnumber %></td>
+            <td><%= h student.studentnumber %></td>
             <td><%= student.email %></td>
           </tr>
         <% end %>
@@ -32,7 +32,7 @@
     <p>
       <% @group.submissions.each do |submission| %>
         <%= submission.created_at %>
-        (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)<br />
+        (<%= link_to "#{h submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)<br />
       <% end %>
     </p>
   <% end %>

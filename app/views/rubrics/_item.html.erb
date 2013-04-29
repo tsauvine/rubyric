@@ -1,6 +1,6 @@
 <div class="item" id="itemElement<%= item.id %>">
   <h3>
-    <span id="itemName<%= item.id %>"><%= item.name.blank? ? '&lt;no heading&gt;' : item.name %></span>
+    <span id="itemName<%= item.id %>"><%= item.name.blank? ? '&lt;no heading&gt;' : h(item.name) %></span>
     <%= in_place_editor "itemName#{item.id}", {:url => url_for(:action => "rename_item", :id => item.id)}  %>
 
     <div class="buttons">

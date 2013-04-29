@@ -5,8 +5,8 @@
 <table>
   <% for course in @courses %>
     <tr>
-      <td><%= link_to course.code, course %></td>
-      <td><%= link_to course.name, course %></td>
+      <td><%= link_to h(course.code), course %></td>
+      <td><%= link_to h(course.name), course %></td>
       <td class="trash">
         <% if course.has_teacher(current_user) || is_admin?(current_user) %>
           <%= link_to(image_tag('trash.png', :alt => 'Destroy'), course, :confirm => 'Are you sure?',  :method => :delete) %>

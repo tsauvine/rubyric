@@ -15,10 +15,10 @@
 
   <ul>
   <% @courses.each do |course| %>
-    <li><%= link_to course.name, course %></li>
+    <li><%= link_to h(course.name), course %></li>
     <ul>
       <% course.active_instances.each do |instance| %>
-        <li><%= link_to instance.name, instance %></li>
+        <li><%= link_to h(instance.name), instance %></li>
       <% end %>
     </ul>
   <% end %>
@@ -32,7 +32,7 @@
   <h1>My courses</h1>
   <ul>
   <% @course_instances.each do |instance| %>
-    <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
+    <li><%= link_to "#{h instance.course.name} (#{h instance.name})", instance %></li>
   <% end %>
   </ul>
 <% end %>

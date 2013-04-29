@@ -18,7 +18,7 @@
         <tr>
           <td><%= check_box 'reviews_checkboxes', review.id, {:class => review.status == 'finished' ? 'review_check review_check_finished' : 'review_check'} %></td>
           <td><%= link_to h(review.user.name), {:controller => 'reviews', :action => 'edit', :id => review.id} %></td>
-          <td><%= review.grade %></td>
+          <td><%= h review.grade %></td>
         </tr>
       <% end %>
     </table>

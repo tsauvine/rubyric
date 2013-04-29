@@ -11,7 +11,7 @@
 <p>
   <!-- Group -->
   Group:
-  <%= (@review.submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %>
+  <%= (@review.submission.group.users.collect do |user| "<span title='#{h user.name}'>#{h user.studentnumber}</span>" end).join(', ') %>
   -
   <!-- View submission -->
   <% unless @review.submission.extension.blank? %>

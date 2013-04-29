@@ -1,9 +1,9 @@
 <!-- exercises/manage.html.erb -->
 
 <h1>
-  <%= "#{@course.code} #{@course.name}" %> -
-  <%= "#{@course_instance.name}" %> -
-  <%= @exercise.name %>
+  <%= "#{h @course.code} #{h @course.name}" %> -
+  <%= "#{h @course_instance.name}" %> -
+  <%= h @exercise.name %>
 </h1>
 
 <p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Publish this link on the homepage of the course.</span></p>
@@ -81,7 +81,7 @@
   <tbody>
     <% @grader_workload.each do |workload| %>
       <tr>
-        <td><%= workload[0].name %></td>
+        <td><%= h workload[0].name %></td>
         <td><%= workload[1] %></td>
       </tr>
     <% end %>
