@@ -1,21 +1,12 @@
-Error report from <%= @request.host %> <%= Time.now %>
+Error report from <%= @request.host %> (<%= Time.now %>)
+Controller: <%= @params['controller'] %>#<%= @params['action'] %>
 
-Message: <%= @exception.message %>
-Location: <%= @env['REQUEST_URI'] %>
-Controller: <%= @params.delete('controller') %>
-Action: <%= @params.delete('action') %>
-Query: <%= @env['QUERY_STRING'] %>
-Method: <%= @env['REQUEST_METHOD'] %>
-SSL: <%= @request.ssl? ? "true" : "false"  %>
-Agent: <%= @env['HTTP_USER_AGENT']  %>
+<%= @exception.message.html_safe %>
 
-
-= Backtrace =
-<%= @trace.to_a.join("\n") -%>
-
-
-= Params =
+Request: <%= @env['REQUEST_METHOD'] %> <%= @env['REQUEST_URI'] %>
+Params:
 <% for key, val in @params -%>
-  <%= key %>
-  <%= val.to_yaml.to_a.join("\n") %>
-<% end if @params -%>
+  <%= key %>: <%= val %>
+<% end -%>
+
+Agent: <%= @env['HTTP_USER_AGENT']  %>

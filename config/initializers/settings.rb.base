@@ -15,6 +15,8 @@ RUBYRIC_HOST = "rubyric.example.com"
 # Authentication
 FORCE_SSL = false
 
+# Uncomment to execute delayed jobs immediately
+# Delayed::Worker.delay_jobs = false
 ENABLE_DELAYED_JOB = true
 
 # ActionMailer::Base.smtp_settings = { address: 'mail.example.com' }

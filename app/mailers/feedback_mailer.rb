@@ -1,5 +1,6 @@
 class FeedbackMailer < ActionMailer::Base
   default :from => RUBYRIC_EMAIL
+  default_url_options[:host] = RUBYRIC_HOST
   
   # Sends the review by email to the students
   def review(review)

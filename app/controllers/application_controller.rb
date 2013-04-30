@@ -61,21 +61,6 @@ class ApplicationController < ActionController::Base
     end
   end
 
-  # Send email on exception
-  def log_error(exception)
-    super(exception)
-
-    begin
-      # Send email
-      if ERRORS_EMAIL && !(local_request? || exception.is_a?(ActionController::RoutingError))
-        ErrorMailer.snapshot(exception, clean_backtrace(exception), params, request).deliver
-      end
-    rescue => e
-      logger.error e
-    end
-  end
-
-
   private
   
   def current_session
@@ -94,6 +79,15 @@ class ApplicationController < ActionController::Base
   
   def is_admin?(user)
     user && user.admin
+  end
+  
+  def store_location
+    session[:return_to] = request.fullpath
+  end
+  
+  def redirect_back_or_default(default)
+    redirect_to(session[:return_to] || default)
+    session[:return_to] = nil
   end
   
   # If require_login GET-parameter is set, this filter redirect to login. After successful login, user is redirected back to the original location.
@@ -146,13 +140,18 @@ class ApplicationController < ActionController::Base
     return false
   end
   
-  def store_location
-    session[:return_to] = request.fullpath
+  # Send email on exception
+  rescue_from Exception do |exception|
+    begin
+      # Send email
+      if ERRORS_EMAIL && !(exception.is_a?(ActionController::RoutingError)) # || local_request?
+        ErrorMailer.snapshot(exception, params, request).deliver
+      end
+    rescue => e
+      logger.error e
+    end
+    
+    raise exception
   end
-  
-  def redirect_back_or_default(default)
-    redirect_to(session[:return_to] || default)
-    session[:return_to] = nil
-  end
-  
+
 end

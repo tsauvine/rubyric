@@ -18,34 +18,41 @@ http://www.quicktimesheets.com/
 
 = Soon =
 
-pitäisi voida siirtää palautus toiseen harjoitukseen, jos on submitattu väärään
-
-exercise lakkaa ottamasta palautuksia määräajan jälkeen
-
-tuotannossa esimerkkiopiskelijoiden mailiosoitteet: student1@example.com
-
 mailer erroreista mailia adminille
 
 assarin näkymä: tarkista UX
 
+edit group: opiskelijanumero pois
+
+etusivu
+ - hintalaskuri
+
 
 = Later =
 
-error mailer: korjaa
+paypal
+
+submit without logging in
+
+exercise lakkaa ottamasta palautuksia määräajan jälkeen
 
 reopen menee finish-näkymään
 
+edit review: jos on finished, niin mene suoraan finalize-tabiin
+
 view review: näytä assarin nimi
 
-test mailer, test delayed job
-
-edit review: jos on finished, niin mene suoraan finalize-tabiin
+test mailer button, test delayed job button
 
 poista group invitationit, jotka ovat vanhentuneet
 
 reopenin pitäisi forkata ja invalidoida review
 
 mailing-status: ei voi editoida, mailauksen voi perua
+
+opettajan pitäisi voida poistaa ryhmä
+
+rubric templates
 
 palautus
  lisää opiskelijat students-listaan (create group, add member, invite)
@@ -66,8 +73,6 @@ Show course instance: Create exercise, help text
 Rubric editor: help texts
 
 groups-näkymä: assign-napin painamisesta palaute
-
-opettajan pitäisi voida poistaa ryhmä
 
 reviewers-näkymässä ryhmien lukumäärä
 
