@@ -12,9 +12,6 @@
         <% @group.users.each do |user| %>
           <tr>
             <td>
-              <%= user.name %>,
-            </td>
-            <td>
               <%= user.email %>
             </td>
           </tr>
@@ -22,8 +19,6 @@
         
         <% @group.group_invitations.each do |invitation| %>
           <tr>
-            <td>
-            </td>
             <td>
               <%= text_field_tag "invitations[#{invitation.id}]", invitation.email %>
             </td>
@@ -33,19 +28,11 @@
         <% (0...@email_fields_count).each do |i| %>
           <tr>
             <td>
-            </td>
-            <td>
               <%= text_field_tag "email[#{i}]" %>
             </td>
           </tr>
         <% end %>
       </tbody>
-      <tfoot>
-        <tr>
-          <td></td>
-          <td></td>
-        </tr>
-      </tfoot>
     </table>
 
     <p>
