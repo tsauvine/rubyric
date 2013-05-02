@@ -1,6 +1,6 @@
 <tr id="sectionGradeElement<%= section_grade.id %>">
   <td>
-    <span class="sectionGradingText" id="sectionGradingOption<%= section_grade.id %>"><%= section_grade.text %></span>
+    <span class="sectionGradingText" id="sectionGradingOption<%= section_grade.id %>"><%= h section_grade.text %></span>
     <%= in_place_editor "sectionGradingOption#{section_grade.id}", {:url => url_for(:action => "rename_section_grading_option", :id => section_grade.id) } %>
   </td>
   <td class="points">

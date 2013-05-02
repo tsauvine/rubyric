@@ -35,15 +35,15 @@
     <ul>
       <li class="first"><%= link_to 'Rubyric', root_url %></li>
       <% if @course %>
-        <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
+        <li>/ <%= link_to "#{h(@course.code)} #{h(@course.name)}", @course %></li>
       <% end %>
 
       <% if @course_instance %>
-        <li>/ <%= link_to "#{@course_instance.name}", @course_instance %></li>
+        <li>/ <%= link_to "#{h(@course_instance.name)}", @course_instance %></li>
       <% end %>
 
       <% if @exercise %>
-        <li>/ <%= link_to "#{@exercise.name}", @exercise %></li>
+        <li>/ <%= link_to "#{h(@exercise.name)}", @exercise %></li>
       <% end %>
     </ul>
   </div>
