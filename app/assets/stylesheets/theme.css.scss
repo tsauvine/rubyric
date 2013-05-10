@@ -33,6 +33,7 @@ div.topnavi {
 
 .navbar-inner {
   background: red image-url("navbar.png") repeat-x;
+  filter: "progid:DXImageTransform.Microsoft.gradient(enabled=false)" !important;
   border: none;
   -webkit-border-radius: 0px;
      -moz-border-radius: 0px;
