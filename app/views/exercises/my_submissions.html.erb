@@ -1,3 +1,7 @@
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'bootstrap.js' %>
+<% end %>
+
 <div class="page-header">
   <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
@@ -25,7 +29,9 @@
     <table>
       <% @available_groups.each do |group| %>
         <tr>
-          <td colspan='2'><%= group.users.collect {|user| user.name }.join(', ') %></td>
+          <td colspan='2'>
+            <%= group.users.collect {|user| user.name }.join(', ') %>
+          </td>
         </tr>
         
         <% if group.submissions.empty? %>

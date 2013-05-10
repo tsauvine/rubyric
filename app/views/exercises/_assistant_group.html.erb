@@ -7,6 +7,15 @@
 <% assistant_group.submissions.each do |submission| %>
   <tr class="submission" id="submission<%= submission.id %>">
     <td rowspan="<%= [submission.reviews.size,1].max %>">
+      <div class="dropdown pull-right">
+        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+          <li>
+            <%= link_to 'Create new review', review_submission_path(submission.id) %>
+          </li>
+        </ul>
+      </div>
+        
       <!-- Submission -->
       <span <%= submission.late?(@exercise) ? 'class="late"'.html_safe : nil %>><%=l submission.created_at %></span>
       (<%= link_to "#{submission.extension}", submission_path(submission.id), :title => submission.filename %>)
@@ -18,8 +27,8 @@
           <tr class="submission">
         <% end; row += 1 %>
         <td>
-          <% if review.user != current_user %>
-            <%= review.user.name %>
+          <% if current_user != review.user %>
+            <%= link_to review.user.name, review %>
           <% elsif ['mailed','invalidated'].include?(review.status) %>
             <%= link_to review.user.name, finish_review_path(review.id) %>
           <% else %>
@@ -33,7 +42,7 @@
     %>
     <% if row == 0 %>
       <td>
-        <div class="hover-buttons pull-right">
+        <div class="hover-buttons">
           <%= link_to 'Create review', review_submission_path(submission.id), :class => 'btn btn-mini' %>
         </div>
       </td>

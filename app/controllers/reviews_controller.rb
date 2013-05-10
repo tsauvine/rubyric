@@ -12,7 +12,7 @@ class ReviewsController < ApplicationController
     @exercise = @submission.exercise
     load_course
 
-    return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || is_admin?(current_user)
     
     respond_to do |format|
       format.html { render :action => 'show', :layout => 'wide' }
