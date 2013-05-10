@@ -143,7 +143,7 @@ class ReviewsController < ApplicationController
 
    if params[:mail] && (@course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email))
      # Mail immediately
-     FeedbackMailer.review(@review).deliver
+     Review.deliver_reviews(@review.id)
    end
 
     redirect_to @exercise

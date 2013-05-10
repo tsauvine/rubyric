@@ -4,4 +4,4 @@
 
 <%=t :Grade %>: <%= @review.grade %><% end %>
 
-<%= (word_wrap @review.feedback, 76).html_safe %>
+<%= word_wrap(@review.feedback, :line_width => 76).html_safe %>

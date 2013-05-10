@@ -34,9 +34,8 @@ class Group < ActiveRecord::Base
         invitation = GroupInvitation.create(
           :group_id => self.id,
           :exercise_id => exercise.id,
-          :email => address)
-
-        GroupInvitation.send_invitation(invitation.id)
+          :email => address
+        )
       end
     end
 

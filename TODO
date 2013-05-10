@@ -15,14 +15,18 @@ http://www.quicktimesheets.com/
 
 
 
-
-= Soon =
+= Test =
 
 mailer erroreista mailia adminille
 
-assarin näkymä: tarkista UX
 
-edit group: opiskelijanumero pois
+= Soon =
+
+testaa arvostelu
+
+results
+
+assarin näkymä: tarkista UX
 
 etusivu
  - hintalaskuri
@@ -30,17 +34,19 @@ etusivu
 
 = Later =
 
+view review: näytä assarin nimi
+
+edit review: jos on finished, niin mene suoraan finalize-tabiin
+
+otsikoiden fontit
+
+submit ja edit group hienomman näköiseksi (fixed layout)
+
 paypal
 
 submit without logging in
 
 exercise lakkaa ottamasta palautuksia määräajan jälkeen
-
-reopen menee finish-näkymään
-
-edit review: jos on finished, niin mene suoraan finalize-tabiin
-
-view review: näytä assarin nimi
 
 test mailer button, test delayed job button
 

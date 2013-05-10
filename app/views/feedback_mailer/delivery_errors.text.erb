@@ -1,0 +1,5 @@
+Some feedback mails could not be delivered:
+
+<% @errors.each do |error| -%>
+<%= error.message.html_safe %>
+<% end -%>

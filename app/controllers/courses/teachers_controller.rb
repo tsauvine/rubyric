@@ -34,11 +34,7 @@ class Courses::TeachersController < CoursesController
       
       emails.each do |address|
         invitation = TeacherInvitation.create(:target_id => @course.id, :email => address.strip, :expires_at => Time.now + 1.weeks)
-        if ENABLE_DELAYED_JOB
-          InvitationMailer.delay.teacher_invitation(invitation.id)
-        else
-          InvitationMailer.teacher_invitation(invitation.id).deliver
-        end
+        InvitationMailer.delay.teacher_invitation(invitation.id)
         
         invited_users << {id: invitation.id, email: address}
       end

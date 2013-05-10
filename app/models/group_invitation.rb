@@ -4,6 +4,10 @@ class GroupInvitation < ActiveRecord::Base
   
   before_create :generate_token
   
+  after_create do |invitation|
+    GroupInvitation.delay.send_invitation(invitation.id)
+  end
+  
   # Generates a unique token
   def generate_token
     self.expires_at = Time.now + 2.weeks
@@ -19,18 +23,18 @@ class GroupInvitation < ActiveRecord::Base
     self.email = new_email
     self.save
     
-    GroupInvitation.send_invitation(self.id)
+    GroupInvitation.delay.send_invitation(self.id)
   end
   
-  # Send the invitation mail. If ENABLE_DELAYED_JOB, this is executed by delayed_job.
+  # Sends the invitation mail.
   def self.send_invitation(invitation_id)
     begin
       InvitationMailer.group_invitation(invitation_id).deliver
     rescue Exception => e
+      # TODO: mark invitation as invalid
       logger.error "Failed to send group invitation #{invitation_id}"
       logger.error e
     end
   end
-  handle_asynchronously :send_invitation if ENABLE_DELAYED_JOB
-
+  
 end

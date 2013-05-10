@@ -33,4 +33,10 @@ class FeedbackMailer < ActionMailer::Base
     review.status = 'mailed'
     review.save
   end
+  
+  def delivery_errors(errors)
+    @errors = errors
+    mail(:to => ERRORS_EMAIL, :subject => '[Rubyric] Undelivered feedback mails')
+  end
+  
 end

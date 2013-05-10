@@ -249,15 +249,21 @@ class Review < ActiveRecord::Base
   end
 
   def self.deliver_reviews(review_ids)
-    Review.where(:id => review_ids, :status => 'mailing').find_each do |review|
+    errors = []
+    
+    Review.where(:id => review_ids).find_each do |review|
       begin
         FeedbackMailer.review(review).deliver
-      rescue Exception => e
-        logger.error "Failed to deliver feedback mail #{review.id}"
+      rescue Net::SMTPFatalError => e
         logger.error e
+        errors << e
+        review.status = 'finished'
+        review.save
       end
     end
+    
+    # Send delivery errors to teacher
+    FeedbackMailer.delivery_errors(errors).deliver unless errors.empty?
   end
-  handle_asynchronously :deliver_reviews if ENABLE_DELAYED_JOB
   
 end
