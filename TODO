@@ -26,15 +26,13 @@ testaa arvostelu
 
 results
 
-assarin näkymä: tarkista UX
-
-etusivu
- - hintalaskuri
+submit without logging in
 
 
 = Later =
 
-view review: näytä assarin nimi
+etusivu
+ - hintalaskuri
 
 edit review: jos on finished, niin mene suoraan finalize-tabiin
 
@@ -42,9 +40,9 @@ otsikoiden fontit
 
 submit ja edit group hienomman näköiseksi (fixed layout)
 
-paypal
+batch create groups
 
-submit without logging in
+paypal
 
 exercise lakkaa ottamasta palautuksia määräajan jälkeen
 
@@ -58,6 +56,8 @@ mailing-status: ei voi editoida, mailauksen voi perua
 
 opettajan pitäisi voida poistaa ryhmä
 
+review editor: alalaitaan save/next -nappula
+
 rubric templates
 
 palautus
@@ -70,17 +70,13 @@ Rubric editor
 group editor for students
 group editor for teacher
 
-submissions-näkymä: pitäisi näkyä, kenelle on assignattu
-
 assarin show course_instance: harjoituksista yhteenveto, mitkä on jo tehty
 
 Show course instance: Näytä yleiskuva harjoitusten tilasta
 Show course instance: Create exercise, help text
 Rubric editor: help texts
 
-groups-näkymä: assign-napin painamisesta palaute
-
-reviewers-näkymässä ryhmien lukumäärä
+groups-näkymä: assign- ja save-nappien painamisesta palaute
 
 Login-laatikkoon forgot password ja sign up-linkit
 
@@ -90,5 +86,3 @@ eri jono feedback maileille
 
 assarin courses index
 - linkit suoraan harjoituksiin
-
-review editor: alalaitaan save/next -nappula
