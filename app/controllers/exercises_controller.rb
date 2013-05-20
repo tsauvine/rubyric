@@ -124,12 +124,29 @@ class ExercisesController < ApplicationController
   end
 
   def results
-    @exercise = Exercise.find(params[:id])
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @groups = @exercise.groups
+    @results = []
+    @groups = Group.where(:course_instance_id => @course_instance.id).includes([{:submissions => [:reviews => :user, :group => :users]}, :users])
+    
+    @groups.each do |group|
+      best_review = nil
+      
+      group.submissions.each do |submission|
+        next unless submission.exercise_id == @exercise.id
+        submission.reviews.each do |review|
+          next unless review.include_in_results?
+          best_review = review if best_review.nil? || review.grade > best_review.grade
+        end
+      end
+      
+      @results.concat group.users.collect {|student| [student, best_review]} if best_review
+    end
+    
+    @results.sort! { |a, b| a[0].studentnumber <=> b[0].studentnumber }
   end
 
   def statistics

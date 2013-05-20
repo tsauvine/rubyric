@@ -56,9 +56,8 @@
                 <% if can? :update, @course_instance %>
                   <li class="<%= active_nav('exercises', 'edit') %>"><%= link_to edit_exercise_path(@exercise) do %><i class="icon-wrench"></i> Settings<% end %></li>
                   <li class="<%= active_nav('rubrics', 'edit') %>"><%= link_to edit_exercise_rubric_path(@exercise) do %><i class="icon-th-list"></i> Rubric<% end %></li>
-                  <!--li><%= link_to exercise_path(@exercise) do %><i class="icon-folder-open"></i> Submissions<% end %></li-->
+                  <li class="<%= active_nav('exercises', 'results') %>"><%= link_to exercise_results_path(@exercise) do %><i class="icon-list-alt"></i> Results<% end %></li>
                   <!--li><%= link_to exercise_statistics_path(@exercise) do %><i class="icon-tasks"></i> Statistics<% end %></li-->
-                  <!--li><%= link_to exercise_results_path(@exercise) do %><i class="icon-list-alt"></i> Results<% end %></li-->
                 <% end %>
               <% else %>
                 <li><%= link_to exercise.name, exercise_path(exercise) %></li>

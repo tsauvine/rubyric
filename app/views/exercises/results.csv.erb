@@ -1,0 +1,4 @@
+studentnumber,first name,last name,email,grade,reviewer
+<% @results.each do |result| -%>
+<%= result[0].studentnumber %>,<%= result[0].firstname %>,<%= result[0].lastname %>,<%= result[0].email %>,<%= result[1].grade %>,<%= result[1].user.name %>
+<% end -%>

@@ -1,9 +1,9 @@
 Error report from <%= @request.host %> (<%= Time.now %>)
-Controller: <%= @params['controller'] %>#<%= @params['action'] %>
 
-<%= @exception.message.html_safe %>
+<%= @exception.to_s.html_safe %>
 
 Request: <%= @env['REQUEST_METHOD'] %> <%= @env['REQUEST_URI'] %>
+Controller: <%= @params['controller'] %>#<%= @params['action'] %>
 Params:
 <% for key, val in @params -%>
   <%= key %>: <%= val %>

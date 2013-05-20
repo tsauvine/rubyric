@@ -1,9 +1,0 @@
-<% group.submissions.each do |submission| %>
-  <% submission.reviews.each do |review| %>
-    <% submission.group.users.each do |student| %>
-
-      <%= h student.studentnumber %> <%= h review.user %> <%= review.grade %>
-
-    <% end %>
-  <% end %>
-<% end %>

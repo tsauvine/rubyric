@@ -7,6 +7,9 @@ class Review < ActiveRecord::Base
 
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
+  def include_in_results?
+    status == 'mailed' || status == 'finished'
+  end
   
   def calculate_grade
     categories_counter = 0
