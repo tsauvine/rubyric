@@ -99,3 +99,7 @@
   </div>
 
 <% end %> <!-- /form -->
+
+<% if @is_teacher %>
+  <%= link_to t(:Back), @exercise %>
+<% end %>

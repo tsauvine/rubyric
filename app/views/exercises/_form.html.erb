@@ -2,53 +2,63 @@
   <%= javascript_include_tag 'editExercise' %>
 <% end %>
 
-<div class="row">
-  <%= form_for([@course_instance,@exercise]) do |f| %>
-    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+<%= form_for([@course_instance,@exercise], :html => {:class => 'form-horizontal'}) do |f| %>
+  <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
 
-    <table>
-      <tr>
-        <td>Name</td>
-        <td><%= f.text_field :name %>
-          <% if @exercise.errors[:name] %>
-            <span class="error"><%= @exercise.errors[:name][0] %></span>
-          <% end %>
-        </td>
-      </tr>
-      <tr>
-        <td><%= f.label :deadline %></td>
-        <td>
-          <%= f.text_field :deadline %>
-        </td>
-      </tr>
-      <tr>
-        <td><%= f.label :deadline, 'Group size' %></td>
-        <td>
-          <%= f.text_field :groupsizemin, :class => 'input-small' %>
-          -
-          <%= f.text_field :groupsizemax, :class => 'input-small' %>
-        </td>
-        <td class="hint">
-          (min - max)
-        </td>
-      </tr>
+  <div class="control-group">
+    <%= f.label :name, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name %>
+      <% if @exercise.errors[:name] %>
+        <span class="error"><%= @exercise.errors[:name][0] %></span>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <%= f.label :deadline, :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :deadline %>
+    </div>
+  </div>
       
-    </table>
+    
+  <div class="control-group">
+    <%= f.label :groupsizemax, 'Group size', :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :groupsizemin, :class => 'input-small' %>
+      -
+      <%= f.text_field :groupsizemax, :class => 'input-small' %>
+      <% if @exercise.errors[:groupsizemin].empty? && @exercise.errors[:groupsizemax].empty? %>
+        <span class="hint">(min - max)</span>
+      <% else %>
+        <span class="error">Check values</span>
+      <% end %>
+    </div>
+  </div>
 
-    <!--p>
-      <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
-      <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
-      <%= f.check_box :anonymous_graders %> Anonymous graders<br />
-    </p-->
+  <!--p>
+    <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
+    <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
+    <%= f.check_box :anonymous_graders %> Anonymous graders<br />
+  </p-->
 
-    <!--
-    <h2>Message to be shown before submitting (HTML allowed):</h2>
-    <%= f.text_area :submit_pre_message, :rows => 3, :cols => 80 %>
+  <!--
+  <h2>Message to be shown before submitting (HTML allowed):</h2>
+  <%= f.text_area :submit_pre_message, :rows => 3, :cols => 80 %>
 
-    <h2>Message to be shown after submitting (HTML allowed):</h2>
-    <%= f.text_area :submit_post_message, :rows => 3, :cols => 80 %>
-    -->
+  <h2>Message to be shown after submitting (HTML allowed):</h2>
+  <%= f.text_area :submit_post_message, :rows => 3, :cols => 80 %>
+  -->
 
-    <p><%= f.submit 'Save', :class => 'btn btn-primary' %></p>
-  <% end %>
-</div>
+  <div class="control-group">
+    <div class="controls">
+      <% if @exercise.new_record? %>
+        <%= link_to t(:Cancel), @course_instance, :class => 'btn' %>
+      <% else %>
+        <%= link_to t(:Back), @exercise, :class => 'btn' %>
+      <% end %>
+      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

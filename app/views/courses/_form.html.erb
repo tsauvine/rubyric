@@ -1,0 +1,47 @@
+<%= form_for(@course, :html => {:class => 'form-horizontal'}) do |f| %>
+  <div class="control-group">
+    <%= f.label :code, t(:course_code), :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :code %>
+      <% if @course.errors[:code].empty? %>
+        <span class="hint"><%=t :course_code_hint %></span>
+      <% else %>
+        <span class="error"><%= @course.errors[:code][0] %></span>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <%= f.label :name, t(:course_name), :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name %>
+      <% if @course.errors[:name].empty? %>
+        <span class="hint"><%=t :course_name_hint %></span>
+      <% else %>
+        <span class="error"><%= @course.errors[:name][0] %></span>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <%= f.label :email, t(:course_email), :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :email %>
+      <span class="hint"><%=t :course_email_hint %></span>
+    </div>
+  </div>
+
+  <div class="control-group">
+    <div class="controls">
+      <% if @course.new_record? %>
+        <p class="hint"><%=t :settings_changeable_later %></p>
+        <%= link_to t(:Cancel), root_path, :class => 'btn' %>
+        <%= f.submit t(:Create), :class => 'btn btn-primary' %>
+      <% else %>
+        <%= link_to t(:Cancel), @course, :class => 'btn' %>
+        <%= f.submit t(:Save), :class => 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
+
+<% end %>

@@ -1,8 +1,8 @@
 en:
   # New
-  exercise_new_heading: "Create exercise"
+  exercise_new_heading: "Create assignment"
   
   # Edit
-  exercise_settings_heading: "Exercise settings"
+  exercise_settings_heading: "Assignment settings"
 
-  submissions: Submissions
+  submissions: "Submissions"

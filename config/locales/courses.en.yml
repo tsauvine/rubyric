@@ -1,4 +1,8 @@
 en:
+  courses:
+    show:
+      no_instances: "Course has no instances. Create at least one instance."
+
   # Index
   courses_index_heading: "Courses"
   course_create_link: "Create new course"
@@ -18,7 +22,7 @@ en:
   course_name: "Course name"
   course_name_hint: "e.g. Basics"
   course_email: "Email"
-  course_email_hint: "Feedback emails appear to come from this address if graders are set anonymous."
+  course_email_hint: "Sender address of feedback emails"
   
   # Show
   course_instances_heading: "Instances"

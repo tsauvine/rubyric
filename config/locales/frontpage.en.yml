@@ -7,7 +7,7 @@ en:
   frontpage_courses_student_heading: "My courses"
 
   frontpage_not_enrolled_heading: "You are not enrolled in any course"
-  frontpage_not_enrolled_info_html: "<ul><li>If you are a <strong>student</strong> looking to submit your exercise, please follow the instructions on the <strong>homepage of your course</strong>.</li><li>If you are a <strong>teacher</strong> and want to use Rubyric on your course, please <a href='%{path}'>follow this link</a>.</li></ul>"
+  frontpage_not_enrolled_info_html: "<ul><li>If you are a <strong>student</strong> looking to submit your assignment, please follow the instructions on the <strong>homepage of your course</strong>.</li><li>If you are a <strong>teacher</strong> and want to use Rubyric on your course, please <a href='%{path}'>follow this link</a>.</li></ul>"
 
   frontpage_create_course_link: "Create new course"
   frontpage_show_all_courses: "Show all courses"

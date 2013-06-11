@@ -45,12 +45,12 @@ class GroupsController < ApplicationController
     @email = Array.new
 
     @email_fields_count = @exercise.groupsizemax
-    @email_fields_count -= 1 if logged_in? && !@is_teacher
-
-#     if current_user
-#       #@studentnumber[0] = current_user.studentnumber
-#       @email[0] = current_user.email
-#     end
+    
+    if @is_teacher
+      @email[0] = current_user.email
+    else
+      @email_fields_count -= 1 if logged_in?
+    end
   end
 
   # GET /groups/1/edit

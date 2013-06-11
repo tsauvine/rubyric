@@ -44,12 +44,12 @@
             <% if can? :update, @course_instance %>
               <li class="<%= active_nav('course_instances', 'edit') %>"><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
               <li class="<%= active_nav('reviewers', 'index') %>"><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-user"></i> Reviewers<% end %></li>
-              <li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li>
+              <!--li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li-->
               <li class="<%= active_nav('groups', 'index') %>"><%= link_to course_instance_groups_path(@course_instance) do %><i class="icon-th"></i> Groups<% end %></li>
             <% end %>
 
             <!-- List of exercises-->
-            <li class="nav-header">Exercises</li>
+            <li class="nav-header">Assignments</li>
             <% @course_instance.exercises.each do |exercise| %>
               <% if exercise == @exercise && !@exercise.new_record? %>
                 <li class="<%= active_nav('exercises', 'show') %>"><%= link_to exercise.name, exercise_path(exercise) %></li>

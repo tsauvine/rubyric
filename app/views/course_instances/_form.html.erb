@@ -1,36 +1,34 @@
-<%= form_for([@course, @course_instance]) do |f| %>
-  <table>
-    <tr>
-      <td><%= f.label :name, t(:instance_name_label) %></td>
-      <td><%= f.text_field :name %></td>
-      <td>
-        <% if @course_instance.errors[:name].empty? %>
-          <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
-        <% else %>
-          <span class="error"><%= @course_instance.errors[:name][0] %></span>
-        <% end %>
-      </td>
-    </tr>
-    <!--
-    <% unless @course_instance.new_record? %>
-      <tr>
-        <td><%= f.label :active, t(:instance_active_label) %></td>
-        <td><%= f.check_box :active %></td>
-        <td class="hint"><%=t :instance_active_hint %></td>
-      </tr>
-    <% end %>
-    -->
-  </table>
-
-  <!--
-  <h2>Description</h2>
-  <p class="hint">Optional description is shown on the front page of the instance.</p>
-  <%= f.text_area :description, :rows => 3, :cols => 80 %>
-  -->
-
-  <% if @course_instance.new_record? %>
-    <p><%= f.submit t(:Create) %></p>
-  <% else %>
-    <p><%= f.submit t(:Save) %></p>
+<%= form_for([@course, @course_instance], :html => {:class => 'form-horizontal'}) do |f| %>
+  <div class="control-group">
+    <%= f.label :name, t(:instance_name_label), :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :name %>
+      <% if @course_instance.errors[:name].empty? %>
+        <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
+      <% else %>
+        <span class="error"><%= @course_instance.errors[:name][0] %></span>
+      <% end %>
+    </div>
+  </div>
+  <% unless @course_instance.new_record? %>
+    <div class="control-group">
+      <%= f.label :active, t(:instance_active_label), :class => 'control-label' %>
+      <div class="controls">
+        <%= f.check_box :active %>
+        <span class="hint"><%=t :instance_active_hint %></span>
+      </div>
+    </div>
   <% end %>
+
+  <div class="control-group">
+    <div class="controls">
+      <% if @course_instance.new_record? %>
+        <%= link_to t(:Cancel), @course, :class => 'btn' %>
+        <%= f.submit t(:Create), :class => 'btn btn-primary' %>
+      <% else %>
+        <%= link_to t(:Cancel), @course_instance, :class => 'btn' %>
+        <%= f.submit t(:Save), :class => 'btn btn-primary' %>
+      <% end %>
+    </div>
+  </div>
 <% end %>

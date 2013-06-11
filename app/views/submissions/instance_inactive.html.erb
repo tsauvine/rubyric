@@ -5,7 +5,7 @@
 <p>This course is not active.</p>
 
 <% unless @course.active_instances.empty? %>
-  <p>Open exercises:</p>
+  <p>Active assignments:</p>
   <ul>
     <% @course.active_instances.each do |instance| %>
       <% instance.exercises.each do |exercise| %>

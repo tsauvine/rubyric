@@ -132,7 +132,7 @@ class SubmissionsController < ApplicationController
 
     if @submission.save
       flash[:success] = 'Submission was received'
-      redirect_to submit_path(:exercise => @submission.exercise_id)
+      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id)
     else
       flash[:error] = 'Failed to submit'
     end

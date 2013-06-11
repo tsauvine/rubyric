@@ -4,8 +4,10 @@ include REXML
 class Exercise < ActiveRecord::Base
   belongs_to :course_instance
   has_many :groups, :order => 'name, id'
-  has_many :categories, {:dependent => :destroy, :order => 'position'}
-
+  
+  validates :groupsizemin, :numericality => { :only_integer => true, :greater_than => 0 }
+  validates :groupsizemax, :numericality => { :only_integer => true, :greater_than => :groupsizemin }
+  
   validates_presence_of :name
 
   def max_points

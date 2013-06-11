@@ -1,4 +1,8 @@
 fi:
+  courses:
+    show:
+      no_instances: "Kurssilla ei ole yhtään instanssia. Luo vähintään yksi."
+
   # Index
   courses_index_heading: "Kurssit"
   course_create_link: "Luo uusi kurssi"
@@ -18,7 +22,7 @@ fi:
   course_name: "Kurssin nimi"
   course_name_hint: "esim. Perusteet"
   course_email: "Sähköposti"
-  course_email_hint: "Palautepostit lähtevät tällä osoitteella, jos 'Anonyymit arvostelijat'-toiminto on käytössä."
+  course_email_hint: "Palautepostien lähettäjän osoite"
   
   # Show
   course_instances_heading: "Toteutuskerrat"

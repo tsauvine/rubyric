@@ -19,7 +19,7 @@ class CourseInstancesController < ApplicationController
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @course_instance = CourseInstance.new
+    @course_instance = CourseInstance.new() # :name => Time.now.year
   end
 
   # GET /course_instances/1/edit
@@ -44,7 +44,7 @@ class CourseInstancesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @course_instance.save
-      flash[:success] = t(:instance_created_flash)
+      #flash[:success] = t(:instance_created_flash)
       redirect_to @course_instance
     else
       render :action => 'new'

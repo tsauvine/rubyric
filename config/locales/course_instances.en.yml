@@ -1,20 +1,24 @@
 en:
+  course_instances:
+    show:
+      no_exercises: "No assignments have been created. Create at least one assignment to allow students to submit their works."
+  
   # New
-  instance_create_heading: "Create instance"
-  instance_created_flash: 'Course instance was successfully created. Next, create exercises where students can submit their assignments.'
+  instance_create_heading: "Create course instance"
+  instance_created_flash: 'Course instance was successfully created. Next, create assignments.'
   
   # Settings
   instance_settings_heading: "Instance settings"
   instance_name_label: "Name"
-  instance_name_hint: "e.g. Spring %{year}"
+  instance_name_hint: "e.g. %{year}"
   instance_active_label: "Active"
-  instance_active_hint: "Inactive course instances do not accept submissions."
+  instance_active_hint: "Only active course instances accept submissions."
   instance_updated_flash: "Instance updated."
   
   # Show
-  instance_exercises_heading: "Exercises"
-  instance_no_exercises: "No exercises"
-  instance_create_exercise: "Create new exercise"
+  instance_exercises_heading: "Assignments"
+  instance_no_exercises: "No assignments"
+  instance_create_exercise: "Create new assignment"
   instance_people_heading: "People"
   # "43 students, 2 teaching assistants":
   instance_n_students: "students"

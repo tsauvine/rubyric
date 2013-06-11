@@ -3,60 +3,56 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
-<% unless @course_instance.description.blank? %>
-  <p><%= @course_instance.description %></p>
-<% end %>
-
 <div class="row-fluid">
-
-  <!-- Exercises -->
-  <div class="span4">
-    <h2><%=t :instance_exercises_heading %></h2>
-    <p>
-    <table class="table">
-      <thead>
-        <tr>
-          <th>Exercise</th>
-          <th>Deadline</th>
-          <th>Group size</th>
-          <% if can? :update, @course %>
-            <th></th>
-          <% end %>
-        </tr>
-      </thead>
-      <tbody>
-        <% if @course_instance.exercises.empty? %>
-          <p><%=t :instance_no_exercises %></p>
-        <% else %>
-          <% @course_instance.exercises.each do |exercise| %>
+  
+    <!-- Exercises -->
+    <% if @course_instance.exercises.empty? %>
+      <div class="alert alert-info">
+        <%=t '.no_exercises' %>
+      </div>
+    <% else %>
+      <div class="span4">
+        <h2><%=t :instance_exercises_heading %></h2>
+        <table class="table">
+          <thead>
             <tr>
-              <td><%= link_to exercise.name, exercise %></td>
-              <td>
-                <% unless exercise.deadline.nil? %>
-                  <%=l exercise.deadline, :format => :short %>
-                <% end %>
-              </td>
-              <td>
-                <% if exercise.groupsizemax > exercise.groupsizemin %>
-                  <%= exercise.groupsizemin %> - <%= exercise.groupsizemax %>
-                <% else %>
-                  <%= exercise.groupsizemin %>
-                <% end %>
-              </td>
+              <th>Assignment</th>
+              <th>Deadline</th>
+              <th>Group size</th>
               <% if can? :update, @course %>
-                <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
+                <th></th>
               <% end %>
             </tr>
-          <% end %>
-        <% end %>
-      </tbody>
-    </table>
-    </p>
-  
+          </thead>
+          <tbody>
+            <% @course_instance.exercises.each do |exercise| %>
+              <tr>
+                <td><%= link_to exercise.name, exercise %></td>
+                <td>
+                  <% unless exercise.deadline.nil? %>
+                    <%=l exercise.deadline, :format => :short %>
+                  <% end %>
+                </td>
+                <td>
+                  <% if exercise.groupsizemax > exercise.groupsizemin %>
+                    <%= exercise.groupsizemin %> - <%= exercise.groupsizemax %>
+                  <% else %>
+                    <%= exercise.groupsizemin %>
+                  <% end %>
+                </td>
+                <% if can? :update, @course %>
+                  <td><%= link_to exercise, :confirm => "Delete #{exercise.name}?", :method => :delete do image_tag('trash.png', :alt => 'Delete', :title => 'Delete') end %></td>
+                <% end %>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% end %>
+    
     <% if can? :update, @course %>
       <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
     <% end %>
-  </div>
 </div>
 
 <% if @is_teacher %>
@@ -76,14 +72,16 @@
         <% end %>
       </ul>
 
-      <%= link_to t(:Edit), course_instance_reviewers_path(@course_instance) %>
+      <%= link_to 'Set reviewers', course_instance_reviewers_path(@course_instance) %>
     </div>
     
     <!-- Students -->
+    <!--
     <div class="span3 well">
       <h2>Students</h2>
       <p><%= link_to course_instance_students_path(@course_instance) do %><%= @course_instance.students.size %> students<% end %></p>
     </div>
+    -->
     
     <!-- Groups -->
     <div class="span3 well">
