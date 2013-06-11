@@ -5,6 +5,12 @@
 <% end %>
 
 <div class="page-header">
+  <div class="dropdown pull-right">
+    <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
+    <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+      <li><%= link_to 'Generate example submissions', exercise_create_example_submissions_path(@exercise) %></li>
+    </ul>
+  </div>
   <h1>
     <%= "#{@course.code} #{@course.name}" %>
     (<%= "#{@course_instance.name}" %>) -

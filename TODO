@@ -22,26 +22,24 @@ mailer erroreista mailia adminille
 
 = Soon =
 
-<<<<<<< HEAD
+index users by email
+
 results
 
 feedback mailien from-osoite on kurssin osoite, jota ei pysty asettamaan
-=======
+
 testaa arvostelu
->>>>>>> 30694436bc96fc861389f67595a5208da8b0a583
 
 submit without logging in
 
 
 = Later =
 
-<<<<<<< HEAD
 assarin view review: Back-nappula menee submittiin
-=======
+
 opettajan ja assarin pitäisi voida editoida ryhmää
 
 opettajan pitäisi voida palauttaa ryhmän puolesta
->>>>>>> 30694436bc96fc861389f67595a5208da8b0a583
 
 etusivu
  - hintalaskuri

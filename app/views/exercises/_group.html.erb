@@ -15,16 +15,14 @@
       <div class="dropdown pull-right">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
-          <li>
-            <%= link_to 'Create new review', review_submission_path(submission.id) %>
-            <%= link_to 'New submission...', submit_path(:exercise => @exercise.id, :group => group.id) %>
-            <% if @course_instance.exercises.size > 1 %>
-              <%= link_to 'Move submission...', move_submission_path(submission) %>
-            <% end %>
-            <% if submission.reviews.empty? %>
-              <%= link_to 'Delete submission...', confirm_delete_submission_path(submission) %>
-            <% end %>
-          </li>
+          <li><%= link_to 'Create new review', review_submission_path(submission.id) %></li>
+          <li><%= link_to 'New submission...', submit_path(:exercise => @exercise.id, :group => group.id) %></li>
+          <% if @course_instance.exercises.size > 1 %>
+            <li><%= link_to 'Move submission...', move_submission_path(submission) %></li>
+          <% end %>
+          <% if submission.reviews.empty? %>
+            <li><%= link_to 'Delete submission...', confirm_delete_submission_path(submission) %></li>
+          <% end %>
         </ul>
       </div>
       

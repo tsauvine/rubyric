@@ -77,7 +77,7 @@ class ExercisesController < ApplicationController
     if @exercise.save
       @exercise.initialize_example
 
-      flash[:success] = 'Assignment was successfully created.'
+      #flash[:success] = 'Assignment was successfully created.'
       redirect_to @exercise
     else
       render :action => "new"
@@ -100,7 +100,7 @@ class ExercisesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @exercise.update_attributes(params[:exercise])
-      flash[:success] = 'Assignment was successfully updated.'
+      #flash[:success] = 'Assignment was successfully updated.'
       redirect_to @exercise
     else
       render :action => "edit"
