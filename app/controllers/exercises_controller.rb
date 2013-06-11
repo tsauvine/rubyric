@@ -139,7 +139,7 @@ class ExercisesController < ApplicationController
         next unless submission.exercise_id == @exercise.id
         submission.reviews.each do |review|
           next unless review.include_in_results?
-          best_review = review if best_review.nil? || review.grade > best_review.grade
+          best_review = review if best_review.nil? || (review.grade && review.grade > best_review.grade)
         end
       end
       

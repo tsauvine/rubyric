@@ -24,12 +24,14 @@ mailer erroreista mailia adminille
 
 testaa arvostelu
 
-results
-
 submit without logging in
 
 
 = Later =
+
+opettajan ja assarin pitäisi voida editoida ryhmää
+
+opettajan pitäisi voida palauttaa ryhmän puolesta
 
 etusivu
  - hintalaskuri
@@ -52,7 +54,7 @@ poista group invitationit, jotka ovat vanhentuneet
 
 reopenin pitäisi forkata ja invalidoida review
 
-mailing-status: ei voi editoida, mailauksen voi perua
+mailing-status: arvostelua ei voi editoida, mailauksen voi perua
 
 opettajan pitäisi voida poistaa ryhmä
 
@@ -68,7 +70,6 @@ Rubric editor
  weights
 
 group editor for students
-group editor for teacher
 
 assarin show course_instance: harjoituksista yhteenveto, mitkä on jo tehty
 
