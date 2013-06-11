@@ -33,6 +33,7 @@ class GroupsController < ApplicationController
   def new
     @exercise = Exercise.find(params[:exercise_id])
     load_course
+    @is_teacher = @course.has_teacher(current_user)
 
     # TODO: redirect to the correct IdP if using shibboleth
     return access_denied unless logged_in? || @exercise.submit_without_login
@@ -44,7 +45,7 @@ class GroupsController < ApplicationController
     @email = Array.new
 
     @email_fields_count = @exercise.groupsizemax
-    @email_fields_count -= 1 if logged_in?
+    @email_fields_count -= 1 if logged_in? && !@is_teacher
 
 #     if current_user
 #       #@studentnumber[0] = current_user.studentnumber
@@ -71,7 +72,9 @@ class GroupsController < ApplicationController
   # POST /groups
   def create
     @exercise = Exercise.find(params[:exercise_id])
-
+    load_course
+    @is_teacher = @course.has_teacher(current_user)
+    
     return access_denied unless logged_in? || @exercise.submit_without_login
 
     # Read addresses
@@ -89,7 +92,7 @@ class GroupsController < ApplicationController
 #     end
 
     @group = Group.new(params[:group])
-    @group.users << current_user if current_user
+    @group.users << current_user if current_user && !@is_teacher
 
     # Automatic groupname
     @group.name = (@group.users.collect { |user| user.studentnumber }).join('_')
