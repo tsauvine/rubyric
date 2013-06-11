@@ -91,7 +91,7 @@
                 <table class="phrases">
                   <tbody data-bind="foreach: phrases">
                     <tr class="phrase">
-                      <td class="phrase" data-bind="html: escaped_content, click: clickPhrase"></td>
+                      <td class="phrase" data-bind="html: escaped_content, click: clickPhrase, css: { highlighted:  highlighted() }"></td>
                     </tr>
                   </tbody>
                 </table>

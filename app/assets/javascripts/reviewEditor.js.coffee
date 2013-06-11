@@ -72,6 +72,7 @@ class Criterion
 
 class Phrase
   constructor: (@rubricEditor, @page) ->
+    @highlighted = ko.observable(false)
 
   load_json: (data) ->
     @id = data['id']
@@ -81,6 +82,7 @@ class Phrase
 
   clickPhrase: ->
     @page.addPhrase(@content, @categoryId)
+    @highlighted(true)
 
 
 class ReviewEditor

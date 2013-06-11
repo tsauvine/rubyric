@@ -228,10 +228,16 @@ table.histogram td {
   margin: 0em 0em 1em 0em;
 }
 
-.rubric .phrases td {
-  border: 1px solid gray;
-  cursor: pointer;
-  padding: 4px;
+.rubric .phrases {
+  td {
+    border: 1px solid gray;
+    cursor: pointer;
+    padding: 4px;
+  }
+  
+  td.highlighted {
+    font-weight: bold;
+  }
 }
 
 /*.rubric .phrases td:hover {
