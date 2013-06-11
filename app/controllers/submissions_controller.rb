@@ -48,13 +48,15 @@ class SubmissionsController < ApplicationController
     return access_denied unless current_user || @exercise.submit_without_login
 
     # Check that instance is open
-    unless @course_instance.active
+    if !@course_instance.active && !@is_teacher
       render :action => 'instance_inactive'
       return
     end
 
     # Find groups that the user is part of
-    if @user
+    if @is_teacher
+      @available_groups = Group.where('course_instance_id=?', @course_instance.id).joins(:users)
+    elsif @user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, @user.id).joins(:users)
     else
       @available_groups = []
@@ -64,21 +66,22 @@ class SubmissionsController < ApplicationController
     if params[:group]
       # Group given as a parameter
       @group = Group.find(params[:group])
-      return access_denied unless @group.has_member?(current_user) || @is_teacher
+      return access_denied unless @group.has_member?(current_user) || @is_teacher || @exercise.submit_without_login
+    elsif !@user
+      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
+    elsif @available_groups.size > 1 || (@exercise.groupsizemax > 1 && @available_groups.size == 0) || @is_teacher
+      render :action => 'select_group'
+      return
     elsif @available_groups.size == 1
       @group = @available_groups[0]
-    elsif @exercise.groupsizemax > 1 && @available_groups.size != 1
-      render :action => 'select_group'
-      return 
-    end
-
-    # Redirect to create group if no group is selected
-    if !@group && @exercise.groupsizemax > 1
-      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
-      return
     end
     
-    @submissions = Submission.where(:group_id => @group.id, :exercise_id => @exercise.id).order('created_at DESC').all
+    # Load previous submissions
+    if @group
+      @submissions = Submission.where(:group_id => @group.id, :exercise_id => @exercise.id).order('created_at DESC').all
+    else
+      @submissions = []
+    end
 
     @submission = Submission.new
   end
@@ -87,15 +90,16 @@ class SubmissionsController < ApplicationController
     @submission = Submission.new(params[:submission])
     @exercise = @submission.exercise
     load_course
+    @is_teacher = @course.has_teacher(current_user)
+    
     return access_denied unless logged_in? || @exercise.submit_without_login
 
     # Check that instance is open
-    unless @course_instance.active
+    unless @course_instance.active || @is_teacher
       flash[:error] = 'Submission rejected. Course instance is not active.'
       redirect_to submit_url(@exercise.id)
       return
     end
-
 
     user = current_user
     unless @submission.group

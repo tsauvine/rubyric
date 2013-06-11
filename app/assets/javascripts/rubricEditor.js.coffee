@@ -375,7 +375,7 @@ class RubricEditor
   initializeDefault: ->
     @gradingMode('average')
     @finalComment('')
-    @feedbackCategories([new FeedbackCategory(this,'Strengths'),new FeedbackCategory(this,'Weaknesses'),new FeedbackCategory(this,'Other comments')])
+    @feedbackCategories([new FeedbackCategory(this, {name: 'Strengths', id:0}),new FeedbackCategory(this, {name:'Weaknesses', id:1}),new FeedbackCategory(this, {name:'Other comments', id:2})])
 
     page = new Page(this)
     page.initializeDefault()
@@ -488,4 +488,4 @@ class RubricEditor
 
 
 jQuery ->
-  new RubricEditor
+  new RubricEditor()

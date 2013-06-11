@@ -1,15 +1,38 @@
-studentnumber,reviewer,grade<br />
+<div class="page-header">
+  <h1>
+    <%= "#{@course.code} #{@course.name}" %>
+    (<%= "#{@course_instance.name}" %>) -
+    <%= @exercise.name %>
+  </h1>
+</div>
 
-<% @groups.each do |group| %>
-  <% group.submissions.each do |submission| %>
-    <% submission.reviews.each do |review| %>
-      <% submission.group.users.each do |student| %>
+<p>
+  <%= link_to exercise_results_path(@exercise, :format => :csv), :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %> <span class="hint"></span>
+</p>
 
-        <%= h student.studentnumber %>,<%= h review.user.studentnumber %>,<%= review.grade %><br />
-
-      <% end %>
+<table class="table table-condensed table-bordered table-striped">
+  <thead>
+    <tr>
+      <th>studentnumber</th>
+      <th>first name</th>
+      <th>last name</th>
+      <th>email</th>
+      <th>grade</th>
+      <th>reviewer</th>
+    </tr>
+  </thead>
+  <tbody>
+    <% @results.each do |result| %>
+      <tr>
+        <td><%= result[0].studentnumber %></td>
+        <td><%= result[0].firstname %></td>
+        <td><%= result[0].lastname %></td>
+        <td><%= result[0].email %></td>
+        <td><%= result[1].grade %></td>
+        <td><%= result[1].user.name %></td>
+      </tr>
     <% end %>
-  <% end %>
-<% end %>
+  </tbody>
+</table>
 
-<p><%= link_to 'Back', @exercise %></p>
+<p>Note: In case multiple reviews exist for the same group, the review with the highest grade counts.</p>

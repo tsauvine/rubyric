@@ -15,7 +15,7 @@
 
     <table>
       <tbody>
-        <% if logged_in? %>
+        <% if logged_in? && !@is_teacher %>
           <tr>
             <td>
               <%= current_user.email %>

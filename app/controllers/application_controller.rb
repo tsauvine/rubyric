@@ -144,7 +144,7 @@ class ApplicationController < ActionController::Base
   rescue_from Exception do |exception|
     begin
       # Send email
-      if ERRORS_EMAIL && !(exception.is_a?(ActionController::RoutingError)) # || local_request?
+      if ERRORS_EMAIL && Rails.env == 'production' && !(exception.is_a?(ActionController::RoutingError))
         ErrorMailer.snapshot(exception, params, request).deliver
       end
     rescue => e

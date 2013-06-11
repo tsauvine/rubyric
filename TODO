@@ -22,16 +22,26 @@ mailer erroreista mailia adminille
 
 = Soon =
 
+<<<<<<< HEAD
 results
 
 feedback mailien from-osoite on kurssin osoite, jota ei pysty asettamaan
+=======
+testaa arvostelu
+>>>>>>> 30694436bc96fc861389f67595a5208da8b0a583
 
 submit without logging in
 
 
 = Later =
 
+<<<<<<< HEAD
 assarin view review: Back-nappula menee submittiin
+=======
+opettajan ja assarin pitäisi voida editoida ryhmää
+
+opettajan pitäisi voida palauttaa ryhmän puolesta
+>>>>>>> 30694436bc96fc861389f67595a5208da8b0a583
 
 etusivu
  - hintalaskuri
@@ -54,7 +64,7 @@ poista group invitationit, jotka ovat vanhentuneet
 
 reopenin pitäisi forkata ja invalidoida review
 
-mailing-status: ei voi editoida, mailauksen voi perua
+mailing-status: arvostelua ei voi editoida, mailauksen voi perua
 
 opettajan pitäisi voida poistaa ryhmä
 
@@ -70,7 +80,6 @@ Rubric editor
  weights
 
 group editor for students
-group editor for teacher
 
 assarin show course_instance: harjoituksista yhteenveto, mitkä on jo tehty
 
