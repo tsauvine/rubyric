@@ -22,14 +22,16 @@ mailer erroreista mailia adminille
 
 = Soon =
 
-testaa arvostelu
-
 results
+
+feedback mailien from-osoite on kurssin osoite, jota ei pysty asettamaan
 
 submit without logging in
 
 
 = Later =
+
+assarin view review: Back-nappula menee submittiin
 
 etusivu
  - hintalaskuri
@@ -86,3 +88,7 @@ eri jono feedback maileille
 
 assarin courses index
 - linkit suoraan harjoituksiin
+
+do not show the 'Delete review' option if submission has reviews
+
+li.active harmaalla
