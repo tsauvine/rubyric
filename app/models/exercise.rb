@@ -6,7 +6,7 @@ class Exercise < ActiveRecord::Base
   has_many :groups, :order => 'name, id'
   
   validates :groupsizemin, :numericality => { :only_integer => true, :greater_than => 0 }
-  validates :groupsizemax, :numericality => { :only_integer => true, :greater_than => :groupsizemin }
+  validates :groupsizemax, :numericality => { :only_integer => true, :greater_than_or_equal_to => :groupsizemin }
   
   validates_presence_of :name
 
