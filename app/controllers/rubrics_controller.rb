@@ -55,26 +55,22 @@ class RubricsController < ApplicationController
 
     # Load xml
     if params[:file] && !params[:file].blank?
-      #@exercise.load_json(params[:file])
-      @exercise.load_xml1(params[:file].read)
-      #@exercise.rubric = params[:file].read
+      @exercise.load_rubric(params[:file].read)
       @exercise.save
       redirect_to edit_exercise_rubric_path(@exercise)
     end
-    
   end
 
   def download
-    @exercise = Exercise.find(params[:id])
+    @exercise = Exercise.find(params[:exercise_id])
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    xml = @exercise.generate_xml
-    send_data(xml, :filename => "#{@exercise.name}.xml", :type => 'text/xml')
-
-    #redirect_to :controller => 'exercises', :action => 'show', :id => @exercise.id
-    #redirect_to @exercise
+    #xml = @exercise.generate_xml
+    #send_data(xml, :filename => "#{@exercise.name}.xml", :type => 'text/xml')
+    json = @exercise.rubric
+    send_data(json, :filename => "#{@exercise.name}.json", :type => 'application/json')
   end
   
 end

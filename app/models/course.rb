@@ -60,7 +60,7 @@ class Course < ActiveRecord::Base
     deadline = Time.mktime(t.year, t.month, t.day)
     exercise = Exercise.create(
       :course_instance_id => instance.id,
-      :name => 'Exercise 1',
+      :name => 'Assignment 1',
       :deadline => deadline,
       :groupsizemax => 3
     )

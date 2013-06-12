@@ -15,6 +15,20 @@
 </style>
 
 <div class="page-header">
+  <div class="pull-right">
+    <div class="btn-group">
+      <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
+        Action
+        <span class="caret"></span>
+      </a>
+      <ul class="dropdown-menu">
+        <li><%= link_to 'Upload rubric', upload_exercise_rubric_path(@exercise) %></li>
+        <li><%= link_to 'Download rubric', download_exercise_rubric_path(@exercise) %></li>
+      </ul>
+    </div>
+    <button class="btn btn-success" data-bind="click: clickSaveRubric">Save</button>
+  </div>
+  
   <h1><%= link_to @exercise.name, @exercise %> - Editing rubric</h1>
 </div>
 
@@ -22,10 +36,10 @@
 <div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">
   <!-- Tabs -->
   <div class="row-fluid">
-    <div class="span1">
-      <button class="btn btn-success" data-bind="click: clickSaveRubric">Save</button>
-    </div>
-    <div class="span11">
+    <!--div class="span1">
+      
+    </div-->
+    <div class="span12">
       <ul id="tabs" class="nav nav-tabs">
         <li class="active">
           <a id="tab-settings-link" href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>

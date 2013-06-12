@@ -66,7 +66,18 @@ class Exercise < ActiveRecord::Base
   # "finalComment":"Loppukaneetti\n<b>Toinen rivi</b>"
   # }
   
-  # Load rubric from an XML file.
+  # rubric: string
+  def load_rubric(rubric)
+    looks_like_xml = rubric[0] == '<'
+    
+    if looks_like_xml
+      load_xml1(rubric)
+    else
+      self.rubric = rubric
+    end
+  end
+  
+  # Load rubric from an XML file (version Rubyric 1).
   # This erases the existing rubric.
   def load_xml1(file)
     # Parse XML
