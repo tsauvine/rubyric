@@ -22,9 +22,8 @@ mailer erroreista mailia adminille
 
 = Soon =
 
-upload/download rubrics
-rubric repository
 phrase grades
+rubric repository
 submit without logging in
 
 
@@ -94,3 +93,5 @@ assarin courses index
 do not show the 'Delete review' option if submission has reviews
 
 li.active harmaalla
+
+upload rubric näyttämään hienommalta

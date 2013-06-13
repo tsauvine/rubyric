@@ -210,33 +210,50 @@ table.histogram td {
  * Feedback editor (assistant view)
  ***********************************/
 
-.rubric table.phrases, .rubric-editor .add-phrase {
-  /*font-size: .8em;*/
-}
+.rubric {
+  h3 button {
+    visibility: hidden;
+  }
 
-.rubric select {
-  margin: 0px;
-}
-
-.rubric table.phrases {
-  background: #F8F8F8;
-  width: 100%;
-  margin: 0em 0em 0em 0em;
-}
-
-.rubric div.criterion {
-  margin: 0em 0em 1em 0em;
-}
-
-.rubric .phrases {
-  td {
-    border: 1px solid gray;
-    cursor: pointer;
-    padding: 4px;
+  div.criterion {
+    margin: 0em 0em 1em 0em;
   }
   
-  td.highlighted {
-    font-weight: bold;
+  table.phrases {
+    background: #F8F8F8;
+    width: 100%;
+    margin: 0em 0em 0em 0em;
+  }
+
+  .phrases {
+    tr {
+      border: 1px solid gray;
+    }
+    
+    td {
+      cursor: pointer;
+      padding: 4px;
+    }
+    
+    button.highlighted {
+      font-weight: bold;
+      border: 1px solid #622;
+      background: #fcc;
+    }
+  }
+  
+  .rubric select {
+    margin: 0px;
+  }
+}
+
+.rubric.compact {
+  h3 button {
+    visibility: visible;
+  }
+  
+  div.phrases {
+    display: none;
   }
 }
 

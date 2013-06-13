@@ -54,18 +54,6 @@ class Exercise < ActiveRecord::Base
     # TODO
   end
 
-  #{ "version":2,
-  #  "pages":[
-  #    {"id":0,"name":"Sivu 1",
-  #     "criteria":[{"id":0,"name":"Kriteeri 1.1","phrases":[{"id":0,"text":"Mikä meni hyvin\nToinen rivi","category":"Hyvää"},{"id":1,"text":"<b>Mikä meni huonosti</b>","category":"Kehitettävää"},{"id":8,"text":"Jotain muuta","category":"Muuta"}]},{"id":1,"name":"Kriteeri 1.2","phrases":[{"id":8,"text":"Olipa hyvä","category":"Hyvää"},{"id":8,"text":"Olipa huono","category":"Kehitettävää"}]}]},
-  #  ],
-  
-  # "grades":["Failed",1,2,3,4,5],
-  # "gradingMode":"average",
-  # "feedbackCategories":["Hyvää","Kehitettävää","Muuta"],
-  # "finalComment":"Loppukaneetti\n<b>Toinen rivi</b>"
-  # }
-  
   # rubric: string
   def load_rubric(rubric)
     looks_like_xml = rubric[0] == '<'
@@ -87,7 +75,7 @@ class Exercise < ActiveRecord::Base
     criterion_counter = 0
     phrase_counter = 0
     pages = []
-    rubric = {version: 2, pages: pages}
+    rubric = {version: '2', pages: pages}
     
     # Categories
     positive_caption_element = XPath.first(doc, "/rubric/positive-caption")
@@ -157,7 +145,9 @@ class Exercise < ActiveRecord::Base
         # Section grading options
         rubric['grades'] = grades = []
         section.each_element('grade') do |grading_option|
-          grades << grading_option.text.strip
+          raw_grade = grading_option.text.strip
+          grade = Float(raw_grade) rescue raw_grade  # Convert to number if possible
+          grades << grade
         end
 
       end # sections

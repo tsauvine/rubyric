@@ -3,8 +3,10 @@
 
 class Page
   constructor: (@rubricEditor) ->
-    @criteria = []
+    @criteria = ko.observableArray()
+    @criteriaById = {}          # id => Criterion
     @grade = ko.observable()
+    @phrasesHidden = ko.observable(false)
 
     @feedback = []              # [{id: category_id, value: ko.observable('feedback')}]
     @feedbackByCategory = {}    # category_id => {}
@@ -12,7 +14,14 @@ class Page
     @finalizing = ko.computed((->
       return @rubricEditor.finalizing()
       ), this)
-
+    
+    @averageGrade = ko.computed((-> 
+      grades = []
+      for criterion in @criteria()
+        grades.push(criterion.grade()) if criterion.gradeRequired
+      
+      return @rubricEditor.calculateGrade(grades)
+    ), this)
 
   load_rubric: (data) ->
     @name = data['name']
@@ -24,23 +33,42 @@ class Page
       @feedbackByCategory[category.id] = feedback
 
     for criterion_data in data['criteria']
-      @criteria.push(new Criterion(@rubricEditor, this, criterion_data))
+      criterion = new Criterion(@rubricEditor, this, criterion_data)
+      @criteria.push(criterion)
+      @criteriaById[criterion.id] = criterion
   
   load_review: (data) ->
     if data['feedback'] && data['feedback'].length > 0
-      
       for feedback_data in data['feedback']
         feedback = @feedbackByCategory[feedback_data['category_id']]
         feedback.value(feedback_data['text']) if feedback
-      
+    
+    if data['criteria']
+      for criterion_data in data['criteria']
+        criterion = @criteriaById[criterion_data['criterion_id']]
+        continue unless criterion
+        
+        phrase = criterion.phrasesById[criterion_data['selected_phrase_id']]
+        continue unless phrase
+        
+        criterion.selectedPhrase(phrase)
+        phrase.highlighted(true)
+        
+    
     @grade(data['grade']) if data['grade']?
 
   to_json: ->
-    feedback = @feedback.map (fb) -> return { category_id: fb.id, text: fb.value() }
+    feedback = @feedback.map (fb) -> { category_id: fb.id, text: fb.value() }
+    
+    criteria = []
+    for criterion in @criteria()
+      c = criterion.to_json()
+      criteria.push(c) if c
     
     json = {
       id: @id,
       feedback: feedback,
+      criteria: criteria,
       grade: @grade()
     }
 
@@ -55,39 +83,71 @@ class Page
     @rubricEditor.cancelFinalize()
     event.preventDefault()
     return false
-    
+  
+  togglePhraseVisibility: ->
+    @phrasesHidden(!@phrasesHidden())
+
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
     @id = data['id']
     @name = data['name']
     @phrases = []
+    @phrasesById = {} # id => Phrase
+    @selectedPhrase = ko.observable()  # Phrase object which is selected as the grade
+    @gradeRequired = false
 
     for phrase_data in data['phrases']
-      phrase = new Phrase(@rubricEditor, @page)
+      phrase = new Phrase(@rubricEditor, @page, this)
       phrase.load_json(phrase_data)
       @phrases.push(phrase)
+      @phrasesById[phrase.id] = phrase
 
+  setGrade: (phrase) ->
+    return if @page.finalizing()
+    
+    # Unhilight previous
+    previousPhrase = @selectedPhrase()
+    previousPhrase.highlighted(false) if previousPhrase
+    
+    # Hilight new
+    @selectedPhrase(phrase)
+    phrase.highlighted(true) if phrase
+  
+  to_json: ->
+    return unless @selectedPhrase()
+    
+    return { criterion_id: @id, selected_phrase_id: @selectedPhrase().id }
+
+  grade: ->
+    return @selectedPhrase().grade if @selectedPhrase()
 
 
 class Phrase
-  constructor: (@rubricEditor, @page) ->
+  constructor: (@rubricEditor, @page, @criterion) ->
     @highlighted = ko.observable(false)
 
   load_json: (data) ->
     @id = data['id']
     @categoryId = data['category']
+    @grade = data['grade']
     @content = data['text']
     @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+    
+    @criterion.gradeRequired = true if @grade?
 
   clickPhrase: ->
     @page.addPhrase(@content, @categoryId)
-    @highlighted(true)
+    this.clickGrade()
+
+  clickGrade: ->
+    @criterion.setGrade(this) if @grade
 
 
 class ReviewEditor
 
   constructor: () ->
+    @paused = ko.observable(true)
     @finishedText = ko.observable('')
     @finalizing = ko.observable(false)
     
@@ -199,12 +259,12 @@ class ReviewEditor
         page.load_review(page_data) if page
     
     ko.applyBindings(this)
-
+    @paused(false)
 
   save: ->
     # Encode review as JSON
     pages_json = @pages.map (page) -> page.to_json()
-    json_string = JSON.stringify({version: 2, pages: pages_json})
+    json_string = JSON.stringify({version: '2', pages: pages_json})
     $('#review_payload').val(json_string)
     
     # Set grade
@@ -251,7 +311,8 @@ class ReviewEditor
     this.collectFeedbackTexts()
     
     # Calculate grade
-    grade = this.calculateGrade()
+    grades = @pages.map (page) -> page.grade()
+    grade = this.calculateGrade(grades)
     @finalGrade(grade)
   
   collectFeedbackTexts: ->
@@ -276,39 +337,74 @@ class ReviewEditor
     
     @finishedText(finalText)
     
-    
   
-  calculateGrade: ->
+  #
+  # Calculates average grade
+  # If @numericGrading if true, average grade is calculated as the average value of the given grades.
+  # If @numericGrading if false, average index is used instead.
+  # If some grade null or undefined, undefined is returned.
+  # grades: array of grade values (strings or numbers)
+  #
+  calculateGrade: (grades) ->
+    return undefined if !grades? || grades.length < 1
+    
     nonNumericGradesSeen = false
-    gradeSum = 0
+    gradeSum = 0.0
     indexSum = 0
     
-    for page in @pages
-      grade = page.grade()
-      index = @gradeIndexByValue[grade]
-      
-      if grade?
-        # Grade is set
-        indexSum += index
-        
-        if isNaN(grade)
-          nonNumericGradesSeen = true
-        else
-          gradeSum += grade
-      else
-        # Grade not set
-        return false
+    for grade in grades
+      return undefined unless grade?
     
-    pageCount = @pages.length
-    meanGrade = Math.round(gradeSum / pageCount)
-    meanIndex = Math.round(indexSum / pageCount)
+      index = @gradeIndexByValue[grade]
+      indexSum += index
+      
+      # FIXME: does isNaN think that string "5" is numeric?
+      if isNaN(grade)
+        nonNumericGradesSeen = true
+      else
+        gradeSum += grade
     
     if !@numericGrading
+      meanIndex = Math.round(indexSum / grades.length)
       return @grades[meanIndex]
     else if nonNumericGradesSeen
-      return null  # Grade must be selected manually
+      return undefined  # Grade must be selected manually
     else
+      meanGrade = Math.round(gradeSum / grades.length)
       return meanGrade
+  
+  
+#   calculateGrade: ->
+#     nonNumericGradesSeen = false
+#     gradeSum = 0
+#     indexSum = 0
+#     
+#     for page in @pages
+#       grade = page.grade()
+#       index = @gradeIndexByValue[grade]
+#       
+#       if grade?
+#         # Grade is set
+#         indexSum += index
+#         
+#         if isNaN(grade)
+#           nonNumericGradesSeen = true
+#         else
+#           gradeSum += grade
+#       else
+#         # Grade not set
+#         return false
+#     
+#     pageCount = @pages.length
+#     meanGrade = Math.round(gradeSum / pageCount)
+#     meanIndex = Math.round(indexSum / pageCount)
+#     
+#     if !@numericGrading
+#       return @grades[meanIndex]
+#     else if nonNumericGradesSeen
+#       return null  # Grade must be selected manually
+#     else
+#       return meanGrade
     
 
   #

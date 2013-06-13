@@ -200,12 +200,12 @@ class Criterion
     
     phrase = new Phrase(@rubricEditor, this)
     phrase.content("What went well")
-    phrase.category("Strengths")
+    phrase.category(0)
     @phrases.push(phrase)
 
     phrase = new Phrase(@rubricEditor, this)
     phrase.content("What could be improved")
-    phrase.category("Weaknesses")
+    phrase.category(1)
     @phrases.push(phrase)
     
     
@@ -242,6 +242,7 @@ class Phrase
   constructor: (@rubricEditor, @criterion, data) ->
     @content = ko.observable('')
     @category = ko.observable()
+    @grade = ko.observable()         # grade string
     @editorActive = ko.observable(false)
     
     if data
@@ -256,11 +257,17 @@ class Phrase
 
     category = @rubricEditor.feedbackCategoriesById[data['category']]
     @category(category)
+    
+    grade = @rubricEditor.gradesByValue[data['grade']]
+    @grade(grade)
 
 
   to_json: ->
-    category = if @category() then @category().id else undefined
-    return {id: @id, text: @content(), category: category}
+    json = { id: @id, text: @content() }
+    json['category'] = @category().id if @category()
+    json['grade'] = @grade().to_json() if @grade()
+    
+    return json
 
   activateEditor: ->
     @editorActive(true)
@@ -319,8 +326,9 @@ class RubricEditor
     @feedbackCategoryIdCounter = 0
     @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
-    @grades = ko.observableArray()             # Array of Grade objects
     @gradingMode = ko.observable('average')    # String
+    @grades = ko.observableArray()             # Array of Grade objects
+    @gradesByValue = {}                        # string => Grade
     @feedbackCategories = ko.observableArray() # Array of FeedbackCategory objects
     @feedbackCategoriesById = {}               # id => FeedbackCategory
     @finalComment = ko.observable('')
@@ -351,26 +359,6 @@ class RubricEditor
     else
       return @idCounters[counterName]++
 
-#   nextPageId: (id) ->
-#     if id
-#       @pageIdCounter = id if id > @pageIdCounter
-#       return @pageIdCounter
-#     else
-#       return @pageIdCounter++
-
-#   nextCriterionId: (id) ->
-#     if id 
-#       @criterionIdCounter = id if id > @criterionIdCounter
-#       return @criterionIdCounter
-#     else
-#       return @criterionIdCounter++
-
-#   nextPhraseId: (id) ->
-#     if id
-#       @phraseIdCounter = id if id > @phraseIdCounter
-#       return @phraseIdCounter
-#     else
-#       return @phraseIdCounter++
 
   initializeDefault: ->
     @gradingMode('average')
@@ -434,7 +422,9 @@ class RubricEditor
       # Load grades
       if data['grades']
         for grade in data['grades']
-          @grades.push(new Grade(grade.toString(), @grades))
+          grade = new Grade(grade.toString(), @grades)
+          @grades.push(grade)
+          @gradesByValue[grade.value()] = grade
 
       # Load pages
       for page_data in data['pages']
@@ -455,7 +445,7 @@ class RubricEditor
     grades = @grades().map (grade) -> grade.to_json()
 
     json = {
-      version: 2
+      version: '2'
       pages: pages
       feedbackCategories: categories
       grades: grades

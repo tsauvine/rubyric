@@ -79,19 +79,27 @@
           <!-- /ko -->
           
           <!-- Rubric -->
-          <div class="rubric" data-bind="foreach: criteria">
+          <div class="rubric" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
             <div class="criterion">
               <!-- Heading -->
-              <h3 data-bind="text: name"></h3>
-
-              <div class="clear"></div>
+              <h3>
+                <span data-bind="text: name"></span>
+                <!-- ko if: selectedPhrase() -->
+                  <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
+                <!-- /ko -->
+              </h3>
 
               <!-- Phrases -->
+              <div class="clear"></div>
+              
               <div class="phrases">
                 <table class="phrases">
                   <tbody data-bind="foreach: phrases">
                     <tr class="phrase">
-                      <td class="phrase" data-bind="html: escaped_content, click: clickPhrase, css: { highlighted:  highlighted() }"></td>
+                      <td class="grade" data-bind="if: grade">
+                        <button data-bind="text: grade, click: clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
+                      </td>
+                      <td class="phrase" data-bind="html: escaped_content, click: clickPhrase"></td>
                     </tr>
                   </tbody>
                 </table>
@@ -99,11 +107,19 @@
             </div>
           </div>
           
+          <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
+          
           <!-- Grades -->
           <div data-bind="if: $root.grades.length > 1">
             <p>
               <h3>Grade</h3>
-              <select data-bind="options: $root.grades, value: grade, attr: {disabled: finalizing}, optionsCaption: 'Choose grade...'"></select>
+              
+              <p>
+                <select data-bind="options: $root.grades, value: grade, attr: {disabled: finalizing}, optionsCaption: 'Choose grade...'"></select>
+                <!-- ko if: averageGrade -->
+                  <br />Calculated average is <strong data-bind="text: averageGrade"></strong>
+                <!-- /ko -->
+              </p>
             </p>
           </div>
 

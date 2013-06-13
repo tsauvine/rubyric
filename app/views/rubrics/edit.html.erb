@@ -36,9 +36,6 @@
 <div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">
   <!-- Tabs -->
   <div class="row-fluid">
-    <!--div class="span1">
-      
-    </div-->
     <div class="span12">
       <ul id="tabs" class="nav nav-tabs">
         <li class="active">
@@ -154,8 +151,13 @@
                   <tr class="phrase">
                     <td class="phraseType">
                       <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'name', value: category">
-                        <option data-bind="text: $data.value"></option>
                       </select>
+                      <!--option data-bind="text: $data.value"></option-->
+                    </td>
+                    <td class="phraseType">
+                      <select class="phraseType" data-bind="options: $root.grades, optionsCaption: '= Grade =', optionsText: 'value', value: grade">
+                      </select>
+                      <!--option data-bind="text: $data.value"></option-->
                     </td>
                     <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit'}"></td>
                     <td class="buttons-column">
