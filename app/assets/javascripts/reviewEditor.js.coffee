@@ -53,7 +53,6 @@ class Page
         
         criterion.selectedPhrase(phrase)
         phrase.highlighted(true)
-        
     
     @grade(data['grade']) if data['grade']?
 
@@ -144,7 +143,7 @@ class Phrase
     @criterion.setGrade(this) if @grade
 
 
-class ReviewEditor
+class @ReviewEditor
 
   constructor: () ->
     @paused = ko.observable(true)
@@ -164,16 +163,11 @@ class ReviewEditor
     @gradingMode = 'none'
     @finalGrade = ko.observable()
 
-    @rubric_url = $('#review-editor').data('rubric-url')
-    @review_url = $('#review-editor').data('review-url')
-
-    this.loadRubric(@rubric_url)
-
 
   #
   # Loads the rubric by AJAX
   #
-  loadRubric: (url) ->
+  loadRubric: (url, callback) ->
     $.ajax
       type: 'GET'
       url: url
@@ -181,11 +175,12 @@ class ReviewEditor
       dataType: 'json'
       success: (data) =>
         this.parseRubric(data)
+        callback()
 
   #
   # Loads the review
   #
-  loadReview: (url) ->
+  loadReview: () ->
 #     $.ajax
 #       type: 'GET'
 #       url: url
@@ -247,8 +242,6 @@ class ReviewEditor
       
       ) , this)
 
-    this.loadReview(@review_url)
-
   #
   # Parses the JSON data returned by the server. See loadRubric.
   #
@@ -261,11 +254,17 @@ class ReviewEditor
     ko.applyBindings(this)
     @paused(false)
 
+
+  # Returns the review as JSON
+  encodeJSON: ->
+    pages_json = @pages.map (page) -> page.to_json()
+    return JSON.stringify({version: '2', pages: pages_json})
+
+  
+  # Populates the HTML-form from the model. This is called just before submitting.
   save: ->
     # Encode review as JSON
-    pages_json = @pages.map (page) -> page.to_json()
-    json_string = JSON.stringify({version: '2', pages: pages_json})
-    $('#review_payload').val(json_string)
+    $('#review_payload').val(this.encodeJSON())
     
     # Set grade
     finalGrade = @finalGrade()
@@ -372,40 +371,6 @@ class ReviewEditor
     else
       meanGrade = Math.round(gradeSum / grades.length)
       return meanGrade
-  
-  
-#   calculateGrade: ->
-#     nonNumericGradesSeen = false
-#     gradeSum = 0
-#     indexSum = 0
-#     
-#     for page in @pages
-#       grade = page.grade()
-#       index = @gradeIndexByValue[grade]
-#       
-#       if grade?
-#         # Grade is set
-#         indexSum += index
-#         
-#         if isNaN(grade)
-#           nonNumericGradesSeen = true
-#         else
-#           gradeSum += grade
-#       else
-#         # Grade not set
-#         return false
-#     
-#     pageCount = @pages.length
-#     meanGrade = Math.round(gradeSum / pageCount)
-#     meanIndex = Math.round(indexSum / pageCount)
-#     
-#     if !@numericGrading
-#       return @grades[meanIndex]
-#     else if nonNumericGradesSeen
-#       return null  # Grade must be selected manually
-#     else
-#       return meanGrade
-    
 
   #
   # Callback for AJAX errors
@@ -416,7 +381,3 @@ class ReviewEditor
         alert('Server is not responding')
       else
         alert(errorThrown)
-
-
-jQuery ->
-  new ReviewEditor
