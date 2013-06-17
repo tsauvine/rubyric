@@ -1,5 +1,71 @@
 # Read about fixtures at http://ar.rubyonrails.org/classes/Fixtures.html
 
+default_rubric:
+  course_instance: active
+  name: "Default rubric"
+  rubric: |
+    {
+      "version": '2',
+      "pages": [
+        {
+          "id": 0,
+          "name": "Page 1",
+          "criteria": [
+            {
+              "id":0, 
+              "name":"Criterion 1.1",
+              "phrases":[
+                {"id":0, "text":"Good", "category":0, "grade": 5},
+                {"id":1, "text":"Bad", "category":1, "grade": 3},
+                {"id":2, "text":"Other","category":2, "grade": "fail"}
+              ]
+            },
+            {
+              "id":1,
+              "name":"Criterion 1.2",
+              "phrases": [
+                {"id":3, "text":"Good", "category":0, "grade": 5},
+                {"id":4, "text":"Bad", "category":1, "grade": 3},
+                {"id":5, "text":"Other","category":2, "grade": "fail"}
+              ]
+            }
+          ]
+        },
+        {
+          "id": 1,
+          "name": "Page 1",
+          "criteria": [
+            {
+              "id":3, 
+              "name":"Criterion 2.1",
+              "phrases":[
+                {"id":6, "text":"Good", "category":0, "grade": 5},
+                {"id":7, "text":"Bad", "category":1, "grade": 3},
+                {"id":8, "text":"Other","category":2, "grade":"fail"}
+              ]
+            },
+            {
+              "id":4,
+              "name":"Criterion 2.2",
+              "phrases": [
+                {"id":9, "text":"Good", "category":0, "grade": 5},
+                {"id":10, "text":"Bad", "category":1, "grade": 3},
+                {"id":11, "text":"Other","category":2, "grade":"fail"}
+              ]
+            }
+          ]
+        },
+      ],
+      "grades": ["fail",1,2,3,4,5],
+      "gradingMode": "average",
+      "feedbackCategories": [
+        {id:0, name:"Strengths"},
+        {id:1, name:"Weaknesses"},
+        {id:2, name:"Other"}
+      ],
+      "finalComment": "Final statement"
+    } 
+
 active_exercise:
   course_instance: active
   name: Active exercise
@@ -57,9 +123,3 @@ submit_without_login:
   name: Can submit without login
   deadline: <%= 10.days.from_now.to_s(:db) %>
   submit_without_login: true
-
-no_autoassign:
-  course_instance: active
-  name: No autoassign
-  deadline: <%= 10.days.from_now.to_s(:db) %>
-  autoassign: false
