@@ -3,6 +3,12 @@ require File.expand_path('../../config/environment', __FILE__)
 require 'rails/test_help'
 
 require 'authlogic/test_case'
+require 'capybara/rails'
+
+class ActionDispatch::IntegrationTest
+  # Make the Capybara DSL available in all integration tests
+  include Capybara::DSL
+end
 
 class ActiveSupport::TestCase
   # Setup all fixtures in test/fixtures/*.(yml|csv) for all tests in alphabetical order.
@@ -52,3 +58,4 @@ class ActiveSupport::TestCase
     end
   end
 end
+

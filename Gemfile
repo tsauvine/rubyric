@@ -18,11 +18,11 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
   gem 'jquery-ui-rails'
+  
+  gem 'capybara'
+  gem 'capybara-webkit'
 end
 
-group :development, :test do
-  gem 'qunit-rails'
-end
 
 gem 'jquery-rails'
 
