@@ -75,6 +75,8 @@ GEM
     multi_json (1.5.0)
     pg (0.14.1)
     polyglot (0.3.3)
+    qunit-rails (0.0.3)
+      railties (>= 3.2.3)
     rack (1.4.4)
     rack-cache (1.2)
       rack (>= 0.4)
@@ -138,6 +140,7 @@ DEPENDENCIES
   jquery-rails
   jquery-ui-rails
   pg
+  qunit-rails
   rails (= 3.2.11)
   sass-rails (~> 3.2.3)
   sqlite3

@@ -20,6 +20,10 @@ group :assets do
   gem 'jquery-ui-rails'
 end
 
+group :development, :test do
+  gem 'qunit-rails'
+end
+
 gem 'jquery-rails'
 
 # To use Jbuilder templates for JSON
