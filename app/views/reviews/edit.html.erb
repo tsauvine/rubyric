@@ -86,7 +86,7 @@
   <p>
     <!-- Group -->
     Group:
-    <%= (@review.submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %>
+    <%= (@review.submission.group.users.collect do |user| "<span title='#{h user.name}'>#{h user.studentnumber}</span>" end).join(', ') %>
     -
     <!-- View submission -->
     <% unless @review.submission.extension.blank? %>
@@ -117,12 +117,12 @@
   <% end %>
 
 
-  <!--h2><%= @section.name %></h2-->
+  <!--h2><%= h @section.name %></h2-->
 
   <% @section.items.each do |item| %>
 
     <!-- Heading -->
-    <h3 onClick="$('phrases<%= item.id %>').toggle()" title="Click to hide/unhide phrases"><%= item.name.blank? ? '-&nbsp;' : item.name %></h3>
+    <h3 onClick="$('phrases<%= item.id %>').toggle()" title="Click to hide/unhide phrases"><%= item.name.blank? ? '-&nbsp;' : h(item.name) %></h3>
 
     <!-- Grading options -->
     <ul class="grading-options">
@@ -134,7 +134,7 @@
           selected_grading_option = grading_option.id
         end
       %>
-        <li id="grade<%= item.id %>_<%= i %>" onClick='setGrade("<%= item.id %>", "<%= i %>", "<%= grading_option.id %>");' <%= @feedback.item_grades.include?(grading_option) ? "class='selected'" : '' %>><%= grading_option.text %></li>
+        <li id="grade<%= item.id %>_<%= i %>" onClick='setGrade("<%= item.id %>", "<%= i %>", "<%= grading_option.id %>");' <%= @feedback.item_grades.include?(grading_option) ? "class='selected'" : '' %>><%= h grading_option.text %></li>
       <% i += 1; end %>
     </ul>
     <%= hidden_field_tag "item_grades[#{item.id}]", selected_grading_option %>

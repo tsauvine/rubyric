@@ -197,7 +197,7 @@ class Exercise < ActiveRecord::Base
 
     # Write the XML, intendation = 2 spaces
     output = ""
-    doc.write(output, 2)
+    doc.write(output)
 
     return output
   end

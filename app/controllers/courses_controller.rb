@@ -87,10 +87,7 @@ class CoursesController < ApplicationController
     @course = Course.find(params[:course_id])
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      head :forbidden
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     unless params[:studentnumber].blank?
       user = User.find_by_studentnumber(params[:studentnumber])

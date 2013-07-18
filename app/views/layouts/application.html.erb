@@ -35,15 +35,15 @@
     <ul>
       <li class="first"><%= link_to 'Rubyric', root_url %></li>
       <% if @course %>
-        <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
+        <li>/ <%= link_to "#{h(@course.code)} #{h(@course.name)}", @course %></li>
       <% end %>
 
       <% if @course_instance %>
-        <li>/ <%= link_to "#{@course_instance.name}", @course_instance %></li>
+        <li>/ <%= link_to "#{h(@course_instance.name)}", @course_instance %></li>
       <% end %>
 
       <% if @exercise %>
-        <li>/ <%= link_to "#{@exercise.name}", @exercise %></li>
+        <li>/ <%= link_to "#{h(@exercise.name)}", @exercise %></li>
       <% end %>
     </ul>
   </div>
@@ -68,7 +68,7 @@
     <!-- Left navigation -->
     <% if @course and !@course.new_record? %>
       <ul class="naviButtons">
-        <li><%= link_to @course.name, course_path(@course) %></li>
+        <li><%= link_to h(@course.name), course_path(@course) %></li>
         <% if @is_teacher || is_admin?(current_user) %>
           <ul>
             <li><%= link_to 'Settings', edit_course_path(@course) %></li>
@@ -79,7 +79,7 @@
       <% if @course_instance and !@course_instance.new_record? %>
         <!-- Selected instance -->
         <ul class="naviButtons">
-          <li><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
+          <li><%= link_to h(@course_instance.name), course_instance_path(@course_instance) %></li>
           <% if @is_teacher || is_admin?(current_user) %>
             <ul>
               <li><%= link_to 'Settings', edit_course_instance_path(@course_instance) %></li>  
@@ -90,7 +90,7 @@
         <% if @exercise and !@exercise.new_record?%>
           <!-- Selected exercise -->
           <ul class="naviButtons">
-            <li><%= link_to @exercise.name, exercise_path(@exercise) %></li>
+            <li><%= link_to h(@exercise.name), exercise_path(@exercise) %></li>
             <% if @is_teacher || is_admin?(current_user) %>
               <ul>
                 <li><%= link_to 'Settings', edit_exercise_path(@exercise) %></li>
@@ -107,7 +107,7 @@
             <li>Exercises</li>
             <% @course_instance.exercises.each do |exercise| %>
               <ul>
-                <li><%= link_to exercise.name, exercise_path(exercise) %></li>
+                <li><%= link_to h(exercise.name), exercise_path(exercise) %></li>
               </ul>
             <% end %>
           </ul>
@@ -118,7 +118,7 @@
           <li>Instances</li>
           <% @course.course_instances.each do |instance| %>
             <ul>
-              <li><%= link_to instance.name, course_instance_path(instance) %></li>  
+              <li><%= link_to h(instance.name), course_instance_path(instance) %></li>  
             </ul>
           <% end %>
         </ul>

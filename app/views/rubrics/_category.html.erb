@@ -1,6 +1,6 @@
 <div class="category" id="categoryElement<%= category.id %>">
   <h1>
-    <span id="categoryName<%= category.id %>"><%= category.name %></span>
+    <span id="categoryName<%= category.id %>"><%= h category.name %></span>
     <%= in_place_editor "categoryName#{category.id}", {:url => url_for(:action => "rename_category", :id => category.id), :clickToEditText => 'positive float'}  %>
 
     <span class="weight">(weight: <span id="categoryWeight<%= category.id %>"><%= category.weight %></span>)</span>

@@ -24,6 +24,9 @@ class Review < ActiveRecord::Base
   # Returns the feedback object corresponding the section in question.
   # A new feedback object is created and saved automatically, if it didn't previously exist.
   def find_feedback(section_id)
+    # FIXME: what to do if called without section_id?
+    #return self.feedbacks.first unless section_id
+    
     self.feedbacks.each do |feedback|
       return feedback if feedback.section_id == section_id
     end
@@ -86,6 +89,9 @@ class Review < ActiveRecord::Base
         grade = nil
     end
 
+    # Empty rubric
+    grade = nil if submission.exercise.categories.empty?
+    
     self.grade = grade.round unless grade.blank?    # Will be deprecated
     self.calculated_grade = grade.round unless grade.blank?
   end

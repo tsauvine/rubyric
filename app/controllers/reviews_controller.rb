@@ -30,12 +30,24 @@ class ReviewsController < ApplicationController
     if params[:section]
       @section = Section.find(params[:section], :include => {:items => :phrases})
     else
-      @section  = @exercise.categories.first.sections.first
+      # Find the first section that exists
+      # TODO: do more efficiently by SQL
+      @exercise.categories.each do |category|
+        @section = category.sections.first
+        break if @section
+      end
     end
 
-    # TODO: unless @section...
-
-    @feedback = @review.find_feedback(@section.id) if @section
+    # Empty rubric
+    unless @section
+      # Go to finish
+      @review.status = 'unfinished'
+      @review.save
+      redirect_to({:controller => 'reviews', :action => 'finish', :id => @review.id})
+      return
+    end
+    
+    @feedback = @review.find_feedback(@section.id)
   end
 
   def finish
@@ -44,18 +56,14 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Check state
     if !['unfinished', 'finished', 'mailed'].include?(@review.status)
       redirect_to :action => 'edit'
       return
     end
-
+    
     # Mail button
     @enable_mailing = @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email)
 
@@ -133,15 +141,12 @@ class ReviewsController < ApplicationController
   def update
     @review = Review.find(params[:id])
     @exercise = @review.submission.exercise
-    @section = Section.find(params[:section])
+    @section = Section.find(params[:section]) unless params[:section].blank?
+    @section ||= Section.new
     load_course
 
     # Authorization
-    unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     # Check that the review has not been mailed
     if @review.status == 'mailed'
@@ -150,7 +155,12 @@ class ReviewsController < ApplicationController
     end
 
     # Update feedback
-    @feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", params[:section], params[:id]])
+    if @section.new_record?
+      # Special case of empty rubric
+      @feedback = Feedback.find(:first, :conditions => ["review_id = ?", @review.id])
+    else
+      @feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", @section.id, @review.id])
+    end
 
     # Read item grading options from the hidden fields
     grades = Array.new
@@ -198,7 +208,7 @@ class ReviewsController < ApplicationController
     # Redirect to the next section
     next_section = @section.next_sibling
 
-    unless next_section
+    if !next_section && @section.category
       next_category = @section.category.next_sibling
       next_section = next_category.sections.first if next_category
     end

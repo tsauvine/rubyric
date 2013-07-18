@@ -1,9 +1,9 @@
 <!-- course_instance/show.html.erb -->
 
-<h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+<h1><%= "#{h @course.code} #{h @course.name} - #{h @course_instance.name}" %></h1>
 
 <% if @course_instance.description %>
-  <p><%= @course_instance.description %></p>
+  <p><%= h @course_instance.description %></p>
 <% end %>
 
 
@@ -12,7 +12,7 @@
   <% unless @course_instance.exercises.empty? %>
     <% @course_instance.exercises.each do |exercise| %>
       <tr>
-        <td><%= link_to exercise.name, exercise %></td>
+        <td><%= link_to h(exercise.name), exercise %></td>
         <% if @allow_edit %>
           <td><%= link_to(image_tag('trash.png', :alt => 'Destroy'), exercise, :confirm => 'Are you sure?', :method => :delete) %></td>
         <% end %>

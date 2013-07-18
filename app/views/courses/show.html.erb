@@ -10,7 +10,7 @@
 <table>
   <% @course.course_instances.each do |instance| %>
     <tr>
-      <td><%= link_to instance.name, instance %></td>
+      <td><%= link_to h(instance.name), instance %></td>
 
       <% if @is_teacher %>
         <td class="trash"><%= link_to(image_tag('trash.png', :alt => 'Destroy'), instance, :confirm => 'Are you sure?', :method => :delete) %></td>
@@ -21,7 +21,7 @@
 
   <% if @is_teacher %>
     <tr>
-      <td><%= link_to 'Create new instance', { :controller => 'course_instances', :action => 'new', :course => @course.id }, :class => 'new' %></td>
+      <td><%= link_to h('Create new instance'), { :controller => 'course_instances', :action => 'new', :course => @course.id }, :class => 'new' %></td>
       <td></td>
     </tr>
   <% end %>

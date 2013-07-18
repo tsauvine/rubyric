@@ -20,15 +20,15 @@
   <div class="breadcrumbs">
     <ul>
       <% if @course %>
-        <li class="first"><%= "#{@course.code} #{@course.name}" %></li>
+        <li class="first"><%= "#{h(@course.code)} #{h(@course.name)}" %></li>
       <% end %>
 
       <% if @course_instance %>
-        <li><%= "#{@course_instance.name}" %></li>
+        <li><%= "#{h(@course_instance.name)}" %></li>
       <% end %>
 
       <% if @exercise %>
-        <li><%= "#{@exercise.name}" %></li>
+        <li><%= "#{h(@exercise.name)}" %></li>
       <% end %>
     </ul>
   </div>
@@ -39,7 +39,7 @@
     user = current_user
     if user
     %>
-      <%= "#{user.firstname} #{user.lastname} (#{user.studentnumber})" %><br />
+      <%= "#{h(user.firstname)} #{h(user.lastname)} (#{h(user.studentnumber)})" %><br />
     <% end %>
   </div>
 

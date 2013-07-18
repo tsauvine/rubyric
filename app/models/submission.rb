@@ -32,16 +32,11 @@ class Submission < ActiveRecord::Base
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
-#     File.makedirs(path)
+    FileUtils.makedirs(path)
 
-    if @file_data.is_a?(Tempfile)
-      FileUtils.cp(@file_data.path, "#{path}/#{filename}")
-    elsif @file_data.is_a?(StringIO)
-      File.open("#{path}/#{filename}", "wb") do |file|
-        file.write(@file_data.read)
-      end
+    File.open("#{path}/#{filename}", "wb") do |file|
+      file.write(@file_data.read)
     end
-
   end
 
   #def delete_file

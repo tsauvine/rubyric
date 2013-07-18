@@ -23,11 +23,7 @@ class RubricsController < ApplicationController
     load_course
 
     # Authorization
-    unless @course.has_teacher(current_user) || is_admin?(current_user)
-      @heading = 'Unauthorized'
-      render :template => "shared/error"
-      return
-    end
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     if params[:section]
       @section = Section.find(params[:section], :include => {:items => :phrases})
@@ -35,7 +31,7 @@ class RubricsController < ApplicationController
       @section  = @exercise.categories.first.sections.first
     end
 
-    # TODO: unless @section...
+    @section ||= Section.new
 
     @feedback = Feedback.new
   end

@@ -5,10 +5,15 @@
 ENV['RAILS_ENV'] ||= 'production'
 
 # Specifies gem version of Rails to use when vendor/rails is not present
-RAILS_GEM_VERSION = '2.3.14' unless defined? RAILS_GEM_VERSION
+RAILS_GEM_VERSION = '2.3.15' unless defined? RAILS_GEM_VERSION
 
 # Bootstrap the Rails environment, frameworks, and default configuration
 require File.join(File.dirname(__FILE__), 'boot')
+
+# "invalid byte sequence in US-ASCII" workaround
+# http://stackoverflow.com/questions/3192128/invalid-byte-sequence-in-us-ascii-ruby-1-9-rails-2-3-8-mongodb-mongo-mapp
+Encoding.default_external = Encoding::UTF_8
+Encoding.default_internal = Encoding::UTF_8
 
 Rails::Initializer.run do |config|
   # Settings in config/environments/* take precedence over those specified here.
