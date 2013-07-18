@@ -11,5 +11,7 @@ class GroupToInstance < ActiveRecord::Migration
 
   def self.down
     remove_column :groups, :course_instance_id
+    remove_column :groups, :studentnumber
+    remove_column :groups, :email
   end
 end

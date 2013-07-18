@@ -78,22 +78,22 @@ class Exercise < ActiveRecord::Base
     rubric = {version: '2', pages: pages}
     
     # Categories
-    positive_caption_element = XPath.first(doc, "/rubric/positive-caption")
+    positive_caption_element = REXML::XPath.first(doc, "/rubric/positive-caption")
     positive_caption = 'Strengths'
     positive_caption = positive_caption_element.text.strip if positive_caption_element and positive_caption_element.text
 
-    negative_caption_element = XPath.first(doc, "/rubric/negative-caption")
+    negative_caption_element = REXML::XPath.first(doc, "/rubric/negative-caption")
     negative_caption = 'Weknesses'
     negative_caption = negative_caption_element.text.strip if negative_caption_element and negative_caption_element.text
 
-    neutral_caption_element = XPath.first(doc, "/rubric/neutral-caption")
+    neutral_caption_element = REXML::XPath.first(doc, "/rubric/neutral-caption")
     neutral_caption = 'Other comments'
     neutral_caption = neutral_caption_element.text.strip if neutral_caption_element and neutral_caption_element.text
 
     rubric['feedbackCategories'] = [{id: 0, name: positive_caption}, {id: 1, name: negative_caption}, {id: 2, name: neutral_caption}]
     
     # Final comment
-    final_comment_element = XPath.first(doc, "/rubric/final-comment")
+    final_comment_element = REXML::XPath.first(doc, "/rubric/final-comment")
     finalcomment = ''
     finalcomment = final_comment_element.text.strip if final_comment_element and final_comment_element.text
     
@@ -130,6 +130,7 @@ class Exercise < ActiveRecord::Base
               categoryId = 0
             end
             
+            phrase.text ||= ''
             phrases << {id: phrase_counter, text: phrase.text.strip, category: categoryId}
             phrase_counter += 1
           end
