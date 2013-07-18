@@ -1,0 +1,5 @@
+<% @assignments.each do |group, graders| %>
+  <% graders.each do |grader| %>
+    <%= group.users.first.studentnumber %>,<%= grader.studentnumber %><br />
+  <% end %>
+<% end %>

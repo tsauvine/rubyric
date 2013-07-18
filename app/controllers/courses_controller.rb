@@ -28,7 +28,7 @@ class CoursesController < ApplicationController
   def edit
     @course = Course.find(params[:id])
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
-    
+
     return access_denied unless @is_teacher
   end
 
@@ -38,13 +38,13 @@ class CoursesController < ApplicationController
 
     if @course.save
       @course.teachers << current_user
-    
+
       flash[:success] = 'New course was successfully created. Next, create a course instance.'
       redirect_to new_course_instance_path(:course => @course.id)
     else
       render :action => "new"
     end
-    
+
   end
 
   # PUT /courses/1
@@ -53,7 +53,7 @@ class CoursesController < ApplicationController
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
 
     return access_denied unless @is_teacher
-    
+
     if @course.update_attributes(params[:course])
       flash[:success] = 'Course was successfully updated.'
       redirect_to(@course)
@@ -134,5 +134,11 @@ class CoursesController < ApplicationController
     @course.remove_teachers(users)
 
     render :partial => 'user', :collection => @course.teachers, :locals => { :cid => @course.id }
+  end
+
+  def gradings
+
+    @exercises = Exercise.all(:include => [{:course_instance => [:course]}, :categories => [:sections => [:section_grading_options]]])
+
   end
 end
