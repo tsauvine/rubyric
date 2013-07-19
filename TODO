@@ -23,30 +23,59 @@ mailer erroreista mailia adminille
 = Soon =
 
 phrase grades
-rubric repository
-submit without logging in
+
+Rubric editor: tool tips
+
+Course new: disclaimer
 
 
 = Later =
 
-assarin view review: Back-nappula menee submittiin
+Date formatting of deadlines
+
+CSS: smaller font in h1 page-title
+
+rubric editor: bottom margin
+
+rubric editor: warn if leaving
 
 opettajan ja assarin pitäisi voida editoida ryhmää
 
 opettajan pitäisi voida palauttaa ryhmän puolesta
 
-etusivu
- - hintalaskuri
+assarin view review: Back-nappula menee submittiin
+
+submit without logging in
+
+Delete instace: confirmation
+
+Delete exercise: confirmation
+
+rubric repository
+
+rubric templates
+
+review editor: alalaitaan save/next -nappula
+
+group editor for students
 
 edit review: jos on finished, niin mene suoraan finalize-tabiin
 
-otsikoiden fontit
+groups-näkymä: assign- ja save-nappien painamisesta palaute
 
+li.active harmaalla
+
+etusivu: hintalaskuri
+
+etusivu (logged in): ohjeita ja videoita
+
+paypal
+
+Login-laatikkoon forgot password ja sign up-linkit
+ 
 submit ja edit group hienomman näköiseksi (fixed layout)
 
 batch create groups
-
-paypal
 
 exercise lakkaa ottamasta palautuksia määräajan jälkeen
 
@@ -60,38 +89,30 @@ mailing-status: arvostelua ei voi editoida, mailauksen voi perua
 
 opettajan pitäisi voida poistaa ryhmä
 
-review editor: alalaitaan save/next -nappula
-
-rubric templates
-
 palautus
  lisää opiskelijat students-listaan (create group, add member, invite)
  palautussivun customoitu viesti
 
-Rubric editor
- weights
-
-group editor for students
+rubric editor: weights
 
 assarin show course_instance: harjoituksista yhteenveto, mitkä on jo tehty
 
 Show course instance: Näytä yleiskuva harjoitusten tilasta
+
 Show course instance: Create exercise, help text
-Rubric editor: help texts
-
-groups-näkymä: assign- ja save-nappien painamisesta palaute
-
-Login-laatikkoon forgot password ja sign up-linkit
-
-etusivu (logged in): ohjeita ja videoita
 
 eri jono feedback maileille
 
-assarin courses index
-- linkit suoraan harjoituksiin
+assarin courses index: linkit suoraan harjoituksiin
 
 do not show the 'Delete review' option if submission has reviews
 
-li.active harmaalla
-
 upload rubric näyttämään hienommalta
+
+Assignment editor: näytä ryhmän tiedot assign-dialogissa
+
+Assignment editor: save immediately
+
+Rubric editor: y axis constraint in grading scale editor
+
+Submission list: select finish should unselect first
