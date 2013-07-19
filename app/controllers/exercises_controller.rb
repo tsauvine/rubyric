@@ -134,16 +134,29 @@ class ExercisesController < ApplicationController
     
     @groups.each do |group|
       best_review = nil
+      best_grade = Float::MIN
       
+      # Collect the reviews that should be included in the results
       group.submissions.each do |submission|
         next unless submission.exercise_id == @exercise.id
         submission.reviews.each do |review|
           next unless review.include_in_results?
-          best_review = review if best_review.nil? || (review.grade && review.grade > best_review.grade)
+          
+          # Determine grade
+          grade = Float(review.grade) rescue Float::MIN
+          
+          if !grade.nil? && (best_review.nil? || grade > best_grade)
+            best_review = review
+            best_grade = grade
+          end
         end
       end
       
-      @results.concat group.users.collect {|student| [student, best_review]} if best_review
+      if best_review
+        @results.concat group.users.collect {|student| [student, best_review]}
+      else
+        # FIXME: add all reviews
+      end
     end
     
     @results.sort! { |a, b| a[0].studentnumber <=> b[0].studentnumber }
