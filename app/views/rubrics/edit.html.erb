@@ -61,7 +61,7 @@
           
           <p><em>Scale:</em></p>
           <table>
-            <tbody class="grading" data-bind="sortable: {data: grades, connectClass: 'grading'} ">
+            <tbody id="grading-scale" data-bind="sortable: {data: grades, options: {containment: '#grading-scale', axis: 'y', distance: 5}} ">
               <tr>
                 <td data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<grade missing>'}"></td>
                 <td class="buttons-column">
@@ -87,23 +87,32 @@
         </div>
         
         <div class="span4 well">
+          <i id="tooltip-categories" class="pull-right icon icon-question-sign" data-content="<%=t '.tooltip_categories' %>"></i>
           <h3>Feedback categories</h3>
-          <table>
-            <tbody id="feedback-categories" data-bind="foreach: feedbackCategories">
-              <tr class="category">
-                <td class="category" data-bind="editable: {value: name, editorActive: editorActive, placeholder: '<no name>'}"></td>
-                <td class="buttons-column">
-                  <div class="buttons">
-                    <i class="icon-pencil edit-button" title="Edit" data-bind="click: activateEditor"></i>
-                    <!--i class="icon-trash delete-button" title="Delete"></i-->
-                    <!--i class="icon-resize-vertical move-button" title="Drag to move"></i-->
-                  </div>
-                </td>
-              </tr>
-            </tbody>
-          </table>
+          
+          <!-- ko if: feedbackCategories().length > 1 -->
+            <table>
+              <tbody id="feedback-categories" data-bind="sortable: {data: feedbackCategories, options: {containment: '#feedback-categories', axis: 'y', distance: 5}}">
+                <tr class="category">
+                  <td class="category" data-bind="editable: {value: name, editorActive: editorActive, placeholder: '<no name>'}"></td>
+                  <td class="buttons-column">
+                    <div class="buttons">
+                      <i class="icon-pencil edit-button" title="Edit" data-bind="click: activateEditor"></i>
+                      <i class="icon-trash delete-button" title="Delete" data-bind="click: deleteCategory"></i>
+                      <i class="icon-resize-vertical move-button" title="Drag to move"></i>
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          <!-- /ko -->
+          <!-- ko if: feedbackCategories().length <= 1 -->
+            <p class="hint"><%=t '.no-categories' %></p>
+          <!-- /ko -->
 
-          <!--div id="create-category-button" class="btn btn-small" data-bind="click: clickCreateCategory"><i class="icon-plus"></i> Create category</div-->
+          <!-- ko if: $root.feedbackCategories().length < 3 -->
+            <div id="create-category-button" class="btn btn-small" data-bind="click: clickCreateCategory"><i class="icon-plus"></i> Create category</div>
+          <!-- /ko -->
         </div>
         <div class="span4 well">
           <h3>Feedback email</h3>
@@ -149,16 +158,20 @@
               <table class="phrases">
                 <tbody data-bind="sortable: { data: phrases, connectClass: 'phrases-container', options: {containment: '#rubric-editor', axis: 'y', distance: 5} }" class="phrases-container">
                   <tr class="phrase">
-                    <td class="phraseType">
-                      <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'name', value: category">
-                      </select>
+                    <!-- ko if: $root.feedbackCategories().length > 1 -->
+                      <td class="phraseType">
+                        <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'name', value: category">
+                        </select>
                       <!--option data-bind="text: $data.value"></option-->
-                    </td>
-                    <td class="phraseType">
-                      <select class="phraseType" data-bind="options: $root.grades, optionsCaption: '= Grade =', optionsText: 'value', value: grade">
-                      </select>
+                      </td>
+                    <!-- /ko -->
+                    <!-- ko if: $root.grades().length > 0 -->
+                      <td class="phraseType">
+                        <select class="phraseType" data-bind="options: $root.grades, optionsCaption: ' ', optionsText: 'value', value: grade">
+                        </select>
                       <!--option data-bind="text: $data.value"></option-->
-                    </td>
+                      </td>
+                    <!-- /ko -->
                     <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit'}"></td>
                     <td class="buttons-column">
                       <div class="buttons">

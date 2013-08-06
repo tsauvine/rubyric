@@ -9,7 +9,7 @@ class Page
     @phrasesHidden = ko.observable(false)
 
     @feedback = []              # [{id: category_id, value: ko.observable('feedback')}]
-    @feedbackByCategory = {}    # category_id => {}
+    @feedbackByCategory = {}    # category_id => {<see above>}
 
     @finalizing = ko.computed((->
       return @rubricEditor.finalizing()
@@ -27,6 +27,7 @@ class Page
     @name = data['name']
     @id = data['id']
     
+    # Prepare feedback containers
     for category in @rubricEditor.feedbackCategories
       feedback = {id: category.id, title: category.name, value: ko.observable('')}
       @feedback.push(feedback)
@@ -37,11 +38,12 @@ class Page
       @criteria.push(criterion)
       @criteriaById[criterion.id] = criterion
   
+  
   load_review: (data) ->
     if data['feedback'] && data['feedback'].length > 0
       for feedback_data in data['feedback']
-        feedback = @feedbackByCategory[feedback_data['category_id']]
-        feedback.value(feedback_data['text']) if feedback
+        feedback = @feedbackByCategory[feedback_data['category_id']] || @feedback[0]
+        feedback.value(feedback.value() + feedback_data['text']) if feedback
     
     if data['criteria']
       for criterion_data in data['criteria']
@@ -75,7 +77,7 @@ class Page
 
   addPhrase: (content, categoryId) ->
     return if @finalizing()
-    feedback = @feedbackByCategory[categoryId]
+    feedback = @feedbackByCategory[categoryId || 0] || @feedback[0]
     feedback.value(feedback.value() + content + "\n") if feedback
   
   cancelFinalize: (data, event) ->
@@ -136,6 +138,7 @@ class Phrase
     @criterion.gradeRequired = true if @grade?
 
   clickPhrase: ->
+    console.log "Add phrase #{@id} to category #{@categoryId}"
     @page.addPhrase(@content, @categoryId)
     this.clickGrade()
 
@@ -162,7 +165,7 @@ class @ReviewEditor
     @numericGrading = false
     @gradingMode = 'none'
     @finalGrade = ko.observable()
-
+    
 
   #
   # Loads the rubric by AJAX
@@ -211,10 +214,19 @@ class @ReviewEditor
       alert('Rubric has not been prepared')
       return
 
-    if data['feedbackCategories']
-      for category in data['feedbackCategories']
-        @feedbackCategories.push(category)
-        @feedbackCategoriesById[category.id] = category
+    # Parse feedback categories
+    raw_categories = data['feedbackCategories']
+    if !raw_categories? || raw_categories.length < 1
+      # Make sure that the there is one category
+      raw_categories = [{id: 0, name: ''}]
+    
+    # Don't use category title if only one category is present
+    raw_categories[0].name = '' if raw_categories.length == 1
+    
+    for category in raw_categories
+      @feedbackCategories.push(category)
+      @feedbackCategoriesById[category.id] = category
+
 
     if data['grades']
       i = 0
@@ -251,9 +263,20 @@ class @ReviewEditor
         page = @pagesById[page_data['id']]
         page.load_review(page_data) if page
     
+    @averageGrade = ko.computed((-> 
+      grades = []
+      for page in @pages
+        grades.push(page.grade())
+      
+      return this.calculateGrade(grades)
+    ), this)
+
     ko.applyBindings(this)
     @paused(false)
-
+    
+    # Activate the finalizing tab
+    $('#tab-finish-link').tab('show') if @finalizing()
+    
 
   # Returns the review as JSON
   encodeJSON: ->

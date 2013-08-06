@@ -22,6 +22,8 @@ mailer erroreista mailia adminille
 
 = Soon =
 
+rubric editor: if all grades are deleted, phrase grades are not properly cleared
+
 phrase grades
 
 Rubric editor: tool tips
@@ -58,8 +60,6 @@ rubric templates
 review editor: alalaitaan save/next -nappula
 
 group editor for students
-
-edit review: jos on finished, niin mene suoraan finalize-tabiin
 
 groups-näkymä: assign- ja save-nappien painamisesta palaute
 
@@ -116,3 +116,5 @@ Assignment editor: save immediately
 Rubric editor: y axis constraint in grading scale editor
 
 Submission list: select finish should unselect first
+
+rubric editor: confirm if removing whole page

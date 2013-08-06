@@ -7,9 +7,7 @@
 # preview (grader)
 # preview (mail)
 # page weights
-# quality levels
 # cut'n'paste
-# feedback grouping
 
 
 ko.bindingHandlers.editable = {
@@ -312,6 +310,9 @@ class FeedbackCategory
   to_json: ->
     return {id: @id, name: @name()}
   
+  deleteCategory: ->
+    @rubricEditor.feedbackCategories.remove(this)
+  
   activateEditor: ->
     @editorActive(true)
 
@@ -320,10 +321,6 @@ class RubricEditor
 
   constructor: () ->
     @saved = true
-    @pageIdCounter = 0
-    @criterionIdCounter = 0
-    @phraseIdCounter = 0
-    @feedbackCategoryIdCounter = 0
     @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
     @gradingMode = ko.observable('average')    # String
@@ -363,7 +360,7 @@ class RubricEditor
   initializeDefault: ->
     @gradingMode('average')
     @finalComment('')
-    @feedbackCategories([new FeedbackCategory(this, {name: 'Strengths', id:0}),new FeedbackCategory(this, {name:'Weaknesses', id:1}),new FeedbackCategory(this, {name:'Other comments', id:2})])
+    #@feedbackCategories([new FeedbackCategory(this, {name: 'Strengths', id:0}),new FeedbackCategory(this, {name:'Weaknesses', id:1}),new FeedbackCategory(this, {name:'Other comments', id:2})])
 
     page = new Page(this)
     page.initializeDefault()
@@ -380,8 +377,17 @@ class RubricEditor
     page.showTab()
     page.activateEditor()
 
-#   clickCreateCategory: ->
-#     @feedbackCategories.push('')
+  clickCreateCategory: ->
+    originalCategoryCount = @feedbackCategories().length
+    
+    # Don't allow more than 3 categories
+    return if originalCategoryCount >= 3
+  
+    new_category_count = if originalCategoryCount == 0 then 2 else 1
+    for i in [0...new_category_count]
+      new_category = new FeedbackCategory(this, {name: '', id: this.nextId('feedbackCategory')})
+      @feedbackCategories.push(new_category)
+      new_category.activateEditor()
 
   createGrade: () ->
     grade = new Grade('', @grades)
@@ -416,8 +422,6 @@ class RubricEditor
           category = new FeedbackCategory(this, raw_category)
           @feedbackCategories.push(category)
           @feedbackCategoriesById[category.id] = category
-      else
-        @feedbackCategories([new FeedbackCategory(this, 'Strengths'),new FeedbackCategory(this, 'Weaknesses'),new FeedbackCategory(this, 'Other comments')])
 
       # Load grades
       if data['grades']
@@ -479,3 +483,5 @@ class RubricEditor
 
 jQuery ->
   new RubricEditor()
+
+  $('#tooltip-categories').popover({placement: 'right', trigger: 'hover', html: true})

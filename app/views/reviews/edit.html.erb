@@ -17,7 +17,7 @@
       <!-- /ko -->
       
       <!-- ko if: finishable -->
-        <li><a href="#tab-finish" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
+        <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
       <!-- /ko -->
       <li><input type="submit" value="Save" class="btn btn-success" data-bind="click: save" /></li>
     </ul>
@@ -120,7 +120,7 @@
               <p>
                 <select data-bind="options: $root.grades, value: grade, attr: {disabled: finalizing}, optionsCaption: 'Choose grade...'"></select>
                 <!-- ko if: averageGrade -->
-                  <br />Calculated average is <strong data-bind="text: averageGrade"></strong>
+                  Calculated mean: <strong data-bind="text: averageGrade"></strong>
                 <!-- /ko -->
               </p>
             </p>
@@ -145,6 +145,28 @@
         <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
         
         <div data-bind="if: $root.grades.length > 1">
+          <h3>Grades</h3>
+          <table>
+            <!--thead>
+              <tr>
+                <th></th>
+                <th></th>
+              </tr>
+            </thead-->
+            <tbody data-bind="foreach: pages">
+              <tr>
+                <td><span data-bind="text: name"></span>:</td>
+                <td data-bind="text: grade"></td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="hint">Mean:</td>
+                <td><strong data-bind="text: averageGrade"></strong></td>
+              </tr>
+            </tfoot>
+          </table>
+        
           <h3>Final Grade</h3>
           <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
         </div>
