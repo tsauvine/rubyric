@@ -1,76 +1,46 @@
 <div class="page-header">
-  <h1>Welcome to Rubyric <small>(beta)</small></h1>
+  <h1>Rubyric <small>(beta)</small></h1>
 </div>
+
+<div class="alert alert-info">
+  Rubyric has been updated and moved to a new server.
+  Please report any problems or bugs to 
+  rubyric<span>@</span>cs.hut.fi
+</div>
+
 
 <div class="row">
   <div class="span12">
   Rubyric is an assessment tool that makes it easy to give written feedback to students.
   With Rubyric, teachers can create rubrics that specify the assessment criteria and contain feedback phrases for typical mistakes.
-  Because many students tend to make similar mistakes, large parts of feedback can be produced from the prewritten phrases.
+  Because many students tend to make similar mistakes, large parts of feedback can be constructed from the prewritten phrases.
   However, it is still possible to manually edit the phrases to suit each individual case.
   </div>
 </div>
 
 <hr />
 
-<div class="row frontpage">
-  <div class="span8">
-    <div class="row">
-      <div class="span6">
-        <h3>Create <strong>rubrics</strong></h3>
-        <ul>
-          <li>Rubrics are created with an easy-to-use editor in the browser.</li>
-          <li>There is no need to install any programs on the computer.</li>
-          <!-- li>rubrics can be shared with others.</li -->
-        </ul>
-      </div>
-      <!--div class="span2">
-        <div class="screenshot"><%= link_to image_tag('brochure-editor.png', {:alt => 'Rubric editor', :class => 'img-polaroid'}), path_to_image('brochure-editor.png') %></div>
-      </div-->
-    </div>
-
-    <div class="row">
-      <div class="span6">
-        <h3>Divide <strong>workload</strong></h3>
-        <ul>
-          <li>Students return their work to Rybric.</li>
-          <li>Submissions can be assigned to multiple graders who can read and assess the submissions on-line.</li>
-          <li>Feedback is sent to students by e-mail.</li>
-          <li>The submissions, feedback and grades are archived in Rubyric.</li>
-        </ul>
-      </div>
-      <!--div class="span2">
-        <div class="screenshot"><%= link_to image_tag('brochure-assign.png', {:alt => 'Assignments', :class => 'img-polaroid'}), path_to_image('brochure-assign.png') %></div>
-      </div-->
-    </div>
-
-    <div class="row">
-      <div class="span6">
-        <h3>More feedback with <strong>less work</strong></h3>
-        <ul>
-          <li>Feedback is constructed by clicking the prewritten phrases.</li>
-          <li>The feedback text can be manually edited and extra comments can be added.</li>
-          <li>The length of the phrases is not limited. It is possible to include long paragraphs that address misconceptions. This way, feedback does not only justify the grade but <em>supports learning</em>.</li>
-        </ul>
-      </div>
-      <!--div class="span2">
-        <div class="screenshot"><%= link_to image_tag('brochure-grading.png', {:alt => 'Grading view', :class => 'img-polaroid'}), path_to_image('brochure-grading.png') %></div>
-      </div-->
-    </div>
-
-    <div class="row">
-      <div class="span6">
-        <h3>Consistent <strong>grading</strong></h3>
-        <ul>
-          <li>Rubrics help to ensure that all graders follow the <em>same assessment criteria</em>,</li>
-          <li>that grades are objectively based on the criteria regardless of the mood or tiredness of the grader,</li>
-          <li>and helps inexperienced instructors such as teaching assistants to write <em>better feedback</em>.</li>
-        </ul>
-      </div>
+<div class="row">
+  <div class="span3">
+    <div class="">
+      <h2>Students</h2>
+      
+      <p>A link for submitting your assignment can be found from the homepage of your course (most likely in <a href="http://noppa.aalto.fi/">Noppa</a>)</p>
     </div>
   </div>
 
-  <div class="span4">
+  <div class="span3 offset1">
+    <div class="">
+      <h2>Teachers</h2>
+      
+      <p>
+        Teachers of Aalto university can freely use rubyric.cs.hut.fi.
+        <%= link_to 'Click here to create a course.', new_course_path %>
+      </p>
+    </div>
+  </div>
+
+  <div class="span4 offset1">
     <!--
     <h3>Try it for free</h3>
     <p>
@@ -78,7 +48,7 @@
     </p>
     -->
 
-    <h3><%=t :frontpage_login_heading %></h3>
+    <h2><%=t :frontpage_login_heading %></h2>
     <% if defined?(SHIB_PATH) %>
       <%= render :partial => 'sessions/shibboleth' %>
     <% end %>

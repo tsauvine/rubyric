@@ -41,7 +41,7 @@ module Rubyric
 
     # JavaScript files you want as :defaults (application.js is always included).
     #config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui rails)
-    config.assets.precompile += ['assignmentEditor.js', 'editExercise.js', 'editInstructors.js', 'reviewEditor.js', 'rubricEditor.js', 'submissions.js', 'bootstrap.js']
+    config.assets.precompile += ['assignmentEditor.js', 'editExercise.js', 'editInstructors.js', 'reviewEditor.js', 'rubricEditor.js', 'submissions.js', 'reviews-edit.js', 'bootstrap.js']
 
     # Use SQL instead of Active Record's schema dumper when creating the database.
     # This is necessary if your schema can't be completely dumped by the schema dumper,
@@ -58,6 +58,6 @@ module Rubyric
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.8'
+    config.assets.version = '1.9'
   end
 end
