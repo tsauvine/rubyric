@@ -1,0 +1,5 @@
+en:
+  rubrics:
+    edit:
+      tooltip_categories: 'You can optionally divide feedback into categories such as <i>strengths</i> as <i>weaknesses</i>.'
+      no-categories: 'Not using categories'
