@@ -14,9 +14,6 @@ Rubyric::Application.routes.draw do
   match 'preferences' => 'users#edit'
 
   resources :courses do
-    #post 'add_teachers'
-    #post 'remove_selected_teachers'
-
     resources :course_instances, :only => [:new, :create, :update]
     resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
   end
@@ -26,10 +23,15 @@ Rubyric::Application.routes.draw do
     
     resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
     
-    resource :students, :only => [:show], :controller => 'course_instances/students'
+    resource :students, :only => [:index], :controller => 'course_instances/students'
     
     resource :groups, :only => [:update], :controller => 'course_instances/groups'
-    resources :groups, :only => [:index, :edit, :update], :controller => 'course_instances/groups'
+    resources :groups, :only => [:index, :edit, :update], :controller => 'course_instances/groups' do
+      collection do
+        get :batch
+        post :batch
+      end
+    end
     
     get :create_example_groups
   end
@@ -44,12 +46,6 @@ Rubyric::Application.routes.draw do
     post 'send_reviews'
     
     get :create_example_submissions
-
-    #resources :submissions, :controller => 'exercises' do
-    #  collection do
-    #    post :assign
-    #  end
-    #end
 
     resource :rubric, :only => [:show, :edit, :update] do
       member do

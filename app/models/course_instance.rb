@@ -163,6 +163,131 @@ class CourseInstance < ActiveRecord::Base
         group.save
       end
     end
-    
   end
+  
+  # Creates groups and adds them to the course based on a list of studentnumebrs or emails.
+  # batch: string with comma separated student identifiers, each row representing one group. Student identifier can be studentnumber or email.
+  def batch_create_groups(batch)
+    # Load existing students
+    students_by_studentnumber = {}  # 'studentnumber' => Student
+    students_by_email = {}          # 'email' => Student
+    self.students.each do |student|
+      students_by_studentnumber[student.studentnumber] = student
+      students_by_email[student.email] = student
+    end
+    
+    # Load existing groups
+    groups_by_student_id = {}     # student_id => [array of groups where the student belongs]
+    self.groups.includes(:users).each do |group|
+      group.users.each do |student|
+        groups_by_student_id[student.id] ||= []
+        groups_by_student_id[student.id] << group
+      end
+    end
+    
+    #foo = foos.each_with_object({}) { |h, f| h[f.name.to_sym] = f.value }
+    
+    batch.lines.each do |line|
+      parts = line.split(';')
+      student_keys = parts[0].split(',')
+      
+      # Find or create students
+      group_students = []   # Array of Student objects that were loaded or created based on the input row
+      group_student_ids = []
+      current_groups = []   # Array of arrays of Groups, [[groups of first student], [groups of second student], ...]
+      student_keys.each do |student_key|
+        student_key.strip!
+        next if student_key.empty?
+        
+        if student_key.include?('@')
+          print "search email #{student_key}"
+          # Search by studentnumber
+          search_key = student_key
+          student = students_by_email[search_key]         # Search from students in the course
+          
+          unless student
+            print ", not found in course"
+            student = User.where(:email => search_key).first   # Search from database
+            unless student  # Create new user
+              student = User.new(:email => search_key, :firstname => '', :lastname => '')
+              student.save(:validate => false)
+              print ", not found in db, creating, "
+            end
+            self.students << student  # Add student to course
+            students_by_studentnumber[student.studentnumber] = student
+            students_by_email[student.email] = student
+          end
+          
+        else
+          # Search by email
+          print "search studentnumber #{student_key}"
+          search_key = student_key
+          student = students_by_studentnumber[search_key]        # Search from students in the course
+          
+          unless student
+            print ", not found in course"
+            relation = User.where(:studentnumber => search_key) # Search from database
+            # relation = relation.where(:organization_id => self.course.organization_id) if self.course.organization_id
+            student = relation.first
+            
+            # Create new user
+            unless student
+              student = User.new(:firstname => '', :lastname => '')
+              student.studentnumber = search_key
+              student.save(:validate => false)
+              print ", not found in db, creating, "
+            end
+            self.students << student  # Add student to course
+            students_by_studentnumber[student.studentnumber] = student
+            students_by_email[student.email] = student
+          end
+        end
+        
+        g = groups_by_student_id[student.id] || []
+        current_groups << g
+        group_students << student
+        group_student_ids << student.id
+        puts
+      end
+      
+      if group_students.empty?
+        puts "No student on this line. Next."
+        next
+      end
+      
+      # Calculate the intersection of students' current groups, ie. find the groups that contain all of the given students.
+      groups = current_groups.inject(:&)
+      print "groups intersection: #{groups.size}"
+      
+      # The list now contains the groups with the requested students but possibly extra students as well.
+      # Find the group that contains the requested amount of students.
+      group = nil
+      groups.each do |g|
+        if g.users.size == group_students.size
+          group = g
+          break
+        end
+      end
+      
+      unless group
+        print ", creating group"
+        group_name = (group_students.collect { |user| user.studentnumber }).join('_')
+        group = Group.create(:name => group_name, :course_instance_id => self.id)
+        
+        group.users << group_students
+        
+        group_students.each do |student|
+          groups_by_student_id[student.id] ||= []
+          groups_by_student_id[student.id] << group
+        end
+      end
+      puts
+      
+      # Set reviewer
+      if parts.size >= 2
+      end
+      
+    end
+  end
+  
 end

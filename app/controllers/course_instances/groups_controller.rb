@@ -26,11 +26,9 @@ class CourseInstances::GroupsController < GroupsController
     end
   end
   
-  
   def update
     @course_instance = CourseInstance.find(params[:course_instance_id])
     load_course
-    
     authorize! :update, @course_instance
     
     @course_instance.set_assignments(params[:assignments])
@@ -41,4 +39,16 @@ class CourseInstances::GroupsController < GroupsController
     end
   end
 
+  def batch
+    @course_instance = CourseInstance.find(params[:course_instance_id])
+    load_course
+    authorize! :update, @course_instance
+    
+    if params[:paste]
+      @course_instance.batch_create_groups(params[:paste])
+    end
+    
+    
+  end
+  
 end
