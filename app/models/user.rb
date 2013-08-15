@@ -29,7 +29,11 @@ class User < ActiveRecord::Base
 
 
   def name
-    "#{firstname} #{lastname}"
+    if firstname.blank? && lastname.blank?
+      email
+    else
+      "#{firstname} #{lastname}"
+    end
   end
 
   def admin?

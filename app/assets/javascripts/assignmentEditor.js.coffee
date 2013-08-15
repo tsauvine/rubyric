@@ -4,10 +4,15 @@
 class User
   constructor: (data) ->
     @id = data['id']
-    @firstname = data['firstname']
-    @lastname = data['lastname']
-    @name = "#{@firstname} #{@lastname}"
-    @studentnumber = data['studentnumber']
+    @firstname = data['firstname'] || ''
+    @lastname = data['lastname'] || ''
+    @email = data['email'] || ''
+    if @firstname.length + @lastname.length > 0
+      @name = "#{@firstname} #{@lastname}"
+    else
+      @name = @email
+    
+    @studentnumber = data['studentnumber'] || ''
     @assignments = ko.observableArray()
     
 

@@ -18,7 +18,12 @@ class CourseInstances::GroupsController < GroupsController
     user_ids << @course.teacher_ids
     users = User.find(user_ids)
     
-    response = { groups: groups.as_json(:only => [:id], :methods => [:user_ids, :reviewer_ids, :url]), users: users.as_json(:only => [:id, :studentnumber, :firstname, :lastname] ), assistants: @course_instance.assistant_ids, teachers: @course.teacher_ids }
+    response = { 
+      groups: groups.as_json(:only => [:id], :methods => [:user_ids, :reviewer_ids, :url]),
+      users: users.as_json(:only => [:id, :studentnumber, :email, :firstname, :lastname] ),
+      assistants: @course_instance.assistant_ids,
+      teachers: @course.teacher_ids
+    }
     
     respond_to do |format|
       format.html { }
