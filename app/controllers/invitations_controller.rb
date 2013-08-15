@@ -24,7 +24,7 @@ class InvitationsController < ApplicationController
       exercise = invitation.exercise
 
       # Add user to group
-      group.users << current_user unless group.users.include?(current_user)
+      group.add_member(current_user)
 
       # Delete invitation
       invitation.destroy

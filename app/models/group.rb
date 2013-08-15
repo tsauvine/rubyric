@@ -20,6 +20,11 @@ class Group < ActiveRecord::Base
     user && reviewers.include?(user)
   end
 
+  def add_member(user)
+    self.users << user unless self.users.include?(user)
+    self.course_instance.students << user unless self.course_instance.students.include?(user)
+  end
+  
   # If matching email address if found, user is added to the group. Otherwise, an invitation link is sent to that address.
   #
   # members: array of email addresses
@@ -29,6 +34,7 @@ class Group < ActiveRecord::Base
 
       if user
         self.users << user unless self.users.include?(user)
+        self.course_instance.students << user unless self.course_instance.students.include?(user)
       else
         # Create invitation
         invitation = GroupInvitation.create(

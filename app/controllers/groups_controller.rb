@@ -92,7 +92,7 @@ class GroupsController < ApplicationController
 #     end
 
     @group = Group.new(params[:group])
-    @group.users << current_user if current_user && !@is_teacher
+    @group.add_member(current_user) if current_user && !@is_teacher
 
     # Automatic groupname
     @group.name = (@group.users.collect { |user| user.studentnumber }).join('_')
@@ -153,7 +153,7 @@ class GroupsController < ApplicationController
       exercise = invitation.exercise
 
       # Add user to group
-      group.users << current_user unless group.users.include?(current_user)
+      group.add_member(current_user)
 
       # Delete invitation
       invitation.destroy

@@ -106,10 +106,7 @@ class SubmissionsController < ApplicationController
       if @exercise.groupsizemax <= 1 && current_user
         # Create a group automatically
         @group = Group.create({:course_instance_id => @course_instance.id, :name => user.studentnumber})
-        @group.users << user
-
-        # Add user to the course
-        @course_instance.students << user unless @course_instance.students.include?(user)
+        @group.add_member(user)
 
         @submission.group = @group
       else

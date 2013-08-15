@@ -132,10 +132,11 @@ class CourseInstance < ActiveRecord::Base
 
   # Creates example groups for this course instance. Group members are users whose firstname is 'Student' and organization is 'Example'.
   def create_example_groups(groups_count = 100)
+    # FIXME: What if Example organization is not found?
     organization = Organization.where(:name => 'Example').first
     
     # Get example students
-    users = User.where(:firstname => 'Student', :organization_id => organization.id).all  # Fixme
+    users = User.where(:firstname => 'Student', :organization_id => organization.id).all
     user_counter = 0
     
     # Create groups and submissions
@@ -147,7 +148,7 @@ class CourseInstance < ActiveRecord::Base
       students_count = rand(3) # self.groupsizemin + rand(self.groupsizemax - self.groupsizemin + 1)
       for j in (0..students_count)
         user = users[user_counter]
-        group.users << user if user
+        group.add_member(user) if user
         user_counter += 1
       end
 
