@@ -35,6 +35,7 @@ class CoursesController < ApplicationController
   # POST /courses
   def create
     @course = Course.new(params[:course])
+    @course.organization_id = current_user.organization_id
 
     if @course.save
       @course.teachers << current_user

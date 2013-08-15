@@ -1,6 +1,7 @@
 class Course < ActiveRecord::Base
   has_many :course_instances, {:order => :id, :dependent => :destroy}
   has_many :active_instances, {:order => :id, :dependent => :destroy, :class_name => 'CourseInstance', :conditions => {:active => true}}
+  belongs_to :organization
 
   has_and_belongs_to_many :teachers, {:class_name => 'User', :join_table => 'courses_teachers', :order => :studentnumber}
 
@@ -52,7 +53,10 @@ class Course < ActiveRecord::Base
     example_submission_filename = "#{SUBMISSIONS_PATH}/example.pdf"
     exists = File.exists?(example_submission_filename)
 
-    course = Course.create(:code => '0.123', :name => 'Example course')
+    course = Course.new(:code => '0.123', :name => 'Example course')
+    course.organization_id = teacher.organization_id if teacher
+    course.save
+    
     course.teachers << teacher if teacher
 
     instance = CourseInstance.create(:course_id => course.id, :name => Time.now.year)

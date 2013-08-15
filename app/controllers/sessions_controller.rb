@@ -50,11 +50,11 @@ class SessionsController < ApplicationController
     logout_url = request.env[SHIB_ATTRIBUTES[:logout]]
 
 #     shibinfo = {
-#       :login => 'teacher1@aalto.fi', #'student1@hut.fi',
-#       :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:97514' || '').split(':').last,
-#       :firstname => 'Teemu',
-#       :lastname => 'Teekkari',
-#       :email => 'teacher1@example.com'
+#       :login => 'student41@aalto.fi', #'student1@hut.fi',
+#       :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00041' || '').split(':').last,
+#       :firstname => 'Student',
+#       :lastname => '41',
+#       :email => 'student41@example.com'
 #     }
 #     logout_url= 'http://www.aalto.fi/'
 
@@ -82,11 +82,19 @@ class SessionsController < ApplicationController
       logger.debug "Trying to find by studentnumber #{shibinfo[:studentnumber]}"
       user = User.find_by_studentnumber(shibinfo[:studentnumber], :conditions => "login IS NULL")
     end
-
+    
+    if !user && !shibinfo[:email].blank?
+      logger.debug "Trying to find by email #{shibinfo[:email]}"
+      user = User.find_by_email(shibinfo[:email])
+    end
+    
     # Create new account or update an existing
     unless user
       logger.debug "User not found. Trying to create."
 
+      # Find organization
+      organization_domain = (shibinfo[:login] || '').split('@',2)[1]
+      
       # New user
       user = User.new()
       user.login = shibinfo[:login]
@@ -94,6 +102,7 @@ class SessionsController < ApplicationController
       user.firstname = shibinfo[:firstname]
       user.lastname = shibinfo[:lastname]
       user.email = shibinfo[:email]
+      user.organization = Organization.find_by_domain(organization_domain) || Organization.create(domain: organization_domain) if organization_domain
       user.reset_persistence_token
       #user.reset_single_access_token
       if user.save(:validate => false)
@@ -115,6 +124,11 @@ class SessionsController < ApplicationController
       user.email = shibinfo[:email] if user.email.blank?
       user.reset_persistence_token if user.persistence_token.blank?  # Authlogic won't work if persistence token is empty
       #user.reset_single_access_token if user.single_access_token.blank?
+      
+      unless user.organization
+        organization_domain = (shibinfo[:login] || '').split('@',2)[1]
+        user.organization = Organization.find_by_domain(organization_domain) || Organization.create(domain: organization_domain) if organization_domain
+      end
     end
 
     # Create session

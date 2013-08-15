@@ -185,8 +185,6 @@ class CourseInstance < ActiveRecord::Base
       end
     end
     
-    #foo = foos.each_with_object({}) { |h, f| h[f.name.to_sym] = f.value }
-    
     batch.lines.each do |line|
       parts = line.split(';')
       student_keys = parts[0].split(',')
@@ -210,6 +208,7 @@ class CourseInstance < ActiveRecord::Base
             student = User.where(:email => search_key).first   # Search from database
             unless student  # Create new user
               student = User.new(:email => search_key, :firstname => '', :lastname => '')
+              student.organization_id = self.course.organization_id
               student.save(:validate => false)
               print ", not found in db, creating, "
             end
@@ -234,6 +233,7 @@ class CourseInstance < ActiveRecord::Base
             unless student
               student = User.new(:firstname => '', :lastname => '')
               student.studentnumber = search_key
+              student.organization_id = self.course.organization_id
               student.save(:validate => false)
               print ", not found in db, creating, "
             end

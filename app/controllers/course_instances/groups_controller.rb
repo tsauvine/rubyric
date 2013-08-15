@@ -46,9 +46,8 @@ class CourseInstances::GroupsController < GroupsController
     
     if params[:paste]
       @course_instance.batch_create_groups(params[:paste])
+      redirect_to course_instance_groups_path
     end
-    
-    
   end
   
 end
