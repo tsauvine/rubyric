@@ -10,16 +10,36 @@
       <% end %>
     </div>
   </div>
+  <div class="control-group">
+    <%= f.label :submission_policy, t('.submission_policy_label'), :class => 'control-label' %>
+    <div class="controls">
+      <label class="radio">
+        <%= f.radio_button :submission_policy, 'authenticated' %>
+        <%=t '.policy_authenticated' %>
+      </label>
+      <label class="radio">
+        <%= f.radio_button :submission_policy, 'enrolled' %>
+        <%=t '.policy_enrolled' %>
+        <% if @course_instance.new_record? %>
+          <%=t '.policy_provide_list' %>
+        <% else %>
+          <%= link_to t('.policy_provide_list_link'), batch_course_instance_groups_path(@course_instance), :target => '_blank' %>
+        <% end %>
+      </label>
+    </div>
+  </div>
   <% unless @course_instance.new_record? %>
     <div class="control-group">
       <%= f.label :active, t(:instance_active_label), :class => 'control-label' %>
       <div class="controls">
-        <%= f.check_box :active %>
-        <span class="hint"><%=t :instance_active_hint %></span>
+        <label>
+          <%= f.check_box :active %>
+          <%=t :instance_active_hint %>
+        </label>
       </div>
     </div>
   <% end %>
-
+  
   <div class="control-group">
     <div class="controls">
       <% if @course_instance.new_record? %>
@@ -31,4 +51,6 @@
       <% end %>
     </div>
   </div>
+  
+  
 <% end %>

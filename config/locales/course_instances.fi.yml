@@ -2,6 +2,12 @@ fi:
   course_instances:
     show:
       no_exercises: "Kurssilla ei ole yhtään harjoitusta. Luo vähintään yksi harjoitus, johon opiskelijat voivat palauttaa töitään."
+    form:
+      submission_policy_label: "Palautusten vastaanotto"
+      policy_authenticated: "Kuka tahansa kirjautunut opiskelija voi palauttaa."
+      policy_enrolled: "Vain ilmoittautuneet opiskelijat voivat palauttaa."
+      policy_provide_list: "(Opiskelijalista syötettävä.)"
+      policy_provide_list_link: "(Syötä opiskelijalista täällä.)"
       
   # New
   instance_create_heading: "Luo toteutuskerta"
@@ -12,7 +18,7 @@ fi:
   instance_name_label: "Nimi"
   instance_name_hint: "esim. %{year}"
   instance_active_label: "Aktiivinen"
-  instance_active_hint: "Vain aktiiviset kurssit vastaanottavat palautuksia."
+  instance_active_hint: "Kurssi on aktiivinen ja ottaa vastaan palautuksia."
   instance_updated_flash: "Toteutuskerta päivitetty."
   
   # Show

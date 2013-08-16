@@ -19,7 +19,7 @@ class CourseInstancesController < ApplicationController
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @course_instance = CourseInstance.new() # :name => Time.now.year
+    @course_instance = CourseInstance.new(:submission_policy => 'authenticated') # :name => Time.now.year
   end
 
   # GET /course_instances/1/edit

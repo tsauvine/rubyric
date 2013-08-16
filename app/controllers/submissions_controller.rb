@@ -52,6 +52,12 @@ class SubmissionsController < ApplicationController
       render :action => 'instance_inactive'
       return
     end
+    
+    # Check submisison policy
+    if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(@user)
+      render :action => 'not_enrolled'
+      return
+    end
 
     # Find groups that the user is part of
     if @is_teacher
@@ -91,6 +97,7 @@ class SubmissionsController < ApplicationController
     @exercise = @submission.exercise
     load_course
     @is_teacher = @course.has_teacher(current_user)
+    user = current_user
     
     return access_denied unless logged_in? || @exercise.submit_without_login
 
@@ -100,8 +107,13 @@ class SubmissionsController < ApplicationController
       redirect_to submit_url(@exercise.id)
       return
     end
+    
+    # Check submisison policy
+    if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(user)
+      render :action => 'not_enrolled'
+      return
+    end
 
-    user = current_user
     unless @submission.group
       if @exercise.groupsizemax <= 1 && current_user
         # Create a group automatically

@@ -2,6 +2,12 @@ en:
   course_instances:
     show:
       no_exercises: "No assignments have been created. Create at least one assignment to allow students to submit their works."
+    form:
+      submission_policy_label: "Submission policy"
+      policy_authenticated: "Any authenticated user can submit."
+      policy_enrolled: "Only enrolled students can submit."
+      policy_provide_list: "(You must provide a student list.)"
+      policy_provide_list_link: "(You must provide a student list here.)"
   
   # New
   instance_create_heading: "Create course instance"
@@ -12,7 +18,7 @@ en:
   instance_name_label: "Name"
   instance_name_hint: "e.g. %{year}"
   instance_active_label: "Active"
-  instance_active_hint: "Only active course instances accept submissions."
+  instance_active_hint: "Course is active and accepts submissions."
   instance_updated_flash: "Instance updated."
   
   # Show

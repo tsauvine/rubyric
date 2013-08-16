@@ -30,7 +30,7 @@
       -
       <%= f.text_field :groupsizemax, :class => 'input-small' %>
       <% if @exercise.errors[:groupsizemin].empty? && @exercise.errors[:groupsizemax].empty? %>
-        <span class="hint">(min - max)</span>
+        <span class="hint">(Number of students in one group, min...max)</span>
       <% else %>
         <span class="error">Check values</span>
       <% end %>
