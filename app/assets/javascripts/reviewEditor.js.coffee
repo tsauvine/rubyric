@@ -29,7 +29,13 @@ class Page
     
     # Prepare feedback containers
     for category in @rubricEditor.feedbackCategories
-      feedback = {id: category.id, title: category.name, value: ko.observable('')}
+      feedbackHeight = Math.floor(100.0 / @rubricEditor.feedbackCategories.length) + "%"
+      feedback = {
+        id: category.id,
+        title: category.name,
+        value: ko.observable(''),
+        height: feedbackHeight
+      }
       @feedback.push(feedback)
       @feedbackByCategory[category.id] = feedback
 
@@ -217,7 +223,7 @@ class @ReviewEditor
     # Parse feedback categories
     raw_categories = data['feedbackCategories']
     if !raw_categories? || raw_categories.length < 1
-      # Make sure that the there is one category
+      # Make sure that there is at least one category
       raw_categories = [{id: 0, name: ''}]
     
     # Don't use category title if only one category is present

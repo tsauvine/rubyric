@@ -128,7 +128,7 @@
 
           <!-- Textareas -->
           <div class="textareas" data-bind="foreach: feedback">
-            <div>
+            <div data-bind="style: { height: height }">
               <p data-bind="text: title"></p>
               <textarea data-bind="value: value, attr: {disabled: $parent.finalizing}"></textarea>
             </div>

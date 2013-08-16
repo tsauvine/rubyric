@@ -335,9 +335,11 @@ table.histogram td {
 }
 
 .review-editor {
-  width: 69%;
-  margin-left: 1em;
-  margin-top: 1em;
+  box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  width: 70%;
+  margin: 0em;
+  padding: 0em 1em;
 }
 
 
@@ -350,7 +352,7 @@ table.histogram td {
 
   background-color: #f8f8f8;
   border-left: 2px solid black;
-  overflow: scroll;
+  overflow: auto;
 }
 
 .textareas div {
@@ -366,10 +368,9 @@ table.histogram td {
 
 .textareas textarea {
   width: 95%;
-  height: 85%;
+  height: 88%;
   font-family: sans-serif;
   text-align: left;
-  /*font-size: .8em;*/
 }
 
 .rubricmenu {
