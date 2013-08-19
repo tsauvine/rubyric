@@ -1,19 +1,29 @@
-<!-- exercises/batch_assign.html.erb -->
+<div class="page-header">
+  <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+</div>
 
-<h1>Create groups</h1>
+<!-- Tabs -->
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li><%= link_to 'Assign groups to reviewers', course_instance_groups_path(@course_instance) %></li>
+    <li class="active"><%= link_to 'Batch upload', batch_course_instance_groups_path %></li>
+  </ul>
+</div>
 
 <%= form_tag batch_course_instance_groups_path(@course_instance), :html => { :multipart => true } do |f| -%>
   <div class="hint">
-    Paste the student list here.
+    Paste the student list here to create groups and/or assign groups to reviewers
     <ul>
       <li>Each row represents one group.</li>
       <li>Separate students by comma.</li>
-      <li>Students can be identified with either studentnumber or email.</li>
-      <li>Duplicate groups are not created, ie. you can safely upload the same list multiple times.</li>
+      <li>Optionally, specify reviewers after semicolon: <em>student1, student2, ...; reviewer1, reviewer2...</em></li>
+      <li>Students can be identified by studentnumber or email.</li>
+      <li>Reviewers can be identified by studentnumber, email, firstname, lastname or full name. Ambiguous identifiers are not accepted.</li>
+      <li>Duplicate groups or assignments are not created, ie. you can safely upload the same list multiple times.</li>
     </ul>
   </div>
   <%= text_area_tag :paste, nil, :rows => 25, :class => 'span12' %>
   <p><%= submit_tag 'Upload', :class => 'btn btn-primary' %></p>
 <% end -%>
 
-<p><%= link_to 'Back', course_instance_groups_path(@course_instance) %></p>
+

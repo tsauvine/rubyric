@@ -6,17 +6,25 @@
   <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
 </div>
 
+<!-- Tabs -->
+<div class="tabbable">
+  <ul class="nav nav-tabs">
+    <li class="active"><%= link_to 'Assign groups to reviewers', course_instance_groups_path(@course_instance) %></li>
+    <li><%= link_to 'Batch upload', batch_course_instance_groups_path %></li>
+  </ul>
+</div>
+
+<!-- Hints -->
 <% if @course_instance.groups.empty? %>
   <div class="alert alert-info">
     There are no student groups yet. After students have formed groups, you can assign groups to reviewers here.
   </div>
 <% elsif @course_instance.assistants.empty? %>
   <div class="alert alert-info">
-    In this view, you can assign groups to reviewers. If the course has no teaching assistants, you can skip this step. Users with teacher's privileges can review any groups without being specifically assigned.
+    Here you can assign groups to reviewers. If the course has no teaching assistants, you can skip this step. Users with teacher's privileges can review any groups without being specifically assigned.
   </div>
 <% else %>
   <div class="hint">
-    <p>Assign groups to reviewers</p>
     <ul>
       <li>Teaching assistants can only see groups that are assigned to them.</li>
       <li>Teachers can see and review all groups.</li>
@@ -118,5 +126,3 @@
     <button type="button" class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
   </div>
 </div>
-
-<p><%= link_to 'Batch upload', batch_course_instance_groups_path %></p>

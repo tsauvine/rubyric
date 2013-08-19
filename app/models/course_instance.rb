@@ -179,10 +179,25 @@ class CourseInstance < ActiveRecord::Base
     
     # Load existing groups
     groups_by_student_id = {}     # student_id => [array of groups where the student belongs]
-    self.groups.includes(:users).each do |group|
+    self.groups.includes(:users, :reviewers).each do |group|
       group.users.each do |student|
         groups_by_student_id[student.id] ||= []
         groups_by_student_id[student.id] << group
+      end
+    end
+    
+    # Load assistants
+    assistants = {}
+    assistants_ambiguous_keys = {}
+    assistant_keys = [:email, :studentnumber, :firstname, :lastname, :name]
+    (self.assistants + self.course.teachers).each do |assistant|
+      assistant_keys.each do |key|
+        value = assistant.send(key).downcase
+        
+        # Mark the key as ambiguous if it has been seen already
+        assistants_ambiguous_keys[value] = true if assistants[value]
+        
+        assistants[value] = assistant
       end
     end
     
@@ -199,19 +214,16 @@ class CourseInstance < ActiveRecord::Base
         next if student_key.empty?
         
         if student_key.include?('@')
-          print "search email #{student_key}"
-          # Search by studentnumber
+          # Search by email
           search_key = student_key
           student = students_by_email[search_key]         # Search from students in the course
           
           unless student
-            print ", not found in course"
             student = User.where(:email => search_key).first   # Search from database
             unless student  # Create new user
               student = User.new(:email => search_key, :firstname => '', :lastname => '')
               student.organization_id = self.course.organization_id
               student.save(:validate => false)
-              print ", not found in db, creating, "
             end
             self.students << student  # Add student to course
             students_by_studentnumber[student.studentnumber] = student
@@ -219,13 +231,11 @@ class CourseInstance < ActiveRecord::Base
           end
           
         else
-          # Search by email
-          print "search studentnumber #{student_key}"
+          # Search by studentnumber
           search_key = student_key
           student = students_by_studentnumber[search_key]        # Search from students in the course
           
           unless student
-            print ", not found in course"
             relation = User.where(:studentnumber => search_key) # Search from database
             # relation = relation.where(:organization_id => self.course.organization_id) if self.course.organization_id
             student = relation.first
@@ -236,7 +246,6 @@ class CourseInstance < ActiveRecord::Base
               student.studentnumber = search_key
               student.organization_id = self.course.organization_id
               student.save(:validate => false)
-              print ", not found in db, creating, "
             end
             self.students << student  # Add student to course
             students_by_studentnumber[student.studentnumber] = student
@@ -248,17 +257,12 @@ class CourseInstance < ActiveRecord::Base
         current_groups << g
         group_students << student
         group_student_ids << student.id
-        puts
       end
       
-      if group_students.empty?
-        puts "No student on this line. Next."
-        next
-      end
+      next if group_students.empty?
       
       # Calculate the intersection of students' current groups, ie. find the groups that contain all of the given students.
       groups = current_groups.inject(:&)
-      print "groups intersection: #{groups.size}"
       
       # The list now contains the groups with the requested students but possibly extra students as well.
       # Find the group that contains the requested amount of students.
@@ -270,8 +274,8 @@ class CourseInstance < ActiveRecord::Base
         end
       end
       
+      # Create group if not found
       unless group
-        print ", creating group"
         group_name = (group_students.collect { |user| user.studentnumber }).join('_')
         group = Group.create(:name => group_name, :course_instance_id => self.id)
         
@@ -282,12 +286,30 @@ class CourseInstance < ActiveRecord::Base
           groups_by_student_id[student.id] << group
         end
       end
-      puts
       
-      # Set reviewer
+      # Set reviewers
       if parts.size >= 2
+        assistant_keys = parts[1].split(',')
+        
+        assistant_keys.each do |assistant_key|
+          assistant_key = assistant_key.strip.downcase
+          next if assistant_key.blank?
+          
+          # Detect ambiguous keys
+          if assistants_ambiguous_keys[assistant_key]
+            # TODO: warn about ambiguous key
+            next
+          end
+          
+          assistant = assistants[assistant_key]
+          unless assistant
+            # TODO: warn that assistant was not found
+            next
+          end
+          
+          group.reviewers << assistant unless group.reviewers.include? assistant
+        end
       end
-      
     end
   end
   
