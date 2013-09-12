@@ -24,11 +24,13 @@ mailer erroreista mailia adminille
 
 rubric editor: if all grades are deleted, phrase grades are not properly cleared
 
-phrase grades
-
 Rubric editor: tool tips
 
 Course new: disclaimer
+
+Opettaja ei voi submitata, jos 'Only allow enrolled students to submit' on käytössä.
+
+Teacher should be able to delete submission.
 
 
 = Later =

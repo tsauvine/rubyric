@@ -25,11 +25,14 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    return unless current_session
+    flash[:success] = "Logout successful"
+    unless current_session
+      redirect_to(root_url)
+      return
+    end
     
     logout_url = session[:logout_url]
     current_session.destroy
-    flash[:success] = "Logout successful"
 
     if logout_url
       redirect_to(logout_url)
