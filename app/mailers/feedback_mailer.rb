@@ -18,15 +18,21 @@ class FeedbackMailer < ActionMailer::Base
 
     # Collect receiver addresses
     recipients = []
-    @review.submission.group.users.each do |user|
+    review.submission.group.users.each do |user|
       recipients << user.email unless user.email.blank?
     end
-    recipients = recipients.join(",")
+    
+    if recipients.empty?
+      # TODO: raise an exception with an informative message
+      review.status = 'finished'
+      review.save
+      return
+    end
     
     subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
-      mail(:to => recipients, :from => from, :subject => subject)
+      mail(:to => recipients.join(","), :from => from, :subject => subject)
     end
 
     # Set status

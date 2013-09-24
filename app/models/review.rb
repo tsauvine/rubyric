@@ -254,10 +254,12 @@ class Review < ActiveRecord::Base
   def self.deliver_reviews(review_ids)
     errors = []
     
+    # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
       begin
         FeedbackMailer.review(review).deliver
-      rescue Net::SMTPFatalError => e
+      #rescue Net::SMTPFatalError => e
+      rescue Exception => e
         logger.error e
         errors << e
         review.status = 'finished'
