@@ -159,7 +159,7 @@ class ExercisesController < ApplicationController
       end
     end
     
-    @results.sort! { |a, b| a[0].studentnumber <=> b[0].studentnumber }
+    @results.sort! { |a, b| (a[0].studentnumber || '') <=> (b[0].studentnumber || '') }
   end
 
   def statistics
