@@ -8,7 +8,7 @@ class Review < ActiveRecord::Base
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
   def include_in_results?
-    status == 'mailed' || status == 'finished'
+    status == 'finished' || status == 'mailed' || status == 'mailing'
   end
   
   def calculate_grade
