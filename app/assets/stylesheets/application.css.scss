@@ -86,6 +86,19 @@ p.narrow, div.narrow {
 }
 */
 
+.shibboleth-login {
+  a {
+    padding: 1em 2em;
+    font-weight: bold;
+    /*.border-radius(20px);*/
+    margin-bottom: 1ex;
+  }
+
+  p {
+    margin-bottom: 20px;
+  }
+}
+
 
 /******************
  * Headings
@@ -721,4 +734,21 @@ img.pdfpage {
   display: block;
   width: 612px;
   height: 792px;
+}
+
+
+/******************
+ * Footer
+ ******************/
+
+.footer {
+  /*text-align: center;*/
+  padding: 30px 0px;
+  margin-top: 70px;
+  border-top: 1px solid #e5e5e5;
+  background-color: #f5f5f5;
+
+  p {
+    color: #777;
+  }
 }

@@ -1,7 +1,9 @@
 fi:
   sessions_login_heading: "Kirjaudu"
   sessions_traditional_hint: "Kirjaudu erillisellä Rubyric-tunnuksella (testitunnukset)"
-  sessions_shibboleth_hint: "Suomalaisten korkeakoulujen käyttäjät voivat kirjautua kotiyliopiston tunnuksilla."
+  sessions_shibboleth_hint: "Muiden suomalaisten korkeakoulujen käyttäjät voivat kirjautua kotiyliopistonsa tunnuksilla."
+  sessions_shibboleth_aalto_hint: "Kirjaudu Aallon käyttäjätunnuksella"
+  shibboleth_aalto_button: 'Aalto Weblogin'
   sessions_login_button: "Kirjaudu"
   sessions_studentnumber_label: "Opiskelijanumero"
   sessions_password_label: "Salasana"

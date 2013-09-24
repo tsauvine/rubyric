@@ -2,13 +2,6 @@
   <h1>Rubyric <small>(beta)</small></h1>
 </div>
 
-<div class="alert alert-info">
-  Rubyric has been updated and moved to a new server.
-  Please report any problems or bugs to 
-  rubyric<span>@</span>cs.hut.fi
-</div>
-
-
 <div class="row">
   <div class="span12">
   Rubyric is an assessment tool that makes it easy to give written feedback to students.
@@ -49,6 +42,9 @@
     -->
 
     <h2><%=t :frontpage_login_heading %></h2>
+    <% if defined?(SHIB_AALTO_PATH) %>
+      <%= render :partial => 'sessions/aalto' %>
+    <% end %>
     <% if defined?(SHIB_PATH) %>
       <%= render :partial => 'sessions/shibboleth' %>
     <% end %>
@@ -61,3 +57,8 @@
     -->
   </div>
 </div>
+
+<% content_for(:footer) do -%>
+  <p>rubyric.cs.hut.fi is provided by <a target="_blank" href="https://cse.aalto.fi/research/groups/letech/">Learning+Technology group</a>.</p>
+  <p>Please report any problems or bugs to rubyric<span>@</span>cs.hut.fi</p>
+<% end -%>

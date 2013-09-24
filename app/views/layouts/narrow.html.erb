@@ -35,5 +35,12 @@
   <%= yield  %>
 </div>
 
+<% if content_for?(:footer) -%>
+<footer class="footer">
+  <div class="container">
+    <%= yield(:footer) %>
+  </div>
+</footer>
+<% end -%>
 </body>
 </html>

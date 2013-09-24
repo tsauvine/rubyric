@@ -2,13 +2,25 @@
   <h1><%=t :sessions_login_heading %></h1>
 </div>
 
-<div class="row">
-  <div class="span4">
-    <%= render :partial => 'login' %>
-  </div>
-  <% if defined?(SHIB_PATH) %>
-    <div class="span4">
-      <%= render :partial => 'shibboleth' %>
+<!--div class="row"-->
+  <% if defined?(SHIB_AALTO_PATH) %>
+    <div class="row">
+      <div class="span4">
+        <%= render :partial => 'aalto' %>
+      </div>
     </div>
   <% end %>
-</div>
+  <% if defined?(SHIB_PATH) %>
+    <div class="row">
+      <div class="span4">
+        <%= render :partial => 'shibboleth' %>
+      </div>
+    </div>
+  <% end %>
+  <div class="row">
+    <div class="span4">
+      <%= render :partial => 'login' %>
+    </div>
+  </div>
+
+<!--/div-->
