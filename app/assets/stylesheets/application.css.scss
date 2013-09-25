@@ -352,7 +352,7 @@ table.histogram td {
   -moz-box-sizing: border-box;
   width: 70%;
   margin: 0em;
-  padding: 0em 1em;
+  padding: 0em 0em;
 }
 
 
@@ -634,6 +634,20 @@ p.feedback-preview {
     padding-right: 2em;
   }
 }
+
+
+/**************************************************************************
+ * Submit form (student's view)
+ **************************************************************************/
+
+.submit-form {
+  table.submissions {
+    td {
+      padding-right: 1em;
+    }
+  }
+}
+
 
 
 /******************

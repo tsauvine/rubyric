@@ -10,15 +10,15 @@
   <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
-<% unless @exercise.submit_pre_message.blank? %>
-  <p><%= @exercise.submit_pre_message %></p>
-<% end %>
-
+<div class="submit-form">
+  <% unless @exercise.submit_pre_message.blank? %>
+    <p><%= @exercise.submit_pre_message %></p>
+  <% end %>
 
   <!-- Group -->
   <% if @exercise.groupsizemax > 1 %>
-    <div class="row-fluid">
-      <div class="span4">
+    <div class="row">
+      <div class="span6">
 
         <h2>Group members</h2>
         <table class="table">
@@ -63,43 +63,56 @@
   
   <!-- Submissions -->
   <% unless @submissions.empty? %>
-    <h2>Submissions</h2>
-    <table>
-      <% @submissions.each do |submission| %>
-        <tr>
-          <td><%=l submission.created_at, :format => :long %></td>
-          <td>(<%= link_to "#{submission.extension}", submission %>)</td>
-          <td>
-            <% submission.reviews.each do |review| %>
-              <% if review.status == 'mailed' %>
-                <%= link_to 'Feedback', review %>
-              <% end %>
-            <% end %>
-          </td>
-        </tr>
-      <% end %>
-    </table>
-
+    <div class="row">
+      <div class="span12">
+        <h2>Submissions</h2>
+        <table class="table table-striped submissions">
+          <% @submissions.each do |submission| %>
+            <tr>
+              <td>
+                <%=l submission.created_at, :format => :long %>
+                (<%= link_to "#{submission.extension}", submission %>)
+              </td>
+              <td>
+                <% submission.reviews.each do |review| %>
+                  <% if review.status == 'mailed' %>
+                    <%= link_to 'View feedback', review %>
+                    <% unless review.filename.blank? %>
+                      (<%= link_to review.filename, download_review_path(review) %>)
+                    <% end %>
+                  <% end %>
+                  <br />
+                <% end %>
+              </td>
+            </tr>
+          <% end %>
+        </table>
+      </div>
+    </div>
+    
     <hr />
   <% end %>
 
-  
-<%= form_for @submission, :html => { :multipart => true } do |f| %>
-  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-  <% if @group %>
-    <%= f.hidden_field :group_id, :value => @group.id %>
-  <% end %>
+  <div class="row">
+    <div class="span12">
+      <%= form_for @submission, :html => { :multipart => true } do |f| %>
+        <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+        <% if @group %>
+          <%= f.hidden_field :group_id, :value => @group.id %>
+        <% end %>
 
-  <!-- Upload -->
-  <h2>Submit file</h2>
-  <div id="exercise">
-    <p><%= file_field_tag 'file' %></p>
+        <!-- Upload -->
+        <h2>Submit file</h2>
+        <div id="exercise">
+          <p><%= file_field_tag 'file' %></p>
 
-    <p><%= f.submit 'Submit', :class => 'btn btn-primary' %></p>
+          <p><%= f.submit 'Submit', :class => 'btn btn-primary' %></p>
+        </div>
+      <% end %> <!-- /form -->
+    </div>
   </div>
-
-<% end %> <!-- /form -->
-
+</div>
+  
 <% if @is_teacher %>
   <%= link_to t(:Back), @exercise %>
 <% end %>

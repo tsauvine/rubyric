@@ -1,8 +1,5 @@
 class ReviewsController < ApplicationController
 
-  #layout 'review'
-  #layout 'wide', :only => ['finish']
-
   # GET /reviews/1
   def show
     @review = Review.find(params[:id])
@@ -15,7 +12,7 @@ class ReviewsController < ApplicationController
     return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || is_admin?(current_user)
     
     respond_to do |format|
-      format.html { render :action => 'show', :layout => 'wide' }
+      format.html { render :action => 'show', :layout => 'narrow' }
       format.json { render json: @review.payload }
     end
   end
@@ -165,6 +162,49 @@ class ReviewsController < ApplicationController
     redirect_to edit_review_path(@review)
   end
 
+  def upload
+    @review = Review.find(params[:id])
+    @exercise = @review.submission.exercise
+    load_course
+
+    # Authorization
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+
+    # Load file
+    if params[:file] && !params[:file].blank?
+      @review.write_file(params[:file], @exercise)
+      @review.save
+      redirect_to edit_review_path(@review)
+      return
+    end
+    
+    render :action => 'upload', :layout => 'narrow'
+  end
+  
+  # Download feedback file
+  def download
+    @review = Review.find(params[:id])
+    @grader = @review.user
+    @submission = @review.submission
+    @group = @submission.group
+    @exercise = @submission.exercise
+    load_course
+
+    return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || is_admin?(current_user)
+    
+    respond_to do |format|
+      format.html do
+        if @review.filename.blank? || !File.exist?(@review.full_filename)
+          # TODO: better error message
+          @heading = 'File not found'
+          render :template => "shared/error", :layout => 'narrow'
+        else
+          send_file @review.full_filename, :type => Mime::Type.lookup_by_extension(@review.extension) || 'application/octet-stream', :filename => @review.filename
+        end
+      end
+    end
+  end
+  
   def annotation
     @review = Review.find(params[:id])
     @submission = @review.submission

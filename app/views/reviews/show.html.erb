@@ -21,4 +21,4 @@
 
 <p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
 
-<p><%= link_to 'Back', submit_url(@exercise.id) %></p>
+<p><%= link_to 'Back', submit_url(@exercise.id, :group => @group) %></p>

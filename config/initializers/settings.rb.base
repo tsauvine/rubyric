@@ -1,5 +1,6 @@
 # sets the upload root, relative to the RAILS_ROOT
 SUBMISSIONS_PATH = "/home/rubyric/submissions"
+FEEDBACK_PATH = "/home/rubyric/feedback"
 
 PDF_CACHE_PATH = "/home/rubyric/pdf_cache"
 

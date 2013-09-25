@@ -25,27 +25,42 @@
 <% else %>
   
   <% unless @available_groups.empty? %>
+    
+    <h3>Submissions</h3>
     <!-- Submissions -->
-    <table>
+    <table class="assignments">
       <% @available_groups.each do |group| %>
-        <tr>
-          <td colspan='2'>
+        <tr class="group">
+          <td colspan='3'>
             <%= group.users.collect {|user| user.name }.join(', ') %>
           </td>
         </tr>
         
         <% if group.submissions.empty? %>
-          <tr>
-            <td colspan='2'>No submissions</td>
+          <tr class="submission">
+            <td colspan='3'>No submissions</td>
           </tr>
         <% else %>
           <% group.submissions.each do |submission| %>
-            <tr>
+            <tr class="submission">
               <td><%=l submission.created_at, :format => :long %></td>
               <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+              <td>
+                <% submission.reviews.each do |review| %>
+                  <% if review.status == 'mailed' %>
+                    <%= link_to 'View feedback', review %>
+                    <% unless review.filename.blank? %>
+                      (<%= link_to review.filename, download_review_path(review) %>)
+                    <% end %>
+                  <% end %>
+                  <br />
+                <% end %>
+              </td>
             </tr>
           <% end %>
         <% end %>
+        
+        <tr class="spacer"><td colspan="3"></td></tr>
       <% end %>
     </table>
   <% end %>

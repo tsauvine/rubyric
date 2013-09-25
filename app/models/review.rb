@@ -10,6 +10,30 @@ class Review < ActiveRecord::Base
   def include_in_results?
     status == 'finished' || status == 'mailed' || status == 'mailing'
   end
+
+  # Saves the file to the filesystem.
+  # This must be called after create, because we need to know the id.
+  def write_file(file_data, exercise)
+    return unless file_data
+      
+    # TODO: check if utf-8 will cause problems
+    self.filename = file_data.original_filename
+    self.extension = file_data.original_filename.split(".").last
+
+    path = "#{FEEDBACK_PATH}/#{exercise.id}"
+    filename = "#{self.id}.#{self.extension}"
+    FileUtils.makedirs(path)
+
+    File.open("#{path}/#{filename}", "wb") do |file|
+      file.write(file_data.read)
+    end
+  end
+  
+  # Returns the location of the feedback file in the filesystem.
+  def full_filename
+    "#{FEEDBACK_PATH}/#{submission.exercise.id}/#{id}.#{extension}"
+  end
+
   
   def calculate_grade
     categories_counter = 0

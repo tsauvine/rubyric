@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130816101923) do
+ActiveRecord::Schema.define(:version => 20130925084640) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -215,6 +215,8 @@ ActiveRecord::Schema.define(:version => 20130816101923) do
     t.text     "notes_to_teacher"
     t.text     "notes_to_grader"
     t.text     "payload"
+    t.string   "filename"
+    t.string   "extension"
   end
 
   create_table "roles", :id => false, :force => true do |t|

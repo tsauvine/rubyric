@@ -2,7 +2,7 @@ class SubmissionsController < ApplicationController
   before_filter :login_required, :only => [:show]
   before_filter :load_submission, :except => [:new, :create]
 
-  layout 'wide'
+  layout 'narrow'
 
   def load_submission
     @submission = Submission.find(params[:id])
@@ -164,6 +164,7 @@ class SubmissionsController < ApplicationController
       @submission.move(target)
       
       redirect_to @exercise
+      return
     end
   end
   

@@ -1,7 +1,7 @@
 class GroupsController < ApplicationController
   before_filter :login_required, :only => [:index]
 
-  layout 'wide'
+  layout 'narrow'
 # 
 #   def set_layout
 #     case params[:embed]
