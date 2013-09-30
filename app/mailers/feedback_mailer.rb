@@ -10,11 +10,14 @@ class FeedbackMailer < ActionMailer::Base
     @course = @course_instance.course
     @grader = @review.user
 
-    from = @course.email
-#     unless @exercise.anonymous_graders
-#       from = @grader.email
-#     end
-    # @headers = {"Reply-to" => course.email}
+    if @course.email.blank?
+      from = @grader.email
+    else
+      from = @course.email
+      #headers["Reply-to"] = @grader.email
+    end
+    #unless @exercise.anonymous_graders
+    #end
 
     # Collect receiver addresses
     recipients = []
@@ -27,6 +30,11 @@ class FeedbackMailer < ActionMailer::Base
       review.status = 'finished'
       review.save
       return
+    end
+    
+    # Attachment
+    unless @review.filename.blank?
+      attachments[@review.filename] = File.read(@review.full_filename)
     end
     
     subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
