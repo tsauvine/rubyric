@@ -34,7 +34,10 @@ class FeedbackMailer < ActionMailer::Base
     
     # Attachment
     unless @review.filename.blank?
+      logger.info "Attachment #{@review.filename} (#{@review.full_filename})"
       attachments[@review.filename] = File.read(@review.full_filename)
+    else
+      logger.info "No attachment"
     end
     
     subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
