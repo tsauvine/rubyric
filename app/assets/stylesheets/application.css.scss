@@ -583,17 +583,23 @@ p.feedback-preview {
   padding: 1px;
 }
 
-.rubric-editor td.phraseType {
-  width: 6em;
-  text-align: center;
-}
+.rubric-editor {
+  td.phraseType {
+    width: 6em;
+    text-align: center;
+  }
 
-.rubric-editor select.phraseType {
-  width: 5em;
-}
+  select.phraseType {
+    width: 5em;
+  }
+  
+  input.phraseType {
+    width: 5em;
+  }
 
-.rubric-editor td.type-selection {
-  width: 100px;
+  td.type-selection {
+    width: 100px;
+  }
 }
 
 

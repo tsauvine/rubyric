@@ -93,7 +93,7 @@
           <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
             <h2 data-bind="text: name"></h2>
 
-            <!-- ko if: finalizing -->
+            <!-- ko if: $root.finalizing -->
               <div class="alert alert-info">
                 Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: cancelFinalize">Cancel finalizing</button>
               </div>
@@ -131,24 +131,30 @@
             <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
             
             <!-- Grades -->
-            <div data-bind="if: $root.grades.length > 1">
+            <!-- ko if: $root.gradingMode == 'average' && $root.grades.length > 0 -->
+              <hr />
+              <h3>Grade</h3>
+              
               <p>
-                <h3>Grade</h3>
-                
-                <p>
-                  <select data-bind="options: $root.grades, value: grade, attr: {disabled: finalizing}, optionsCaption: 'Choose grade...'"></select>
-                  <!-- ko if: averageGrade -->
-                    Calculated mean: <strong data-bind="text: averageGrade"></strong>
-                  <!-- /ko -->
-                </p>
+                <select data-bind="options: $root.grades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
+                <!-- ko if: averageGrade -->
+                  Calculated mean: <strong data-bind="text: averageGrade"></strong>
+                <!-- /ko -->
               </p>
-            </div>
+            <!-- /ko -->
+            <!-- ko if: $root.gradingMode == 'sum' -->
+              <hr />
+              <h3>
+                Points:
+                <span data-bind="text: averageGrade"></span>
+              </h3>
+            <!-- /ko -->
 
             <!-- Textareas -->
             <div class="textareas" data-bind="foreach: feedback">
               <div data-bind="style: { height: height }">
                 <p data-bind="text: title"></p>
-                <textarea data-bind="value: value, attr: {disabled: $parent.finalizing}"></textarea>
+                <textarea data-bind="value: value, attr: {disabled: $root.finalizing}"></textarea>
               </div>
             </div>
           </div>
@@ -162,15 +168,9 @@
           
           <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
           
-          <div data-bind="if: $root.grades.length > 1">
+          <!-- ko if: gradingMode == 'average' && $root.grades.length > 0 -->
             <h3>Grades</h3>
             <table>
-              <!--thead>
-                <tr>
-                  <th></th>
-                  <th></th>
-                </tr>
-              </thead-->
               <tbody data-bind="foreach: pages">
                 <tr>
                   <td><span data-bind="text: name"></span>:</td>
@@ -179,7 +179,7 @@
               </tbody>
               <tfoot>
                 <tr>
-                  <td class="hint">Mean:</td>
+                  <td><strong>Mean:</strong></td>
                   <td><strong data-bind="text: averageGrade"></strong></td>
                 </tr>
               </tfoot>
@@ -187,7 +187,24 @@
           
             <h3>Final Grade</h3>
             <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
-          </div>
+          <!-- /ko -->
+          <!-- ko if: gradingMode == 'sum'-->
+            <h3>Points</h3>
+            <table>
+              <tbody data-bind="foreach: pages">
+                <tr>
+                  <td><span data-bind="text: name"></span>:</td>
+                  <td data-bind="text: averageGrade"></td>
+                </tr>
+              </tbody>
+              <tfoot>
+                <tr>
+                  <td><strong>Sum:</strong></td>
+                  <td><strong data-bind="text: averageGrade"></strong></td>
+                </tr>
+              </tfoot>
+            </table>
+          <!-- /ko -->
           
           <p><button class="btn btn-success" data-bind="click: save">Save</button></p>
         </div>

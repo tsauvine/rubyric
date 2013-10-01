@@ -11,10 +11,6 @@ class Page
     @feedback = []              # [{id: category_id, value: ko.observable('feedback')}]
     @feedbackByCategory = {}    # category_id => {<see above>}
 
-    @finalizing = ko.computed((->
-      return @rubricEditor.finalizing()
-      ), this)
-    
     @averageGrade = ko.computed((-> 
       grades = []
       for criterion in @criteria()
@@ -22,6 +18,13 @@ class Page
       
       return @rubricEditor.calculateGrade(grades)
     ), this)
+    
+    @finished = ko.computed((->
+      for criterion in @criteria()
+        return false if criterion.gradeRequired && !criterion.grade()
+        
+      return true
+      ), this)
 
   load_rubric: (data) ->
     @name = data['name']
@@ -82,7 +85,7 @@ class Page
     return json
 
   addPhrase: (content, categoryId) ->
-    return if @finalizing()
+    return if @rubricEditor.finalizing()
     feedback = @feedbackByCategory[categoryId || 0] || @feedback[0]
     feedback.value(feedback.value() + content + "\n") if feedback
   
@@ -111,7 +114,7 @@ class Criterion
       @phrasesById[phrase.id] = phrase
 
   setGrade: (phrase) ->
-    return if @page.finalizing()
+    return if @rubricEditor.finalizing()
     
     # Unhilight previous
     previousPhrase = @selectedPhrase()
@@ -144,7 +147,6 @@ class Phrase
     @criterion.gradeRequired = true if @grade?
 
   clickPhrase: ->
-    console.log "Add phrase #{@id} to category #{@categoryId}"
     @page.addPhrase(@content, @categoryId)
     this.clickGrade()
 
@@ -219,6 +221,8 @@ class @ReviewEditor
     unless data
       alert('Rubric has not been prepared')
       return
+    
+    @gradingMode = data['gradingMode'] || 'no'
 
     # Parse feedback categories
     raw_categories = data['feedbackCategories']
@@ -250,15 +254,15 @@ class @ReviewEditor
 
     @finalComment = data['finalComment']
 
-    @finishable = ko.computed((->
-      return true if @grades.length < 1
-      
-      for page in @pages
-        return false unless page.grade()?
-      
-      return true
-      
-      ) , this)
+    if (@gradingMode == 'average' && @grades.length > 0) || @gradingMode == 'sum'
+      @finishable = ko.computed((->
+        for page in @pages
+          return false unless page.finished()
+        
+        return true
+        ) , this)
+    else
+      @finishable = ko.observable(true)
 
   #
   # Parses the JSON data returned by the server. See loadRubric.
@@ -269,13 +273,25 @@ class @ReviewEditor
         page = @pagesById[page_data['id']]
         page.load_review(page_data) if page
     
-    @averageGrade = ko.computed((-> 
-      grades = []
-      for page in @pages
-        grades.push(page.grade())
-      
-      return this.calculateGrade(grades)
-    ), this)
+    if (@gradingMode == 'average' && @grades.length > 0)
+      @averageGrade = ko.computed((-> 
+        grades = []
+        for page in @pages
+          grades.push(page.grade())
+        
+        return this.calculateGrade(grades)
+      ), this)
+    else if @gradingMode == 'sum'
+      @averageGrade = ko.computed((-> 
+        grades = []
+        for page in @pages
+          grade = page.averageGrade()
+          grades.push(grade) if grade?
+        
+        return this.calculateGrade(grades)
+      ), this)
+    else
+      @averageGrade = ko.observable()
 
     ko.applyBindings(this)
     @paused(false)
@@ -296,7 +312,12 @@ class @ReviewEditor
     $('#review_payload').val(this.encodeJSON())
     
     # Set grade
-    finalGrade = @finalGrade()
+    if @gradingMode == 'average'
+      finalGrade = @finalGrade()
+    else if @gradingMode == 'sum'
+      finalGrade = @averageGrade()
+    else
+      finalGrade = undefined
     
     if finalGrade? && finalGrade != false
       $('#review_grade').val(finalGrade)
@@ -305,10 +326,10 @@ class @ReviewEditor
     
     # Set status
     if @finalizing() 
-      if (@finalGrade()? || @grades.length < 1)
-        status = 'finished'
-      else
+      if @gradingMode == 'average' && @grades.length > 0 && !@finalGrade()?
         status = 'unfinished'
+      else
+        status = 'finished'
     else
       status = 'started'
     
@@ -365,6 +386,14 @@ class @ReviewEditor
     
     @finishedText(finalText)
     
+  # grades: array of grade values (strings or numbers)
+  calculateGrade: (grades) ->
+    if @gradingMode == 'average'
+      return this.calculateGradeMean(grades)
+    else if @gradingMode == 'sum'
+      return this.calculateGradeSum(grades)
+    else
+      return undefined
   
   #
   # Calculates average grade
@@ -373,7 +402,7 @@ class @ReviewEditor
   # If some grade null or undefined, undefined is returned.
   # grades: array of grade values (strings or numbers)
   #
-  calculateGrade: (grades) ->
+  calculateGradeMean: (grades) ->
     return undefined if !grades? || grades.length < 1
     
     nonNumericGradesSeen = false
@@ -400,6 +429,22 @@ class @ReviewEditor
     else
       meanGrade = Math.round(gradeSum / grades.length)
       return meanGrade
+  
+  #
+  # Calculates sum of grades
+  # grades: array of grade values (strings or numbers)
+  calculateGradeSum: (grades) ->
+    return undefined if !grades? || grades.length < 1
+    
+    gradeSum = 0.0
+    
+    for grade in grades
+      return undefined unless grade?
+      
+      gradeSum += grade unless isNaN(grade)
+    
+    return gradeSum
+  
 
   #
   # Callback for AJAX errors

@@ -240,7 +240,8 @@ class Phrase
   constructor: (@rubricEditor, @criterion, data) ->
     @content = ko.observable('')
     @category = ko.observable()
-    @grade = ko.observable()         # grade string
+    @grade = ko.observable()         # Grade object
+    @gradeValue = ko.observable()    # grade value (used in sum mode)
     @editorActive = ko.observable(false)
     
     if data
@@ -258,12 +259,26 @@ class Phrase
     
     grade = @rubricEditor.gradesByValue[data['grade']]
     @grade(grade)
+    @gradeValue(data['grade'])
 
 
   to_json: ->
     json = { id: @id, text: @content() }
     json['category'] = @category().id if @category()
-    json['grade'] = @grade().to_json() if @grade()
+    
+    # TODO: this could be less hacky
+    if @rubricEditor.gradingMode() == 'sum'
+      value = @gradeValue()
+      if isNaN(value)
+        gradeValue = value
+      else
+        gradeValue = parseFloat(value)
+    else if @grade()
+      gradeValue = @grade().to_json()
+    else
+      gradeValue = undefined
+    
+    json['grade'] = gradeValue
     
     return json
 
@@ -449,7 +464,7 @@ class RubricEditor
     grades = @grades().map (grade) -> grade.to_json()
 
     json = {
-      version: '2'
+      version: '2.1'
       pages: pages
       feedbackCategories: categories
       grades: grades
