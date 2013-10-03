@@ -117,7 +117,7 @@
                   <table class="phrases">
                     <tbody data-bind="foreach: phrases">
                       <tr class="phrase">
-                        <td class="grade" data-bind="if: grade">
+                        <td class="grade" data-bind="if: grade != undefined">
                           <button data-bind="text: grade, click: clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
                         </td>
                         <td class="phrase" data-bind="html: escaped_content, click: clickPhrase"></td>
@@ -152,9 +152,13 @@
 
             <!-- Textareas -->
             <div class="textareas" data-bind="foreach: feedback">
-              <div data-bind="style: { height: height }">
-                <p data-bind="text: title"></p>
-                <textarea data-bind="value: value, attr: {disabled: $root.finalizing}"></textarea>
+              <div class="category" data-bind="style: { height: height }">
+                <div class="title">
+                  <p data-bind="text: title"></p>
+                </div>
+                <div class="feedback">
+                  <textarea data-bind="value: value, attr: {disabled: $root.finalizing}"></textarea>
+                </div>
               </div>
             </div>
           </div>

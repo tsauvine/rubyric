@@ -21,8 +21,14 @@ class Page
     
     @finished = ko.computed((->
       for criterion in @criteria()
-        return false if criterion.gradeRequired && !criterion.grade()
-        
+        if criterion.gradeRequired && !criterion.grade()?
+          #console.log "Grade missing for #{criterion.name}"
+          return false
+      
+      if !@grade()? && @rubricEditor.gradingMode == 'average' && @rubricEditor.grades.length > 0
+        #console.log "Grade missing for #{@name}"
+        return false
+      
       return true
       ), this)
 
@@ -32,6 +38,8 @@ class Page
     
     # Prepare feedback containers
     for category in @rubricEditor.feedbackCategories
+      #category.name = '&nbsp;' if !category.name? || category.name.length < 1
+      
       feedbackHeight = Math.floor(100.0 / @rubricEditor.feedbackCategories.length) + "%"
       feedback = {
         id: category.id,
@@ -130,7 +138,12 @@ class Criterion
     return { criterion_id: @id, selected_phrase_id: @selectedPhrase().id }
 
   grade: ->
-    return @selectedPhrase().grade if @selectedPhrase()
+    if @selectedPhrase()
+      #console.log "#{@name}: #{@selectedPhrase()}"
+      return @selectedPhrase().grade
+    else
+      #console.log "#{@name}: not selected"
+      return undefined
 
 
 class Phrase
@@ -151,7 +164,7 @@ class Phrase
     this.clickGrade()
 
   clickGrade: ->
-    @criterion.setGrade(this) if @grade
+    @criterion.setGrade(this) if @grade?
 
 
 class @ReviewEditor

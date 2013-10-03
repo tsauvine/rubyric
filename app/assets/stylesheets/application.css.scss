@@ -366,70 +366,56 @@ table.histogram td {
   background-color: #f8f8f8;
   border-left: 2px solid black;
   overflow: auto;
-}
+  
+  div.category {
+    width: 97%;
+    height: 33%;
+    text-align: center;
+    position: relative;
+    margin: 0px auto;
+    /*border: 1px solid #0d0;*/
+  }
+  
+  div.title {
+    text-align: left;
+    /*background: blue;*/
+    height: 4ex;
+    position: relative;
+    
+    p {
+      position: absolute;
+      bottom: 1px;
+      /*background: yellow;*/
+      padding: 0px;
+      margin: 0px;
+    }
+  }
 
-.textareas div {
-  width: 100%;
-  height: 33%;
-  text-align: center;
+  div.feedback {
+    position: absolute;
+    top: 4ex;
+    bottom: 0px;
+    width: 100%;
+    
+    div {
+      position: relative;
+      /*border: 1px solid red;*/
+      display: table-cell;
+      /*width: 100%;*/
+      height: 100%;
+    }
+  }
+  
+  textarea {
+    width: 100%;
+    height: 98%;
+    margin: 0px;
+    font-family: sans-serif;
+    text-align: left;
+    padding: 2px;
+    margin-left: -2px;
+  }
 }
-
-.textareas p {
-  text-align: left;
-  margin: 0px 5px;
-}
-
-.textareas textarea {
-  width: 95%;
-  height: 88%;
-  font-family: sans-serif;
-  text-align: left;
-}
-
-.rubricmenu {
-  margin-bottom: 2em;
-  /*font-size: .9em;*/
-}
-
-.rubricmenu tr.selected {
-  /*border: 1px solid #FF8080;*/
-  border: 1px solid #f00000;
-  /*background: #f0e0e0;*/
-}
-
-.rubricmenu td.selected {
-  font-weight: bold;
-}
-
-.rubricmenu td {
-  padding-right: 1em;
-}
-
-.rubricmenu .status {
-  /*font-size: .8em;*/
-  font-variant: small-caps;
-}
-
-.rubricmenu .section-name {
-  padding-left: 1em;
-}
-
-.rubricmenu .not-started {
-  color: red;
-}
-
-.rubricmenu .started {
-  color: #A0A000;
-}
-
-.rubricmenu .finished {
-  color: green;
-}
-
-.rubricmenu .mailed {
-  color: green;
-}
-
 
 p.feedback-preview {
   width: 700px;

@@ -48,7 +48,7 @@
           <% end; row += 1 %>
           <td>
             <%= check_box 'reviews_checkboxes', review.id, {:class => 'review_check ' + (review.status == 'finished' ? ' review_check_finished' : '')} %>
-
+            
             <% if ['mailed','invalidated'].include?(review.status) %>
               <%= link_to review.user.name, finish_review_path(review.id) %>
             <% else %>

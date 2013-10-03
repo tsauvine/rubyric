@@ -37,7 +37,10 @@ class ExercisesController < ApplicationController
       # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-      @groups = Group.where(:course_instance_id => @course_instance.id).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).order('groups.id, submissions.created_at DESC')
+      @groups = Group.where(:course_instance_id => @course_instance.id)
+        .includes([:users, {:submissions => {:reviews => :user}}])
+        .where(:submissions => {:exercise_id => @exercise.id})
+        .order('groups.id, submissions.created_at DESC, reviews.id')
 
       render :action => 'submissions'
     else

@@ -464,7 +464,7 @@ class RubricEditor
     grades = @grades().map (grade) -> grade.to_json()
 
     json = {
-      version: '2.1'
+      version: '2'
       pages: pages
       feedbackCategories: categories
       grades: grades
