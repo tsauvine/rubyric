@@ -3,6 +3,7 @@
 
 class Page
   constructor: (@rubricEditor) ->
+    @nextPage = undefined
     @criteria = ko.observableArray()
     @criteriaById = {}          # id => Criterion
     @grade = ko.observable()
@@ -21,13 +22,9 @@ class Page
     
     @finished = ko.computed((->
       for criterion in @criteria()
-        if criterion.gradeRequired && !criterion.grade()?
-          #console.log "Grade missing for #{criterion.name}"
-          return false
+        return false if criterion.gradeRequired && !criterion.grade()?
       
-      if !@grade()? && @rubricEditor.gradingMode == 'average' && @rubricEditor.grades.length > 0
-        #console.log "Grade missing for #{@name}"
-        return false
+      return false if !@grade()? && @rubricEditor.gradingMode == 'average' && @rubricEditor.grades.length > 0
       
       return true
       ), this)
@@ -104,7 +101,17 @@ class Page
   
   togglePhraseVisibility: ->
     @phrasesHidden(!@phrasesHidden())
+    
+  showTab: ->
+    $("#page-#{@id}-link").tab('show')
 
+  showNextPage: ->
+    if @nextPage
+      @nextPage.showTab()
+    else
+      $('#tab-finish-link').tab('show')
+    
+    window.scrollTo(0, 0)
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
@@ -139,10 +146,8 @@ class Criterion
 
   grade: ->
     if @selectedPhrase()
-      #console.log "#{@name}: #{@selectedPhrase()}"
       return @selectedPhrase().grade
     else
-      #console.log "#{@name}: not selected"
       return undefined
 
 
@@ -259,11 +264,15 @@ class @ReviewEditor
         @gradeIndexByValue[grade_data] = i
         i++
 
+    previousPage = undefined
     for page_data in data['pages']
       page = new Page(this)
       page.load_rubric(page_data)
       @pages.push(page)
       @pagesById[page.id] = page
+      previousPage.nextPage = page if previousPage
+      
+      previousPage = page
 
     @finalComment = data['finalComment']
 
@@ -311,6 +320,7 @@ class @ReviewEditor
     
     # Activate the finalizing tab
     $('#tab-finish-link').tab('show') if @finalizing()
+      
     
 
   # Returns the review as JSON
@@ -338,7 +348,7 @@ class @ReviewEditor
       $('#review_grade').val('')
     
     # Set status
-    if @finalizing() 
+    if @finalizing()
       if @gradingMode == 'average' && @grades.length > 0 && !@finalGrade()?
         status = 'unfinished'
       else

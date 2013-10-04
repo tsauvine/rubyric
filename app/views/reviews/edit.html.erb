@@ -15,10 +15,10 @@
           <li class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
           
           <!-- ko foreach: pages -->
-            <li><a data-bind="text:name, attr:{ href: '#page-' + id }" data-toggle='tab'></a></li>
+            <li><a data-bind="text:name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
           <!-- /ko -->
           
-          <!-- ko if: finishable -->
+          <!-- ko if: finishable() || finalizing() -->
             <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
           <!-- /ko -->
           <li><input type="submit" value="Save" class="btn btn-success" data-bind="click: save" /></li>
@@ -148,6 +148,14 @@
                 Points:
                 <span data-bind="text: averageGrade"></span>
               </h3>
+            <!-- /ko -->
+            
+            <!-- Next page button -->
+            <!-- ko if: nextPage || $root.finishable() -->
+              <button class="btn" data-bind="click: showNextPage">
+                Next page
+                <i class="icon icon-arrow-right"></i>
+              </button>
             <!-- /ko -->
 
             <!-- Textareas -->
