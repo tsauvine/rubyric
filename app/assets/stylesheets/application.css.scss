@@ -431,145 +431,148 @@ p.feedback-preview {
  **************************************************************************/
 
 .rubric-editor {
-  padding: 0em 0em;
-}
+  padding: 0em 0em 1em 0em;
 
-.rubric-editor .weight {
-  /*font-size: small;*/
-  color: black;
-}
+  .grading-scale input {
+    width: 100%;
+  }
 
-.rubric-editor .buttons i {
-  cursor: pointer;
-}
+  .weight {
+    /*font-size: small;*/
+    color: black;
+  }
 
-.rubric-editor .buttons,
-.rubric-editor .criterion .create-phrase-button
-{
-  visibility: hidden;
-}
+  .buttons i {
+    cursor: pointer;
+  }
 
-.rubric-editor .page h2:hover .buttons,
-.rubric-editor .criterion:hover .buttons,
-.rubric-editor tr:hover .buttons
-{
-  visibility: visible;
-}
+  .buttons,
+  .criterion .create-phrase-button
+  {
+    visibility: hidden;
+  }
 
-
-.rubric-editor td.buttons-column {
-  width: 80px;
-  text-align: center;
-}
-
-.rubric-editor textarea {
-  width: 100%
-}
-
-.rubric-editor div.grading {
-  margin-top: 4em;
-}
-
-.rubric-editor .section {
-  margin: 0em 0em 3em 0em;
-  padding: 0em 1em;
-
-  border: 1px solid gray;
-  -moz-border-radius: .5em;
-  background: white;
-}
-
-.rubric-editor .section h2 {
-  font-size: 120%;
-  font-weight: normal;
-  border-bottom: 1px solid #cc1414;
-  color: #cc1414;
-  margin: .5em 0px 1em 0em;
-}
-
-.rubric-editor .section h2 span {
-  cursor: pointer;
-}
-
-.rubric-editor .item {
-  padding: .5em;
-  margin: 1em 0em 2em 0em;
-  border: 1px solid white;
-}
-
-.rubric-editor .item h3 {
-  margin-left: 0em;
-  margin-bottom: .5em;
-  margin-top: 0em;
-}
-
-.rubric-editor .item h3 span {
-  cursor: pointer;
-}
-
-.rubric-editor .item .buttons {
-  visibility: hidden;
-}
-
-.rubric-editor .item:hover {
-  border: 1px dotted navy;
-}
-
-.rubric-editor .item:hover .buttons {
-  visibility: visible;
-}
-
-.rubric-editor .item .grading-options {
-  margin-top: 1em;
-  /*font-size: .9em;*/
-}
-
-.rubric-editor .itemGradingOption {
-  cursor: pointer;
-}
-
-.rubric-editor .section-grading-options {
-  margin: 2em 1em 1em 0em;
-  padding: 0em;
-}
+  .page h2:hover .buttons,
+  .criterion:hover .buttons,
+  tr:hover .buttons
+  {
+    visibility: visible;
+  }
 
 
-.rubric-editor .section-grading-options table {
-  border-bottom: 1px solid #808080;
-}
+  td.buttons-column {
+    width: 80px;
+    text-align: center;
+  }
 
-.rubric-editor .section-grading-options td {
-  border-left: 1px solid #808080;
-  border-right: 1px solid #808080;
-  padding: .1em .5em;
-}
+  textarea {
+    width: 100%
+  }
 
-.rubric-editor .section-grading-options .points {
-  text-align: center;
-}
+  div.grading {
+    margin-top: 4em;
+  }
 
-.rubric-editor .section-grading-options h3 {
-  margin-top: 0em;
-}
+  .section {
+    margin: 0em 0em 3em 0em;
+    padding: 0em 1em;
 
-.rubric-editor .section-grading-options span {
-  cursor: pointer;
-}
+    border: 1px solid gray;
+    -moz-border-radius: .5em;
+    background: white;
+  }
 
-.rubric-editor table.phrases {
-  width: 100%;
-  background: #f8f8f8;
-  border: 1px solid #808080;
-}
+  .section h2 {
+    font-size: 120%;
+    font-weight: normal;
+    border-bottom: 1px solid #cc1414;
+    color: #cc1414;
+    margin: .5em 0px 1em 0em;
+  }
 
-.rubric-editor .phrases td {
-  border-bottom: 1px solid #808080;
-  border-right: none;
-  border-left: none;
-  padding: 1px;
-}
+  .section h2 span {
+    cursor: pointer;
+  }
 
-.rubric-editor {
+  .item {
+    padding: .5em;
+    margin: 1em 0em 2em 0em;
+    border: 1px solid white;
+  }
+
+  .item h3 {
+    margin-left: 0em;
+    margin-bottom: .5em;
+    margin-top: 0em;
+  }
+
+  .item h3 span {
+    cursor: pointer;
+  }
+
+  .item .buttons {
+    visibility: hidden;
+  }
+
+  .item:hover {
+    border: 1px dotted navy;
+  }
+
+  .item:hover .buttons {
+    visibility: visible;
+  }
+
+  .item .grading-options {
+    margin-top: 1em;
+    /*font-size: .9em;*/
+  }
+
+  .itemGradingOption {
+    cursor: pointer;
+  }
+
+  .section-grading-options {
+    margin: 2em 1em 1em 0em;
+    padding: 0em;
+  }
+
+
+  .section-grading-options table {
+    border-bottom: 1px solid #808080;
+  }
+
+  .section-grading-options td {
+    border-left: 1px solid #808080;
+    border-right: 1px solid #808080;
+    padding: .1em .5em;
+  }
+
+  .section-grading-options .points {
+    text-align: center;
+  }
+
+  .section-grading-options h3 {
+    margin-top: 0em;
+  }
+
+  .section-grading-options span {
+    cursor: pointer;
+  }
+
+  table.phrases {
+    width: 100%;
+    background: #f8f8f8;
+    border: 1px solid #808080;
+  }
+
+  .phrases td {
+    border-bottom: 1px solid #808080;
+    border-right: none;
+    border-left: none;
+    padding: 1px;
+  }
+
+
   td.phraseType {
     width: 6em;
     text-align: center;
@@ -593,28 +596,31 @@ p.feedback-preview {
  * Assignments
  **************/
 
-.assignments .submission td {
-  border: 1px solid #808080;
-  padding: .2em .5em;
-}
+.assignments {
 
-.assignments .group {
-  border: 1px solid #808080;
-  background: #e0e0e0;
-}
+  .submission td {
+    border: 1px solid #808080;
+    padding: .2em .5em;
+  }
 
-.assignments td.grade {
-  text-align: center;
-}
+  .group {
+    border: 1px solid #808080;
+    background: #e0e0e0;
+  }
 
-.assignments .late, .assignments .late a {
-  color: red;
-  font-weight: bold;
-}
+  td.grade {
+    text-align: center;
+  }
 
-.assignments .spacer {
-}
+  .late, .late a {
+    color: red;
+    font-weight: bold;
+  }
 
+  .spacer {
+  }
+
+}
 
 
 #exercise-manager-frontpage {

@@ -2,5 +2,6 @@ fi:
   rubrics:
     edit:
       tooltip_categories: 'You can optionally divide feedback into categories such as <i>strengths</i> as <i>weaknesses</i>.'
-      no-categories: 'Not used'
+      tooltip_final_comment: '<i>Final comment</i> is automatically added to the end of feedback, but can be edited by the reviewer.'
+      no-categories: 'Not using categories'
   

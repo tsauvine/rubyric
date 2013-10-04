@@ -499,4 +499,5 @@ class RubricEditor
 jQuery ->
   new RubricEditor()
 
-  $('#tooltip-categories').popover({placement: 'right', trigger: 'hover', html: true})
+  $('.tooltip-help').popover({placement: 'right', trigger: 'hover', html: true})
+  #$('#tooltip-final-comment').popover({placement: 'right', trigger: 'hover', html: true})

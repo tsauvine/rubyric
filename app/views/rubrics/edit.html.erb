@@ -72,7 +72,7 @@
             <div class="span6" data-bind="visible: $root.gradingMode() == 'average'">
               <p><em>Scale:</em></p>
               <table>
-                <tbody id="grading-scale" data-bind="sortable: {data: grades, options: {containment: '#grading-scale', axis: 'y', distance: 5}} ">
+                <tbody class="grading-scale" id="grading-scale" data-bind="sortable: {data: grades, options: {containment: '#grading-scale', axis: 'y', distance: 5}} ">
                   <tr>
                     <td data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<grade missing>'}"></td>
                     <td class="buttons-column">
@@ -94,7 +94,7 @@
         </div>
         
         <div class="span4 well">
-          <i id="tooltip-categories" class="pull-right icon icon-question-sign" data-content="<%=t '.tooltip_categories' %>"></i>
+          <i id="tooltip-categories" class="tooltip-help pull-right icon icon-question-sign" data-content="<%=t '.tooltip_categories' %>"></i>
           <h3>Feedback categories</h3>
           
           <!-- ko if: feedbackCategories().length > 1 -->
@@ -126,10 +126,10 @@
 
           <p>
             Final comment
-            <!--i data-help="final-comment-help" class="icon-question-sign help-hover"></i-->
-            <span class="hint">(this is automatically added to the end of feedback, but can be edited by the reviewer)</span>
+            <i id="tooltip-final-comment" class="tooltip-help pull-right icon icon-question-sign" data-content="<%=t '.tooltip_final_comment' %>"></i>
           </p>
           <textarea data-bind="value: finalComment"></textarea>
+          
         </div>
       </div>
       <%= link_to @exercise do %><i class="icon-circle-arrow-left"></i> Back to <%= @exercise.name %><% end %>

@@ -398,23 +398,38 @@ class @ReviewEditor
     @finalGrade(grade)
   
   collectFeedbackTexts: ->
-    # Collect feedback from each category
-    categoryTexts = {}
-    for page in @pages
-      for page_category in page.feedback
-        categoryTexts[page_category.id] ||= ''
-        val = $.trim(page_category.value())
-        categoryTexts[page_category.id] += val + '\n' if val.length > 0
-    
-    # Combine feedback of different categories
     finalText = ''
-    for category in @feedbackCategories
-      categoryText = categoryTexts[category.id]
-      continue if categoryText.length < 1
-      
-      finalText += "= #{category.name} =\n" if category.name.length > 0
-      finalText += categoryText + '\n'
     
+    if @feedbackCategories.length > 1
+      # Group feedback by category
+      
+      categoryTexts = {}  # category_id => 'feedback from a category'
+      for page in @pages
+        for page_category in page.feedback
+          val = $.trim(page_category.value())
+          
+          categoryTexts[page_category.id] ||= ''
+          categoryTexts[page_category.id] += val + '\n' if val.length > 0
+      
+      for category in @feedbackCategories
+        categoryText = categoryTexts[category.id]
+        continue if categoryText.length < 1
+        
+        finalText += "= #{category.name} =\n" if category.name.length > 0
+        finalText += categoryText + '\n'
+    
+    else
+      # Group feedback by page
+      for page in @pages
+        finalText += "= #{page.name} =\n" if page.name.length > 0
+        
+        for page_category in page.feedback
+          val = $.trim(page_category.value())
+          finalText += val + '\n' if val.length > 0
+        
+        finalText += '\n'
+    
+    # Final comment
     finalText += '\n' + @finalComment if @finalComment.length > 0
     
     @finishedText(finalText)
