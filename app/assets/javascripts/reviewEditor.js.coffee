@@ -35,13 +35,11 @@ class Page
     
     # Prepare feedback containers
     for category in @rubricEditor.feedbackCategories
-      #category.name = '&nbsp;' if !category.name? || category.name.length < 1
-      
       feedbackHeight = Math.floor(100.0 / @rubricEditor.feedbackCategories.length) + "%"
       feedback = {
-        id: category.id,
-        title: category.name,
-        value: ko.observable(''),
+        id: category.id
+        title: category.name
+        value: ko.observable('')
         height: feedbackHeight
       }
       @feedback.push(feedback)
@@ -71,6 +69,11 @@ class Page
         phrase.highlighted(true)
     
     @grade(data['grade']) if data['grade']?
+    
+    @grade.subscribe(=> @rubricEditor.saved = false)
+    
+    for category in @feedback
+      category.value.subscribe((newValue) => @rubricEditor.saved = false )
 
   to_json: ->
     feedback = @feedback.map (fb) -> { category_id: fb.id, text: fb.value() }
@@ -109,6 +112,7 @@ class Page
     if @nextPage
       @nextPage.showTab()
     else
+      @rubricEditor.finish()
       $('#tab-finish-link').tab('show')
     
     window.scrollTo(0, 0)
@@ -170,12 +174,13 @@ class Phrase
 
   clickGrade: ->
     @criterion.setGrade(this) if @grade?
+    @rubricEditor.saved = false
 
 
 class @ReviewEditor
 
   constructor: () ->
-    @paused = ko.observable(true)
+    @saved = true
     @finishedText = ko.observable('')
     @finalizing = ko.observable(false)
     
@@ -192,6 +197,8 @@ class @ReviewEditor
     @gradingMode = 'none'
     @finalGrade = ko.observable()
     
+    $(window).bind 'beforeunload', =>
+      return "You have unsaved changes. Leave anyway?" unless @saved
 
   #
   # Loads the rubric by AJAX
@@ -316,11 +323,12 @@ class @ReviewEditor
       @averageGrade = ko.observable()
 
     ko.applyBindings(this)
-    @paused(false)
+    
+    @finalGrade.subscribe(=> @saved = false )
+    @finishedText.subscribe(=> @saved = false )
     
     # Activate the finalizing tab
     $('#tab-finish-link').tab('show') if @finalizing()
-      
     
 
   # Returns the review as JSON
@@ -357,6 +365,8 @@ class @ReviewEditor
       status = 'started'
     
     $('#review_status').val(status)
+    
+    @saved = true
     
     return true
     
