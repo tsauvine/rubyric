@@ -96,6 +96,8 @@ Rubyric::Application.routes.draw do
   match '/login' => 'sessions#new', :as => :login
   match '/logout' => 'sessions#destroy', :as => :logout
 
+  match '/client_event', to: 'application#log_client_event', as: 'log_client_event'
+  
   root :to => "frontpage#show"
 
   # Install the default routes as the lowest priority.

@@ -51,6 +51,8 @@ class GroupsController < ApplicationController
     else
       @email_fields_count -= 1 if logged_in?
     end
+    
+    log "create_group view #{@exercise.id}"
   end
 
   # GET /groups/1/edit
@@ -67,6 +69,8 @@ class GroupsController < ApplicationController
     load_course
     
     return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
+    
+    log "edit_group view #{@exercise.id}"
   end
 
   # POST /groups
@@ -100,9 +104,12 @@ class GroupsController < ApplicationController
     if @group.save
       @group.add_members_by_email(members, @exercise)
       redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
+      
+      log "create_group success #{@group.id},#{@exercise.id}"
     else
       flash[:error] = 'Failed to create group.'
       redirect_to :action => "new"
+      log "create_group fail #{@exercise.id} #{@group.errors.full_messages.join('. ')}"
     end
 
   end
@@ -141,6 +148,7 @@ class GroupsController < ApplicationController
     end
 
     redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
+    log "edit_group success #{@group.id},#{@exercise.id}"
   end
   
   def join
@@ -161,8 +169,10 @@ class GroupsController < ApplicationController
       # Redirect to submit
       flash[:success] = 'You have been added to the group'
       redirect_to submit_path(:exercise => exercise.id, :group => group.id)
+      log "join_group success #{group.id},#{exercise.id}"
     else
       render :invalid_token
+      log "join_group fail invalid token"
     end
 
   end

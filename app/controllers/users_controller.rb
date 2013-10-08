@@ -13,6 +13,8 @@ class UsersController < ApplicationController
     #return access_denied unless is_admin?(current_user)
     # Anyone can create an account
     @user = User.new
+    
+    log "create_user_traditional view"
   end
 
   def create
@@ -32,10 +34,13 @@ class UsersController < ApplicationController
       exercise = Course.create_example(@user)
 
       redirect_to exercise
+      log "create_user_traditional success (example exercise #{exercise})"
     else
       # Form not sufficiently filled
       render :action => 'new'
+      log "create_user_traditional fail #{@user.errors.full_messages.join('. ')}"
     end
+    
   end
 
 
@@ -47,6 +52,8 @@ class UsersController < ApplicationController
     end
 
     return access_denied unless @user == current_user || is_admin?(current_user)
+    
+    log "edit_user view"
   end
 
   def update
@@ -57,9 +64,11 @@ class UsersController < ApplicationController
     if @user.update_attributes(params[:user])
       flash[:success] = 'Preferences saved'
       redirect_to preferences_path
+      log "edit_user success"
       return
     else
       flash[:error] = 'Failed to update.'
+      log "edit_user fail #{@user.errors.full_messages.join('. ')}"
     end
 
     render :action => 'edit'

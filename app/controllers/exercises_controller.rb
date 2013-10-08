@@ -57,6 +57,8 @@ class ExercisesController < ApplicationController
       
       render :action => 'my_submissions'
     end
+    
+    log "exercise view #{@exercise.id}"
   end
 
   # GET /exercises/new
@@ -67,6 +69,8 @@ class ExercisesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @exercise = Exercise.new
+    
+    log "create_exercise view #{@course_instance.id}"
   end
 
   # POST /exercises
@@ -82,8 +86,10 @@ class ExercisesController < ApplicationController
 
       #flash[:success] = 'Assignment was successfully created.'
       redirect_to @exercise
+      log "create_exercise success #{@exercise.id}"
     else
       render :action => "new"
+      log "create_exercise fail #{@exercise.errors.full_messages.join('. ')}"
     end
   end
 
@@ -93,6 +99,8 @@ class ExercisesController < ApplicationController
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    log "edit_exercise view #{@exercise.id}"
   end
 
   # PUT /exercises/1
@@ -105,8 +113,10 @@ class ExercisesController < ApplicationController
     if @exercise.update_attributes(params[:exercise])
       #flash[:success] = 'Assignment was successfully updated.'
       redirect_to @exercise
+      log "edit_exercise success #{@exercise.id}"
     else
       render :action => "edit"
+      log "edit_exercise fail #{@exercise.errors.full_messages.join('. ')}"
     end
   end
 
@@ -118,6 +128,7 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
+    log "delete_exercise success #{@exercise.id}"
     @exercise.destroy
 
     respond_to do |format|
@@ -163,6 +174,8 @@ class ExercisesController < ApplicationController
     end
     
     @results.sort! { |a, b| (a[0].studentnumber || '') <=> (b[0].studentnumber || '') }
+    
+    log "results #{@exercise.id}"
   end
 
   def statistics
@@ -205,6 +218,7 @@ class ExercisesController < ApplicationController
     @exercise.deliver_reviews(review_ids)
     
     redirect_to @exercise
+    log "send_reviews #{@exercise.id} #{review_ids.size}"
   end
 
   # Removes selected submissions and reviews
@@ -350,6 +364,8 @@ class ExercisesController < ApplicationController
     @exercise.create_example_submissions
     
     redirect_to @exercise
+    
+    log "create_example_submissions #{@exercise.id}"
   end
 
 end

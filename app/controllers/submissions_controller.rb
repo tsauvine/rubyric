@@ -27,6 +27,7 @@ class SubmissionsController < ApplicationController
           render :template => "shared/error"
         else
           send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
+          log "download_submission #{@submission.id},#{@exercise.id}"
         end
       end
         
@@ -50,12 +51,14 @@ class SubmissionsController < ApplicationController
     # Check that instance is open
     if !@course_instance.active && !@is_teacher
       render :action => 'instance_inactive'
+      log "submit view #{@exercise.id} instance_inactive"
       return
     end
     
     # Check submisison policy
     if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(@user)
       render :action => 'not_enrolled'
+      log "submit view #{@exercise.id} not_enrolled"
       return
     end
 
@@ -75,8 +78,10 @@ class SubmissionsController < ApplicationController
       return access_denied unless @group.has_member?(current_user) || @is_teacher || @exercise.submit_without_login
     elsif !@user
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
+      return
     elsif @available_groups.size > 1 || (@exercise.groupsizemax > 1 && @available_groups.size == 0) || @is_teacher
       render :action => 'select_group'
+      log "select_group #{@exercise.id}"
       return
     elsif @available_groups.size == 1
       @group = @available_groups[0]
@@ -90,6 +95,7 @@ class SubmissionsController < ApplicationController
     end
 
     @submission = Submission.new
+    log "submit view #{@exercise.id}"
   end
 
   def create
@@ -142,8 +148,10 @@ class SubmissionsController < ApplicationController
     if @submission.save
       flash[:success] = 'Submission was received'
       redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id)
+      log "submit success #{@submission.id},#{@exercise.id}"
     else
       flash[:error] = 'Failed to submit'
+      log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
     end
   end
 
@@ -154,6 +162,7 @@ class SubmissionsController < ApplicationController
     review = @submission.assign_to(current_user)
 
     redirect_to edit_review_path(review)
+    log "create_review #{@submission.id},#{@exercise.id}"
   end
 
   def move
@@ -164,12 +173,16 @@ class SubmissionsController < ApplicationController
       @submission.move(target)
       
       redirect_to @exercise
+      log "move_submission success #{@submission.id},#{@exercise.id}"
       return
+    else
+      log "move_submission view #{@submission.id},#{@exercise.id}"
     end
   end
   
   def confirm_delete
     return access_denied unless @submission.group.has_member?(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
+    log "delete_submission view #{@submission.id},#{@exercise.id}"
   end
     
   # DELETE /submissions/1
@@ -177,6 +190,7 @@ class SubmissionsController < ApplicationController
     return access_denied unless @submission.group.has_member?(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
     return access_denied unless @submission.reviews.empty?
 
+    log "delete_submission success #{@submission.id},#{@exercise.id}"
     @submission.destroy
 
     redirect_to @exercise

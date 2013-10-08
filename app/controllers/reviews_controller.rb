@@ -15,6 +15,8 @@ class ReviewsController < ApplicationController
       format.html { render :action => 'show', :layout => 'narrow' }
       format.json { render json: @review.payload }
     end
+    
+    log "view_review #{@review.id},#{@exercise.id}"
   end
 
   # GET /reviews/1/edit
@@ -27,6 +29,7 @@ class ReviewsController < ApplicationController
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     render :action => 'edit', :layout => 'review'
+    log "edit_review #{@review.id},#{@exercise.id}"
   end
 
   # PUT /reviews/1
@@ -160,6 +163,8 @@ class ReviewsController < ApplicationController
     end
 
     redirect_to edit_review_path(@review)
+    
+    log "reopen_review #{@review.id},#{@exercise.id}"
   end
 
   def upload
@@ -179,6 +184,8 @@ class ReviewsController < ApplicationController
     end
     
     render :action => 'upload', :layout => 'narrow'
+    
+    log "upload_review #{@review.id},#{@exercise.id}"
   end
   
   # Download feedback file
@@ -200,6 +207,7 @@ class ReviewsController < ApplicationController
           render :template => "shared/error", :layout => 'narrow'
         else
           send_file @review.full_filename, :type => Mime::Type.lookup_by_extension(@review.extension) || 'application/octet-stream', :filename => @review.filename
+          log "download_review #{@review.id},#{@exercise.id}"
         end
       end
     end

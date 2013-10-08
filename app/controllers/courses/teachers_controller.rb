@@ -8,6 +8,7 @@ class Courses::TeachersController < CoursesController
 
     @invitations = TeacherInvitation.where(:target_id => @course.id).all
     #@allow_edit = @course.has_teacher(current_user) || is_admin?(current_user)
+    log "teachers view #{@course.id}"
   end
   
   def create
@@ -41,7 +42,6 @@ class Courses::TeachersController < CoursesController
     end
     
     response = { added_users: added_users.as_json(:only => [ :id, :firstname, :lastname, :email ]), invited_users: invited_users }
-    logger.info "RESPONSE: #{response}"
     
     respond_to do |format|
       #format.html { redirect_to course_teachers_path(@course) }

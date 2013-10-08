@@ -10,18 +10,24 @@ class CoursesController < ApplicationController
       # TODO: show own courses
       @courses = Course.find(:all, :order => "code")
     end
+    
+    log "courses index"
   end
 
   # GET /courses/1
   def show
     @course = Course.find(params[:id])
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    log "view_course #{@course.id}"
   end
 
   # GET /courses/new
   # GET /courses/new.xml
   def new
     @course = Course.new
+    
+    log "create_course"
   end
 
   # GET /courses/1/edit
@@ -30,6 +36,8 @@ class CoursesController < ApplicationController
     @is_teacher = @course.has_teacher(current_user) || is_admin?(current_user)
 
     return access_denied unless @is_teacher
+    
+    log "edit_course #{@course.id}"
   end
 
   # POST /courses
@@ -42,8 +50,10 @@ class CoursesController < ApplicationController
 
       flash[:success] = t(:course_created_flash)
       redirect_to new_course_course_instance_path(:course_id => @course.id)
+      log "create_course success #{@course.id}"
     else
       render :action => "new"
+      log "create_course fail #{@course.errors.full_messages.join('. ')}"
     end
 
   end
@@ -58,8 +68,10 @@ class CoursesController < ApplicationController
     if @course.update_attributes(params[:course])
       flash[:success] = t(:course_updated_flash)
       redirect_to(@course)
+      log "edit_course success #{@course.id}"
     else
       render :action => "edit"
+      log "edit_course fail #{@course.id} #{@course.errors.full_messages.join('. ')}"
     end
   end
 
@@ -69,6 +81,7 @@ class CoursesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
+    log "delete_course #{@course.id}"
     name = @course.name
     if @course.destroy
       flash[:success] = t(:course_deleted_flash, :name => name)

@@ -17,10 +17,14 @@ class SessionsController < ApplicationController
     if @session.save
       logger.info "Login successful"
       redirect_back_or_default root_url
+      
+      CustomLogger.info("#{current_user.login} login_traditional success")
     else
       logger.info "Login failed. #{@session.errors.full_messages.join(',')}"
       flash[:error] = t('sessions_login_failed')
       render :action => :new
+      
+      CustomLogger.info("guest login_traditional fail #{@session.errors.full_messages.join(',')}")
     end
   end
 
@@ -39,6 +43,8 @@ class SessionsController < ApplicationController
     else
       redirect_to(root_url)
     end
+    
+    log "logout"
   end
 
 
@@ -110,9 +116,11 @@ class SessionsController < ApplicationController
       #user.reset_single_access_token
       if user.save(:validate => false)
         logger.info("Created new user #{user.login} (#{user.studentnumber}) (shibboleth)")
+        CustomLogger.info("#{user.login} create_user_shib success")
       else
         logger.info("Failed to create new user (shibboleth) #{shibinfo} Errors: #{user.errors.full_messages.join('. ')}")
         flash[:error] = "Failed to create new user. #{user.errors.full_messages.join('. ')}"
+        CustomLogger.info("#{user.login} create_user_shib fail")
         render :action => 'new'
         return
       end
@@ -144,6 +152,7 @@ class SessionsController < ApplicationController
       render :action => 'new'
       return
     end
+    CustomLogger.info("#{user.login} login_shib success")
 
     # Demo registration
     if (params[:demo])

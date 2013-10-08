@@ -18,6 +18,8 @@ class RubricsController < ApplicationController
     load_course
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    log "edit_rubric #{@exercise.id}"
   end
 
   # PUT
@@ -58,6 +60,9 @@ class RubricsController < ApplicationController
       @exercise.load_rubric(params[:file].read)
       @exercise.save
       redirect_to edit_exercise_rubric_path(@exercise)
+      log "rubric_upload success #{@exercise.id}"
+    else
+      log "rubric_upload view #{@exercise.id}"
     end
   end
 
@@ -71,6 +76,8 @@ class RubricsController < ApplicationController
     #send_data(xml, :filename => "#{@exercise.name}.xml", :type => 'text/xml')
     json = @exercise.rubric
     send_data(json, :filename => "#{@exercise.name}.json", :type => 'application/json')
+    
+    log "rubric_download #{@exercise.id}"
   end
   
 end

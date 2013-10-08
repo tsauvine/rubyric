@@ -7,6 +7,8 @@ class CourseInstancesController < ApplicationController
     load_course
 
     @allow_edit = @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    log "view_course_instance #{@course_instance.id}"
   end
 
   # GET /course_instances/new
@@ -20,6 +22,8 @@ class CourseInstancesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     @course_instance = CourseInstance.new(:submission_policy => 'authenticated') # :name => Time.now.year
+    
+    log "create_course_instance #{@course.id}"
   end
 
   # GET /course_instances/1/edit
@@ -29,6 +33,8 @@ class CourseInstancesController < ApplicationController
 
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    
+    log "edit_course_instance #{@course_instance.id}"
   end
 
   # POST /course_instances
@@ -46,6 +52,7 @@ class CourseInstancesController < ApplicationController
     if @course_instance.save
       #flash[:success] = t(:instance_created_flash)
       redirect_to @course_instance
+      log "create_course_instance success #{@course_instance.id}"
     else
       render :action => 'new'
     end
@@ -61,8 +68,10 @@ class CourseInstancesController < ApplicationController
     if @course_instance.update_attributes(params[:course_instance])
       flash[:success] = t(:instance_updated_flash)
       redirect_to @course_instance
+      log "edit_course_instance success #{@course_instance.id}"
     else
       render :action => "edit"
+      log "edit_course_instance fail #{@course_instance.id} #{@course_instance.errors.full_messages.join('. ')}"
     end
   end
 
@@ -73,6 +82,7 @@ class CourseInstancesController < ApplicationController
 
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    log "delete_course_instance #{@course_instance.id}"
 
     #Destroy
     @course_instance.destroy
@@ -119,6 +129,7 @@ class CourseInstancesController < ApplicationController
     @course_instance.create_example_groups
     
     redirect_to @course_instance
+    log "create_example_groups #{@course_instance.id}"
   end
   
 end

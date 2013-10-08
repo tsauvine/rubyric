@@ -12,6 +12,7 @@ class FrontpageController < ApplicationController
       render :action => 'info', :layout => 'narrow'
     end
 
+    log "frontpage"
   end
 
 end

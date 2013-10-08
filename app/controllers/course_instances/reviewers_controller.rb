@@ -6,6 +6,7 @@ class CourseInstances::ReviewersController < CourseInstancesController
     load_course
 
     @invitations = AssistantInvitation.where(:target_id => @course_instance.id).all
+    log "reviewers view #{@course_instance.id}"
   end
 
   def create

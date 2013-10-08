@@ -12,6 +12,7 @@ class CourseInstances::StudentsController < CourseInstancesController
       format.html { }
       format.json { render :json => @students }
     end
+    log "students view #{@course_instance.id}"
   end
 
 end

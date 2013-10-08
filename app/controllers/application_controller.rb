@@ -1,3 +1,7 @@
+require 'custom_logger'
+require 'client_event_logger'
+require 'securerandom.rb'
+
 # Rubyric
 class ApplicationController < ActionController::Base
   helper :all # include all helpers, all the time
@@ -9,7 +13,23 @@ class ApplicationController < ActionController::Base
   before_filter :set_locale
   before_filter :require_login?
   
+  def log_client_event
+    ClientEventLogger.info("#{params[:session]} #{params[:events]}")
+    
+    render :nothing => true, :status => :ok
+  end
+  
   protected
+  
+  def log(message)
+    user = current_user
+    
+    if user
+      CustomLogger.info("#{user.login || user.email} " + message)
+    else
+      CustomLogger.info('guest ' + message)
+    end
+  end
   
   # Redirects from http to https if FORCE_SSL is set.
   def redirect_to_ssl
