@@ -135,9 +135,10 @@ class Submission < ActiveRecord::Base
       command = "convert -antialias -density #{density} #{submission_path}[#{page_number}] #{png_path}"
       #puts command
       system(command)  # This blocks until the png is rendered
+      
+      # TODO: remove obsolete renderings from cache
+      # rm id-page_number*
     end
-    
-    # TODO: remove obsolete renderings from cache
     
     return png_path
   end

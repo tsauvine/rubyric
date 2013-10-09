@@ -177,13 +177,8 @@ class Phrase
     @rubricEditor.saved = false
 
 
-class @ReviewEditor
-
+class @Rubric
   constructor: () ->
-    @saved = true
-    @finishedText = ko.observable('')
-    @finalizing = ko.observable(false)
-    
     @pages = []
     @pagesById = {}
     
@@ -195,11 +190,7 @@ class @ReviewEditor
     @gradeIndexByValue = {}         # gradeValue -> index (0,1,2,..). Needed for calculating average from non-numeric values.
     @numericGrading = false
     @gradingMode = 'none'
-    @finalGrade = ko.observable()
     
-    $(window).bind 'beforeunload', =>
-      return "You have unsaved changes. Leave anyway?" unless @saved
-
   #
   # Loads the rubric by AJAX
   #
@@ -207,43 +198,18 @@ class @ReviewEditor
     $.ajax
       type: 'GET'
       url: url
-      error: $.proxy(@onAjaxError, this)
+      #error: => @rubricEditor.onAjaxError()
       dataType: 'json'
       success: (data) =>
         this.parseRubric(data)
-        callback()
-
-  #
-  # Loads the review
-  #
-  loadReview: () ->
-#     $.ajax
-#       type: 'GET'
-#       url: url
-#       error: $.proxy(@onAjaxError, this)
-#       dataType: 'json'
-#       success: (data) =>
-#         this.parseReview(data)
-    
-    @finishedText($('#review_feedback').val())
-    
-    finalGrade = $('#review_grade').val()
-    @finalGrade(finalGrade) if finalGrade != ''
-    
-    status = $('#review_status').val()
-    @finalizing(true) if status.length > 0 && status != 'started'
-    
-    payload = $('#review_payload').val()
-    if payload.length > 0
-      this.parseReview($.parseJSON(payload))
-    else
-      this.parseReview()
-
+        callback() if callback
+  
   #
   # Parses the JSON data returned by the server. See loadRubric.
   #
   parseRubric: (data) ->
     unless data
+      # TODO
       alert('Rubric has not been prepared')
       return
     
@@ -292,6 +258,107 @@ class @ReviewEditor
         ) , this)
     else
       @finishable = ko.observable(true)
+
+  # grades: array of grade values (strings or numbers)
+  calculateGrade: (grades) ->
+    if @gradingMode == 'average'
+      return this.calculateGradeMean(grades)
+    else if @gradingMode == 'sum'
+      return this.calculateGradeSum(grades)
+    else
+      return undefined
+  
+  #
+  # Calculates average grade
+  # If @numericGrading if true, average grade is calculated as the average value of the given grades.
+  # If @numericGrading if false, average index is used instead.
+  # If some grade null or undefined, undefined is returned.
+  # grades: array of grade values (strings or numbers)
+  #
+  calculateGradeMean: (grades) ->
+    return undefined if !grades? || grades.length < 1
+    
+    nonNumericGradesSeen = false
+    gradeSum = 0.0
+    indexSum = 0
+    
+    for grade in grades
+      return undefined unless grade?
+    
+      index = @gradeIndexByValue[grade]
+      indexSum += index
+      
+      # FIXME: does isNaN think that string "5" is numeric?
+      if isNaN(grade)
+        nonNumericGradesSeen = true
+      else
+        gradeSum += grade
+    
+    if !@numericGrading
+      meanIndex = Math.round(indexSum / grades.length)
+      return @grades[meanIndex]
+    else if nonNumericGradesSeen
+      return undefined  # Grade must be selected manually
+    else
+      meanGrade = Math.round(gradeSum / grades.length)
+      return meanGrade
+  
+  #
+  # Calculates sum of grades
+  # grades: array of grade values (strings or numbers)
+  calculateGradeSum: (grades) ->
+    return undefined if !grades? || grades.length < 1
+    
+    gradeSum = 0.0
+    
+    for grade in grades
+      return undefined unless grade?
+      
+      gradeSum += grade unless isNaN(grade)
+    
+    return gradeSum
+
+
+
+class @ReviewEditor extends @Rubric
+
+  constructor: () ->
+    super()
+    
+    @saved = true
+    @finalGrade = ko.observable()
+    @finishedText = ko.observable('')
+    @finalizing = ko.observable(false)
+    
+    $(window).bind 'beforeunload', =>
+      return "You have unsaved changes. Leave anyway?" unless @saved
+
+  #
+  # Loads the review
+  #
+  loadReview: () ->
+#     $.ajax
+#       type: 'GET'
+#       url: url
+#       error: $.proxy(@onAjaxError, this)
+#       dataType: 'json'
+#       success: (data) =>
+#         this.parseReview(data)
+    
+    @finishedText($('#review_feedback').val())
+    
+    finalGrade = $('#review_grade').val()
+    @finalGrade(finalGrade) if finalGrade != ''
+    
+    status = $('#review_status').val()
+    @finalizing(true) if status.length > 0 && status != 'started'
+    
+    payload = $('#review_payload').val()
+    if payload.length > 0
+      this.parseReview($.parseJSON(payload))
+    else
+      this.parseReview()
+  
 
   #
   # Parses the JSON data returned by the server. See loadRubric.
@@ -394,7 +461,7 @@ class @ReviewEditor
     
     # Calculate grade
     grades = @pages.map (page) -> page.grade()
-    grade = this.calculateGrade(grades)
+    grade = @rubric.calculateGrade(grades)
     @finalGrade(grade)
   
   collectFeedbackTexts: ->
@@ -433,65 +500,6 @@ class @ReviewEditor
     finalText += '\n' + @finalComment if @finalComment.length > 0
     
     @finishedText(finalText)
-    
-  # grades: array of grade values (strings or numbers)
-  calculateGrade: (grades) ->
-    if @gradingMode == 'average'
-      return this.calculateGradeMean(grades)
-    else if @gradingMode == 'sum'
-      return this.calculateGradeSum(grades)
-    else
-      return undefined
-  
-  #
-  # Calculates average grade
-  # If @numericGrading if true, average grade is calculated as the average value of the given grades.
-  # If @numericGrading if false, average index is used instead.
-  # If some grade null or undefined, undefined is returned.
-  # grades: array of grade values (strings or numbers)
-  #
-  calculateGradeMean: (grades) ->
-    return undefined if !grades? || grades.length < 1
-    
-    nonNumericGradesSeen = false
-    gradeSum = 0.0
-    indexSum = 0
-    
-    for grade in grades
-      return undefined unless grade?
-    
-      index = @gradeIndexByValue[grade]
-      indexSum += index
-      
-      # FIXME: does isNaN think that string "5" is numeric?
-      if isNaN(grade)
-        nonNumericGradesSeen = true
-      else
-        gradeSum += grade
-    
-    if !@numericGrading
-      meanIndex = Math.round(indexSum / grades.length)
-      return @grades[meanIndex]
-    else if nonNumericGradesSeen
-      return undefined  # Grade must be selected manually
-    else
-      meanGrade = Math.round(gradeSum / grades.length)
-      return meanGrade
-  
-  #
-  # Calculates sum of grades
-  # grades: array of grade values (strings or numbers)
-  calculateGradeSum: (grades) ->
-    return undefined if !grades? || grades.length < 1
-    
-    gradeSum = 0.0
-    
-    for grade in grades
-      return undefined unless grade?
-      
-      gradeSum += grade unless isNaN(grade)
-    
-    return gradeSum
   
 
   #
