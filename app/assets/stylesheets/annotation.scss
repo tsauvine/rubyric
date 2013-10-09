@@ -1,0 +1,26 @@
+.annotation-editor {
+  .review-editor {
+    width: 30%;
+    height: 100%;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+
+    background: #fff;
+    border-left: 1px solid #888;
+  }
+  
+  
+  div.submission-page {
+    position: relative;
+  
+    div.annotation {
+      border: 1px solid #880;
+      background: #ff8;
+      padding: .2em;
+      max-width: 200px;
+    }
+  }
+  
+  
+}
