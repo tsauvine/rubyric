@@ -62,15 +62,15 @@ class GroupsController < ApplicationController
     if params[:exercise_id]
       @exercise = Exercise.find(params[:exercise_id])
       @email_fields_count = @exercise.groupsizemax - @group.users.size - @group.group_invitations.size
+      log "edit_group view exercise #{params[:exercise_id]}"
     elsif params[:course_instance_id]
       @course_instance = CourseInstance.find(params[:course_instance_id])
       @email_fields_count = 0
+      log "edit_group view course_instance #{params[:course_instance_id]}"
     end
     load_course
     
     return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
-    
-    log "edit_group view #{@exercise.id}"
   end
 
   # POST /groups
