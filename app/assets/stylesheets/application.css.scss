@@ -223,6 +223,16 @@ table.histogram td {
  * Feedback editor (assistant view)
  ***********************************/
 
+.rubric.compact {
+  h3 button {
+    visibility: visible;
+  }
+  
+  div.phrases {
+    display: none;
+  }
+}
+
 .rubric {
   h3 button {
     visibility: hidden;
@@ -236,9 +246,7 @@ table.histogram td {
     background: #F8F8F8;
     width: 100%;
     margin: 0em 0em 0em 0em;
-  }
-
-  .phrases {
+    
     tr {
       border: 1px solid gray;
     }
@@ -254,97 +262,19 @@ table.histogram td {
       background: #fcc;
     }
   }
+
+  td.grade {
+    white-space: nowrap;
+  }
   
-  .rubric select {
+  td.phrase {
+    width: 99%;
+  }
+
+  select {
     margin: 0px;
   }
-}
 
-.rubric.compact {
-  h3 button {
-    visibility: visible;
-  }
-  
-  div.phrases {
-    display: none;
-  }
-}
-
-/*.rubric .phrases td:hover {
-  background: #F0F0FF;
-}*/
-
-/*
-.rubric h3 {
-  float: left;
-  margin: 0em 2em 2px 0em;
-  cursor: pointer;
-}
-*/
-
-.rubric .grading-options {
-  margin: 0px 0px 2px 0px;
-  padding: 0px;
-  float: right;
-  position: relative;
-}
-
-.rubric .grading-options ul {
-  display: block;
-  float: left;
-  padding: 0px;
-  margin: 0px;
-}
-
-.rubric .grading-options li {
-  display: block;
-  cursor: pointer;
-  float: left;
-  background: #fff0f0;
-  -moz-border-radius: 6px;
-  border: 1px solid #c0c0c0;
-  padding: 2px;
-  margin: 2px;
-}
-
-.rubric .grading-options img {
-  margin: 4px;
-}
-
-.rubric .grading-options li:hover {
-  background: #ffe0e0;
-}
-
-.rubric .grading-options li.selected {
-  border: 2px solid #f00000;
-  padding: 1px;
-}
-
-.rubric .criterion-grade-buttons {
-  display: none;
-  position: absolute;
-  top: -1em;
-  margin: 0px;
-  padding: 0px;
-}
-
-.rubric li:hover .criterion-grade-buttons {
-  display: block;
-}
-
-.rubric td.Good:hover {
-  background: image-url("fbgood.png") right repeat-y;
-}
-.rubric td.Bad:hover {
-  background: image-url("fbbad.png") right repeat-y;
-}
-.rubric td.Neutral:hover {
-  background: image-url("fbneutral.png") right repeat-y;
-}
-
-.rubric .grade {
-  font-size: 150%;
-  font-weight: bold;
 }
 
 .review-editor {
