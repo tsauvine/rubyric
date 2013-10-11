@@ -9,6 +9,7 @@
   <%= stylesheet_link_tag "application", :media => "all" %>
   <%= javascript_include_tag "application" %>
   <%= yield(:javascript) %>
+  <%= render :partial => 'shared/analytics' -%>
 </head>
 
 <body>
@@ -42,8 +43,6 @@
   </div>
 </footer>
 <% end -%>
-
-<%= render :partial => 'shared/analytics' -%>
 
 </body>
 </html>
