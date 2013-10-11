@@ -192,7 +192,9 @@ class CourseInstance < ActiveRecord::Base
     assistant_keys = [:email, :studentnumber, :firstname, :lastname, :name]
     (self.assistants + self.course.teachers).each do |assistant|
       assistant_keys.each do |key|
-        value = assistant.send(key).downcase
+        value = assistant.send(key)
+        next unless value
+        value.downcase!
         
         # Mark the key as ambiguous if it has been seen already
         assistants_ambiguous_keys[value] = true if assistants[value]
