@@ -87,6 +87,11 @@ class SubmissionsController < ApplicationController
       @group = @available_groups[0]
     end
     
+    # Validate group size
+    if @group && (@group.users.size > @exercise.groupsizemax || @group.users.size < @exercise.groupsizemin)
+      @group = nil
+    end
+    
     # Load previous submissions
     if @group
       @submissions = Submission.where(:group_id => @group.id, :exercise_id => @exercise.id).order('created_at DESC').all
