@@ -77,6 +77,7 @@ class SubmissionsController < ApplicationController
       @group = Group.find(params[:group])
       return access_denied unless @group.has_member?(current_user) || @is_teacher || @exercise.submit_without_login
     elsif !@user
+      # User is not authenticated. Group must be created manually.
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     elsif @available_groups.size > 1 || (@exercise.groupsizemax > 1 && @available_groups.size == 0) || @is_teacher
@@ -85,6 +86,11 @@ class SubmissionsController < ApplicationController
       return
     elsif @available_groups.size == 1
       @group = @available_groups[0]
+    end
+    
+    # Validate group size
+    if @group && (@group.users.size > @exercise.groupsizemax || @group.users.size < @exercise.groupsizemin)
+      @group = nil
     end
     
     # Load previous submissions
