@@ -55,6 +55,12 @@ class SubmissionsController < ApplicationController
       return
     end
     
+    # Unauthenticated users must always create group manually
+    if !@user && !params[:group]
+      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
+      return
+    end
+    
     # Check submisison policy
     if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(@user)
       render :action => 'not_enrolled'
@@ -72,26 +78,26 @@ class SubmissionsController < ApplicationController
     end
 
     # Select group
+    @group = nil
     if params[:group]
-      # Group given as a parameter
       @group = Group.find(params[:group])
+      
       return access_denied unless @group.has_member?(current_user) || @is_teacher || @exercise.submit_without_login
-    elsif !@user
-      # User is not authenticated. Group must be created manually.
-      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
-      return
-    elsif @available_groups.size > 1 || (@exercise.groupsizemax > 1 && @available_groups.size == 0) || @is_teacher
+    end
+    
+    # Autoselect group if exactly one is available
+    if !@group && @available_groups.size == 1
+      user_count = @available_groups[0].users.size
+      @group = @available_groups[0] if user_count <= @exercise.groupsizemax && user_count >= @exercise.groupsizemin || @exercise.groupsizemax > 1
+    end
+    
+    # Show group selection page if necessary
+    if !@group && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @is_teacher)
       render :action => 'select_group'
       log "select_group #{@exercise.id}"
       return
-    elsif @available_groups.size == 1
-      @group = @available_groups[0]
     end
     
-    # Validate group size
-    if @group && (@group.users.size > @exercise.groupsizemax || @group.users.size < @exercise.groupsizemin)
-      @group = nil
-    end
     
     # Load previous submissions
     if @group
