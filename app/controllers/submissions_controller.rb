@@ -88,7 +88,7 @@ class SubmissionsController < ApplicationController
     # Autoselect group if exactly one is available
     if !@group && @available_groups.size == 1
       user_count = @available_groups[0].users.size
-      @group = @available_groups[0] if user_count <= @exercise.groupsizemax && user_count >= @exercise.groupsizemin || @exercise.groupsizemax > 1
+      @group = @available_groups[0] if @exercise.groupsizemax == 1 && user_count == 1
     end
     
     # Show group selection page if necessary
