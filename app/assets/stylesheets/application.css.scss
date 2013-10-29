@@ -389,7 +389,10 @@ p.feedback-preview {
     visibility: visible;
   }
 
-
+  td.phrase {
+    width: auto;
+  }
+    
   td.buttons-column {
     width: 80px;
     text-align: center;
