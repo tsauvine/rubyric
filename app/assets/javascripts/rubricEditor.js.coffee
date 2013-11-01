@@ -365,11 +365,11 @@ class RubricEditor
   # nextId('counter') returns the next available id number for 'counter'
   # nextId('counter', newId) increases the counter to newId and returns newId. If next available id is higher than newId, the counter is not increased.
   nextId: (counterName, idNumber) ->
-    if idNumber
+    if idNumber?
       @idCounters[counterName] = idNumber if idNumber > @idCounters[counterName]
       return idNumber
     else
-      return @idCounters[counterName]++
+      return ++@idCounters[counterName]
 
 
   initializeDefault: ->
