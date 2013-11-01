@@ -158,6 +158,8 @@ class CourseInstance < ActiveRecord::Base
   
   # assignments: {group_id => [user_id, user_id, ...], group_id => ...}
   def set_assignments(assignments)
+    return unless assignments
+    
     Group.transaction do
       self.groups.includes(:reviewers).find_each do |group|
         group.reviewer_ids = assignments[group.id.to_s] || []
