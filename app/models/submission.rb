@@ -1,4 +1,5 @@
 #require "ftools"
+require 'open3.rb'
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
