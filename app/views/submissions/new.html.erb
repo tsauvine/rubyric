@@ -16,7 +16,7 @@
   <% end %>
 
   <!-- Group -->
-  <% if @exercise.groupsizemax > 1 && @group %>
+  <% if @group && (@exercise.groupsizemax > 1 || @group.users.size > 1)  %>
     <div class="row">
       <div class="span6">
 
@@ -49,12 +49,13 @@
 
         <p>
           <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id), :class => 'btn' %>
-          <!--
-          <%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %>
-          <% if @available_groups.size > 1 %>
+          <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
+          -%>
+        </p>
+        <p>
+          <% if @available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.users.size > 1 %>
             <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
           <% end %>
-          -->
         </p>
       </div>
     </div>
@@ -93,6 +94,7 @@
     <hr />
   <% end %>
 
+  <!-- Upload -->
   <div class="row">
     <div class="span12">
       <%= form_for @submission, :html => { :multipart => true } do |f| %>
@@ -101,14 +103,13 @@
           <%= f.hidden_field :group_id, :value => @group.id %>
         <% end %>
 
-        <!-- Upload -->
         <h2>Submit file</h2>
         <div id="exercise">
           <p><%= file_field_tag 'file' %></p>
 
           <p><%= f.submit 'Submit', :class => 'btn btn-primary' %></p>
         </div>
-      <% end %> <!-- /form -->
+      <% end %>
     </div>
   </div>
 </div>
