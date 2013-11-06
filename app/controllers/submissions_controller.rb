@@ -70,9 +70,9 @@ class SubmissionsController < ApplicationController
 
     # Find groups that the user is part of
     if @is_teacher
-      @available_groups = Group.where('course_instance_id=?', @course_instance.id).joins(:users)
+      @available_groups = Group.where('course_instance_id=?', @course_instance.id).joins(:users).order(:name)
     elsif @user
-      @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, @user.id).joins(:users)
+      @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, @user.id).joins(:users).order(:name).all.select { |group| group.users.size <= @exercise.groupsizemax }
     else
       @available_groups = []
     end

@@ -1,38 +1,56 @@
 <!-- groups/new.html.erb -->
 
 <div class="page-header">
-  <h1>Create a group for <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+  <h1>
+    Create a group for<br />
+    <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %>
+  </h1>
 </div>
 
-<p class="hint">Please enter the email addresses of other group members. If you do not know their addresses, you can enter them later.</p>
 
-<div>
-  <%= form_for [@exercise, @group] do |f| %>
-    <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+<%= form_for [@exercise, @group] do |f| %>
+  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+  <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
 
-    <h2>Group members</h2>
+  <!--h2>Group members</h2-->
+  <div class="row">
+    <div class="span12 hint">
+      <p>
+      Invite group members by entering their email addresses.<br />
+      Invited members are required to join the group by following the <em>invitation link</em> sent by email.<br />
+      You add or modify these addresses later.
+      </p>
+    </div>
+  </div>
 
-    <table>
-      <tbody>
-        <% if logged_in? && !@is_teacher %>
-          <tr>
-            <td>
-              <%= current_user.email %>
-            </td>
-          </tr>
-        <% end %>
-        <% (0...@email_fields_count).each do |i| %>
-          <tr>
-            <td>
-              <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
+  <div class="row">
+    <div class="span4 well">
+      <table>
+        <tbody>
+          <% if logged_in? && !@is_teacher %>
+            <tr>
+              <td>
+                <%= current_user.email %>
+              </td>
+            </tr>
+          <% end %>
+          <% (0...@email_fields_count).each do |i| %>
+            <tr>
+              <td>
+                <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}", :placeholder => 'email' %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="span12">
+      <p><%= f.submit 'Create group', :class => 'btn btn-primary' %></p>
+      
+    </div>
+  </div>
 
-    <p><%= f.submit 'Create group', :class => 'btn' %></p>
-
-  <% end %>
-</div>
+<% end %>

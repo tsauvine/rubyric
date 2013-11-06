@@ -1,9 +1,1 @@
-<h1>Select group</h1>
-
-<ul>
-  <% @groups.each do |group| %>
-    <li><%= link_to group.users.collect { |user| user.name }.join(', '), submit_path(:exercise => @exercise.id, :group => group.id) %></li>
-  <% end %>
-</ul>
-
-<p><%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id) %></p>
+<%= render :partial => 'submissions/select_group' %>
