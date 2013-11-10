@@ -30,18 +30,19 @@
     <!-- Submissions -->
     <table class="assignments">
       <% @available_groups.each do |group| %>
+        <% submissions = group.submissions.where(:exercise_id => @exercise.id) %>
         <tr class="group">
           <td colspan='3'>
             <%= group.users.collect {|user| user.name }.join(', ') %>
           </td>
         </tr>
         
-        <% if group.submissions.empty? %>
+        <% if submissions.empty? %>
           <tr class="submission">
-            <td colspan='3'>No submissions</td>
+            <td colspan='3'>No submissions to this assignment</td>
           </tr>
         <% else %>
-          <% group.submissions.each do |submission| %>
+          <% submissions.each do |submission| %>
             <tr class="submission">
               <td><%=l submission.created_at, :format => :long %></td>
               <td>(<%= link_to "#{submission.extension}", submission %>)</td>
