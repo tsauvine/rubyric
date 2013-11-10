@@ -8,15 +8,16 @@ class AnnotationAssessment < Review
       assessment = JSON.parse(review.payload || '{"annotations": []}')
       logger.debug "== Current review =="
       logger.debug assessment
-      # {
-      #   annotations: [
-      #   ]
-      # }
       
       annotations_to_create = []  # array of hashes
-      annotations_to_modify = {}  # id => {options}
       annotations_to_delete = {}  # id => true
+      
+      modified_content = {}    # id => 'content'
+      modified_grade = {}      # id => grade
+      modified_position = {}   # id => {x: , y:}
+      
       annotations = []
+      
       
       # Load commands
       commands.each do |command|
@@ -26,7 +27,10 @@ class AnnotationAssessment < Review
         when 'delete_annotation'
           annotations_to_delete[command['id']] = true
         when 'modify_annotation'
-          annotations_to_modify[command['id']] = command
+          id = command['id']
+          modified_content[id] = command['content'] if command['content']
+          modified_grade[id] = command['grade'] if command['grade']
+          modified_position[id] = command['page_position'] if command['page_position']
         end
       end
       
@@ -40,7 +44,9 @@ class AnnotationAssessment < Review
         next if annotations_to_delete[id]
         
         # Do modifications
-        # TODO
+        annotation['content'] = modified_content[id] if modified_content[id]
+        annotation['grade'] = modified_grade[id] if modified_grade[id]
+        annotation['page_position'] = modified_position[id] if modified_position[id]
         
         # Keep this annotation
         annotations << annotation

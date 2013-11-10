@@ -16,6 +16,8 @@ http://www.quicktimesheets.com/
 
 = Annotation =
 
+Modifikaatiot eivät tallennu
+
 Calculate points from annotations
 
 Save
@@ -27,7 +29,9 @@ Drag annotation to another page
 
 = Soon =
 
-rubric editor: if all grades are deleted, phrase grades are not properly cleared
+Rubric Editor: change the order of pages
+
+Rubric editor: if all grades are deleted, phrase grades are not properly cleared
 
 Rubric editor: tool tips
 

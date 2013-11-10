@@ -26,7 +26,14 @@ class ReviewsController < ApplicationController
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    render :action => 'edit', :layout => 'review'
+    if @review.type == 'AnnotationAssessment'
+      @submission = @review.submission
+      @page_count = @submission.page_count
+      
+      render :action => 'annotation', :layout => 'annotation'
+    else
+      render :action => 'edit', :layout => 'review'
+    end
   end
 
   # PUT /reviews/1
@@ -203,19 +210,6 @@ class ReviewsController < ApplicationController
         end
       end
     end
-  end
-  
-  def annotation
-    @review = Review.find(params[:id])
-    @submission = @review.submission
-    @exercise = @submission.exercise
-    load_course
-    
-    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-    
-    @page_count = @submission.page_count
-    
-    render :action => 'annotation', :layout => 'annotation'
   end
 
 end

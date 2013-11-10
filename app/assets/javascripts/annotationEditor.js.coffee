@@ -77,7 +77,15 @@ ko.bindingHandlers.position = {
     }
 
     #dragOptions['start'] = (-> startCallback.call(viewModel)) if startCallback
-    #dragOptions['stop'] = (-> stopCallback.call(viewModel)) if stopCallback
+    dragOptions['stop'] = ->
+      # Update model after drag and notify observers
+      pos = $(element).position()
+      value = ko.utils.unwrapObservable(valueAccessor())
+      value.x = pos.left
+      value.y = pos.top
+      valueAccessor().valueHasMutated()
+      
+      # stopCallback.call(viewModel)) if stopCallback
 
     el = $(element)
     el.draggable(dragOptions).disableSelection()
@@ -98,7 +106,6 @@ ko.bindingHandlers.position = {
     options['width'] = value.width if value.width?
     options['height'] = value.height if value.height?
 
-    #el.offset(options)
     el.css(options)
     #el.animate(options, 150)
     
@@ -136,7 +143,7 @@ class DeleteAnnotationCommand
     @annotation.deleted = false
   
   as_json: ->
-    return unless @annotation.id  # Deletions of new Annotations can be ignored
+    return unless @annotation.id?  # Deletions of new Annotations can be ignored
   
     {
       command: 'delete_annotation'
@@ -144,12 +151,17 @@ class DeleteAnnotationCommand
     }
 
 class ModifyAnnotationCommand
-  constructor: ->
+  constructor: (@annotation, @change) ->
   
   undo: ->
   
   as_json: ->
-    return unless @annotation.id  # Modifications to new Annotations can be ignored because the final values are saved anyway
+    return if !@annotation.id? || @annotation.deleted   # Modifications to new Annotations can be ignored because the final values are saved anyway
+    
+    @change['command'] = 'modify_annotation'
+    @change['id'] = @annotation.id
+    return @change
+    
 
 class CommandBuffer
   constructor: ->
@@ -185,7 +197,7 @@ class SubmissionPage
     # TODO: load when scrolling
     @nextPage.loadPage() if @nextPage
 
-  createAnnotation: (submissionPage, event) =>
+  clickCreateAnnotation: (submissionPage, event) =>
     currentTarget = event.currentTarget
     element = $('#submission-pages')
     scrollTop = element.scrollTop()
@@ -200,9 +212,15 @@ class SubmissionPage
       activateEditor: true
     }
     
-    @annotationEditor.addCommand(new CreateAnnotationCommand(this, options))
+    this.createAnnotation(options)
     
   
+  createAnnotation: (options) ->
+    command = new CreateAnnotationCommand(this, options)
+    @annotationEditor.addCommand(command)
+    @annotationEditor.subscribeToAnnotation(command.annotation)
+    
+
   deleteAnnotation: (annotation) =>
     @annotationEditor.addCommand(new DeleteAnnotationCommand(annotation))
   
@@ -211,7 +229,7 @@ class Annotation
   constructor: (options) ->
     options ||= {}
     
-    @id = undefined
+    @id = options['id']
     @phrase = options['phrase']
     @submissionPage = options['submissionPage']
     @content = ko.observable(options['content'])
@@ -231,6 +249,15 @@ class Annotation
     
     @gradeEditorActive = ko.observable(false)
     @contentEditorActive = ko.observable(false)
+  
+    # Subscribe to screen position changes to update pagePos after dragging.
+    @screenPosition.subscribe =>
+      screenPos = @screenPosition()
+      pagePos = @pagePosition()
+      pagePos.x = screenPos.x / @zoom
+      pagePos.y = screenPos.y / @zoom
+      @pagePosition.valueHasMutated()
+
   
   clickAnnotation: ->
     # Catch clicks and prevent bubbling
@@ -292,7 +319,9 @@ class AnnotationEditor extends Rubric
         'pagePosition': raw_annotation['page_position']
       }
     
-      submission_page.annotations().push(new Annotation(options))
+      annotation = new Annotation(options)
+      submission_page.annotations().push(annotation)
+      this.subscribeToAnnotation(annotation)
     
     for submission_page in @submission_pages()
       submission_page.annotations.valueHasMutated()
@@ -302,6 +331,18 @@ class AnnotationEditor extends Rubric
     @commandBuffer.buffer.push(command)
   
   
+  subscribeToAnnotation: (annotation) ->
+    # Subscribe to modifications
+    annotation.content.subscribe (newValue) =>
+      this.addCommand(new ModifyAnnotationCommand(annotation, {content: newValue}))
+  
+    annotation.grade.subscribe (newValue) =>
+      this.addCommand(new ModifyAnnotationCommand(annotation, {grade: newValue}))
+    
+    annotation.pagePosition.subscribe (newValue) =>
+      this.addCommand(new ModifyAnnotationCommand(annotation, {page_position: newValue}))
+    
+    
   cancelFinalize: ->
     @finalizing(false)
   
@@ -340,9 +381,6 @@ class AnnotationEditor extends Rubric
   
   dropPhrase: (page, phrase, event, ui) =>
     offset = $(event.target).offset()
-#     element = $('#submission-pages')
-#     scrollTop = element.scrollTop()
-#     scrollLeft = element.scrollLeft()
     
     options = {
       submissionPage: page
@@ -353,7 +391,7 @@ class AnnotationEditor extends Rubric
       zoom: @zoom
     }
     
-    this.addCommand(new CreateAnnotationCommand(page, options))
+    page.createAnnotation(options)
   
 
   printJson: ->

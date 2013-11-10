@@ -76,8 +76,14 @@ class Submission < ActiveRecord::Base
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
-
-    review = Review.new({:user => user, :submission => self})
+    options = {:user => user, :submission => self}
+    
+    if self.exercise.review_mode == 'annotation' && self.extension == 'pdf'
+      review = AnnotationAssessment.new(options)
+    else
+      review = Review.new(options)
+    end
+    
     review.save
 
     return review

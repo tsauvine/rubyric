@@ -94,7 +94,7 @@
     </div> <!-- /rubric -->
 
     <div id="submission-pages" class="submission-pages" data-bind="foreach: submission_pages">
-      <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: createAnnotation">
+      <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: clickCreateAnnotation">
         <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
         
         <!-- ko foreach: annotations -->

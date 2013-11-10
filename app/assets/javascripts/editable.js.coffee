@@ -24,15 +24,20 @@ ko.bindingHandlers.editable = {
       type = ko.utils.unwrapObservable(options.type) || 'textfield'
       original_value = ko.utils.unwrapObservable(options.value)
       
+      if original_value?
+        shown_value = original_value.toString()
+      else
+        shown_value = ''
+      
       #ko.utils.registerEventHandler element, "change", () ->
       #  observable = editorActive;
       #  observable($(element).datepicker("getDate"));
     
       # Create editor
       if 'textarea' == type
-        input = $("<textarea>#{original_value}</textarea>")
+        input = $("<textarea>#{shown_value}</textarea>")
       else
-        input = $("<input type='textfield' value='#{original_value}' />")
+        input = $("<input type='textfield' value='#{shown_value}' />")
 
       # Event handlers
       okHandler = (event) =>
@@ -86,11 +91,16 @@ ko.bindingHandlers.editable = {
       placeholder = ko.utils.unwrapObservable(options.placeholder) || '-'
       value = ko.utils.unwrapObservable(options.value)
       
+      if value?
+        value = value.toString()
+      else
+        value = ''
+      
       # Show placeholder if value is empty
-      value = placeholder if placeholder && (!value || value.length < 1)
+      value = placeholder if placeholder && value.length < 1
       
       # Escape nasty characters
-      value = value.toString().replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+      value = value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
 
       el.html(value)
 
