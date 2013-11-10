@@ -51,7 +51,7 @@ class ReviewsController < ApplicationController
       return
     end
 
-    if @review.update_attributes(params[:review])
+    if @review.update_from_json(params[:id], params[:review])
       respond_to do |format|
         format.json { head :no_content } # TODO: ok
         format.html {

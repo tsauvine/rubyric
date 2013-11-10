@@ -1,0 +1,98 @@
+.annotation-editor {
+  .rubric {
+    width: 30%;
+    height: 100%;
+    position: fixed;
+    right: 0px;
+    top: 0px;
+    overflow: scroll;
+    z-index: 1;
+    background: white;
+    border-left: 1px solid black;
+  
+    .rubric-container {
+      margin: 1em;
+    }
+    
+  }
+
+  .submission-pages {
+    position: fixed;
+    width: 70%;
+    height: 100%;
+    top: 0px;
+    left: 0px;
+    overflow-y: scroll;
+    overflow-x: scroll;
+    
+    hr {
+      border: 1px solid black;
+    }
+  }
+  
+  .submission-page {
+    position: relative;
+    /*border: 2px solid red;*/
+    padding-right: 400px;
+    margin: 10px;
+    
+    
+    img {
+      border: 1px solid black;
+      margin-bottom: 10px;
+    }
+  }
+  
+  .annotation {
+    max-width: 500px;
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    border: 1px solid #884;
+    background: #ffa;
+    cursor: default;
+    
+    textarea {
+      width: 400px;
+      height: 150px;
+    }
+
+    .grade {
+      float: left;
+      font-size: 200%;
+      font-weight: bold;
+      font-style: sans-serif;
+      margin: 6px 6px 6px 6px;
+    }
+  
+    .content {
+      padding: 1px 4px;
+      cursor: pointer;
+    }
+    
+    .statusbar {
+      border-top: 1px solid #aa8;
+      background: #eea;
+      color: #884;
+      font-size: smaller;
+      font-family: sans-serif;
+      padding: 2px 4px;
+    }
+    
+    button {
+      margin-left: 4px;
+    }
+    
+    &.editorActive {
+      z-index: 1;
+    }
+  }
+  
+}
+
+div.annotation-drag-helper {
+  width: 100px;
+  height: 10px;
+  border: 1px solid #884;
+  background: #ffa;
+}

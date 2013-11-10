@@ -2,7 +2,7 @@
 #= require bootstrap
 
 class Page
-  constructor: (@rubricEditor) ->
+  constructor: (@rubricEditor, @rubric) ->
     @nextPage = undefined
     @criteria = ko.observableArray()
     @criteriaById = {}          # id => Criterion
@@ -17,14 +17,14 @@ class Page
       for criterion in @criteria()
         grades.push(criterion.grade()) if criterion.gradeRequired
       
-      return @rubricEditor.calculateGrade(grades)
+      return @rubric.calculateGrade(grades)
     ), this)
     
     @finished = ko.computed((->
       for criterion in @criteria()
         return false if criterion.gradeRequired && !criterion.grade()?
       
-      return false if !@grade()? && @rubricEditor.gradingMode == 'average' && @rubricEditor.grades.length > 0
+      return false if !@grade()? && @rubric.gradingMode == 'average' && @rubric.grades.length > 0
       
       return true
       ), this)
@@ -34,8 +34,8 @@ class Page
     @id = data['id']
     
     # Prepare feedback containers
-    for category in @rubricEditor.feedbackCategories
-      feedbackHeight = Math.floor(100.0 / @rubricEditor.feedbackCategories.length) + "%"
+    for category in @rubric.feedbackCategories
+      feedbackHeight = Math.floor(100.0 / @rubric.feedbackCategories.length) + "%"
       feedback = {
         id: category.id
         title: category.name
@@ -69,11 +69,6 @@ class Page
         phrase.highlighted(true)
     
     @grade(data['grade']) if data['grade']?
-    
-    @grade.subscribe(=> @rubricEditor.saved = false)
-    
-    for category in @feedback
-      category.value.subscribe((newValue) => @rubricEditor.saved = false )
 
   to_json: ->
     feedback = @feedback.map (fb) -> { category_id: fb.id, text: fb.value() }
@@ -97,25 +92,12 @@ class Page
     feedback = @feedbackByCategory[categoryId || 0] || @feedback[0]
     feedback.value(feedback.value() + content + "\n") if feedback
   
-  cancelFinalize: (data, event) ->
-    @rubricEditor.cancelFinalize()
-    event.preventDefault()
-    return false
-  
   togglePhraseVisibility: ->
     @phrasesHidden(!@phrasesHidden())
     
   showTab: ->
     $("#page-#{@id}-link").tab('show')
-
-  showNextPage: ->
-    if @nextPage
-      @nextPage.showTab()
-    else
-      @rubricEditor.finish()
-      $('#tab-finish-link').tab('show')
     
-    window.scrollTo(0, 0)
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
@@ -127,10 +109,11 @@ class Criterion
     @gradeRequired = false
 
     for phrase_data in data['phrases']
-      phrase = new Phrase(@rubricEditor, @page, this)
+      phrase = new Phrase(@page, this)
       phrase.load_json(phrase_data)
       @phrases.push(phrase)
       @phrasesById[phrase.id] = phrase
+      @page.rubric.phrasesById[phrase.id] = phrase
 
   setGrade: (phrase) ->
     return if @rubricEditor.finalizing()
@@ -156,7 +139,7 @@ class Criterion
 
 
 class Phrase
-  constructor: (@rubricEditor, @page, @criterion) ->
+  constructor: (@page, @criterion) ->
     @highlighted = ko.observable(false)
 
   load_json: (data) ->
@@ -167,14 +150,6 @@ class Phrase
     @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
     
     @criterion.gradeRequired = true if @grade?
-
-  clickPhrase: ->
-    @page.addPhrase(@content, @categoryId)
-    this.clickGrade()
-
-  clickGrade: ->
-    @criterion.setGrade(this) if @grade?
-    @rubricEditor.saved = false
 
 
 class @Rubric
@@ -188,6 +163,7 @@ class @Rubric
     
     @grades = []
     @gradeIndexByValue = {}         # gradeValue -> index (0,1,2,..). Needed for calculating average from non-numeric values.
+    @phrasesById = {}
     @numericGrading = false
     @gradingMode = 'none'
     
@@ -239,7 +215,7 @@ class @Rubric
 
     previousPage = undefined
     for page_data in data['pages']
-      page = new Page(this)
+      page = new Page(this, this)
       page.load_rubric(page_data)
       @pages.push(page)
       @pagesById[page.id] = page
@@ -368,6 +344,12 @@ class @ReviewEditor extends @Rubric
       for page_data in data['pages']
         page = @pagesById[page_data['id']]
         page.load_review(page_data) if page
+        
+        # Subscribe to grade changes
+        page.grade.subscribe(=> @saved = false)
+    
+        for category in page.feedback
+          category.value.subscribe((newValue) => @saved = false )
     
     if (@gradingMode == 'average' && @grades.length > 0)
       @averageGrade = ko.computed((-> 
@@ -447,10 +429,28 @@ class @ReviewEditor extends @Rubric
 #       success: (data) =>
 #         window.location.href = "#{@review_url}/finish"
 
-
-  cancelFinalize: ->
+  clickGrade: (phrase) =>
+    phrase.criterion.setGrade(phrase) if phrase.grade?
+    @saved = false
+  
+  clickPhrase: (phrase) =>
+    phrase.page.addPhrase(phrase.content, phrase.categoryId)
+    this.clickGrade(phrase)
+    
+  clickCancelFinalize: (data, event) ->
     @finalizing(false)
-
+    #event.preventDefault()
+    #return false
+    
+  showNextPage: (page) ->
+    if page.nextPage
+      page.nextPage.showTab()
+    else
+      this.finish()
+      $('#tab-finish-link').tab('show')
+    
+    window.scrollTo(0, 0)
+    
   finish: ->
     return if @finalizing()  # Ignore if already finalizing
     
