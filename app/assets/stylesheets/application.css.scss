@@ -12,6 +12,7 @@
  *= require jquery.ui.datepicker
  *= require_self
  *= require theme
+ *= require annotation
 
  * // require_tree .
  */
@@ -675,11 +676,6 @@ tr:hover div.hover-buttons {
   visibility: visible;
 }
 
-img.pdfpage {
-  display: block;
-  width: 612px;
-  height: 792px;
-}
 
 
 /******************

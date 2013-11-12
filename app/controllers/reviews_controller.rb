@@ -28,8 +28,16 @@ class ReviewsController < ApplicationController
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
-    render :action => 'edit', :layout => 'review'
-    log "edit_review #{@review.id},#{@exercise.id}"
+    if @review.type == 'AnnotationAssessment'
+      @submission = @review.submission
+      @page_count = @submission.page_count
+      
+      render :action => 'annotation', :layout => 'annotation'
+      log "edit_annotation #{@review.id},#{@exercise.id}"
+    else
+      render :action => 'edit', :layout => 'review'
+      log "edit_review #{@review.id},#{@exercise.id}"
+    end
   end
 
   # PUT /reviews/1
@@ -54,7 +62,7 @@ class ReviewsController < ApplicationController
       return
     end
 
-    if @review.update_attributes(params[:review])
+    if @review.update_from_json(params[:id], params[:review])
       respond_to do |format|
         format.json { head :no_content } # TODO: ok
         format.html {
@@ -211,19 +219,6 @@ class ReviewsController < ApplicationController
         end
       end
     end
-  end
-  
-  def annotation
-    @review = Review.find(params[:id])
-    @submission = @review.submission
-    @exercise = @submission.exercise
-    load_course
-    
-    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
-    
-    @page_count = @submission.page_count
-    
-    render :action => 'annotation', :layout => 'annotation'
   end
 
 end

@@ -1,4 +1,5 @@
 #require "ftools"
+require 'open3.rb'
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
@@ -75,8 +76,14 @@ class Submission < ActiveRecord::Base
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
-
-    review = Review.new({:user => user, :submission => self})
+    options = {:user => user, :submission => self}
+    
+    if self.exercise.review_mode == 'annotation' && self.extension == 'pdf'
+      review = AnnotationAssessment.new(options)
+    else
+      review = Review.new(options)
+    end
+    
     review.save
 
     return review
@@ -119,6 +126,32 @@ class Submission < ActiveRecord::Base
     zoom = 0.01 if zoom < 0.01
     zoom = 10.0 if zoom > 10.0
     
+    book_mode = true
+    # TODO: use pdfinfo
+    width = 1190.5 * zoom * 1.5 # 595
+    height = 841.7 * zoom * 1.5
+    half_width = width / 2
+    
+    if book_mode
+      mod = page_number % 4
+      div = page_number / 4
+      
+      if page_number % 2 == 0
+        crop = " -crop #{half_width.to_i}x#{height.to_i}+#{half_width.to_i}+0"  # right side
+      else
+        crop = " -crop #{half_width.to_i}x#{height.to_i}+0+0"                   # left side
+      end
+      
+      if mod == 0 || mod == 3
+        pdf_page_number = div
+      else
+        pdf_page_number = div + 1
+      end
+    else
+      pdf_page_number = page_number
+      crop = ''
+    end
+    
     submission_path = self.full_filename()
     
     # Create renderings path
@@ -132,20 +165,32 @@ class Submission < ActiveRecord::Base
     else
       # Convert pdf to png
       density = 72 * zoom * 1.5
-      command = "convert -antialias -density #{density} #{submission_path}[#{page_number}] #{png_path}"
+      command = "convert -antialias -density #{density} #{submission_path}[#{pdf_page_number}]#{crop} #{png_path}"
+      puts command
       #puts command
       system(command)  # This blocks until the png is rendered
+      
+      # TODO: remove obsolete renderings from cache
+      # rm id-page_number*
     end
     
-    # TODO: remove obsolete renderings from cache
-    
     return png_path
+    
+    # 0 => 0 right  %0 /0
+    # 1 => 1 left   %1 /0
+    # 2 => 1 right  %2 /0
+    # 3 => 0 left   %3 /0
+    # 4 => 
+    # 5 => 
+    # 5 => 
+    # 6 => 
   end
 
   def page_count
     # http://pdf-toolkit.rubyforge.org/
     # https://github.com/yob/pdf-reader
     
+    book_mode = true
     count = 1
     submission_path = self.full_filename()
     Open3.popen3('pdfinfo', submission_path) do |stdin, stdout, stderr, wait_thr|
@@ -160,6 +205,8 @@ class Submission < ActiveRecord::Base
       
       exit_status = wait_thr.value
     end
+    
+    count *= 2 if book_mode
     
     # TODO: save page count in the DB
     

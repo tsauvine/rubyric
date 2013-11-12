@@ -1,14 +1,123 @@
 <%= content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
+    window.review = <%= (@review.payload || 'undefined').html_safe %>;
+  <% end %>
+
   <%= javascript_include_tag 'annotationEditor' %>
 <% end %>
 
-<h1>Annotation</h1> 
+<%= form_for @review, :as => :review, :url => review_path(@review) do |f| %>
+  <%= f.hidden_field :payload %>
+  <%= f.hidden_field :status %>
+  <%= f.hidden_field :grade %>
+  
+  <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">
+    
 
-<div class="annotation-editor" id="annotation-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">
+    <div class="rubric">
+      <div class="rubric-container">
+        <ul id="tabs" class="nav nav-tabs">
+          <!-- ko foreach: pages -->
+            <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
+          <!-- /ko -->
+          <button class="btn btn-default" data-bind="click: printJson">Preview</button>
+          <button type="submit" class="btn btn-success" data-bind="click: save">Save</button>
+        </ul>
+        
+        <div class="tab-content">
+          <!-- ko foreach: pages -->
+            <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
+              <h2 data-bind="text: name"></h2>
+              
+              <!-- Rubric -->
+              <div class="" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
+                <div class="criterion">
+                  <!-- Heading -->
+                  <h3>
+                    <span data-bind="text: name"></span>
+                    <!-- ko if: selectedPhrase() -->
+                      <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
+                    <!-- /ko -->
+                  </h3>
 
-  <!-- ko foreach: submission_pages --->
-    <div>
-      <img data-bind="attr: { src: src, alt: alt }" />
+                  <!-- Phrases -->
+                  <div class="clear"></div>
+                  
+                  <div class="phrases">
+                    <table class="phrases">
+                      <tbody data-bind="foreach: phrases">
+                        <tr class="phrase" data-bind="draggable: {}">
+                          <td class="grade" data-bind="if: grade != undefined">
+                            <span data-bind="text: grade"></span>
+                          </td>
+                          <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+              
+              <!-- Grades -->
+              <!-- ko if: $root.gradingMode == 'average' && $root.grades.length > 0 -->
+                <hr />
+                <h3>Grade</h3>
+                
+                <p>
+                  <select data-bind="options: $root.grades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
+                  <!-- ko if: averageGrade -->
+                    Calculated mean: <strong data-bind="text: averageGrade"></strong>
+                  <!-- /ko -->
+                </p>
+              <!-- /ko -->
+              <!-- ko if: $root.gradingMode == 'sum' -->
+                <hr />
+                <h3>
+                  Points:
+                  <span data-bind="text: averageGrade"></span>
+                </h3>
+              <!-- /ko -->
+              
+              <!-- Next page button -->
+              <!-- ko if: nextPage || $root.finishable() -->
+                <button class="btn" data-bind="click: $root.showNextPage">
+                  Next page
+                  <i class="icon icon-arrow-right"></i>
+                </button>
+              <!-- /ko -->
+            </div>
+          <!-- /ko -->
+
+        </div> <!-- /tab-contents -->
+      </div>
+    </div> <!-- /rubric -->
+
+    <div id="submission-pages" class="submission-pages" data-bind="foreach: submission_pages">
+      <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: clickCreateAnnotation">
+        <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+        
+        <!-- ko foreach: annotations -->
+          <div class="annotation" data-bind="position: screenPosition, css: {editorActive: gradeEditorActive() || contentEditorActive() }, click: clickAnnotation, clickBubble: false">
+            <div class="grade" data-bind="editable: {value: grade, editorActive: gradeEditorActive, placeholder: '&bull;'}">
+            </div>
+            <div class="content" data-bind="editable: {value: content, editorActive: contentEditorActive, type: 'textarea', placeholder: 'click to edit'}">
+            </div>
+            <div class="clearfix"></div>
+            
+            <div class="statusbar">
+              <button class="btn btn-mini pull-right" title="Delete annotation" data-bind="click: $parent.deleteAnnotation, clickBubble: false">
+                <i class="icon icon-remove"></i>
+              </button>
+              <!-- ko if: phrase -->
+                <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
+              <!-- /ko -->
+              <div class="clearfix"></div>
+            </div>
+          </div>
+        <!-- /ko -->
+      </div>
+      <!--hr /-->
     </div>
-  <!-- /ko -->
-</div>
+  </div>
+<% end %>
