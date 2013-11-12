@@ -78,6 +78,9 @@ class Submission < ActiveRecord::Base
     user = User.find(user) unless user.is_a?(User)
     options = {:user => user, :submission => self}
     
+    logger.info "review_mode: #{self.exercise.review_mode} (#{self.exercise.review_mode == 'annotation'})"
+    logger.info "extension: #{self.extension} (#{self.extension == 'pdf'})"
+    
     if self.exercise.review_mode == 'annotation' && self.extension == 'pdf'
       review = AnnotationAssessment.new(options)
     else
@@ -166,8 +169,7 @@ class Submission < ActiveRecord::Base
       # Convert pdf to png
       density = 72 * zoom * 1.5
       command = "convert -antialias -density #{density} #{submission_path}[#{pdf_page_number}]#{crop} #{png_path}"
-      puts command
-      #puts command
+      logger.info command
       system(command)  # This blocks until the png is rendered
       
       # TODO: remove obsolete renderings from cache
