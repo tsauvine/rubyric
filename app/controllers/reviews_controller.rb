@@ -79,6 +79,8 @@ class ReviewsController < ApplicationController
       end
     end
     
+    log("update_review #{params[:id]}, #{(params['review'] || {})['payload']}")
+    
 #     respond_to do |format|
 #       format.json { render :text => '{"status": "ok"}' }
 #     end
