@@ -117,14 +117,14 @@ class Submission < ActiveRecord::Base
   # Returns the path of the png rendeing of the submission
   # This method blocks until the png is rendered and available.
   # returns false if the png cannot be rendered
-  def png_path(page_number, zoom)
+  def image_path(page_number, zoom)
     page_number ||= 0
     page_number = page_number.to_i
     
     zoom ||= 1.0
     zoom = zoom.to_f
     zoom = 0.01 if zoom < 0.01
-    zoom = 10.0 if zoom > 10.0
+    zoom = 4.0 if zoom > 4.0
     
     book_mode = true
     # TODO: use pdfinfo
@@ -143,9 +143,9 @@ class Submission < ActiveRecord::Base
       end
       
       if mod == 0 || mod == 3
-        pdf_page_number = div
+        pdf_page_number = div * 2
       else
-        pdf_page_number = div + 1
+        pdf_page_number = div * 2 + 1
       end
     else
       pdf_page_number = page_number
@@ -157,33 +157,36 @@ class Submission < ActiveRecord::Base
     # Create renderings path
     FileUtils.makedirs PDF_CACHE_PATH unless File.exists? PDF_CACHE_PATH
     
-    png_path = "#{PDF_CACHE_PATH}/#{id}-#{page_number}-#{(zoom * 100).to_i}.png"
-    png_exists = File.exist? png_path
+    image_format = 'jpg'
+    #image_mimetype = 'image/png'
+    image_mimetype = 'image/jpeg'
+    image_quality = '50'
+    image_filename = "#{id}-#{page_number}-#{(zoom * 100).to_i}.#{image_format}"
+    image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
+    image_exists = File.exist? image_path
     
-    if png_exists
-      return png_path
-    else
-      # Convert pdf to png
+    unless image_exists
+      # Convert pdf to bitmap
       density = 72 * zoom * 1.5
-      command = "convert -antialias -density #{density} #{submission_path}[#{pdf_page_number}]#{crop} #{png_path}"
+      command = "convert -antialias -density #{density} -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
       system(command)  # This blocks until the png is rendered
       
       # TODO: remove obsolete renderings from cache
       # rm id-page_number*
     end
     
-    return png_path
+    return {path: image_path, filename: image_filename, mimetype: image_mimetype}
     
-    # 0 => 0 right  %0 /0
-    # 1 => 1 left   %1 /0
-    # 2 => 1 right  %2 /0
-    # 3 => 0 left   %3 /0
-    # 4 => 
-    # 5 => 
-    # 5 => 
-    # 6 => 
+    # 0 => 0 right
+    # 1 => 1 left
+    # 2 => 1 right
+    # 3 => 0 left
+    # 4 => 2 right
+    # 5 => 3 left
+    # 5 => 3 right
+    # 6 => 2 left
   end
-
+  
   def page_count
     # http://pdf-toolkit.rubyforge.org/
     # https://github.com/yob/pdf-reader

@@ -30,9 +30,11 @@ class SubmissionsController < ApplicationController
           log "download_submission #{@submission.id},#{@exercise.id}"
         end
       end
-        
+      
       format.png do
-        send_file @submission.png_path(params[:page], params[:zoom]), :type => 'image/png', :filename => "#{@submission.id}.png", :disposition => 'inline'
+        response.headers["Expires"] = 1.year.from_now.httpdate
+        bitmap_info = @submission.image_path(params[:page], params[:zoom])
+        send_file bitmap_info[:path], :filename => bitmap_info[:filename], :type => bitmap_info[:mimetype], :disposition => 'inline'
       end
     end
   end
