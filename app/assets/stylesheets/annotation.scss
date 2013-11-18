@@ -71,13 +71,14 @@
     }
     
     .statusbar {
-      border-top: 1px solid #aa8;
+      border-bottom: 1px solid #aa8;
       background: #eea;
       color: #884;
       font-size: smaller;
       font-family: sans-serif;
-      padding: 2px 4px;
+      padding: 0px 4px;
     }
+    
     
     button {
       margin-left: 4px;
