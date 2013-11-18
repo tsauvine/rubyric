@@ -41,7 +41,7 @@ class FeedbackMailer < ActionMailer::Base
     
     if review.type == 'AnnotationAssessment'
       template_name = 'annotation'
-      @review_url = review_url(review.id)
+      @review_url = review_url(review.id, :protocol => 'https://')
     else
       template_name = 'review'
     end
