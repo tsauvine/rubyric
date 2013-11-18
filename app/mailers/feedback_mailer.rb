@@ -39,8 +39,21 @@ class FeedbackMailer < ActionMailer::Base
     
     subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
     
+    if review.type == 'AnnotationAssessment'
+      template_name = 'annotation'
+      @review_url = review_url(review.id)
+    else
+      template_name = 'review'
+    end
+    
     I18n.with_locale(@course_instance.locale || I18n.locale) do
-      mail(:to => recipients.join(","), :from => from, :subject => subject)
+      mail(
+        :to => recipients.join(","),
+        :from => from,
+        :subject => subject,
+        :template_path => 'feedback_mailer',
+        :template_name => template_name
+      )
     end
 
     # Set status
