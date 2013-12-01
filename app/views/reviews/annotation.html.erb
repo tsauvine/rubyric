@@ -12,7 +12,11 @@
   <%= f.hidden_field :status %>
   <%= f.hidden_field :grade %>
   
-  <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">
+  <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
+    data-page-count="<%= @submission.page_count %>"
+    data-page-width="<%= @submission.page_width %>"
+    data-page-height="<%= @submission.page_height %>"
+    >
     
 
     <div class="rubric">

@@ -118,6 +118,7 @@ class Submission < ActiveRecord::Base
   # This method blocks until the png is rendered and available.
   # returns false if the png cannot be rendered
   def image_path(page_number, zoom)
+    # Sanitize parameters
     page_number ||= 0
     page_number = page_number.to_i
     
@@ -126,13 +127,23 @@ class Submission < ActiveRecord::Base
     zoom = 0.01 if zoom < 0.01
     zoom = 4.0 if zoom > 4.0
     
-    book_mode = true
-    # TODO: use pdfinfo
-    width = 1190.5 * zoom * 1.5 # 595
-    height = 841.7 * zoom * 1.5
-    half_width = width / 2
+    # Call page count to make sure values are cached FIXME
+    self.page_count()
     
-    if book_mode
+    submission_path = self.full_filename()
+    image_format = 'png'
+    image_mimetype = 'image/png'
+    #image_format = 'jpg'
+    #image_mimetype = 'image/jpeg'
+    image_quality = '50'
+    image_filename = "#{id}-#{page_number}-#{(zoom * 100).to_i}.#{image_format}"
+    image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
+    image_exists = File.exist? image_path
+    pixels_per_centimeter = 50.0 * zoom
+    
+    if self.book_mode
+      half_width = self.page_width * pixels_per_centimeter / 2
+      height = self.page_height * pixels_per_centimeter
       mod = page_number % 4
       div = page_number / 4
       
@@ -152,23 +163,13 @@ class Submission < ActiveRecord::Base
       crop = ''
     end
     
-    submission_path = self.full_filename()
-    
     # Create renderings path
     FileUtils.makedirs PDF_CACHE_PATH unless File.exists? PDF_CACHE_PATH
     
-    image_format = 'jpg'
-    #image_mimetype = 'image/png'
-    image_mimetype = 'image/jpeg'
-    image_quality = '50'
-    image_filename = "#{id}-#{page_number}-#{(zoom * 100).to_i}.#{image_format}"
-    image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
-    image_exists = File.exist? image_path
-    
     unless image_exists
       # Convert pdf to bitmap
-      density = 72 * zoom * 1.5
-      command = "convert -antialias -density #{density} -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      command = "convert -antialias -density #{pixels_per_centimeter * 2.54} -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      puts command
       system(command)  # This blocks until the png is rendered
       
       # TODO: remove obsolete renderings from cache
@@ -191,25 +192,37 @@ class Submission < ActiveRecord::Base
     # http://pdf-toolkit.rubyforge.org/
     # https://github.com/yob/pdf-reader
     
-    book_mode = true
+    value = read_attribute(:page_count)
+    if value != nil
+      puts "Returning known page count"
+      return value
+    end
+    puts "Calculating page count"
+    
+    #book_mode = true
     count = 1
-    submission_path = self.full_filename()
-    Open3.popen3('pdfinfo', submission_path) do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3('pdfinfo', self.full_filename()) do |stdin, stdout, stderr, wait_thr|
       while line = stdout.gets
-        next unless line =~ /^Pages/ 
-        parts = line.split(':')
-        next if parts.size < 2
-        
-        count = parts[1].strip.to_i
-        break
+        if line =~ /^Pages/  # Read page count
+          parts = line.split(':')
+          next if parts.size < 2
+          count = parts[1].strip.to_i
+        elsif line =~ /^Page size/  # Read page size
+          parts = line.split(':')
+          next if parts.size < 2
+          
+          values = parts[1].scan(/[0-9\.]+/)
+          self.page_width = Float(values[0]) * 0.035278 rescue nil  # Convert points to centimeters
+          self.page_height = Float(values[1]) * 0.035278 rescue nil
+        end
       end
       
       exit_status = wait_thr.value
     end
     
-    count *= 2 if book_mode
-    
-    # TODO: save page count in the DB
+    count *= 2 if self.book_mode
+    self.page_count = count
+    self.save()
     
     return count
   end

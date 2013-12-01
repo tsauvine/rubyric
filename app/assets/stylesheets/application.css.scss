@@ -120,10 +120,12 @@ h1 {
 
 h2 {
   font-size: 130%;
+  line-height: 140%;
 }
 
 h3 {
   font-size: 100%;
+  line-height: 150%;
 }
 
 /*
@@ -233,7 +235,8 @@ table.histogram td {
     margin: 0em 0em 1em 0em;
     
     h3 {
-      margin-bottom: 0em;
+      margin-top: 1.5em;
+      margin-bottom: 0.2em;
     }
   }
   

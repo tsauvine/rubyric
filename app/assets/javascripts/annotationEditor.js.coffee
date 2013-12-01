@@ -178,9 +178,10 @@ class CommandBuffer
 
 class SubmissionPage
   constructor: (@annotationEditor, @pageNumber) ->
-    # TODO: get width from server. Now A4 is assumed.
-    @width = ko.observable("#{Math.round(612 * 1.5)}px")
-    @height = ko.observable("#{Math.round(792 * 1.5)}px")
+    pixelsPerCentimeter = 50.0 * @annotationEditor.zoom()
+    
+    @width = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
+    @height = ko.observable("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
     @src = ko.observable()
     @alt = ko.observable("Page #{@pageNumber + 1}")
     @nextPage = undefined
@@ -189,7 +190,7 @@ class SubmissionPage
     
   
   loadPage: () ->
-    url = "#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom}"
+    url = "#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom()}"
     @src(url)
   
   # Called after image has been loaded
@@ -208,7 +209,7 @@ class SubmissionPage
       content: ''
       grade: undefined
       screenPosition: {x: event.pageX - currentTarget.offsetLeft + scrollLeft, y: event.pageY - currentTarget.offsetTop + scrollTop}
-      zoom: @annotationEditor.zoom
+      zoom: @annotationEditor.zoom()
       activateEditor: true
     }
     
@@ -271,8 +272,10 @@ class AnnotationEditor extends Rubric
     @element = $('#annotation-editor')
     @submission_url = @element.data('submission-url')
     @page_count = @element.data('page-count')
+    @page_width = @element.data('page-width')
+    @page_height = @element.data('page-height')
     
-    @zoom = 1.0
+    @zoom = ko.observable(1.0)
     @submission_pages = ko.observableArray()
     @phrasesById = {}
     
@@ -389,7 +392,7 @@ class AnnotationEditor extends Rubric
       content: phrase.content
       grade: phrase.grade
       screenPosition: {x: ui.position.left - offset.left, y: ui.position.top - offset.top}
-      zoom: @zoom
+      zoom: @zoom()
     }
     
     page.createAnnotation(options)
