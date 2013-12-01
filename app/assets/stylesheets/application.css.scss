@@ -37,6 +37,11 @@ div.clear {
   display: none;
 }
 
+
+hr.large-gap {
+  margin-top: 10ex;
+}
+
 /*
 .bold {
   font-weight: bold;
@@ -105,43 +110,42 @@ p.narrow, div.narrow {
  * Headings
  ******************/
 
-/*
-h1 {
-  font-size: 130%;
-  color: #cc1414;
-  padding-top: 0px;
-  margin-top: 0px;
+h1, h2, h3 {
+  color: #444;
 }
 
+h1 {
+  font-size: 160%;
+}
+
+h2 {
+  font-size: 130%;
+}
+
+h3 {
+  font-size: 100%;
+}
+
+/*
 h1 a {
   font-size: .7em;
   font-weight: normal;
   font-variant: small-caps;
 }
+*/
 
-h2 {
-  font-size: 100%;
-  margin-top: 3em;
-  color: black;
-}
-
+/*
 h1:first-child, h2:first-child, h3:first-child, h1 + h2, h1 + h3, h2 + h3 {
   padding-top: 0px;
   margin-top: 0px;
 }
-
-
-
-h3 {
-  font-size: 100%;
-}
+*/
 
 h1 .hint, h2 .hint, h3 .hint {
   font-size: small;
   font-weight: normal;
   color: gray;
 }
-*/
 
 /******************
  * Help box
@@ -224,23 +228,13 @@ table.histogram td {
  * Feedback editor (assistant view)
  ***********************************/
 
-.rubric.compact {
-  h3 button {
-    visibility: visible;
-  }
-  
-  div.phrases {
-    display: none;
-  }
-}
-
 .rubric {
-  h3 button {
-    visibility: hidden;
-  }
-
   div.criterion {
     margin: 0em 0em 1em 0em;
+    
+    h3 {
+      margin-bottom: 0em;
+    }
   }
   
   table.phrases {
@@ -284,6 +278,21 @@ table.histogram td {
   width: 70%;
   margin: 0em;
   padding: 0em 0em;
+  
+  /* Show/Hide phrases */
+  .rubric.compact div.criterion {
+    h3 button {
+      visibility: visible;
+    }
+
+    div.phrases {
+      display: none;
+    }
+  }
+  
+  div.criterion h3 button {
+    visibility: hidden;
+  }
 }
 
 
@@ -622,29 +631,6 @@ p.feedback-preview {
   list-style: square;
 }
 
-
-/*
-#overlay {
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  left: 0px;
-  top: 0px;
-  visibility: hidden;
-  text-align: center;
-  z-index: 1000;
-  background: image-url("transparency.png");
-}
-
-
-#overlay div {
-  width: 50%;
-  margin: 100px auto;
-  background: white;
-  border: 2px solid black;
-  padding: 1em;
-}
-*/
 
 .ui-timepicker-div .ui-widget-header { margin-bottom: 8px; }
 .ui-timepicker-div dl { text-align: left; }
