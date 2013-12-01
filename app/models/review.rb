@@ -279,7 +279,7 @@ class Review < ActiveRecord::Base
 
     return text
   end
-
+  
   def self.deliver_reviews(review_ids)
     errors = []
     

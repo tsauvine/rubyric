@@ -11,12 +11,20 @@ class ReviewsController < ApplicationController
 
     return access_denied unless @group.has_member?(current_user) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || is_admin?(current_user)
     
-    respond_to do |format|
-      format.html { render :action => 'show', :layout => 'narrow' }
-      format.json { render json: @review.payload }
+    if @review.type == 'AnnotationAssessment'
+      @submission = @review.submission
+      @page_count = @submission.page_count
+      
+      render :action => 'show-annotation', :layout => 'annotation'
+      log "view_annotation #{@review.id},#{@exercise.id}"
+    else
+      respond_to do |format|
+        format.html { render :action => 'show', :layout => 'narrow' }
+        format.json { render json: @review.payload }
+      end
+      
+      log "view_review #{@review.id},#{@exercise.id}"
     end
-    
-    log "view_review #{@review.id},#{@exercise.id}"
   end
 
   # GET /reviews/1/edit

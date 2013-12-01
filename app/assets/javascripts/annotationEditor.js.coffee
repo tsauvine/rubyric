@@ -233,6 +233,7 @@ class Annotation
     @phrase = options['phrase']
     @submissionPage = options['submissionPage']
     @content = ko.observable(options['content'])
+    @escaped_content = (options['content'] || '').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
     @grade = ko.observable(options['grade'])
     
     @zoom = options.zoom || 1.0
