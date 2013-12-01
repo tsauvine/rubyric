@@ -8,6 +8,7 @@
     <%= f.hidden_field :payload %>
     <%= f.hidden_field :status %>
     <%= f.hidden_field :grade %>
+    <%= hidden_field_tag :send_review %>
 
     <div class="tabbable review-editor" id="review-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>">
       <div class="row-fluid">
@@ -218,7 +219,13 @@
             </table>
           <!-- /ko -->
           
-          <p><button class="btn btn-success" data-bind="click: save">Save</button></p>
+          <p>
+            <button class="btn btn-success" data-bind="click: save">Save</button>
+            
+            <% if @exercise.grader_can_email %>
+              <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
+            <% end %>
+          </p>
         </div>
 
       </div> <!-- /tab-contents -->

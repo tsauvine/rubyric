@@ -53,6 +53,7 @@ class ReviewsController < ApplicationController
     @review = Review.find(params[:id])
     @exercise = @review.submission.exercise
     load_course
+    params[:review] ||= {}
 
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
@@ -70,7 +71,12 @@ class ReviewsController < ApplicationController
       return
     end
 
+    @deliver_immediately = @exercise.grader_can_email && params[:send_review]
+    params[:review][:status] = 'mailing' if @deliver_immediately
+    
     if @review.update_from_json(params[:id], params[:review])
+      Review.delay.deliver_reviews([@review.id]) if @deliver_immediately
+      
       respond_to do |format|
         format.json { head :no_content } # TODO: ok
         format.html {

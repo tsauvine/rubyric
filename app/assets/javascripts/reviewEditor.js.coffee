@@ -384,7 +384,6 @@ class @ReviewEditor extends @Rubric
   encodeJSON: ->
     pages_json = @pages.map (page) -> page.to_json()
     return JSON.stringify({version: '2', pages: pages_json})
-
   
   # Populates the HTML-form from the model. This is called just before submitting.
   save: ->
@@ -429,6 +428,10 @@ class @ReviewEditor extends @Rubric
 #       success: (data) =>
 #         window.location.href = "#{@review_url}/finish"
 
+  saveAndSend: ->
+    $('#send_review').val(true)
+    this.save()
+    
   clickGrade: (phrase) =>
     phrase.criterion.setGrade(phrase) if phrase.grade?
     @saved = false

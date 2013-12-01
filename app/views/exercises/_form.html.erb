@@ -21,8 +21,8 @@
       <%= f.text_field :deadline %>
     </div>
   </div>
-      
-    
+  
+
   <div class="control-group">
     <%= f.label :groupsizemax, 'Group size', :class => 'control-label' %>
     <div class="controls">
@@ -37,19 +37,16 @@
     </div>
   </div>
 
-  <!--p>
-    <%= f.check_box :submit_without_login %> Allow submitting without logging in<br />
-    <%= f.check_box :grader_can_email %> Allow assistants to send reviews<br />
-    <%= f.check_box :anonymous_graders %> Anonymous graders<br />
-  </p-->
+  <%
+    # f.check_box :submit_without_login Allow submitting without logging in<br />
+    # f.check_box :anonymous_graders Anonymous graders<br />
 
-  <!--
-  <h2>Message to be shown before submitting (HTML allowed):</h2>
-  <%= f.text_area :submit_pre_message, :rows => 3, :cols => 80 %>
+    # <h2>Message to be shown before submitting (HTML allowed):</h2>
+    # f.text_area :submit_pre_message, :rows => 3, :cols => 80
 
-  <h2>Message to be shown after submitting (HTML allowed):</h2>
-  <%= f.text_area :submit_post_message, :rows => 3, :cols => 80 %>
-  -->
+    # <h2>Message to be shown after submitting (HTML allowed):</h2>
+    # f.text_area :submit_post_message, :rows => 3, :cols => 80
+  %>
 
   <div class="control-group">
     <div class="controls">
@@ -61,4 +58,27 @@
       <%= f.submit 'Save', :class => 'btn btn-primary' %>
     </div>
   </div>
+  
+  
+  <hr class="large-gap" />
+  
+  <h3>Advanced settings</h3>
+  
+  <div class="control-group">
+    <%= f.label :grader_can_email, 'Allow reviewers to send reviews immediately', :class => 'control-label' %><br />
+    <div class="controls">
+      <%= f.check_box :grader_can_email %> 
+    </div>
+  </div>
+  
+  <div class="control-group">
+    <div class="controls">
+      <% if @exercise.new_record? %>
+        <%= link_to t(:Cancel), @course_instance, :class => 'btn' %>
+      <% else %>
+        <%= link_to t(:Back), @exercise, :class => 'btn' %>
+      <% end %>
+      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+    </div>
+  </div>  
 <% end %>
