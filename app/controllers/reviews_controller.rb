@@ -71,7 +71,7 @@ class ReviewsController < ApplicationController
       return
     end
 
-    @deliver_immediately = @exercise.grader_can_email && params[:send_review]
+    @deliver_immediately = @exercise.grader_can_email && params[:send_review] == 'true'
     params[:review][:status] = 'mailing' if @deliver_immediately
     
     if @review.update_from_json(params[:id], params[:review])

@@ -386,7 +386,9 @@ class @ReviewEditor extends @Rubric
     return JSON.stringify({version: '2', pages: pages_json})
   
   # Populates the HTML-form from the model. This is called just before submitting.
-  save: ->
+  save: (options) ->
+    options ||= {}
+    
     # Encode review as JSON
     $('#review_payload').val(this.encodeJSON())
     
@@ -409,6 +411,8 @@ class @ReviewEditor extends @Rubric
         status = 'unfinished'
       else
         status = 'finished'
+        
+        $('#send_review').val('true') if options['send']?  # Send immediately?
     else
       status = 'started'
     
@@ -429,8 +433,7 @@ class @ReviewEditor extends @Rubric
 #         window.location.href = "#{@review_url}/finish"
 
   saveAndSend: ->
-    $('#send_review').val(true)
-    this.save()
+    this.save({send: true})
     
   clickGrade: (phrase) =>
     phrase.criterion.setGrade(phrase) if phrase.grade?
