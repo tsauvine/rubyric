@@ -437,12 +437,12 @@ class @ReviewEditor extends @Rubric
     phrase.page.addPhrase(phrase.content, phrase.categoryId)
     this.clickGrade(phrase)
     
-  clickCancelFinalize: (data, event) ->
+  clickCancelFinalize: (data, event) =>
     @finalizing(false)
     #event.preventDefault()
     #return false
     
-  showNextPage: (page) ->
+  showNextPage: (page) =>
     if page.nextPage
       page.nextPage.showTab()
     else
@@ -461,7 +461,7 @@ class @ReviewEditor extends @Rubric
     
     # Calculate grade
     grades = @pages.map (page) -> page.grade()
-    grade = @rubric.calculateGrade(grades)
+    grade = this.calculateGrade(grades)
     @finalGrade(grade)
   
   collectFeedbackTexts: ->
