@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130925084640) do
+ActiveRecord::Schema.define(:version => 20131201183730) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -100,6 +100,8 @@ ActiveRecord::Schema.define(:version => 20130925084640) do
     t.boolean  "autoassign",              :default => true
     t.text     "xml"
     t.text     "rubric"
+    t.string   "review_mode"
+    t.boolean  "share_rubric",            :default => false
   end
 
   create_table "feedbacks", :force => true do |t|
@@ -217,6 +219,7 @@ ActiveRecord::Schema.define(:version => 20130925084640) do
     t.text     "payload"
     t.string   "filename"
     t.string   "extension"
+    t.string   "type",             :default => "Review", :null => false
   end
 
   create_table "roles", :id => false, :force => true do |t|
@@ -259,6 +262,10 @@ ActiveRecord::Schema.define(:version => 20130925084640) do
     t.datetime "created_at"
     t.datetime "updated_at"
     t.string   "filename"
+    t.boolean  "book_mode"
+    t.integer  "page_count"
+    t.float    "page_width"
+    t.float    "page_height"
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

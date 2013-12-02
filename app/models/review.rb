@@ -11,6 +11,11 @@ class Review < ActiveRecord::Base
     status == 'finished' || status == 'mailed' || status == 'mailing'
   end
 
+  def update_from_json(id, json)
+    review = Review.find(id)
+    review.update_attributes(json)
+  end
+  
   # Saves the file to the filesystem.
   # This must be called after create, because we need to know the id.
   def write_file(file_data, exercise)
@@ -274,7 +279,9 @@ class Review < ActiveRecord::Base
 
     return text
   end
-
+  
+  
+  
   def self.deliver_reviews(review_ids)
     errors = []
     

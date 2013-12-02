@@ -76,11 +76,10 @@ Rubyric::Application.routes.draw do
     end
   end
 
-  resources :reviews do
+  resources :reviews, :only => [:show, :edit, :update] do
     member do
       get :finish
       put :update_finish
-      get :annotation
       get :reopen  # FIXME: should be POST
       get :upload
       post :upload

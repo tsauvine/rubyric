@@ -237,6 +237,74 @@ class Exercise < ActiveRecord::Base
     # sort by grade
     histogram.sort { |x,y| x[0] <=> y[0] }
   end
+  
+  def annotation_points
+    rubric = JSON.parse(self.rubric)
+    
+    criteria_by_id = {}
+    criterion_id_by_phrase_id = {}
+    page_id_by_phrase_id = {}
+    rubric['pages'].each do |page|
+      page['criteria'].each do |criterion|
+        criterion['phrases'].each do |phrase|
+          criteria_by_id[criterion['id']] = criterion
+          criterion_id_by_phrase_id[phrase['id']] = criterion['id']
+          page_id_by_phrase_id[phrase['id']] = page['id']
+        end
+      end
+    end
+    
+    # review=Review.find(44622)
+    # annotations = JSON.parse(review.payload)
+    # exercise = Exercise.find(1008)
+    # rubric = JSON.parse(exercise.rubric)
+    File.open('results.csv', 'w') do |output|
+      Group.where(:course_instance_id => self.course_instance_id).find_each do |group|
+        puts group
+        group.submissions.each do |submission|
+          puts submission
+          submission.reviews.each do |review|
+            #review = Review.find(44405)
+            
+            annotations = JSON.parse(review.payload)['annotations']
+            students = review.submission.group.users
+            
+            criterion_points = {}   # criterion_id => float
+            page_points = {}        # page_id => float
+            annotations.each do |annotation|
+              #puts annotation
+              criterion_id = criterion_id_by_phrase_id[annotation['phrase_id']]
+              page_id = page_id_by_phrase_id[annotation['phrase_id']]
+              
+              grade = Float(annotation['grade']) rescue 0
+              
+              #puts "#{page_id}/#{criterion_id}: #{grade}"
+              
+              criterion_points[criterion_id] ||= 0
+              criterion_points[criterion_id] += grade
+              page_points[page_id] ||= 0
+              page_points[page_id] += grade
+            end
+            
+            output.print students[0].studentnumber
+            rubric['pages'].each do |page|
+              #page['criteria'].each do |criterion|
+              #  print criterion_points[criterion['id']]
+              #end
+              output.print ', '
+              
+              unless page_points[page['id']].nil?
+                output.print page_points[page['id']].ceil
+              end
+            end
+            output.puts
+          end
+        end
+      end
+    end
+
+    
+  end
 
   # Assign submissions to assistants
   # csv: student, assistant

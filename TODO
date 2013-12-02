@@ -14,15 +14,34 @@ mainossivun malli:
 http://www.quicktimesheets.com/
 
 
+= Annotation =
 
-= Test =
+Mailer
 
-mailer erroreista mailia adminille
+Student's view
+
+Instrumentation
+
+Textareas don't receive clicks
+
+Zoom
+
+Overview page: student information, point table
+
+Calculate points from annotations
+
+Jump to next student
+
+Drag annotation to another page
+
+
 
 
 = Soon =
 
-rubric editor: if all grades are deleted, phrase grades are not properly cleared
+Rubric Editor: change the order of pages
+
+Rubric editor: if all grades are deleted, phrase grades are not properly cleared
 
 Rubric editor: tool tips
 

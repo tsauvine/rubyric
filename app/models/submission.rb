@@ -1,4 +1,5 @@
 #require "ftools"
+require 'open3.rb'
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
@@ -75,8 +76,14 @@ class Submission < ActiveRecord::Base
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
-
-    review = Review.new({:user => user, :submission => self})
+    options = {:user => user, :submission => self}
+    
+    if self.exercise.review_mode == 'annotation' && self.extension == 'pdf'
+      review = AnnotationAssessment.new(options)
+    else
+      review = Review.new(options)
+    end
+    
     review.save
 
     return review
@@ -110,58 +117,112 @@ class Submission < ActiveRecord::Base
   # Returns the path of the png rendeing of the submission
   # This method blocks until the png is rendered and available.
   # returns false if the png cannot be rendered
-  def png_path(page_number, zoom)
+  def image_path(page_number, zoom)
+    # Sanitize parameters
     page_number ||= 0
     page_number = page_number.to_i
     
     zoom ||= 1.0
     zoom = zoom.to_f
     zoom = 0.01 if zoom < 0.01
-    zoom = 10.0 if zoom > 10.0
+    zoom = 4.0 if zoom > 4.0
+    
+    # Call page count to make sure values are cached FIXME
+    self.page_count()
     
     submission_path = self.full_filename()
+    image_format = 'png'
+    image_mimetype = 'image/png'
+    #image_format = 'jpg'
+    #image_mimetype = 'image/jpeg'
+    image_quality = '50'
+    image_filename = "#{id}-#{page_number}-#{(zoom * 100).to_i}.#{image_format}"
+    image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
+    image_exists = File.exist? image_path
+    pixels_per_centimeter = 50.0 * zoom
+    
+    if self.book_mode
+      half_width = self.page_width * pixels_per_centimeter / 2
+      height = self.page_height * pixels_per_centimeter
+      mod = page_number % 4
+      div = page_number / 4
+      
+      if page_number % 2 == 0
+        crop = " -crop #{half_width.to_i}x#{height.to_i}+#{half_width.to_i}+0"  # right side
+      else
+        crop = " -crop #{half_width.to_i}x#{height.to_i}+0+0"                   # left side
+      end
+      
+      if mod == 0 || mod == 3
+        pdf_page_number = div * 2
+      else
+        pdf_page_number = div * 2 + 1
+      end
+    else
+      pdf_page_number = page_number
+      crop = ''
+    end
     
     # Create renderings path
     FileUtils.makedirs PDF_CACHE_PATH unless File.exists? PDF_CACHE_PATH
     
-    png_path = "#{PDF_CACHE_PATH}/#{id}-#{page_number}-#{(zoom * 100).to_i}.png"
-    png_exists = File.exist? png_path
-    
-    if png_exists
-      return png_path
-    else
-      # Convert pdf to png
-      density = 72 * zoom * 1.5
-      command = "convert -antialias -density #{density} #{submission_path}[#{page_number}] #{png_path}"
-      #puts command
+    unless image_exists
+      # Convert pdf to bitmap
+      command = "convert -antialias -density #{pixels_per_centimeter * 2.54} -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      puts command
       system(command)  # This blocks until the png is rendered
+      
+      # TODO: remove obsolete renderings from cache
+      # rm id-page_number*
     end
     
-    # TODO: remove obsolete renderings from cache
+    return {path: image_path, filename: image_filename, mimetype: image_mimetype}
     
-    return png_path
+    # 0 => 0 right
+    # 1 => 1 left
+    # 2 => 1 right
+    # 3 => 0 left
+    # 4 => 2 right
+    # 5 => 3 left
+    # 5 => 3 right
+    # 6 => 2 left
   end
-
+  
   def page_count
     # http://pdf-toolkit.rubyforge.org/
     # https://github.com/yob/pdf-reader
     
+    value = read_attribute(:page_count)
+    if value != nil
+      puts "Returning known page count"
+      return value
+    end
+    puts "Calculating page count"
+    
+    #book_mode = true
     count = 1
-    submission_path = self.full_filename()
-    Open3.popen3('pdfinfo', submission_path) do |stdin, stdout, stderr, wait_thr|
+    Open3.popen3('pdfinfo', self.full_filename()) do |stdin, stdout, stderr, wait_thr|
       while line = stdout.gets
-        next unless line =~ /^Pages/ 
-        parts = line.split(':')
-        next if parts.size < 2
-        
-        count = parts[1].strip.to_i
-        break
+        if line =~ /^Pages/  # Read page count
+          parts = line.split(':')
+          next if parts.size < 2
+          count = parts[1].strip.to_i
+        elsif line =~ /^Page size/  # Read page size
+          parts = line.split(':')
+          next if parts.size < 2
+          
+          values = parts[1].scan(/[0-9\.]+/)
+          self.page_width = Float(values[0]) * 0.035278 rescue nil  # Convert points to centimeters
+          self.page_height = Float(values[1]) * 0.035278 rescue nil
+        end
       end
       
       exit_status = wait_thr.value
     end
     
-    # TODO: save page count in the DB
+    count *= 2 if self.book_mode
+    self.page_count = count
+    self.save()
     
     return count
   end

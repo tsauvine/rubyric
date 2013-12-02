@@ -1,6 +1,6 @@
 <!-- reviews/edit.html.erb -->
 <% content_for :javascript do %>
-  <%= javascript_include_tag 'reviews-edit' %>
+  <%= javascript_include_tag 'views/reviews/edit' %>
 <% end %>
 
 <div class="container-fluid">
@@ -8,6 +8,7 @@
     <%= f.hidden_field :payload %>
     <%= f.hidden_field :status %>
     <%= f.hidden_field :grade %>
+    <%= hidden_field_tag :send_review %>
 
     <div class="tabbable review-editor" id="review-editor" data-rubric-url="<%= exercise_rubric_url(@exercise.id) %>" data-review-url="<%= review_url(@review.id) %>">
       <div class="row-fluid">
@@ -95,7 +96,7 @@
 
             <!-- ko if: $root.finalizing -->
               <div class="alert alert-info">
-                Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: cancelFinalize">Cancel finalizing</button>
+                Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
               </div>
             <!-- /ko -->
             
@@ -118,9 +119,9 @@
                     <tbody data-bind="foreach: phrases">
                       <tr class="phrase">
                         <td class="grade" data-bind="if: grade != undefined">
-                          <button data-bind="text: grade, click: clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
+                          <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
                         </td>
-                        <td class="phrase" data-bind="html: escaped_content, click: clickPhrase"></td>
+                        <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
                       </tr>
                     </tbody>
                   </table>
@@ -152,7 +153,7 @@
             
             <!-- Next page button -->
             <!-- ko if: nextPage || $root.finishable() -->
-              <button class="btn" data-bind="click: showNextPage">
+              <button class="btn" data-bind="click: $root.showNextPage">
                 Next page
                 <i class="icon icon-arrow-right"></i>
               </button>
@@ -218,7 +219,13 @@
             </table>
           <!-- /ko -->
           
-          <p><button class="btn btn-success" data-bind="click: save">Save</button></p>
+          <p>
+            <button class="btn btn-success" data-bind="click: save">Save</button>
+            
+            <% if @exercise.grader_can_email %>
+              <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
+            <% end %>
+          </p>
         </div>
 
       </div> <!-- /tab-contents -->
