@@ -25,7 +25,6 @@
           <!-- ko foreach: pages -->
             <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
           <!-- /ko -->
-          <button class="btn btn-default" data-bind="click: printJson">Preview</button>
           <button type="submit" class="btn btn-success" data-bind="click: save">Save</button>
         </ul>
         
