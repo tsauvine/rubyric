@@ -14,30 +14,11 @@ mainossivun malli:
 http://www.quicktimesheets.com/
 
 
-= Annotation =
-
-Mailer
-
-Student's view
-
-Instrumentation
-
-Textareas don't receive clicks
-
-Zoom
-
-Overview page: student information, point table
-
-Calculate points from annotations
-
-Jump to next student
-
-Drag annotation to another page
-
-
-
-
 = Soon =
+
+Send combined reviews from all exercises
+
+New deadline editor
 
 Rubric Editor: change the order of pages
 
@@ -51,14 +32,24 @@ Opettaja ei voi submitata, jos 'Only allow enrolled students to submit' on käyt
 
 Teacher should be able to delete submission.
 
+Delete review
+
 
 = Later =
 
+Annotation: Textareas don't receive clicks
+
+Annotation: Zoom
+
+Annotation: Instrumentation
+
+Annotation: Overview page, student information, point table
+
+Annotation: Jump to next student
+
+Annotation: Drag annotation to another page
+
 Date formatting of deadlines
-
-CSS: smaller font in h1 page-title
-
-rubric editor: bottom margin
 
 rubric editor: warn if leaving
 
