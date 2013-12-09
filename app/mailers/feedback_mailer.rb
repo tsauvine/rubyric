@@ -69,7 +69,9 @@ class FeedbackMailer < ActionMailer::Base
     @course_instance = course_instance
     @course = @course_instance.course
     
-    from = @course.email || RUBYRIC_EMAIL
+    from = @course.email 
+    from = RUBYRIC_EMAIL if from.blank?
+    
     subject = "#{@course.code} #{@course.name}"
     
     # Attachments
