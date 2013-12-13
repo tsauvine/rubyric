@@ -39,6 +39,10 @@ Drag annotation to another page
 
 = Soon =
 
+Palautuslaatikon sulkeminen
+
+Groups-näkymässä joskus undefined variable
+
 Rubric Editor: change the order of pages
 
 Rubric editor: if all grades are deleted, phrase grades are not properly cleared
@@ -53,6 +57,8 @@ Teacher should be able to delete submission.
 
 
 = Later =
+
+Configure sender address of feedback emails (course/reviewer)
 
 Date formatting of deadlines
 
