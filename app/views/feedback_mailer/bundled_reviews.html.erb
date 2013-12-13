@@ -1,0 +1,26 @@
+<h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name})" %></h1>
+
+<% @reviews.each do |review| %>
+<h2><%= review.submission.exercise.name %></h2>
+
+<p>
+<%=t :Reviewer %>: <%= review.user.firstname %> <%= review.user.lastname %> <a href="mailto:<%= review.user.email %>">(<%= review.user.email %>)</a>
+<% unless review.grade.blank? %><br /><%=t :Grade %>: <%= review.grade %><% end -%>
+</p>
+
+<% if review.feedback -%>
+<%= h(review.feedback).gsub(/(\r\n|\n|\r)/, "<br />\n").html_safe %>
+<% end -%>
+
+<% end %>
+
+
+<h2>Summary:</h2>
+<table>
+<% @course_instance.exercises.each do |exercise| %>
+  <tr>
+    <td><%= exercise.name %>:</td>
+    <td><%= @exercise_grades[exercise.id] %></td>
+  </tr>
+<% end %>
+</table>

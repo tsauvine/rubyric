@@ -301,5 +301,42 @@ class Review < ActiveRecord::Base
     # Send delivery errors to teacher
     FeedbackMailer.delivery_errors(errors).deliver unless errors.empty?
   end
+
   
+  def self.deliver_bundled_reviews(course_instance_id)
+    course_instance = CourseInstance.find(course_instance_id)
+    
+    users_by_id = {}
+    reviews_by_userid = {}
+    
+    course_instance.groups.each do |group|
+      group.users.each do |user|
+        users_by_id[user.id] = user
+      end
+    end
+    
+    course_instance.exercises.each do |exercise|
+      Review.where("status='finished' OR status='mailed'").where(:submission_id => exercise.submission_ids).includes(:submission => :group).find_each do |review|
+        review.submission.group.user_ids.each do |user_id|
+          reviews_by_userid[user_id] ||= []
+          reviews_by_userid[user_id] << review
+        end
+      end
+    end
+    
+    reviews_by_userid.each do |user_id, reviews|
+      exercise_grades = {}
+      reviews.each do |review|
+        exercise_grades[review.submission.exercise_id] = review.grade
+      end
+      
+      FeedbackMailer.bundled_reviews(course_instance, users_by_id[user_id], reviews, exercise_grades).deliver
+      
+      reviews.each do |review|
+        review.status = 'mailed'
+        review.save
+      end
+    end
+  end
+    
 end

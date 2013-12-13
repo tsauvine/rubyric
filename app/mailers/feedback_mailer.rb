@@ -61,6 +61,31 @@ class FeedbackMailer < ActionMailer::Base
     review.save
   end
   
+  def bundled_reviews(course_instance, user, reviews, exercise_grades)
+    return if user.email.blank?
+    
+    @reviews = reviews
+    @exercise_grades = exercise_grades
+    @course_instance = course_instance
+    @course = @course_instance.course
+    
+    from = @course.email 
+    from = RUBYRIC_EMAIL if from.blank?
+    
+    subject = "#{@course.code} #{@course.name}"
+    
+    # Attachments
+    @reviews.each do |review|
+      attachments[review.filename] = File.read(review.full_filename) unless review.filename.blank?
+    end
+    
+    I18n.with_locale(@course_instance.locale || I18n.locale) do
+      mail(
+        :to => user.email, :from => from, :subject => subject
+      )
+    end
+  end
+  
   def delivery_errors(errors)
     @errors = errors
     mail(:to => ERRORS_EMAIL, :subject => '[Rubyric] Undelivered feedback mails')
