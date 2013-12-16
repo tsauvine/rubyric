@@ -19,6 +19,8 @@ Rubyric::Application.routes.draw do
   end
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
+    post :send_feedback_bundle
+    
     resources :exercises, :only => [:new, :create, :update]
     
     resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'

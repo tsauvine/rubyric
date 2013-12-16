@@ -132,4 +132,15 @@ class CourseInstancesController < ApplicationController
     log "create_example_groups #{@course_instance.id}"
   end
   
+  def send_feedback_bundle
+    @course_instance = CourseInstance.find(params[:course_instance_id])
+    authorize! :update, @course_instance
+    
+    Review.delay.deliver_bundled_reviews(@course_instance.id)
+    flash[:success] = 'Sending feedback mails'
+    
+    redirect_to @course_instance
+    log "send_feedback_bundle #{@course_instance.id}"
+  end
+  
 end

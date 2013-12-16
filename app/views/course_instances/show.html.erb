@@ -53,7 +53,19 @@
 <% end %>
 
 <% if can? :update, @course %>
-  <p><%= link_to t(:instance_create_exercise), new_course_instance_exercise_path(@course_instance), :class => 'btn btn-primary' %></p>
+  <p>
+    <%= link_to new_course_instance_exercise_path(@course_instance), :class => 'btn btn-default' do %>
+      <i class="icon icon-plus"></i> <%= t(:instance_create_exercise) %>
+    <% end %>
+  </p>
+  
+  <% if @course_instance.feedback_delivery_mode == 'bundle_mail' %>
+    <%= form_tag course_instance_send_feedback_bundle_path(@course_instance.id) do %>
+      <%= button_tag({:type => 'submit', :confirm => 'Send feedback mails?', :class => "btn btn-default", :title => 'Sends one email for each student containing feedback from all assignments'}) do %>
+        <i class="icon-envelope"></i> Send bundled feedback mails
+      <% end %>
+    <% end %>
+  <% end %>
 <% end %>
 
 
