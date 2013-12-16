@@ -19,6 +19,9 @@ class Page
     @criteria = ko.observableArray()
     @editorActive = ko.observable(false)
     
+    @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
+    @criteria.subscribe => @rubricEditor.saved = false if @rubricEditor
+    
     #if data
     #  this.load_json(data)
     #else
@@ -82,6 +85,8 @@ class Page
     @rubricEditor.pages.remove(this)
     
     $('#tab-settings-link').tab('show')  # Activate first tab
+    
+    @rubricEditor.saved = false if @rubricEditor
 
   #
   # Event handler: User clicks the 'Create criterion' button
@@ -107,6 +112,8 @@ class Criterion
     else
       this.initializeDefault()
     
+    @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
+    @phrases.subscribe => @rubricEditor.saved = false if @rubricEditor
     
   initializeDefault: () ->
     @id = @rubricEditor.nextId('criterion')
@@ -163,7 +170,12 @@ class Phrase
       this.load_json(data)
     else
       @id = @rubricEditor.nextId('phrase')
-
+    
+    @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
+    @category.subscribe => @rubricEditor.saved = false if @rubricEditor
+    @grade.subscribe => @rubricEditor.saved = false if @rubricEditor
+    @gradeValue.subscribe => @rubricEditor.saved = false if @rubricEditor
+    
 
   load_json: (data) ->
     @id = @rubricEditor.nextId('phrase', parseInt(data['id']))
@@ -230,6 +242,8 @@ class FeedbackCategory
   constructor: (@rubricEditor, data) ->
     @name = ko.observable('')
     @editorActive = ko.observable(false)
+    
+    @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
   
     if data
       @name(data['name'])
@@ -269,6 +283,15 @@ class RubricEditor
 
     this.loadRubric(@url)
 
+  
+  subscribeToChanges: ->
+    notSaved = => @saved = false
+    
+    @grades.subscribe -> notSaved()
+    @feedbackCategories.subscribe -> notSaved()
+    @gradingMode.subscribe -> notSaved()
+    
+
   setHelpTexts: ->
     $('.help-hover').each (index, element) =>
       helpElementName = $(element).data('help')
@@ -306,6 +329,7 @@ class RubricEditor
     @pages.push(page)
     page.showTab()
     page.activateEditor()
+
 
   clickCreateCategory: ->
     originalCategoryCount = @feedbackCategories().length
@@ -367,6 +391,8 @@ class RubricEditor
         @pages.push(page)
     
     ko.applyBindings(this)
+    this.subscribeToChanges()
+    @saved = true
 
 
   #
