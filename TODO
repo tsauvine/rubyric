@@ -16,6 +16,10 @@ http://www.quicktimesheets.com/
 
 = Soon =
 
+Submit without login
+
+Test for submit
+
 New deadline editor (http://www.ama3.com/anytime/)
 
 Palautuslaatikon sulkeminen
@@ -24,15 +28,15 @@ Groups-näkymässä joskus undefined variable
 
 Rubric Editor: change the order of pages
 
-Rubric editor: if all grades are deleted, phrase grades are not properly cleared
-
 Rubric editor: tool tips
-
-Course new: disclaimer
 
 Opettaja ei voi submitata, jos 'Only allow enrolled students to submit' on käytössä.
 
 Delete review
+
+Rubric editor: if all grades are deleted, phrase grades are not properly cleared
+
+Course new: disclaimer
 
 
 = Later =

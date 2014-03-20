@@ -3,7 +3,7 @@ Encoding.default_internal = Encoding::UTF_8
 
 source 'https://rubygems.org'
 
-gem 'rails', '3.2.11'
+gem 'rails', '3.2.17'
 
 gem 'pg'
 #gem 'sqlite3'
@@ -38,8 +38,8 @@ gem 'jquery-rails'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
-gem 'acts_as_list'
 gem 'authlogic'
+gem 'scrypt'
 gem 'cancan'
 #gem 'shoulda'
 #gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
