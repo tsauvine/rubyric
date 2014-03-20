@@ -4,8 +4,9 @@ fi:
       no_exercises: "Kurssilla ei ole yhtään harjoitusta. Luo vähintään yksi harjoitus, johon opiskelijat voivat palauttaa töitään."
     form:
       submission_policy_label: "Palautusten vastaanotto"
-      policy_authenticated: "Kuka tahansa kirjautunut opiskelija voi palauttaa."
-      policy_enrolled: "Vain ilmoittautuneet opiskelijat voivat palauttaa."
+      policy_unauthenticated: "Kuka tahansa voi palauttaa kirjautumatta."
+      policy_authenticated: "Kuka tahansa kirjautunut käyttäjä voi palauttaa."
+      policy_enrolled: "Vain kurssille rekisteröityneet opiskelijat voivat palauttaa."
       policy_provide_list: "(Opiskelijalista syötettävä.)"
       policy_provide_list_link: "(Syötä opiskelijalista täällä.)"
       

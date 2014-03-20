@@ -33,9 +33,8 @@ class Group < ActiveRecord::Base
       user = User.find_by_email(address)
 
       if user
-        self.users << user unless self.users.include?(user)
-        self.course_instance.students << user unless self.course_instance.students.include?(user)
-      else
+        add_member(user)
+      elsif !exercise.course_instance.submission_policy == 'unauthenticated'
         # Create invitation
         invitation = GroupInvitation.create(
           :group_id => self.id,

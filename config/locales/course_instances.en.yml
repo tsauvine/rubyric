@@ -4,6 +4,7 @@ en:
       no_exercises: "No assignments have been created. Create at least one assignment to allow students to submit their works."
     form:
       submission_policy_label: "Submission policy"
+      policy_unauthenticated: "Anybody can submit without authenticating."
       policy_authenticated: "Any authenticated user can submit."
       policy_enrolled: "Only enrolled students can submit."
       policy_provide_list: "(You must provide a student list.)"

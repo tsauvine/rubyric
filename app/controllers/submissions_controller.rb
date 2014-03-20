@@ -48,7 +48,7 @@ class SubmissionsController < ApplicationController
     @is_teacher = @course.has_teacher(current_user)
 
     # Authorization
-    return access_denied unless current_user || @exercise.submit_without_login
+    return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
 
     # Check that instance is open
     if !@course_instance.active && !@is_teacher
@@ -82,9 +82,10 @@ class SubmissionsController < ApplicationController
     # Select group
     @group = nil
     if params[:group]
+      # TODO: add some auth token
       @group = Group.find(params[:group])
       
-      return access_denied unless @group.has_member?(current_user) || @is_teacher || @exercise.submit_without_login
+      return access_denied unless @group.has_member?(current_user) || @is_teacher || @course_instance.submission_policy == 'unauthenticated'
     end
     
     # Autoselect group if exactly one is available
@@ -118,7 +119,7 @@ class SubmissionsController < ApplicationController
     @is_teacher = @course.has_teacher(current_user)
     user = current_user
     
-    return access_denied unless logged_in? || @exercise.submit_without_login
+    return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
 
     # Check that instance is open
     unless @course_instance.active || @is_teacher

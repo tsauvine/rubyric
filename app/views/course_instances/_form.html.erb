@@ -14,6 +14,10 @@
     <%= f.label :submission_policy, t('.submission_policy_label'), :class => 'control-label' %>
     <div class="controls">
       <label class="radio">
+        <%= f.radio_button :submission_policy, 'unauthenticated' %>
+        <%=t '.policy_unauthenticated' %>
+      </label>
+      <label class="radio">
         <%= f.radio_button :submission_policy, 'authenticated' %>
         <%=t '.policy_authenticated' %>
       </label>

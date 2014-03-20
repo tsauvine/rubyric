@@ -1,0 +1,11 @@
+en:
+  groups:
+    new:
+      title_group: "Create a group for"
+      title_individual: "Submit"
+      hint_group_authenticated: "Invite group members by entering their email addresses.<br />Invited members are required to join the group by following the <em>invitation link</em> sent by email.<br />You can add or modify these addresses later."
+      hint_group_unauthenticated: "Please enter the email addresses of group members."
+      hint_individual_unauthenticated: "Please enter the email address of submitter."
+      ok_group: 'Create group'
+      ok_individual: 'OK'
+  

@@ -36,7 +36,7 @@ class GroupsController < ApplicationController
     @is_teacher = @course.has_teacher(current_user)
 
     # TODO: redirect to the correct IdP if using shibboleth
-    return access_denied unless logged_in? || @exercise.submit_without_login
+    return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
 
     @group = Group.new
 
@@ -79,13 +79,13 @@ class GroupsController < ApplicationController
     load_course
     @is_teacher = @course.has_teacher(current_user)
     
-    return access_denied unless logged_in? || @exercise.submit_without_login
+    return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
 
     # Read addresses
     members = Array.new
     if params[:email]
       params[:email].each do |index, address|
-        members << address unless address.empty?
+        members << address.strip unless address.empty?
       end
     end
 

@@ -1,0 +1,10 @@
+fi:
+  groups:
+    new:
+      title_group: "Luo ryhmä"
+      hint_group_authenticated: "Invite group members by entering their email addresses.<br />Invited members are required to join the group by following the <em>invitation link</em> sent by email.<br />You can add or modify these addresses later."
+      hint_group_unauthenticated: "Please enter the email addresses of all group members."
+      hint_individual_unauthenticated: "Enter email address."
+      ok_group: 'Luo ryhmä'
+      ok_individual: 'OK'
+      

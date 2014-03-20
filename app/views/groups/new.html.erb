@@ -2,7 +2,11 @@
 
 <div class="page-header">
   <h1>
-    Create a group for<br />
+    <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
+      <%=t '.title_group' %><br />
+    <% else %>
+      <%=t '.title_individual' %><br />
+    <% end %>
     <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %>
   </h1>
 </div>
@@ -16,9 +20,15 @@
   <div class="row">
     <div class="span12 hint">
       <p>
-      Invite group members by entering their email addresses.<br />
-      Invited members are required to join the group by following the <em>invitation link</em> sent by email.<br />
-      You add or modify these addresses later.
+        <% if @course_instance.submission_policy == 'unauthenticated' %>
+          <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
+            <%= t('.hint_group_unauthenticated').html_safe %>
+          <% else %>
+            <%= t('.hint_individual_unauthenticated').html_safe %>
+          <% end %>
+        <% else %>
+          <%= t('.hint_group_authenticated').html_safe %>
+        <% end %>
       </p>
     </div>
   </div>
@@ -48,9 +58,11 @@
   
   <div class="row">
     <div class="span12">
-      <p><%= f.submit 'Create group', :class => 'btn btn-primary' %></p>
-      
+      <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
+        <p><%= f.submit t('.ok_group'), :class => 'btn btn-primary' %></p>
+      <% else %>
+        <p><%= f.submit t('.ok_individual'), :class => 'btn btn-primary' %></p>
+      <% end %>
     </div>
   </div>
-
 <% end %>
