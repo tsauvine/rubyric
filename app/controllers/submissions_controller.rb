@@ -39,6 +39,43 @@ class SubmissionsController < ApplicationController
     end
   end
 
+  
+  
+  def new
+    @exercise = Exercise.find(params[:exercise])
+    load_course
+
+    @user = current_user
+    @is_teacher = @course.has_teacher(current_user)
+    
+    # Authorization
+    return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
+
+    # Check that instance is open
+    if !@course_instance.active && !@is_teacher
+      render :action => 'instance_inactive'
+      log "submit view #{@exercise.id} instance_inactive"
+      return
+    end
+
+    # TODO: Check enrollment
+    
+    # Select group
+    @group = nil
+    if params[:group]
+      # TODO: add some auth token
+      @group = Group.find(params[:group])
+      
+      # TODO: authenticate
+      # user is member of group || user knows key
+    end
+    
+    
+    
+    
+  end
+  
+  
   # Submit
   def new
     @exercise = Exercise.find(params[:exercise])
@@ -46,7 +83,7 @@ class SubmissionsController < ApplicationController
 
     @user = current_user
     @is_teacher = @course.has_teacher(current_user)
-
+    
     # Authorization
     return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
 
@@ -57,13 +94,7 @@ class SubmissionsController < ApplicationController
       return
     end
     
-    # Unauthenticated users must always create group manually
-    if !@user && !params[:group]
-      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
-      return
-    end
-    
-    # Check submisison policy
+    # Check enrollment
     if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(@user)
       render :action => 'not_enrolled'
       log "submit view #{@exercise.id} not_enrolled"
@@ -82,8 +113,9 @@ class SubmissionsController < ApplicationController
     # Select group
     @group = nil
     if params[:group]
-      # TODO: add some auth token
       @group = Group.find(params[:group])
+      
+      # TODO: Check that user is member or knows key
       
       return access_denied unless @group.has_member?(current_user) || @is_teacher || @course_instance.submission_policy == 'unauthenticated'
     end
@@ -98,6 +130,12 @@ class SubmissionsController < ApplicationController
     if !@group && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @is_teacher)
       render :action => 'select_group'
       log "select_group #{@exercise.id}"
+      return
+    end
+    
+    # Unauthenticated users must always create group manually
+    if !@group && @course_instance.submission_policy == 'unauthenticated'
+      redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     end
     
@@ -209,5 +247,4 @@ class SubmissionsController < ApplicationController
 
     redirect_to @exercise
   end
-  
 end

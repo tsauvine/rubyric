@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20131216164941) do
+ActiveRecord::Schema.define(:version => 20140323135545) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -126,6 +126,21 @@ ActiveRecord::Schema.define(:version => 20131216164941) do
   end
 
   add_index "group_invitations", ["group_id", "token"], :name => "index_group_invitations_on_group_id_and_token"
+
+  create_table "group_members", :force => true do |t|
+    t.integer  "group_id",            :null => false
+    t.integer  "user_id"
+    t.integer  "group_invitation_id"
+    t.string   "email"
+    t.string   "studentnumber"
+    t.string   "access_token"
+    t.datetime "created_at",          :null => false
+    t.datetime "updated_at",          :null => false
+  end
+
+  add_index "group_members", ["access_token"], :name => "index_group_members_on_access_token"
+  add_index "group_members", ["group_id"], :name => "index_group_members_on_group_id"
+  add_index "group_members", ["user_id"], :name => "index_group_members_on_user_id"
 
   create_table "group_reviewers", :force => true do |t|
     t.integer "group_id", :null => false
@@ -267,6 +282,7 @@ ActiveRecord::Schema.define(:version => 20131216164941) do
     t.integer  "page_count"
     t.float    "page_width"
     t.float    "page_height"
+    t.boolean  "authenticated", :default => false, :null => false
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

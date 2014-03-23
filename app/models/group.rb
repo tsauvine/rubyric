@@ -2,7 +2,10 @@ class Group < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :course_instance
 
-  has_and_belongs_to_many :users
+  #has_and_belongs_to_many :users
+  has_many :group_members
+  has_many :users, :through => :group_members
+  
   has_many :group_invitations
   
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
@@ -34,7 +37,9 @@ class Group < ActiveRecord::Base
 
       if user
         add_member(user)
-      elsif !exercise.course_instance.submission_policy == 'unauthenticated'
+      elsif exercise.course_instance.submission_policy == 'unauthenticated'
+        
+      else
         # Create invitation
         invitation = GroupInvitation.create(
           :group_id => self.id,
