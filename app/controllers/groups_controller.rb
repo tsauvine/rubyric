@@ -111,7 +111,6 @@ class GroupsController < ApplicationController
       redirect_to :action => "new"
       log "create_group fail #{@exercise.id} #{@group.errors.full_messages.join('. ')}"
     end
-
   end
 
   def update

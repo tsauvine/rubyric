@@ -88,7 +88,8 @@ ko.bindingHandlers.position = {
       # stopCallback.call(viewModel)) if stopCallback
 
     el = $(element)
-    el.draggable(dragOptions).disableSelection()
+    el.draggable(dragOptions)
+    # el.disableSelection()  # This is commented out because it would be impossible to select text in the text area
     
 
   update: (element, valueAccessor, bindingHandlers, viewModel) ->
