@@ -1,68 +1,11 @@
 <!-- groups/new.html.erb -->
-
 <div class="page-header">
   <h1>
-    <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
-      <%=t '.title_group' %><br />
-    <% else %>
-      <%=t '.title_individual' %><br />
+    <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %><br />
+    <% if @group.max_size > 1 %>
+      <%=t '.title_group' %>
     <% end %>
-    <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %>
   </h1>
 </div>
 
-
-<%= form_for [@exercise, @group] do |f| %>
-  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-  <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
-
-  <!--h2>Group members</h2-->
-  <div class="row">
-    <div class="span12 hint">
-      <p>
-        <% if @course_instance.submission_policy == 'unauthenticated' %>
-          <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
-            <%= t('.hint_group_unauthenticated').html_safe %>
-          <% else %>
-            <%= t('.hint_individual_unauthenticated').html_safe %>
-          <% end %>
-        <% else %>
-          <%= t('.hint_group_authenticated').html_safe %>
-        <% end %>
-      </p>
-    </div>
-  </div>
-
-  <div class="row">
-    <div class="span4 well">
-      <table>
-        <tbody>
-          <% if logged_in? && !@is_teacher %>
-            <tr>
-              <td>
-                <%= current_user.email %>
-              </td>
-            </tr>
-          <% end %>
-          <% (0...@email_fields_count).each do |i| %>
-            <tr>
-              <td>
-                <%= text_field_tag "email[#{i}]", @email[i], :id => "email_#{i}", :placeholder => 'email' %>
-              </td>
-            </tr>
-          <% end %>
-        </tbody>
-      </table>
-    </div>
-  </div>
-  
-  <div class="row">
-    <div class="span12">
-      <% if @exercise.groupsizemax && @exercise.groupsizemax > 1 %>
-        <p><%= f.submit t('.ok_group'), :class => 'btn btn-primary' %></p>
-      <% else %>
-        <p><%= f.submit t('.ok_individual'), :class => 'btn btn-primary' %></p>
-      <% end %>
-    </div>
-  </div>
-<% end %>
+<%= render 'form' %>

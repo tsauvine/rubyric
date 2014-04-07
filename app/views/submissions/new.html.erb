@@ -10,69 +10,76 @@
   <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
-<div class="submit-form">
+<div id="submit-form">
   <% unless @exercise.submit_pre_message.blank? %>
     <p><%= @exercise.submit_pre_message %></p>
   <% end %>
 
   <!-- Group -->
-  <% if @group && (@exercise.groupsizemax > 1 || @group.users.size > 1)  %>
+  <% if @group && (@exercise.groupsizemax > 1 || @group.group_members.size > 1)  %>
     <div class="row">
       <div class="span6">
 
-        <h2>Group members</h2>
+        <h2><%=t '.group_members' %></h2>
         <table class="table">
           <thead>
             <tr>
-              <td>Name</td>
-              <td>Email</td>
+              <% unless @course_instance.submission_policy == 'unauthenticated' %>
+                <td><%=t '.name_column' %></td>
+              <% end %>
+              <td><%=t '.email_column' %></td>
               <td></td>
             </tr>
           </thead>
           <tbody>
-            <% @group.users.each do |student| %>
-              <tr>
-                <td><%= student.name %></td>
-                <td><%= student.email %></td>
-                <td></td>
-              </tr>
-            <% end %>
-            <% @group.group_invitations.each do |invitation| %>
-              <tr>
-                <td></td>
-                <td><%= invitation.email %></td>
-                <td>(invited)</td>
-              </tr>
+            <% @group.group_members.each do |member| %>
+              <% if member.user %>
+                <tr>
+                  <% unless @course_instance.submission_policy == 'unauthenticated' %>
+                    <td><%= member.user.name %></td>
+                  <% end %>
+                  <td><%= member.user.email %></td>
+                  <td></td>
+                </tr>
+              <% else %>
+                <tr>
+                  <% unless @course_instance.submission_policy == 'unauthenticated' %>
+                    <td></td>
+                  <% end %>
+                  <td><%= member.email %></td>
+                  <td><% unless @course_instance.submission_policy == 'unauthenticated' %><%=t '.invited' %><% end %></td>
+                </tr>
+              <% end %>
             <% end %>
           </tbody>
         </table>
 
         <p>
-          <%= link_to 'Edit group', edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id), :class => 'btn' %>
+          <%= link_to t('.edit_group'), edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
           <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
           -%>
         </p>
         <p>
-          <% if @available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.users.size > 1 %>
-            <%= link_to 'Choose another group', exercise_groups_path(:exercise_id => @exercise.id) %><br />
+          <% if current_user && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
+            <%= link_to t('.choose_group'), exercise_groups_path(:exercise_id => @exercise.id) %><br />
           <% end %>
         </p>
       </div>
     </div>
   <% end %>
 
-  
+
   <!-- Submissions -->
   <% unless @submissions.empty? %>
     <div class="row">
       <div class="span12">
-        <h2>Submissions</h2>
-        <table class="table table-striped submissions">
+        <h2><%=t '.submissions' %></h2>
+        <table class="submissions">
           <% @submissions.each do |submission| %>
             <tr>
               <td>
                 <%=l submission.created_at, :format => :long %>
-                (<%= link_to "#{submission.extension}", submission %>)
+                (<%= link_to "#{submission.extension}", submission_url(submission.id, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
               </td>
               <td>
                 <% submission.reviews.each do |review| %>
@@ -90,9 +97,8 @@
         </table>
       </div>
     </div>
-    
-    <hr />
   <% end %>
+
 
   <!-- Upload -->
   <div class="row">
@@ -101,13 +107,19 @@
         <%= f.hidden_field :exercise_id, :value => @exercise.id %>
         <% if @group %>
           <%= f.hidden_field :group_id, :value => @group.id %>
-        <% end %>
+        <% end -%>
+        <% if params['group_token'] %>
+          <%= hidden_field_tag :group_token, params['group_token'] %>
+        <% end -%>
+        <% if params['member_token'] %>
+          <%= hidden_field_tag :member_token, params['member_token'] %>
+        <% end -%>
 
-        <h2>Submit file</h2>
+        <h2><%=t '.submit_heading' %></h2>
         <div id="exercise">
           <p><%= file_field_tag 'file' %></p>
 
-          <p><%= f.submit 'Submit', :class => 'btn btn-primary' %></p>
+          <p><%= f.submit t('.submit_button'), :class => 'btn btn-primary' %></p>
         </div>
       <% end %>
     </div>

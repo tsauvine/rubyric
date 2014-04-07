@@ -1,0 +1,73 @@
+<%= form_for [@exercise, @group] do |f| %>
+  <%= f.hidden_field :exercise_id, :value => @exercise.id %>
+  <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
+  <% if params['group_token'] %>
+    <%= hidden_field_tag :group_token, params['group_token'] %>
+  <% end -%>
+  <% if params['member_token'] %>
+    <%= hidden_field_tag :member_token, params['member_token'] %>
+  <% end -%>
+
+  <div class="row">
+    <div class="span12 hint">
+      <p>
+        <% if @course_instance.submission_policy == 'unauthenticated' %>
+          <% if @group.max_size > 1 %>
+            <%= t('.hint_group_unauthenticated').html_safe %>
+          <% else %>
+            <%= t('.hint_individual_unauthenticated').html_safe %>
+          <% end %>
+        <% else %>
+          <%= t('.hint_group_authenticated').html_safe %>
+        <% end %>
+      </p>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="span4 well">
+    
+      <table>
+        <tbody>
+          <% @group_members.each_with_index do |member, index| %>
+            <!--%= fields_for "group_members[]", member do |mf| %-->
+              <tr>
+                <% if member.user %>
+                  <td>
+                    <%= member.user.email %>
+                    <%= hidden_field_tag "email[#{member.id || 'new-' + index.to_s}]", member.email %>
+                  </td>
+                <% else %>
+                  <td>
+                    <%= text_field_tag "email[#{member.id || 'new-' + index.to_s}]", member.email, :placeholder => 'email', :class => member.errors[:email].any? ? 'error' : '' %>
+                  </td>
+                <% end %>
+              </tr>
+            <% end %>
+          <!--% end %-->
+        </tbody>
+      </table>
+  
+      <% if @group.errors[:group_members].any? && @group.max_size > 1 %>
+        <p class="text-error"><%=t '.invalid_address_warning' %></p>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="span12">
+      <% if @group.new_record? %>
+        <% if @group.max_size > 1 %>
+          <p><%= f.submit t('.ok_group'), :class => 'btn btn-primary' %></p>
+        <% else %>
+          <p><%= f.submit t('.ok_individual'), :class => 'btn btn-primary' %></p>
+        <% end %>
+      <% else %>
+        <p>
+          <%= link_to t(:Cancel), submit_path(:exercise => @exercise.id, :group => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
+          <%= f.submit t(:Save), :class => 'btn btn-primary' %>
+        </p>
+      <% end %>
+    </div>
+  </div>
+<% end %>

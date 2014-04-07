@@ -1,0 +1,15 @@
+en:
+  submissions:
+    new:
+      group_members: "Group members"
+      name_column: "Name"
+      email_column: "Email"
+      invited: "(invited)"
+      edit_group: "Edit group"
+      choose_group: "Choose another group"
+      submissions: "Submissions"
+      submit_heading: "Submit file"
+      submit_button: "Submit"
+      email_confirmed: "Your email address has been confirmed"
+      missing_file: "You must submit a file"
+      submission_received: "Submission was received"

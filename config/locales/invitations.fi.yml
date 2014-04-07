@@ -5,7 +5,7 @@ fi:
   invitation_mailer:
     group_invitation:
       subject: "%{course} - Liity ryhmään"
-      you_have_been_added: "Sinut on kutsuttu ryhmään:"
-      please_confirm: "Hyväksy seuraamalla linkkiä:"
-      group_invitation_message: "Sinut on lisätty ryhmään"
+      you_have_been_added: "Sinut on lisätty ryhmään:"
+      please_confirm: "Vahvista sähköpostiosoitteesi seuraamalla linkkiä:"
+      view_submissions_hint: "Voit katsoa ja päivittää palautuksia myöhemmin samasta linkistä."
       

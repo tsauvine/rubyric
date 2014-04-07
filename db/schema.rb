@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140323135545) do
+ActiveRecord::Schema.define(:version => 20140402123710) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -156,7 +156,12 @@ ActiveRecord::Schema.define(:version => 20140323135545) do
     t.datetime "updated_at"
     t.text     "name"
     t.integer  "course_instance_id"
+    t.string   "access_token"
+    t.integer  "min_size",           :default => 1, :null => false
+    t.integer  "max_size",           :default => 1, :null => false
   end
+
+  add_index "groups", ["access_token"], :name => "index_groups_on_access_token"
 
   create_table "groups_users", :id => false, :force => true do |t|
     t.integer "group_id"

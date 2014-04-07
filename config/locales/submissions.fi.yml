@@ -1,0 +1,15 @@
+fi:
+  submissions:
+    new:
+      group_members: "Ryhmän jäsenet"
+      name_column: "Nimi"
+      email_column: "Email"
+      invited: "(kutsuttu)"
+      edit_group: "Muokkaa ryhmää"
+      choose_group: "Valitse toinen ryhmä"
+      submissions: "Palautukset"
+      submit_heading: "Palauta tiedosto"
+      submit_button: "Lähetä"
+      email_confirmed: "Sähköpostiosoitteesi on vahvistettu"
+      missing_file: "Tiedostoa ei valittu"
+      submission_received: "Palautus on vastaanotettu"

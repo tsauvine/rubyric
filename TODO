@@ -16,32 +16,30 @@ http://www.quicktimesheets.com/
 
 = Soon =
 
-Submit without login
-
-Test for submit
-
-New deadline editor (http://www.ama3.com/anytime/)
-
-Palautuslaatikon sulkeminen
+Make GroupController::update work with the new GroupMember and Invitation system
 
 Groups-näkymässä joskus undefined variable
-
-Rubric Editor: change the order of pages
-
-Rubric editor: tool tips
-
-Opettaja ei voi submitata, jos 'Only allow enrolled students to submit' on käytössä.
-
-Delete review
-
-Rubric editor: if all grades are deleted, phrase grades are not properly cleared
-
-Course new: disclaimer
 
 Get rid of course.code
 
 
 = Later =
+
+Course new: disclaimer
+
+Rubric editor: if all grades are deleted, phrase grades are not properly cleared
+
+Delete review
+
+Rubric Editor: change the order of pages
+
+Rubric editor: tool tips
+
+New deadline editor (http://www.ama3.com/anytime/)
+
+Palautuslaatikon sulkeminen
+
+Create tests for submit
 
 Configure sender address of feedback emails (course/reviewer)
 

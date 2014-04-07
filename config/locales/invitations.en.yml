@@ -5,7 +5,6 @@ en:
   invitation_mailer:
     group_invitation:
       subject: "%{course} - Join group"
-      you_have_been_added: "You have been invited to the following group:"
-      please_confirm: "Please confirm by visiting the following link:"
-      group_invitation_message: "You have been added to the group"
-    
+      you_have_been_added: "You have been added to the following group:"
+      please_confirm: "Please confirm your email adderss by visiting the following link:"
+      view_submissions_hint: "You can view or update submissions at the same address later."

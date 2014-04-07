@@ -2,7 +2,7 @@ class GroupsController < ApplicationController
   before_filter :login_required, :only => [:index]
 
   layout 'narrow'
-# 
+#
 #   def set_layout
 #     case params[:embed]
 #     when 'embed'
@@ -33,26 +33,27 @@ class GroupsController < ApplicationController
   def new
     @exercise = Exercise.find(params[:exercise_id])
     load_course
+    I18n.locale = @course_instance.locale || I18n.locale
     @is_teacher = @course.has_teacher(current_user)
 
-    # TODO: redirect to the correct IdP if using shibboleth
     return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
 
-    @group = Group.new
+    @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax)
+    @group_members = []
 
-    # Prefill the form
-    #@studentnumber = Array.new
-    @email = Array.new
-
-    @email_fields_count = @exercise.groupsizemax
-    
-    if @is_teacher
-      @email[0] = current_user.email
-    else
-      @email_fields_count -= 1 if logged_in?
+    # Add current user
+    if logged_in? && !@is_teacher
+      member = GroupMember.new(:email => current_user.email)
+      member.user = current_user
+      @group_members << member
     end
-    
-    log "create_group view #{@exercise.id}"
+
+    # Create group member slots
+    (@group.max_size - @group_members.size).times do |i|
+      @group_members << GroupMember.new()
+    end
+
+    log "create_group view #{params[:exercise_id]}"
   end
 
   # GET /groups/1/edit
@@ -61,120 +62,146 @@ class GroupsController < ApplicationController
 
     if params[:exercise_id]
       @exercise = Exercise.find(params[:exercise_id])
-      @email_fields_count = @exercise.groupsizemax - @group.users.size - @group.group_invitations.size
       log "edit_group view exercise #{params[:exercise_id]}"
     elsif params[:course_instance_id]
       @course_instance = CourseInstance.find(params[:course_instance_id])
-      @email_fields_count = 0
       log "edit_group view course_instance #{params[:course_instance_id]}"
     end
     load_course
-    
-    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
+    I18n.locale = @course_instance.locale || I18n.locale
+
+    return access_denied unless group_membership_validated(@group) || (@course && @course.has_teacher(current_user))
+
+    @group_members = @group.group_members.all
+    @group_members.sort! { |a, b| b.user ? 1 : 0 }  # Authenticated users first
+
+    # Add empty slots
+    (@group.max_size - @group_members.size).times do |i|
+      @group_members << GroupMember.new()
+    end
   end
 
   # POST /groups
   def create
     @exercise = Exercise.find(params[:exercise_id])
     load_course
+    I18n.locale = @course_instance.locale || I18n.locale
     @is_teacher = @course.has_teacher(current_user)
-    
+
     return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
 
-    # Read addresses
-    members = Array.new
-    if params[:email]
-      params[:email].each do |index, address|
-        members << address.strip unless address.empty?
-      end
+    @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax, :course_instance => @exercise.course_instance, :exercise => @exercise)
+    @group_members = []
+    
+    if logged_in? && !@is_teacher
+      member = GroupMember.new(:email => current_user.email)
+      member.user = current_user
+      @group_members << member
     end
 
-#     if members.size < @exercise.groupsizemin
-#       flash[:error] = "There must be at least #{@exercise.groupsizemin} member#{@exercise.groupsizemin == 1 ? '' : 's'} in the group."
-#       redirect_to :action => "new", :exercise => params[:exercise]
-#       return
-#     end
+    # Read params
+    params['email'].each do |member_id, address|
+      address.strip!
+      next if address.blank?
+      
+      member = GroupMember.new(:email => address)
+      member.group = @group
+      @group_members << member
+    end
 
-    @group = Group.new(params[:group])
-    @group.add_member(current_user) if current_user && !@is_teacher
-
-    # Automatic groupname
-    @group.name = (@group.users.collect { |user| user.studentnumber }).join('_')
-
+    @group.group_members = @group_members
+#     @group.name = (@group.users.collect { |user| user.studentnumber }).join('_')
+    
     if @group.save
-      @group.add_members_by_email(members, @exercise)
-      redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
+      #@group.add_members(@group_members, @exercise)
+      #@group.save
+
+      if current_user
+        redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
+      else
+        redirect_to submit_path(:exercise => @exercise.id, :group_token => @group.access_token)
+      end
       
       log "create_group success #{@group.id},#{@exercise.id}"
     else
-      flash[:error] = 'Failed to create group.'
-      redirect_to :action => "new"
+      (@group.max_size - @group_members.size).times do |i|
+        @group_members << GroupMember.new()
+      end
+      
+      render :action => 'new'
       log "create_group fail #{@exercise.id} #{@group.errors.full_messages.join('. ')}"
     end
-
   end
 
   def update
     @group = Group.find(params[:id])
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+    I18n.locale = @course_instance.locale || I18n.locale
+    
+    return access_denied unless group_membership_validated(@group) || (@course && @course.has_teacher(current_user))
+    
+    # Read params
+    @invalid_addresses = false
+    @group_members = []
+    members_to_delete = []
+    members_to_add = []
+    params['email'].each do |member_id, address|
+      address.strip!
+      member = @group.group_members.all.select{ |m| m.id == member_id.to_i }.first
 
-    if params[:exercise_id]
-      @exercise = Exercise.find(params[:exercise_id])
-      load_course
-    end
-    
-    return access_denied unless is_admin?(current_user) || @group.has_member?(current_user) || (@course && @course.has_teacher(current_user))
-    
-    # New members
-    members = Array.new
-    if params[:email]
-      params[:email].each do |index, email|
-        members << email unless email.empty?
+      if member
+        # Edit existing invitation
+        if address.blank?
+          # Delete invitation
+          members_to_delete << member
+        else
+          member.email = address
+          @invalid_addresses = true if member.email_changed? && !member.save
+          @group_members << member
+        end
+      elsif !address.blank?
+        # Enter new invitation
+        member = GroupMember.new(:email => address)
+        member.group = @group
+        @invalid_addresses = true unless member.save
+        members_to_add << member
+        @group_members << member
       end
-      
-      @group.add_members_by_email(members, @exercise)
     end
 
-    # Edit invitations
-    if params[:invitations]
-      params[:invitations].each do |id, email|
-        invitation = GroupInvitation.find(id)
-        email.strip!
-        if email.blank?
-          invitation.destroy
-        elsif email != invitation.email
-          invitation.update_email(email)
+    # Delete members
+    unless members_to_delete.empty?
+      # Remove all members?
+      if @group.group_members.size + members_to_add.size - members_to_delete.size < 1
+        if @group.submissions.empty?
+          @group.delete
+          redirect_to submit_path(:exercise => @exercise.id)
+          flash[:success] = t('groups.edit.group_deleted')
+          return
+        else
+          # Show warning
+          flash[:error] = t('groups.edit.cannot_delete_all')
+          @invalid_addresses = true
+        end
+      else
+        members_to_delete.each do |member|
+          member.delete
         end
       end
     end
-
-    redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
-    log "edit_group success #{@group.id},#{@exercise.id}"
-  end
-  
-  def join
-    return access_denied unless logged_in?
-
-    invitation = GroupInvitation.where(:group_id => params[:id], :token => params[:token]).first
-
-    if invitation
-      group = invitation.group
-      exercise = invitation.exercise
-
-      # Add user to group
-      group.add_member(current_user)
-
-      # Delete invitation
-      invitation.destroy
-
-      # Redirect to submit
-      flash[:success] = 'You have been added to the group'
-      redirect_to submit_path(:exercise => exercise.id, :group => group.id)
-      log "join_group success #{group.id},#{exercise.id}"
+    
+    if @invalid_addresses
+      
+      (@group.max_size - @group_members.size).times do |i|
+        @group_members << GroupMember.new()
+      end
+      
+      render :action => 'edit'
     else
-      render :invalid_token
-      log "join_group fail invalid token"
+      redirect_to submit_path(:exercise => @exercise.id, :group => @group.id, :member_token => params[:member_token], :group_token => params[:group_token])
+      log "edit_group success #{@group.id},#{@exercise.id}"
     end
-
   end
 
   # DELETE /groups/1
@@ -187,4 +214,28 @@ class GroupsController < ApplicationController
     redirect_to(groups_url)
   end
 
+  
+  private
+  def group_membership_validated(group)
+    if current_user
+      return false unless group.has_member?(current_user)
+      
+    elsif params[:member_token]
+      member = GroupMember.find_by_access_token(params[:member_token])
+      
+      if !member || member.group_id != group.id
+        log "submit authentication failed with member token #{params[:member_token]}"
+        return false
+      end
+    elsif params[:group_token]
+      group = Group.find_by_access_token(params[:group_token])
+      
+      if !group || group.id != group.id
+        log "submit authentication failed with group token #{params[:group_token]}"
+        return false
+      end
+    end
+    
+    return true
+  end
 end
