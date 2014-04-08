@@ -1,10 +1,15 @@
 fi:
   groups:
-    new:
+    edit:
+      title_group: "Muokkaa ryhmää"
+      cannot_delete_all: "Ryhmän kaikkia jäseniä ei voi poistaa"
+      group_deleted: "Ryhmä poistettiin"
+    form:
       title_group: "Luo ryhmä"
-      hint_group_authenticated: "Invite group members by entering their email addresses.<br />Invited members are required to join the group by following the <em>invitation link</em> sent by email.<br />You can add or modify these addresses later."
-      hint_group_unauthenticated: "Please enter the email addresses of all group members."
-      hint_individual_unauthenticated: "Enter email address."
+      hint_group_authenticated: "Syötä ryhmän jäsenten sähköpostiosoitteet. Voit lisätä osoitteita myöhemmin."
+      hint_group_unauthenticated: "Syötä ryhmän jäsenten sähköpostiosoitteet. Voit lisätä osoitteita myöhemmin."
+      hint_individual_unauthenticated: "Anna sähköpostiosoitteesi palautuksen yksilöimistä varten."
       ok_group: 'Luo ryhmä'
       ok_individual: 'OK'
-      
+      invalid_address_warning: 'Anna toimiva sähköpostiosoite tai jätä tyhjäksi. Voit lisätä osoitteita myöhemmin.'
+    

@@ -1,43 +1,11 @@
-<h1>Edit group</h1>
-
-<div>
-  <%= form_for [@exercise, @group] do |f| %>
-    <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-    <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
-
-    <h2>Group members</h2>
-
-    <table>
-      <tbody>
-        <% @group.users.each do |user| %>
-          <tr>
-            <td>
-              <%= user.email %>
-            </td>
-          </tr>
-        <% end %>
-        
-        <% @group.group_invitations.each do |invitation| %>
-          <tr>
-            <td>
-              <%= text_field_tag "invitations[#{invitation.id}]", invitation.email %>
-            </td>
-          </tr>
-        <% end %>
-        
-        <% (0...@email_fields_count).each do |i| %>
-          <tr>
-            <td>
-              <%= text_field_tag "email[#{i}]" %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <p>
-      <%= link_to 'Cancel', submit_path(:exercise => @exercise.id, :group => @group.id), :class => 'btn' %>
-      <%= f.submit 'Save', :class => 'btn btn-primary' %>
-    </p>
-  <% end %>
+<!-- groups/edit.html.erb -->
+<div class="page-header">
+  <h1>
+    <% if @group.max_size > 1 %>
+      <%=t '.title_group' %><br />
+    <% end %>
+    <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %>
+  </h1>
 </div>
+
+<%= render 'form' %>

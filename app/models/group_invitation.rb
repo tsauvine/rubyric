@@ -1,4 +1,6 @@
 class GroupInvitation < ActiveRecord::Base
+  # FIXME: class is obsolete
+  
   belongs_to :group
   belongs_to :exercise
   

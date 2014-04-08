@@ -142,7 +142,7 @@ class CourseInstance < ActiveRecord::Base
     # Create groups and submissions
     for i in (1..groups_count)
       # Create group
-      group = Group.create(:course_instance_id => self.id, :name => "Group #{i}")
+      group = Group.create(:course_instance_id => self.id, :name => "Group #{i}", :max_size => 3)
 
       # Add users to group
       students_count = rand(3) # self.groupsizemin + rand(self.groupsizemax - self.groupsizemin + 1)
@@ -281,7 +281,7 @@ class CourseInstance < ActiveRecord::Base
       # Create group if not found
       unless group
         group_name = (group_students.collect { |user| user.studentnumber }).join('_')
-        group = Group.create(:name => group_name, :course_instance_id => self.id)
+        group = Group.create(:name => group_name, :course_instance_id => self.id, :max_size => group_students.size)
         
         group.users << group_students
         

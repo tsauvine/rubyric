@@ -1,10 +1,13 @@
 <%= @course.code %> <%= @course.name %>
 
-<%=t '.you_have_been_added' %>
-<% @group.users.each do |user| %>  <%= user.name %>
-<% end %><% @group.group_invitations.each do |invitation| %>  <%= invitation.email %>
+<% if @group.max_size > 1 %><%=t '.you_have_been_added' %>
+<% @group.group_members.each do |member| %>  <%= member.user ? member.user.name : member.email %>
 <% end %>
 
-<%=t '.please_confirm' %>
+<% end %><%=t '.please_confirm' %>
 
-<%= join_group_url(:id => @group.id, :token => @invitation.token, :protocol => 'https://') %>
+<%= submit_url(:exercise => @exercise_id, :member_token => @group_member.access_token, :protocol => 'https://') %>
+
+<% if @course_instance.submission_policy == 'unauthenticated' -%>
+<%=t '.view_submissions_hint' %>
+<% end -%>

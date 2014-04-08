@@ -33,6 +33,11 @@ div.clear {
   font-style: italic;
 }
 
+input.error {
+  background-color: #fcc;
+  color: black;
+}
+
 .obfuscate {
   display: none;
 }
@@ -122,6 +127,8 @@ h2 {
   font-size: 130%;
   line-height: 140%;
 }
+
+
 
 h3 {
   font-size: 100%;
@@ -584,11 +591,20 @@ p.feedback-preview {
  * Submit form (student's view)
  **************************************************************************/
 
-.submit-form {
+#submit-form {
   table.submissions {
     td {
       padding-right: 1em;
+      padding-bottom: 1ex;
     }
+  }
+  
+  .row {
+    margin-top: 2em;
+  }
+  
+  .row:first-child {
+    margin-top: 0em;
   }
 }
 
