@@ -14,7 +14,10 @@ class CreateGroupMembers < ActiveRecord::Migration
     add_index :group_members, :access_token
     
     ActiveRecord::Base.connection.execute("SELECT user_id, group_id, studentnumber, email FROM groups_users").each do |row|
-      GroupMember.create(:user_id => row['user_id'].to_i, :group_id => row['group_id'].to_i, :studentnumber => row['studentnumber'], :email => row['email'])
+      member = GroupMember.new(:studentnumber => row['studentnumber'], :email => row['email'])
+      member.user_id = row['user_id'].to_i
+      member.group_id = row['group_id'].to_i
+      member.save
     end
     
     add_column :submissions, :authenticated, :boolean, :null => false, :default => false

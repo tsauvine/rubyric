@@ -1,11 +1,7 @@
 fi:
   groups:
-    new:
-      title_group: "Luo ryhmä"
-      title_individual: ""
     edit:
       title_group: "Muokkaa ryhmää"
-      title_individual: ""
       cannot_delete_all: "Ryhmän kaikkia jäseniä ei voi poistaa"
       group_deleted: "Ryhmä poistettiin"
     form:

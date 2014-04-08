@@ -93,11 +93,11 @@ class GroupsController < ApplicationController
     @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax, :course_instance => @exercise.course_instance, :exercise => @exercise)
     @group_members = []
     
-    if logged_in? && !@is_teacher
-      member = GroupMember.new(:email => current_user.email)
-      member.user = current_user
-      @group_members << member
-    end
+#     if logged_in? && !@is_teacher
+#       member = GroupMember.new(:email => current_user.email)
+#       member.user = current_user
+#       @group_members << member
+#     end
 
     # Read params
     params['email'].each do |member_id, address|
@@ -106,6 +106,9 @@ class GroupsController < ApplicationController
       
       member = GroupMember.new(:email => address)
       member.group = @group
+      
+      member.user = current_user if logged_in? && member.email == current_user.email
+      
       @group_members << member
     end
 

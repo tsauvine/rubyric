@@ -3,8 +3,6 @@
   <h1>
     <% if @group.max_size > 1 %>
       <%=t '.title_group' %><br />
-    <% else %>
-      <%=t '.title_individual' %><br />
     <% end %>
     <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %>
   </h1>

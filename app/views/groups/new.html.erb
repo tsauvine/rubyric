@@ -2,9 +2,6 @@
 <div class="page-header">
   <h1>
     <%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %><br />
-    <% if @group.max_size > 1 %>
-      <%=t '.title_group' %>
-    <% end %>
   </h1>
 </div>
 

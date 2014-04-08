@@ -36,11 +36,16 @@ class Group < ActiveRecord::Base
   end
 
   def add_member(user)
-    self.users << user unless self.users.include?(user)
+    return if self.users.include?(user)
+    
+    member = GroupMember.new(:email => user.email, :studentnumber => user.studentnumber)
+    member.group = self
+    member.user = user
+    member.save
+    
     self.course_instance.students << user unless self.course_instance.students.include?(user)
   end
   
-
   # members: array of GroupMembers
   def add_members(members, exercise)
     members.each do |member|

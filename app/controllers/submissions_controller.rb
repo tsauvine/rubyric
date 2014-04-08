@@ -99,8 +99,8 @@ class SubmissionsController < ApplicationController
     
     # Autoselect group if exactly one is available
     if !@group && @available_groups.size == 1
-      user_count = @available_groups[0].users.size
-      @group = @available_groups[0] if @exercise.groupsizemax == 1 && user_count == 1
+      #user_count = @available_groups[0].users.size
+      @group = @available_groups[0] if @exercise.groupsizemax == 1 && @available_groups[0].max_size == 1
     end
     
     # Unauthenticated users must always create group manually
@@ -148,12 +148,20 @@ class SubmissionsController < ApplicationController
     return unless submission_policy_accepted || @is_teacher
     logger.debug "Submission policy accepted"
     
-    unless @submission.group
+    if @submission.group
+      # Check that user is member of group
+      unless group_membership_validated(@submission.group) || @is_teacher
+        render :template => 'shared/forbidden', :status => 403, :layout => 'wide'
+        return
+      end
+      logger.debug "Membership accepted"
+    else
       logger.debug "No group specified"
       if @exercise.groupsizemax <= 1 && current_user
         logger.debug "Creating group of one"
         # Create a group automatically
-        group = Group.create({:course_instance_id => @course_instance.id, :name => user.studentnumber})
+        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => user.studentnumber})
+        group.save(:validate => false)
         group.add_member(user)
 
         @submission.group = group
@@ -164,13 +172,6 @@ class SubmissionsController < ApplicationController
       end
     end
     logger.debug "Group accepted"
-    
-    # Check that user is member of group
-    unless group_membership_validated(@submission.group) || @is_teacher
-      render :template => 'shared/forbidden', :status => 403, :layout => 'wide'
-      return
-    end
-    logger.debug "Membership accepted"
 
     # Check the file
     if params[:file].blank?
