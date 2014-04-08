@@ -1,6 +1,6 @@
 fi:
   sessions_login_heading: "Kirjaudu"
-  sessions_traditional_hint: "Kirjaudu erillisellä Rubyric-tunnuksella (testitunnukset)"
+  sessions_traditional_hint: "Kirjaudu Rubyric-tunnuksella"
   sessions_shibboleth_hint: "Muiden suomalaisten korkeakoulujen käyttäjät voivat kirjautua kotiyliopistonsa tunnuksilla."
   sessions_shibboleth_aalto_hint: "Kirjaudu Aallon käyttäjätunnuksella"
   shibboleth_aalto_button: 'Aalto Weblogin'
@@ -10,3 +10,24 @@ fi:
   sessions_remember_label: "Muista minut"
   sessions_create_account: "Rekisteröidy"
   sessions_login_failed: "Virheellinen käyttäjänimi tai salasana"
+
+  sessions:
+    login:
+      sign_up_link: "Luo tunnus"
+      forgot_password_link: "Salasana unohtui"
+    new:
+      login_failed: "Invalid username or password."
+      forgot_password_button: "Salasana unohtui"
+      
+  password_resets:
+    password_reset_mailed: "Saat sähköpostitse linkin uuden salasanan asettamista varten."
+    invalid_link: "Linkki on vanhentunut."
+    new:
+      reset_hint: "Anna sähköpostiosoitteesi. Saat sähköpostitse linkin uuden salasanan asettamista varten."
+      reset_button: "Lähetä"
+      user_not_found: "Osoitteella ei löydy käyttäjätunnusta. Tarkista, että kirjoitit osoitteen oikein tai"
+      sign_up_link: "Luo uusi käyttäjätunnus"
+    edit:
+      update_heading: "Valitse uusi salasana"
+      update_button: "Päivitä salasana"
+      success_message: "Salasana vaihdettu"

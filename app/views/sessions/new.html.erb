@@ -2,6 +2,16 @@
   <h1><%=t :sessions_login_heading %></h1>
 </div>
 
+<% if @session.errors.any? %>
+  <div class="alert alert-block">
+    <%= form_tag password_resets_path, :class => 'form-inline' do %>
+      <%= hidden_field_tag :email, params['session']['email'] %>
+      <%=t '.login_failed' %>
+      <%= submit_tag t('.forgot_password_button'), :class => 'btn btn-default btn-small' %>
+    <% end %> 
+  </div>
+<% end %>
+
 <!--div class="row"-->
   <% if defined?(SHIB_AALTO_PATH) %>
     <div class="row">

@@ -48,5 +48,10 @@ class User < ActiveRecord::Base
   def teacher?
     courses_teacher.size > 0
   end
-
+  
+  def deliver_password_reset_instructions
+    reset_perishable_token!
+    PasswordMailer.delay.password_reset_instructions(self.id)
+  end
+  
 end

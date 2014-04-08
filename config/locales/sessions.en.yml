@@ -1,6 +1,6 @@
 en:
   sessions_login_heading: "Login"
-  sessions_traditional_hint: "Login using a Rubyric account (test accounts)"
+  sessions_traditional_hint: "Login using a Rubyric account"
   sessions_shibboleth_hint: "Users from other Finnish institutes can log in with HakaLogin"
   sessions_shibboleth_aalto_hint: "Login with an Aalto account"
   shibboleth_aalto_button: 'Aalto Weblogin'
@@ -10,3 +10,24 @@ en:
   sessions_remember_label: "Remember me"
   sessions_create_account: "Create an account"
   sessions_login_failed: "Invalid username or password"
+
+  sessions:
+    login:
+      sign_up_link: "Sign up"
+      forgot_password_link: "Forgot password"
+    new:
+      login_failed: "Invalid username or password."
+      forgot_password_button: "Forgot password"
+  
+  password_resets:
+    password_reset_mailed: "A link for setting a new password has been sent to your email address."
+    invalid_link: "Password reset link has expired."
+    new:
+      reset_hint: "Enter your email address below. You will receive a link for setting a new password."
+      reset_button: "Reset Password"
+      user_not_found: "No user account was found with this address. Please check that you spelled the address correctly or"
+      sign_up_link: "Create a new account"
+    edit:
+      update_heading: "Choose a new password"
+      update_button: "Update password"
+      success_message: "Password has been changed"

@@ -21,7 +21,7 @@ class SessionsController < ApplicationController
       CustomLogger.info("#{current_user.login} login_traditional success")
     else
       logger.info "Login failed. #{@session.errors.full_messages.join(',')}"
-      flash[:error] = t('sessions_login_failed')
+      #flash[:error] = t('sessions_login_failed')
       render :action => :new
       
       CustomLogger.info("guest login_traditional fail #{@session.errors.full_messages.join(',')}")

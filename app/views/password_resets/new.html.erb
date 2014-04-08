@@ -1,0 +1,18 @@
+<h1>Reset Password</h1>
+
+<p class="hint"><%=t '.reset_hint' %></p>
+
+<%= form_tag password_resets_path, :class => 'form-inline' do %>
+  <%= text_field_tag :email, @email, :class => 'input-large', :placeholder => 'email' %>
+  <%= submit_tag t('.reset_button'), :class => 'btn btn-primary' %>
+<% end %> 
+
+<% if @user_not_found %>
+  <div class="alert alert-block">
+    <p><%= t('.user_not_found') %></p>
+    <p><%= link_to t('.sign_up_link'), new_user_path(:email => @email) %></p></p>
+  </div>
+  
+<% end %>
+
+<p><%= link_to t(:Cancel), root_path %></p>

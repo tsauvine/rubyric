@@ -1,0 +1,12 @@
+<h1><%=t '.update_heading' %></h1>
+
+<%= form_tag password_reset_path, :method => :put, :class => 'form-inline' do %>
+  <%= password_field_tag :password %>
+  <%= submit_tag t('.update_button'), :class => 'btn btn-primary' %>
+<% end %>
+
+<% if @user.errors[:password].any? %>
+  <div class="alert alert-block">
+    <%= @user.errors[:password].join('. ') %>
+  </div>
+<% end %>

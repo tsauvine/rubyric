@@ -3,8 +3,9 @@ Rubyric::Application.routes.draw do
     get 'shibboleth'
   end
 
-  resource :frontpage, :only => [:show], :controller => 'frontpage'
+  resources :password_resets, :only => [ :new, :create, :edit, :update ]
   
+  resource :frontpage, :only => [:show], :controller => 'frontpage'
 
   resources :users, :except => [:index] do
     collection do
@@ -89,6 +90,7 @@ Rubyric::Application.routes.draw do
     end
   end
 
+  
 
   #match '/exercise/new/:instance' => 'exercises#new'
   match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
