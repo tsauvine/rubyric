@@ -4,16 +4,16 @@
 
 <% if @available_groups.empty? %>  
   <% if @exercise.groupsizemax > 1 && !@is_teacher %>
-    <p>This assignment is done in groups of <%= @exercise.groupsizemin %>-<%= @exercise.groupsizemax %>. One member should create a group and invite others.</p>
+    <p><%=t '.select_group_hint', :min => @exercise.groupsizemin, :max => @exercise.groupsizemax %></p>
   <% end %>
 <% else %>
-  <h2>Select group</h2>
+  <h2><%=t '.select_group_heading' %></h2>
   
   <ul>
     <% @available_groups.each do |group| %>
-      <li><%= link_to group.users.collect {|user| user.name }.join(', '), submit_path(:exercise => @exercise.id, :group => group.id) %></li>
+      <li><%= link_to group.name, submit_path(:exercise => @exercise.id, :group => group.id) %></li>
     <% end %>
   </ul>
 <% end %>
 
-<p><%= link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %></p>
+<p><%= link_to t('.create_button'), new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn' %></p>

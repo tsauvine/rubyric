@@ -143,7 +143,7 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @results = []
+    @results = [] # [[member, grade], [member, grade], ...]
     @groups = Group.where(:course_instance_id => @course_instance.id).includes([{:submissions => [:reviews => :user, :group => :users]}, :users])
     
     @groups.each do |group|
@@ -167,7 +167,7 @@ class ExercisesController < ApplicationController
       end
       
       if best_review
-        @results.concat group.users.collect {|student| [student, best_review]}
+        @results.concat group.group_members.collect {|member| [member, best_review]}
       else
         # FIXME: add all reviews
       end

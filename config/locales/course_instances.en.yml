@@ -9,6 +9,7 @@ en:
       policy_enrolled: "Only enrolled students can submit."
       policy_provide_list: "(You must provide a student list.)"
       policy_provide_list_link: "(You must provide a student list here.)"
+      language: "Interface language"
   
   # New
   instance_create_heading: "Create course instance"

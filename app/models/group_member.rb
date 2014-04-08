@@ -15,6 +15,18 @@ class GroupMember < ActiveRecord::Base
 #     self.email.strip! unless self.email.blank?
 #   end
 
+  def studentnumber
+    self.user ? user.studentnumber : ''
+  end
+  
+  def firstname
+    self.user ? user.firstname : ''
+  end
+  
+  def lastname
+    self.user ? user.lastname : ''
+  end
+  
   # Generates a unique token
   def generate_token
     begin

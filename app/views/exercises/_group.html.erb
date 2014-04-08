@@ -6,7 +6,7 @@
     </div>
     
     <!-- Students -->
-    <%= (group.users.collect do |user| "#{user.name} (#{user.studentnumber})" end).join(', ') %>
+    <%= group.names_with_studentnumbers %>
   </td>
 </tr>
 <% group.submissions.each do |submission| %>

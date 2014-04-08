@@ -16,6 +16,24 @@ class Group < ActiveRecord::Base
   
   attr_accessor :url  # Needed for JSON serialization
 
+  def name
+    self.group_members.collect {|member| member.user ? member.user.name : member.email }.join(', ')
+  end
+  
+  def names_with_studentnumbers
+    self.group_members.collect do |member|
+      if member.user
+        if member.user.studentnumber.blank?
+          member.user.name
+        else
+          "#{member.user.name} (#{member.user.studentnumber})"
+        end
+      else
+        member.email
+      end
+    end.join(', ')
+  end
+
   def require_group_members
     errors.add(:base, "Group cannot be empty") if self.group_members.empty?
   end

@@ -13,3 +13,7 @@ en:
       email_confirmed: "Your email address has been confirmed"
       missing_file: "You must submit a file"
       submission_received: "Submission was received"
+    select_group:
+      select_group_hint: "This assignment is done in groups of %{min}-%{max}. One member should create a group and invite others."
+      select_group_heading: "Select group"
+      create_button: "Create new group"

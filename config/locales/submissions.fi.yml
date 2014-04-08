@@ -13,3 +13,7 @@ fi:
       email_confirmed: "Sähköpostiosoitteesi on vahvistettu"
       missing_file: "Tiedostoa ei valittu"
       submission_received: "Palautus on vastaanotettu"
+    select_group:
+      select_group_hint: "Harjoitus tehdään %{min}-%{max} hengen ryhmissä. Yhden ryhmän jäsenen tulee luoda ryhmä ja kutsua muut."
+      select_group_heading: "Valitse ryhmä"
+      create_button: "Luo uusi ryhmä"

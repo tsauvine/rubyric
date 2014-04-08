@@ -1,7 +1,7 @@
 <tr class="group" id="group<%= assistant_group.id %>">
   <td colspan="4">
     <!-- Students -->
-    <%= (assistant_group.users.collect do |user| "#{h(user.name)} (#{h(user.studentnumber)})" end).join(', ') %>
+    <%= assistant_group.names_with_studentnumbers %>
   </td>
 </tr>
 <% assistant_group.submissions.each do |submission| %>

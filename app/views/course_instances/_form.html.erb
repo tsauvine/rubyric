@@ -10,6 +10,18 @@
       <% end %>
     </div>
   </div>
+  
+  <!-- Language -->
+<div class="control-group">
+    <%= f.label :active, t('.language'), :class => 'control-label' %>
+    <div class="controls">
+      <label>
+        <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']])) %>
+      </label>
+    </div>
+  </div>
+  
+  <!-- Submission policy -->
   <div class="control-group">
     <%= f.label :submission_policy, t('.submission_policy_label'), :class => 'control-label' %>
     <div class="controls">
@@ -32,6 +44,8 @@
       </label>
     </div>
   </div>
+  
+  <!-- Active -->
   <% unless @course_instance.new_record? %>
     <div class="control-group">
       <%= f.label :active, t(:instance_active_label), :class => 'control-label' %>

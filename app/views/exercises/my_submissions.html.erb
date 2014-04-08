@@ -33,7 +33,7 @@
         <% submissions = group.submissions.where(:exercise_id => @exercise.id) %>
         <tr class="group">
           <td colspan='3'>
-            <%= group.users.collect {|user| user.name }.join(', ') %>
+            <%= group.name %>
           </td>
         </tr>
         
