@@ -1,6 +1,7 @@
 class UsersController < ApplicationController
 
   before_filter :login_required, :only => [:edit, :update]
+  layout 'narrow'
   
   # GET /users/1
 #   def show
@@ -10,20 +11,25 @@ class UsersController < ApplicationController
 #   end
 
   def new
-    #return access_denied unless is_admin?(current_user)
     # Anyone can create an account
     @user = User.new
     @user.email = params[:email]
-    
+    @email_taken = false
+
     log "create_user_traditional view"
   end
 
   def create
     # Create user
     @user = User.new(params[:user])
-    @user.save
-
-    if @user.errors.empty?
+    
+    if !@user.email.blank? && User.exists?(email: @user.email)
+      @email_taken = true
+      render :action => 'new'
+      return
+    end
+    
+    if @user.save
       # Success
       logger.info("Created user #{@user.email} (traditional)")
 
@@ -37,6 +43,7 @@ class UsersController < ApplicationController
       redirect_to exercise
       log "create_user_traditional success (example exercise #{exercise})"
     else
+      logger.debug @user.errors[:email]
       # Form not sufficiently filled
       render :action => 'new'
       log "create_user_traditional fail #{@user.errors.full_messages.join('. ')}"

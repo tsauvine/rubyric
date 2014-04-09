@@ -9,10 +9,10 @@ class User < ActiveRecord::Base
   end
 
   belongs_to :organization
-  
-  validates_uniqueness_of :login, :allow_nil => true
-  validates_uniqueness_of :email, :allow_nil => true
 
+  validates :login, :uniqueness => true, :allow_nil => true
+  validates :email, :uniqueness => true
+  
   attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
 
   has_many :group_members
