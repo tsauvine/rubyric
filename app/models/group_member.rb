@@ -16,7 +16,7 @@ class GroupMember < ActiveRecord::Base
 #   end
 
   def studentnumber
-    self.user ? user.studentnumber : ''
+    self.user ? user.studentnumber : self.studentnumber
   end
   
   def firstname
@@ -69,6 +69,7 @@ class GroupMember < ActiveRecord::Base
     end
 
     self.user = user
+    self.studentnumber = user.studentnumber
     self.save
 
     self.group.course_instance.students << user unless self.group.course_instance.students.include?(user)
