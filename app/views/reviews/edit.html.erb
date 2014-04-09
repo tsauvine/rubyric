@@ -63,11 +63,11 @@
 
               <table class="table">
                 <tbody>
-                  <% @review.submission.group.users.each do |user| %>
+                  <% @review.submission.group.group_members.each do |member| %>
                     <tr>
-                      <td><%= user.studentnumber %></td>
-                      <td><%= user.name %></td>
-                      <td><%= user.email %></td>
+                      <td><%= member.studentnumber %></td>
+                      <td><%= member.name %></td>
+                      <td><%= member.email %></td>
                     </tr>
                   <% end %>
                 </tbody>

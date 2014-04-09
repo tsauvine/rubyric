@@ -1,4 +1,6 @@
 .annotation-editor {
+  height: 100%;
+  
   .rubric {
     width: 30%;
     height: 100%;
@@ -14,6 +16,15 @@
       margin: 1em;
     }
     
+    .toolbar {
+      width: 100%;
+      background: #eee;
+      border-bottom: 1px solid #ddd;
+      
+      div {
+        padding: 2px;
+      }
+    }
   }
 
   .submission-pages {
@@ -32,10 +43,9 @@
   
   .submission-page {
     position: relative;
-    /*border: 2px solid red;*/
-    padding-right: 400px;
+    /*border: 1px solid red;*/
+    /*padding-right: 400px;*/
     margin: 10px;
-    
     
     img {
       border: 1px solid black;
@@ -72,7 +82,7 @@
     }
     
     .statusbar {
-      border-bottom: 1px solid #aa8;
+      border-top: 1px solid #aa8;
       background: #eea;
       color: #884;
       font-size: smaller;

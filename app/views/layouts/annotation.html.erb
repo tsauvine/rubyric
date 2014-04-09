@@ -13,29 +13,7 @@
 
 <body>
 
-<%= render :template => 'layouts/top' %>
-
-<div class="container-fluid">
-  <div class="row-fluid">
-    <!-- Content -->
-    <div class="span12">
-      <!-- Flash messages -->
-      <% if flash[:warning] %>
-        <div class="alert"><%= flash[:warning] %></div>
-      <% end %>
-
-      <% if flash[:success] %>
-        <div class="alert alert-success"><%= flash[:success] %></div>
-      <% end %>
-
-      <% if flash[:error] %>
-        <div class="alert alert-error"><%= flash[:error] %></div>
-      <% end %>
-
-      <%= yield  %>
-    </div>
-  </div>
-</div>
+<%= yield  %>
 
 </body>
 </html>

@@ -7,21 +7,29 @@
   <%= javascript_include_tag 'annotationEditor' %>
 <% end %>
 
-<%= form_for @review, :as => :review, :url => review_path(@review) do |f| %>
-  <%= f.hidden_field :payload %>
-  <%= f.hidden_field :status %>
-  <%= f.hidden_field :grade %>
-  
-  <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
-    data-page-count="<%= @submission.page_count %>"
-    data-page-width="<%= @submission.page_width %>"
-    data-page-height="<%= @submission.page_height %>"
-    >
-    
+<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
+  data-page-count="<%= @submission.page_count %>"
+  data-page-width="<%= @submission.page_width %>"
+  data-page-height="<%= @submission.page_height %>"
+  >
+  <%= form_for @review, :as => :review, :url => review_path(@review) do |f| %>
+    <%= f.hidden_field :payload %>
+    <%= f.hidden_field :status %>
+    <%= f.hidden_field :grade %>
 
     <div class="rubric">
+      <div class="toolbar">
+        <div class="pull-right"><%= link_to 'Back to menu', exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}") %></div>
+        
+        <div>
+          Zoom:
+          <select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select>
+        </div>
+      </div>
+    
       <div class="rubric-container">
         <ul id="tabs" class="nav nav-tabs">
+          <li class="active"><a href="#page-overview" data-toggle='tab'>Overview</a></li>
           <!-- ko foreach: pages -->
             <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
           <!-- /ko -->
@@ -29,6 +37,43 @@
         </ul>
         
         <div class="tab-content">
+          <div class="tab-pane active" id="page-overview">
+            <div class="row-fluid">
+              <!-- Warnings -->
+              <% if (@review.status == 'mailed') %>
+                <div class="alert">
+                  This review has already been mailed and cannot be modified any more.
+                </div>
+              <% end %>
+
+              <!-- Notes to grader -->
+              <% unless @review.notes_to_grader.blank? %>
+                <div class="alert alert-info">
+                  <%= @review.notes_to_grader %>
+                </div>
+              <% end %>
+            </div>
+            
+            <div class="row-fluid">
+              <div class="well">
+                <!-- Group -->
+                <h3>Group</h3>
+
+                <table class="table">
+                  <tbody>
+                    <% @review.submission.group.group_members.each do |member| %>
+                      <tr>
+                        <td><%= member.studentnumber %></td>
+                        <td><%= member.name %></td>
+                        <td><%= member.email %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        
           <!-- ko foreach: pages -->
             <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
               <h2 data-bind="text: name"></h2>
@@ -97,7 +142,7 @@
     </div> <!-- /rubric -->
 
     <div id="submission-pages" class="submission-pages" data-bind="foreach: submission_pages">
-      <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: clickCreateAnnotation">
+      <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: clickCreateAnnotation, style: { minWidth: containerWidth() }">
         <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
         
         <!-- ko foreach: annotations -->
@@ -122,5 +167,5 @@
       </div>
       <!--hr /-->
     </div>
-  </div>
-<% end %>
+  <% end %>
+</div>

@@ -179,15 +179,28 @@ class CommandBuffer
 
 class SubmissionPage
   constructor: (@annotationEditor, @pageNumber) ->
-    pixelsPerCentimeter = 50.0 * @annotationEditor.zoom()
-    
-    @width = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
-    @height = ko.observable("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
     @src = ko.observable()
     @alt = ko.observable("Page #{@pageNumber + 1}")
     @nextPage = undefined
     
     @annotations = ko.observableArray()
+    
+    @annotationEditor.zoom.subscribe =>
+      this.updateZoom()
+      @src("#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom()}")  # FIXME: repetition
+    
+    this.updateZoom()
+  
+  updateZoom: () ->
+    new_zoom = @annotationEditor.zoom()
+    pixelsPerCentimeter = 50.0 * new_zoom
+    
+    @width = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
+    @containerWidth = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 400)}px")
+    @height = ko.observable("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
+    
+    for annotation in @annotations()
+      annotation.setZoom(new_zoom)
     
   
   loadPage: () ->
@@ -237,7 +250,6 @@ class Annotation
     @content = ko.observable(options['content'])
     @escaped_content = (options['content'] || '').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
     @grade = ko.observable(options['grade'])
-    
     @zoom = options.zoom || 1.0
     
     screenPosition = options['screenPosition']
@@ -260,7 +272,16 @@ class Annotation
       pagePos.x = screenPos.x / @zoom
       pagePos.y = screenPos.y / @zoom
       @pagePosition.valueHasMutated()
-
+    
+  setZoom: (new_zoom) ->
+    @zoom = new_zoom
+    screenPos = @screenPosition()
+    pagePos = @pagePosition()
+    screenPos.updated = false
+    screenPos.x = pagePos.x * @zoom
+    screenPos.y = pagePos.y * @zoom
+    @screenPosition.valueHasMutated()
+  
   
   clickAnnotation: ->
     # Catch clicks and prevent bubbling
@@ -276,7 +297,16 @@ class AnnotationEditor extends Rubric
     @page_width = @element.data('page-width')
     @page_height = @element.data('page-height')
     
-    @zoom = ko.observable(1.0)
+    @zoom_options = [
+      {value: 0.25, text: "25 %"},
+      {value: 0.50, text: "50 %"},
+      {value: 1.00, text: "100 %"},
+      {value: 1.50, text: "150 %"},
+      {value: 2.00, text: "200 %"}
+    ]
+    @zoom_selection = ko.observable(@zoom_options[2])
+    @zoom = ko.observable(@zoom_selection().value)
+    
     @submission_pages = ko.observableArray()
     @phrasesById = {}
     
@@ -294,6 +324,9 @@ class AnnotationEditor extends Rubric
     ko.applyBindings(this)
   
     this.parseReview(window.review)
+    
+    @zoom_selection.subscribe =>
+      @zoom(@zoom_selection().value)
   
   createSubmissionPages: ->
     previousPage = undefined
