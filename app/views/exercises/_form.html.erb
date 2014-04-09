@@ -5,6 +5,7 @@
 <%= form_for([@course_instance,@exercise], :html => {:class => 'form-horizontal'}) do |f| %>
   <%= f.hidden_field :course_instance_id, :value => @course_instance.id %>
 
+  <!-- Name -->
   <div class="control-group">
     <%= f.label :name, :class => 'control-label' %>
     <div class="controls">
@@ -15,6 +16,7 @@
     </div>
   </div>
   
+  <!-- Deadline -->
   <div class="control-group">
     <%= f.label :deadline, :class => 'control-label' %>
     <div class="controls">
@@ -22,7 +24,7 @@
     </div>
   </div>
   
-
+  <!-- Group size -->
   <div class="control-group">
     <%= f.label :groupsizemax, 'Group size', :class => 'control-label' %>
     <div class="controls">
@@ -46,30 +48,25 @@
     # <h2>Message to be shown after submitting (HTML allowed):</h2>
     # f.text_area :submit_post_message, :rows => 3, :cols => 80
   %>
-
+  
+  <!-- Review mode -->
   <div class="control-group">
+    <%= f.label :review_mode, 'Review mode', :class => 'control-label' %>
     <div class="controls">
-      <% if @exercise.new_record? %>
-        <%= link_to t(:Cancel), @course_instance, :class => 'btn' %>
-      <% else %>
-        <%= link_to t(:Back), @exercise, :class => 'btn' %>
-      <% end %>
-      <%= f.submit 'Save', :class => 'btn btn-primary' %>
+      <label>
+        <%= f.select(:review_mode, options_for_select([['Annotation', 'annotation'], ['Plain text', 'text']])) %>
+      </label>
     </div>
   </div>
-  
-  
-  <hr class="large-gap" />
-  
-  <h3>Advanced settings</h3>
-  
+
   <div class="control-group">
     <%= f.label :grader_can_email, 'Allow reviewers to send reviews immediately', :class => 'control-label' %><br />
     <div class="controls">
       <%= f.check_box :grader_can_email %> 
     </div>
   </div>
-  
+
+  <!-- Save -->
   <div class="control-group">
     <div class="controls">
       <% if @exercise.new_record? %>
@@ -79,5 +76,7 @@
       <% end %>
       <%= f.submit 'Save', :class => 'btn btn-primary' %>
     </div>
-  </div>  
+  </div>
+  
+ 
 <% end %>

@@ -73,7 +73,8 @@ class Course < ActiveRecord::Base
       :course_instance_id => instance.id,
       :name => 'Assignment 1',
       :deadline => deadline,
-      :groupsizemax => 3
+      :groupsizemax => 3,
+      :review_mode => 'annotation'
     )
     
     # FIXME: makedirs may throw an exception

@@ -12,8 +12,8 @@
   </div>
   
   <!-- Language -->
-<div class="control-group">
-    <%= f.label :active, t('.language'), :class => 'control-label' %>
+  <div class="control-group">
+    <%= f.label :language, t('.language'), :class => 'control-label' %>
     <div class="controls">
       <label>
         <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']])) %>
