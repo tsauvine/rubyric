@@ -21,10 +21,14 @@ class FeedbackMailer < ActionMailer::Base
 
     # Collect receiver addresses
     recipients = []
-    review.submission.group.users.each do |user|
-      recipients << user.email unless user.email.blank?
+    review.submission.group.group_members.each do |member|
+      if member.user
+        recipients << member.user.email unless member.user.email.blank?
+      else
+        recipients << member.email unless member.email.blank?
+      end
     end
-    
+
     if recipients.empty?
       # TODO: raise an exception with an informative message
       review.status = 'finished'

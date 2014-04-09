@@ -23,6 +23,8 @@ Polish frontpage
 
 = Later =
 
+Annotation: Zoom
+
 Fix Batch assign
 
 Make student list work with GroupMembers
@@ -44,8 +46,6 @@ Palautuslaatikon sulkeminen
 Create tests for submit
 
 Configure sender address of feedback emails (course/reviewer)
-
-Annotation: Zoom
 
 Annotation: Instrumentation
 
