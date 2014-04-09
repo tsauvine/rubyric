@@ -23,12 +23,12 @@ class Group
     @url = data['url']
 
     # Set students
-    @students = []
     groupname = []
-    for user_id in data['user_ids']
-      student = users[user_id]
-      @students.push(student)
-      groupname.push(student.name + ' (' + student.studentnumber + ')')
+    for member_data in data['group_members']
+      member_string = member_data['name'] || ''
+      member_string += " (#{member_data['studentnumber']})" if member_data['studentnumber']?.length > 0
+      member_string = member_data['email'] || '' if member_string.length < 1
+      groupname.push(member_string)
       
     @name = groupname.join(', ')
     @name = 'Untitled group' if @name.length < 1
@@ -60,7 +60,6 @@ class Group
 class AssignmentEditor
   constructor: (data) ->
     @currentReviewer = ko.observable()
-    @testi = ko.observable('testi')
     
     @users_by_id = {}
     @teachers = []
@@ -95,7 +94,6 @@ class AssignmentEditor
   clickSelectNone: ->
     for group in @groups
       group.selected(false)
-  
   
   clickAssign: ->
     if @currentReviewer() == 'assistants'
@@ -162,7 +160,6 @@ class AssignmentEditor
 
 
 jQuery ->
-  $.getJSON $('#assign-groups').data('url'), (data) ->
-    assignmentEditor = new AssignmentEditor(data)
-    ko.applyBindings(assignmentEditor)
-    $('#assign-groups').removeClass('busy')
+  assignmentEditor = new AssignmentEditor(window.group_data)
+  ko.applyBindings(assignmentEditor)
+  $('#assign-groups').removeClass('busy')

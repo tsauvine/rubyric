@@ -16,7 +16,11 @@ class GroupMember < ActiveRecord::Base
 #   end
 
   def studentnumber
-    self.user ? user.studentnumber : self.studentnumber
+    self.user ? user.studentnumber : read_attribute(:studentnumber)
+  end
+  
+  def name
+    self.user ? user.name : ''
   end
   
   def firstname

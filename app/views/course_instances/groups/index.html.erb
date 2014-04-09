@@ -1,4 +1,7 @@
 <% content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.group_data = <%= @groups_json.to_json( root: false ).html_safe %>;
+  <% end %>
   <%= javascript_include_tag 'assignmentEditor.js' %>
 <% end %>
 
@@ -7,12 +10,14 @@
 </div>
 
 <!-- Tabs -->
+<!--
 <div class="tabbable">
   <ul class="nav nav-tabs">
     <li class="active"><%= link_to 'Assign groups to reviewers', course_instance_groups_path(@course_instance) %></li>
     <li><%= link_to 'Batch upload', batch_course_instance_groups_path %></li>
   </ul>
 </div>
+-->
 
 <!-- Hints -->
 <% if @course_instance.groups.empty? %>
@@ -32,7 +37,7 @@
   </div>
 <% end %>
 
-<div class="row-fluid busy" id="assign-groups" data-url="<%= course_instance_groups_path(@course_instance) %>">
+<div class="row-fluid busy" id="assign-groups">
   <table class="table table-hover table-condensed">
     <thead>
       <tr>
@@ -47,7 +52,9 @@
         <td>
           <input type="checkbox" data-bind="checked: selected" />
         </td>
-        <td><a data-bind="text: name, attr: {href: url}"></a>
+        <td>
+          <span data-bind="text: name"></span>
+          <!--a data-bind="text: name, attr: {href: url}"></a-->
         </td>
         <td data-bind="foreach: reviewers">
           <span class="label label-info">
@@ -63,7 +70,7 @@
 </div>  
 
 <!-- Buttons -->
-<div class="row">
+<div class="row form-inline">
   <div class="span6">
     <p>
       <button class="btn" data-bind="click: clickSelectAll">Select all</button>

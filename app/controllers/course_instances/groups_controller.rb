@@ -13,22 +13,31 @@ class CourseInstances::GroupsController < GroupsController
       group.url = edit_course_instance_group_path(:course_instance_id => @course_instance.id, :id => group.id)
     end
     
-    user_ids = groups.collect {|group| group.user_ids }
+    #user_ids = groups.collect {|group| group.user_ids }
+    user_ids = []
     user_ids << @course_instance.assistant_ids
     user_ids << @course.teacher_ids
     users = User.find(user_ids)
     
-    response = { 
-      groups: groups.as_json(:only => [:id], :methods => [:user_ids, :reviewer_ids, :url]),
+    @groups_json = { 
+      groups: groups.as_json(
+                             :only => [:id],
+                             :include => [:group_members => {
+                                                        :only => [:email],
+                                                        :methods => [:name, :studentnumber]
+                                                         }
+                                          ],
+                             :methods => [:reviewer_ids, :url]
+      ),
       users: users.as_json(:only => [:id, :studentnumber, :email, :firstname, :lastname] ),
       assistants: @course_instance.assistant_ids,
       teachers: @course.teacher_ids
     }
     
-    respond_to do |format|
-      format.html { }
-      format.json { render :json => response }
-    end
+#     respond_to do |format|
+#       format.html { }
+#       format.json { render :json => response }
+#     end
   end
   
   def update
