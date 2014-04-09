@@ -5,9 +5,16 @@ class Course < ActiveRecord::Base
 
   has_and_belongs_to_many :teachers, {:class_name => 'User', :join_table => 'courses_teachers', :order => :studentnumber}
 
-  validates_presence_of :code
   validates_presence_of :name
 
+  def full_name
+    if self.code.blank?
+      self.name
+    else
+      "#{self.code} #{self.name}"
+    end
+  end
+  
   def has_teacher(user)
     user && teachers.include?(user)
   end

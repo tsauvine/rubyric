@@ -8,7 +8,7 @@
 <% end %>
 
 <div class="page-header">
-  <h1><%= "#{@course.code} #{@course.name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+  <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
 <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">

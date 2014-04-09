@@ -16,14 +16,12 @@ http://www.quicktimesheets.com/
 
 = Soon =
 
-Make GroupController::update work with the new GroupMember and Invitation system
-
-Groups-näkymässä joskus undefined variable
-
 Get rid of course.code
 
 
 = Later =
+
+Fix Batch assign
 
 Course new: disclaimer
 

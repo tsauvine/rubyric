@@ -1,4 +1,4 @@
-<%= @course.code %> <%= @course.name %>
+<%= @course.full_name %>
 
 <% if @group.max_size > 1 %><%=t '.you_have_been_added' %>
 <% @group.group_members.each do |member| %>  <%= member.user ? member.user.name : member.email %>

@@ -37,7 +37,7 @@ class FeedbackMailer < ActionMailer::Base
       attachments[@review.filename] = File.read(@review.full_filename)
     end
     
-    subject = "#{@course.code} #{@course.name} - #{@exercise.name}"
+    subject = "#{@course.full_name} - #{@exercise.name}"
     
     if review.type == 'AnnotationAssessment'
       template_name = 'annotation'
@@ -72,7 +72,7 @@ class FeedbackMailer < ActionMailer::Base
     from = @course.email 
     from = RUBYRIC_EMAIL if from.blank?
     
-    subject = "#{@course.code} #{@course.name}"
+    subject = "#{@course.full_name}"
     
     # Attachments
     @reviews.each do |review|

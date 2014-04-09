@@ -3,7 +3,7 @@
 <% end %>
 
 <div class="page-header">
-  <h1><%= "#{@course.code} #{@course.name} - #{@course_instance.name}" %></h1>
+  <h1><%= "#{@course.full_name} - #{@course_instance.name}" %></h1>
 </div>
 
 <div class="row">
@@ -67,7 +67,7 @@
     <h3>Add reviewer</h3>
   </div>
   <div class="modal-body">
-    <p>Add <strong><span id="confirm-add-user-name"></span></strong> as a reviewer to <strong><%= "#{@course.code} #{@course.name} (#{@course_instance.name})" %></strong>?</p>
+    <p>Add <strong><span id="confirm-add-user-name"></span></strong> as a reviewer to <strong><%= "#{@course.full_name} (#{@course_instance.name})" %></strong>?</p>
   </div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
@@ -82,7 +82,7 @@
     <h3>Remove reviewer</h3>
   </div>
   <div class="modal-body">
-    <p>Remove <strong><span id="confirm-remove-user-name"></span></strong> from <strong><%= "#{@course.code} #{@course.name} (#{@course_instance.name})" %></strong>?</p>
+    <p>Remove <strong><span id="confirm-remove-user-name"></span></strong> from <strong><%= "#{@course.full_name} (#{@course_instance.name})" %></strong>?</p>
   </div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>

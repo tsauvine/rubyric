@@ -22,7 +22,7 @@
   <div class="breadcrumbs">
     <ul>
       <% if @course %>
-        <li class="first"><%= "#{@course.code} #{@course.name}" %></li>
+        <li class="first"><%= "#{@course.full_name}" %></li>
       <% end %>
 
       <% if @course_instance %>

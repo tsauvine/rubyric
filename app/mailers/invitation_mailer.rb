@@ -11,7 +11,7 @@ class InvitationMailer < ActionMailer::Base
     @exercise_id = exercise_id
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
-      subject = t('invitation_mailer.group_invitation.subject', :course => "#{@course.code} #{@course.name}")
+      subject = t('invitation_mailer.group_invitation.subject', :course => "#{@course.full_name}")
       mail(:to => @group_member.email, :subject => subject)
     end
   end
@@ -21,7 +21,7 @@ class InvitationMailer < ActionMailer::Base
     @invitation = Invitation.find(invitation_id)
     @course = Course.find(@invitation.target_id)
     
-    subject = "#{@course.code} #{@course.name} - Rubyric instructor access"
+    subject = "#{@course.full_name} - Rubyric instructor access"
     mail(:to => @invitation.email, :subject => subject)
   end
 
@@ -31,7 +31,7 @@ class InvitationMailer < ActionMailer::Base
     @course_instance = CourseInstance.find(@invitation.target_id)
     @course = @course_instance.course
     
-    subject = "#{@course.code} #{@course.name} - Rubyric reviewer access"
+    subject = "#{@course.full_name} - Rubyric reviewer access"
     mail(:to => @invitation.email, :subject => subject)
   end
   

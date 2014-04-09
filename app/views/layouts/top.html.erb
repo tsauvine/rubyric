@@ -17,7 +17,7 @@
     <ul>
       <li class="first"><%= link_to 'Rubyric', root_url %></li>
       <% if @course && !@course.new_record? %>
-        <li>/ <%= link_to "#{@course.code} #{@course.name}", @course %></li>
+        <li>/ <%= link_to "#{@course.full_name}", @course %></li>
       <% end %>
 
       <% if @course_instance && !@course_instance.new_record? %>

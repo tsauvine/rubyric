@@ -3,7 +3,7 @@
 <% end %>
 
 <div class="page-header">
-  <h1><%= "#{@course.code} #{@course.name}" %></h1>
+  <h1><%= "#{@course.full_name}" %></h1>
 </div>
 
 <div class="row">
@@ -68,7 +68,7 @@
     <h3>Add instructor</h3>
   </div>
   <div class="modal-body">
-    <p>Add <strong><span id="confirm-add-user-name"></span></strong> as an instructor to <strong><%= "#{@course.code} #{@course.name}" %></strong>?<br />
+    <p>Add <strong><span id="confirm-add-user-name"></span></strong> as an instructor to <strong><%= "#{@course.full_name}" %></strong>?<br />
     Instructors have full access to all course instances (also previous years).</p>
   </div>
   <div class="modal-footer">
@@ -84,7 +84,7 @@
     <h3>Remove instructor</h3>
   </div>
   <div class="modal-body">
-    <p>Remove <strong><span id="confirm-remove-user-name"></span></strong> from <strong><%= "#{@course.code} #{@course.name}" %></strong>?</p>
+    <p>Remove <strong><span id="confirm-remove-user-name"></span></strong> from <strong><%= "#{@course.full_name}" %></strong>?</p>
   </div>
   <div class="modal-footer">
     <a href="#" class="btn" data-dismiss="modal">Cancel</a>
