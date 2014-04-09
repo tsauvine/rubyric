@@ -53,6 +53,8 @@ class ApplicationController < ActionController::Base
     #  I18n.locale = current_user.locale
     elsif !session[:locale].blank?  # Get locale from session
       I18n.locale = session[:locale]
+    else
+      I18n.locale = I18n.default_locale
     end
   end
   
