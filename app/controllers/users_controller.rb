@@ -13,6 +13,7 @@ class UsersController < ApplicationController
     #return access_denied unless is_admin?(current_user)
     # Anyone can create an account
     @user = User.new
+    @user.email = params[:email]
     
     log "create_user_traditional view"
   end
