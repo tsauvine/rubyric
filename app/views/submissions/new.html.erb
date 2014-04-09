@@ -84,7 +84,7 @@
               <td>
                 <% submission.reviews.each do |review| %>
                   <% if review.status == 'mailed' %>
-                    <%= link_to 'View feedback', review %>
+                    <%= link_to 'View feedback', review_path(review, :member_token => params[:member_token], :group_token => params[:group_token]) %>
                     <% unless review.filename.blank? %>
                       (<%= link_to review.filename, download_review_path(review) %>)
                     <% end %>

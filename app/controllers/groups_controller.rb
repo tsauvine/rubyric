@@ -217,28 +217,4 @@ class GroupsController < ApplicationController
     redirect_to(groups_url)
   end
 
-  
-  private
-  def group_membership_validated(group)
-    if current_user
-      return false unless group.has_member?(current_user)
-      
-    elsif params[:member_token]
-      member = GroupMember.find_by_access_token(params[:member_token])
-      
-      if !member || member.group_id != group.id
-        log "submit authentication failed with member token #{params[:member_token]}"
-        return false
-      end
-    elsif params[:group_token]
-      group = Group.find_by_access_token(params[:group_token])
-      
-      if !group || group.id != group.id
-        log "submit authentication failed with group token #{params[:group_token]}"
-        return false
-      end
-    end
-    
-    return true
-  end
 end

@@ -7,7 +7,7 @@
 <p>
   Submission:
   <%=l @submission.created_at, :format => :long %>
-  (<%= link_to "#{@submission.extension}", @submission %>)
+  (<%= link_to "#{@submission.extension}", submission_url(@submission, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
 </p>
 
 <% unless @exercise.anonymous_graders %>
@@ -21,4 +21,4 @@
 
 <p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
 
-<p><%= link_to 'Back', submit_url(@exercise.id, :group => @group) %></p>
+<p><%= link_to 'Back', submit_url(@exercise.id, :group => @group, :member_token => params[:member_token], :group_token => params[:group_token]) %></p>

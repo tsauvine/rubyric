@@ -18,16 +18,15 @@
       
       <!-- ko foreach: annotations -->
         <div class="annotation" data-bind="position: screenPosition, clickBubble: false">
+          <div class="grade" data-bind="text: grade">
+          </div>
+          <div class="content" data-bind="html: escaped_content">
+          </div>
           <div class="statusbar">
             <!-- ko if: phrase -->
               <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
             <!-- /ko -->
             <div class="clearfix"></div>
-          </div>
-          
-          <div class="grade" data-bind="text: grade">
-          </div>
-          <div class="content" data-bind="html: escaped_content">
           </div>
           <div class="clearfix"></div>
         </div>

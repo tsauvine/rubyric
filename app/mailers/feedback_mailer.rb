@@ -9,6 +9,7 @@ class FeedbackMailer < ActionMailer::Base
     @course_instance = @exercise.course_instance
     @course = @course_instance.course
     @grader = @review.user
+    group = review.submission.group
 
     if @course.email.blank?
       from = @grader.email
@@ -21,7 +22,7 @@ class FeedbackMailer < ActionMailer::Base
 
     # Collect receiver addresses
     recipients = []
-    review.submission.group.group_members.each do |member|
+    group.group_members.each do |member|
       if member.user
         recipients << member.user.email unless member.user.email.blank?
       else
@@ -45,7 +46,7 @@ class FeedbackMailer < ActionMailer::Base
     
     if review.type == 'AnnotationAssessment'
       template_name = 'annotation'
-      @review_url = review_url(review.id, :protocol => 'https://')
+      @review_url = review_url(review.id, :group_token => group.access_token, :protocol => 'https://')
     else
       template_name = 'review'
     end

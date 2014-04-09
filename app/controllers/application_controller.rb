@@ -160,6 +160,35 @@ class ApplicationController < ActionController::Base
     return false
   end
   
+  def group_membership_validated(group)
+    if current_user
+      logger.debug "Checking current user"
+      if group.has_member?(current_user)
+        logger.debug "Membership confirmed"
+        return true
+      end
+      
+    elsif params[:member_token]
+      logger.debug "Checking member token"
+      member = GroupMember.find_by_access_token(params[:member_token])
+      
+      if member && member.group_id == group.id
+        log "submit authentication succeeded with member token #{params[:member_token]}"
+        return true
+      end
+    elsif params[:group_token]
+      logger.debug "Checking group token"
+      grp = Group.find_by_access_token(params[:group_token])
+      
+      if grp && grp.id == group.id
+        log "submit authentication succeeded with group token #{params[:group_token]}"
+        return true
+      end
+    end
+    
+    return false
+  end
+  
   # Send email on exception
   rescue_from Exception do |exception|
     begin
