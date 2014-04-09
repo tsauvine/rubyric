@@ -59,7 +59,7 @@ class Group < ActiveRecord::Base
     member = GroupMember.new(:email => user.email, :studentnumber => user.studentnumber)
     member.group = self
     member.user = user
-    member.save
+    member.save(:validate => false)
     
     self.course_instance.students << user unless self.course_instance.students.include?(user)
   end

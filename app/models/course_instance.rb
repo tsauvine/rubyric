@@ -142,7 +142,8 @@ class CourseInstance < ActiveRecord::Base
     # Create groups and submissions
     for i in (1..groups_count)
       # Create group
-      group = Group.create(:course_instance_id => self.id, :name => "Group #{i}", :max_size => 3)
+      group = Group.new(:course_instance_id => self.id, :name => "Group #{i}", :max_size => 3)
+      group.save(:validate => false)
 
       # Add users to group
       students_count = rand(3) # self.groupsizemin + rand(self.groupsizemax - self.groupsizemin + 1)
