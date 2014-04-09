@@ -52,13 +52,12 @@ class SubmissionsController < ApplicationController
     return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
 
     # Check that instance is active and student is enrolled
-    return unless submission_policy_accepted || @is_teacher
+    return unless @is_teacher || submission_policy_accepted
     
     # Find groups that the user is part of
     if @is_teacher
       @available_groups = Group.where('course_instance_id=?', @course_instance.id).includes(:users).order(:name)
     elsif @user
-      # FIXME: does this work?
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, @user.id).joins(:users).order(:name).all.select { |group| group.users.size <= @exercise.groupsizemax }
     else
       @available_groups = []
@@ -145,7 +144,7 @@ class SubmissionsController < ApplicationController
     logger.debug "Login accepted"
 
     # Check that instance is active and student is enrolled
-    return unless submission_policy_accepted || @is_teacher
+    return unless @is_teacher || submission_policy_accepted
     logger.debug "Submission policy accepted"
     
     if @submission.group
