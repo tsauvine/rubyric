@@ -184,10 +184,7 @@ class @Rubric
   # Parses the JSON data returned by the server. See loadRubric.
   #
   parseRubric: (data) ->
-    unless data
-      # TODO
-      alert('Rubric has not been prepared')
-      return
+    data ||= {}
     
     @gradingMode = data['gradingMode'] || 'no'
 
@@ -214,7 +211,7 @@ class @Rubric
         i++
 
     previousPage = undefined
-    for page_data in data['pages']
+    for page_data in (data['pages'] || [])
       page = new Page(this, this)
       page.load_rubric(page_data)
       @pages.push(page)
