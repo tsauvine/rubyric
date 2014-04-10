@@ -113,6 +113,37 @@ ko.bindingHandlers.position = {
     value['updated'] = true
 }
 
+class SetSelectedPhraseCommand
+  constructor: (@phrase) ->
+    # TODO: @previous_phrase = ...
+    
+    @phrase.criterion.setGrade(phrase) if phrase.grade?
+    
+  undo: ->
+    # TODO
+    
+  as_json: ->
+    {
+      command: 'set_selected_phrase'
+      phrase_id: @phrase.id
+      criterion_id: @phrase.criterion.id
+      page_id: @phrase.criterion.page.id
+    }
+
+class SetPageGradeCommand
+  constructor: (@page, @grade) ->
+    console.log @grade
+    # TODO: @previous_grade = ...
+  
+  undo: ->
+  
+  as_json: ->
+    {
+      command: 'set_page_grade'
+      page_id: @page.id
+      grade: @grade
+    }
+
 class CreateAnnotationCommand
   constructor: (@page, options) ->
     @annotation = new Annotation(options)
@@ -321,6 +352,12 @@ class AnnotationEditor extends Rubric
     
     this.parseRubric(window.rubric)
     
+    for page in @pages
+      do (page) =>
+        page.grade.subscribe (new_grade) =>
+          this.addCommand(new SetPageGradeCommand(page, new_grade))
+
+    
     ko.applyBindings(this)
   
     this.parseReview(window.review)
@@ -360,6 +397,10 @@ class AnnotationEditor extends Rubric
       annotation = new Annotation(options)
       submission_page.annotations().push(annotation)
       this.subscribeToAnnotation(annotation)
+    
+    for page_data in (data['pages'] || [])
+      page = @pagesById[page_data['id']]
+      page.load_review(page_data) if page
     
     for submission_page in @submission_pages()
       submission_page.annotations.valueHasMutated()
@@ -408,7 +449,7 @@ class AnnotationEditor extends Rubric
   
   
   clickGrade: (phrase) =>
-    phrase.criterion.setGrade(phrase) if phrase.grade?
+    this.addCommand(new SetSelectedPhraseCommand(phrase))
     @saved = false
   
   

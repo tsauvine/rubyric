@@ -5,19 +5,21 @@ class AnnotationAssessment < Review
     Review.transaction do
       review = Review.find(id)
       commands = JSON.parse(params['payload'])
-      assessment = JSON.parse(review.payload || '{"annotations": []}')
+      assessment = JSON.parse(review.payload || '{"annotations": [], "pages": []}')
+      annotations = []
+      pages = {}
       logger.debug "== Current review =="
       logger.debug assessment
       
       annotations_to_create = []  # array of hashes
       annotations_to_delete = {}  # id => true
       
-      modified_content = {}    # id => 'content'
-      modified_grade = {}      # id => grade
-      modified_position = {}   # id => {x: , y:}
+      modified_content = {}       # id => 'content'
+      modified_grade = {}         # id => grade
+      modified_position = {}      # id => {x: , y:}
       
-      annotations = []
-      
+      new_page_grades = {}        # page_id => grade
+      new_phrase_selections = []  # [{page_id: , criterion_id: , phrase_id: }]
       
       # Load commands
       commands.each do |command|
@@ -31,10 +33,55 @@ class AnnotationAssessment < Review
           modified_content[id] = command['content'] if command['content']
           modified_grade[id] = command['grade'] if command['grade']
           modified_position[id] = command['page_position'] if command['page_position']
+        when 'set_page_grade'
+          new_page_grades[command['page_id']] = command['grade']
+        when 'set_selected_phrase'
+          new_phrase_selections << {'page_id' => command['page_id'], 'criterion_id' => command['criterion_id'], 'phrase_id' => command['phrase_id']}
         end
       end
       
-      # Do deletions and modifications. Find next free id.
+      # Load existing pages
+      assessment['pages'].each do |page|
+        page_id = page['id']
+        next if page_id.nil?
+        pages[page_id] = page
+      end
+      
+      # Set new page grades
+      new_page_grades.each do |page_id, new_grade|
+        page = pages[page_id]
+        unless page
+          page = {'id' => page_id, 'criteria' => []}
+          pages[page_id] = page
+        end
+        page['grade'] = new_grade
+      end
+      
+      # Set selected phrases
+      new_phrase_selections.each do |new_selection|
+        page_id = new_selection['page_id']
+        logger.debug "PAGE_ID: #{page_id}"
+        page = pages[page_id]
+        unless page
+          page = {'id' => page_id, 'criteria' => []}
+          pages[page_id] = page
+        end
+        
+        criterion_id = new_selection['criterion_id']
+        criterion = page['criteria'].select {|criterion| criterion['criterion_id'] == criterion_id}.first
+        
+        if criterion
+          criterion['selected_phrase_id'] = new_selection['phrase_id']
+          logger.debug "PHRASE_ID: #{new_selection['phrase_id']}"
+        else
+          criterion = {'criterion_id' => criterion_id, 'selected_phrase_id' => new_selection['phrase_id']}
+          logger.debug "PHRASE_ID: #{new_selection['phrase_id']}"
+          logger.debug "CRITERION_ID: #{criterion_id}"
+          page['criteria'] << criterion
+        end
+      end
+      
+      # Do deletions and modifications of annotations. Find next free id.
       max_id = -1
       assessment['annotations'].each do |annotation|
         id = annotation['id']
@@ -67,9 +114,11 @@ class AnnotationAssessment < Review
         max_id += 1
       end
       
-      logger.debug "== New review =="
-      logger.debug annotations
+      # Serialize
       assessment['annotations'] = annotations
+      assessment['pages'] = pages.values
+      logger.debug "== New review =="
+      logger.debug assessment
       
       review.payload = assessment.to_json()
       review.save()
