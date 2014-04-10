@@ -132,7 +132,6 @@ class SetSelectedPhraseCommand
 
 class SetPageGradeCommand
   constructor: (@page, @grade) ->
-    console.log @grade
     # TODO: @previous_grade = ...
   
   undo: ->
@@ -348,7 +347,15 @@ class AnnotationEditor extends Rubric
     # reviewEditor features
     @saved = true
     @finalizing = ko.observable(false)
+    
     @finalGrade = ko.observable()
+    finalGrade = $('#review_grade').val()
+    @finalGrade(finalGrade) if finalGrade != ''
+    
+    status = $('#review_status').val()
+    @finalizing(true) if status.length > 0 && status != 'started'
+    
+    $('#tab-finish-link').tab('show') if @finalizing()
     
     this.parseRubric(window.rubric)
     
@@ -357,10 +364,9 @@ class AnnotationEditor extends Rubric
         page.grade.subscribe (new_grade) =>
           this.addCommand(new SetPageGradeCommand(page, new_grade))
 
+    this.parseReview(window.review)
     
     ko.applyBindings(this)
-  
-    this.parseReview(window.review)
     
     @zoom_selection.subscribe =>
       @zoom(@zoom_selection().value)
@@ -404,6 +410,26 @@ class AnnotationEditor extends Rubric
     
     for submission_page in @submission_pages()
       submission_page.annotations.valueHasMutated()
+    
+    if (@gradingMode == 'average' && @grades.length > 0)
+      @averageGrade = ko.computed((-> 
+        grades = []
+        for page in @pages
+          grades.push(page.grade())
+        
+        return this.calculateGrade(grades)
+      ), this)
+    else if @gradingMode == 'sum'
+      @averageGrade = ko.computed((-> 
+        grades = []
+        for page in @pages
+          grade = page.averageGrade()
+          grades.push(grade) if grade?
+        
+        return this.calculateGrade(grades)
+      ), this)
+    else
+      @averageGrade = ko.observable()
   
   
   addCommand: (command) ->
@@ -426,16 +452,18 @@ class AnnotationEditor extends Rubric
     @finalizing(false)
   
   
-  showNextPage: (page) ->
+  showNextPage: (page) =>
     if page.nextPage
       page.nextPage.showTab()
     else
       this.finish()
-      #$('#tab-finish-link').tab('show')
+      $('#tab-finish-link').tab('show')
     
     # TODO: scroll to top
     #window.scrollTo(0, 0)
   
+  clickCancelFinalize: (data, event) =>
+    @finalizing(false)
   
   finish: ->
     return if @finalizing()  # Ignore if already finalizing
@@ -444,7 +472,7 @@ class AnnotationEditor extends Rubric
     
     # Calculate grade
     grades = @pages.map (page) -> page.grade()
-    grade = @rubric.calculateGrade(grades)
+    grade = this.calculateGrade(grades)
     @finalGrade(grade)
   
   
@@ -478,13 +506,44 @@ class AnnotationEditor extends Rubric
     console.log @commandBuffer.as_json()
 
   # Populates the HTML-form from the model. This is called just before submitting.
-  save: ->
+  save: (options) ->
+    options ||= {}
+  
     # Encode review as JSON
     $('#review_payload').val(JSON.stringify(@commandBuffer.as_json()))
+    
+    # Set grade
+    if @gradingMode == 'average'
+      finalGrade = @finalGrade()
+    else if @gradingMode == 'sum'
+      finalGrade = @averageGrade()
+    else
+      finalGrade = undefined
+    
+    if finalGrade? && finalGrade != false
+      $('#review_grade').val(finalGrade)
+    else
+      $('#review_grade').val('')
+    
+    # Set status
+    if @finalizing()
+      if @gradingMode == 'average' && @grades.length > 0 && !@finalGrade()?
+        status = 'unfinished'
+      else
+        status = 'finished'
+        
+        $('#send_review').val('true') if options['send']?  # Send immediately?
+    else
+      status = 'started'
+    
+    $('#review_status').val(status)
+    
     @saved = true
     
     return true
-    
+  
+  saveAndSend: ->
+    this.save({send: true})
 
 jQuery ->
   new AnnotationEditor

@@ -16,6 +16,7 @@
     <%= f.hidden_field :payload %>
     <%= f.hidden_field :status %>
     <%= f.hidden_field :grade %>
+    <%= hidden_field_tag :send_review %>
 
     <div class="rubric">
       <div class="toolbar">
@@ -32,6 +33,9 @@
           <li class="active"><a href="#page-overview" data-toggle='tab'>Overview</a></li>
           <!-- ko foreach: pages -->
             <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
+          <!-- /ko -->
+          <!-- ko if: finishable() || finalizing() -->
+            <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
           <!-- /ko -->
           <button type="submit" class="btn btn-success" data-bind="click: save">Save</button>
         </ul>
@@ -78,6 +82,12 @@
             <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
               <h2 data-bind="text: name"></h2>
               
+              <!-- ko if: $root.finalizing -->
+              <div class="alert alert-info">
+                Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
+              </div>
+            <!-- /ko -->
+            
               <!-- Rubric -->
               <div class="" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
                 <div class="criterion">
@@ -142,7 +152,58 @@
               <!-- /ko -->
             </div>
           <!-- /ko -->
-
+          
+          <!-- Finish tab -->
+          <div class="tab-pane" id="tab-finish">
+            <h2>Finalize Feedback</h2>
+            
+            <!-- ko if: gradingMode == 'average' && $root.grades.length > 0 -->
+              <h3>Grades</h3>
+              <table>
+                <tbody data-bind="foreach: pages">
+                  <tr>
+                    <td><span data-bind="text: name"></span>:</td>
+                    <td data-bind="text: grade"></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>Mean:</strong></td>
+                    <td><strong data-bind="text: averageGrade"></strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            
+              <h3>Final Grade</h3>
+              <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
+            <!-- /ko -->
+            <!-- ko if: gradingMode == 'sum'-->
+              <h3>Points</h3>
+              <table>
+                <tbody data-bind="foreach: pages">
+                  <tr>
+                    <td><span data-bind="text: name"></span>:</td>
+                    <td data-bind="text: averageGrade"></td>
+                  </tr>
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td><strong>Sum:</strong></td>
+                    <td><strong data-bind="text: averageGrade"></strong></td>
+                  </tr>
+                </tfoot>
+              </table>
+            <!-- /ko -->
+            
+            <p>
+              <button class="btn btn-success" data-bind="click: save">Save</button>
+              
+              <% if @exercise.grader_can_email %>
+                <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
+              <% end %>
+            </p>
+          </div>
+            
         </div> <!-- /tab-contents -->
       </div>
     </div> <!-- /rubric -->

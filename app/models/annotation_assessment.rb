@@ -4,6 +4,9 @@ class AnnotationAssessment < Review
   def update_from_json(id, params)
     Review.transaction do
       review = Review.find(id)
+      review.grade = params['grade']
+      review.status = params['status']
+      
       commands = JSON.parse(params['payload'])
       assessment = JSON.parse(review.payload || '{"annotations": [], "pages": []}')
       annotations = []
