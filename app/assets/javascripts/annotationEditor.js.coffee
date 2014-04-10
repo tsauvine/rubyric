@@ -430,6 +430,7 @@ class AnnotationEditor extends Rubric
     }
     
     page.createAnnotation(options)
+    this.clickGrade(phrase)
   
 
   printJson: ->

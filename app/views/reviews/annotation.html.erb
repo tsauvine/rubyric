@@ -97,8 +97,14 @@
                       <tbody data-bind="foreach: phrases">
                         <tr class="phrase" data-bind="draggable: {}">
                           <td class="grade" data-bind="if: grade != undefined">
-                            <span data-bind="text: grade"></span>
+                            <!-- ko if: $root.gradingMode != 'average' -->
+                              <span data-bind="text: grade"></span>
+                            <!-- /ko -->
+                            <!-- ko if: $root.gradingMode == 'average' -->
+                              <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
+                            <!-- /ko -->
                           </td>
+                        
                           <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
                         </tr>
                       </tbody>
