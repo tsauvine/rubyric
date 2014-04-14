@@ -1,19 +1,18 @@
 ko.bindingHandlers.editable = {
   init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-#     $(element).click ->
-#       valueAccessor().editorActive(true)
+    value = valueAccessor()
 
     $(element).mousedown (event) ->
-      valueAccessor().clickStartPos = {x: event.pageX, y: event.pageY}
+      value.clickStartPos = {x: event.pageX, y: event.pageY}
     
     $(element).mouseup (event) ->
-      clickStartPos = valueAccessor().clickStartPos
+      clickStartPos = value.clickStartPos
       xDist = event.pageX - clickStartPos.x
       yDist = event.pageY - clickStartPos.y
       dist = xDist * xDist + yDist * yDist
       
       # Activate editor unless dragging
-      valueAccessor().editorActive(true) if dist < 25
+      value.editorActive(true) if dist < 25
   
   
   update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->

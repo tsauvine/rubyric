@@ -94,9 +94,8 @@
                   <!-- Heading -->
                   <h3>
                     <span data-bind="text: name"></span>
-                    <!-- ko if: selectedPhrase() -->
-                      <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
-                    <!-- /ko -->
+                    
+                    <span data-bind="text: grade()" type="button" class="btn highlighted"></span>
                   </h3>
 
                   <!-- Phrases -->
