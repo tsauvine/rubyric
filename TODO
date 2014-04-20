@@ -25,7 +25,11 @@ Exam: flow
 
 Annotation: selected phrases should not be collected when using sum mode
 
+Annotation: Disable draggables if finalized
+
 Annotation: Calculate phrase grade sum in sum mode
+
+Annotation: selected phrases should not be collected when using sum mode
 
 Polish frontpage
 

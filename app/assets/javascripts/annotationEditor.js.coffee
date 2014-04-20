@@ -117,7 +117,7 @@ class SetSelectedPhraseCommand
   constructor: (@phrase) ->
     # TODO: @previous_phrase = ...
     
-    @phrase.criterion.setGrade(phrase) if phrase.grade?
+    @phrase.criterion.setSelectedPhrase(phrase) if phrase.grade?
     
   undo: ->
     # TODO
@@ -167,6 +167,7 @@ class CreateAnnotationCommand
 class DeleteAnnotationCommand
   constructor: (@annotation) ->
     @annotation.submissionPage.annotations.remove(@annotation)
+    @annotation.phrase.criterion.annotations.remove(@annotation)
     @annotation.deleted = true
   
   undo: ->
@@ -294,6 +295,12 @@ class Annotation
     
     @gradeEditorActive = ko.observable(false)
     @contentEditorActive = ko.observable(false)
+    
+    @phrase.criterion.annotations.push(this)
+    
+    console.log @phrase.criterion.grade
+    @phrase.criterion.grade.subscribe (new_value) =>
+      console.log "Grade changed to #{new_value}"
   
     # Subscribe to screen position changes to update pagePos after dragging.
     @screenPosition.subscribe =>
@@ -487,6 +494,8 @@ class AnnotationEditor extends Rubric
   
   
   dropPhrase: (page, phrase, event, ui) =>
+    return if @finalizing()
+  
     offset = $(event.target).offset()
     
     options = {

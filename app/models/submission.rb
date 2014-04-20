@@ -3,6 +3,8 @@ require 'open3.rb'
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
+# page_width: in centimeters
+# page_height: in centimeters
 class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
@@ -193,13 +195,8 @@ class Submission < ActiveRecord::Base
     # https://github.com/yob/pdf-reader
     
     value = read_attribute(:page_count)
-    if value != nil
-      puts "Returning known page count"
-      return value
-    end
-    puts "Calculating page count"
+    return value if value != nil
     
-    #book_mode = true
     count = 1
     Open3.popen3('pdfinfo', self.full_filename()) do |stdin, stdout, stderr, wait_thr|
       while line = stdout.gets

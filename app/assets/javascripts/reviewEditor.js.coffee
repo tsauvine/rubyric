@@ -1,4 +1,4 @@
-#= require knockout-2.2.1
+#= require knockout-3.1.0
 #= require bootstrap
 
 class Page
@@ -12,7 +12,7 @@ class Page
     @feedback = []              # [{id: category_id, value: ko.observable('feedback')}]
     @feedbackByCategory = {}    # category_id => {<see above>}
 
-    @averageGrade = ko.computed((-> 
+    @averageGrade = ko.computed((=>
       grades = []
       for criterion in @criteria()
         grades.push(criterion.grade()) if criterion.gradeRequired
@@ -20,7 +20,7 @@ class Page
       return @rubric.calculateGrade(grades)
     ), this)
     
-    @finished = ko.computed((->
+    @finished = ko.computed((=>
       for criterion in @criteria()
         return false if criterion.gradeRequired && !criterion.grade()?
       
@@ -106,6 +106,7 @@ class Criterion
     @phrases = []
     @phrasesById = {} # id => Phrase
     @selectedPhrase = ko.observable()  # Phrase object which is selected as the grade
+    @annotations = ko.observableArray()
     @gradeRequired = false
 
     for phrase_data in data['phrases']
@@ -114,8 +115,22 @@ class Criterion
       @phrases.push(phrase)
       @phrasesById[phrase.id] = phrase
       @page.rubric.phrasesById[phrase.id] = phrase
+    
+    @grade = ko.computed((=>
+      grades = []
+      for annotation in @annotations()
+        grades.push(annotation.grade())
+      
+      if grades.length > 0
+        return  = @rubricEditor.calculateGrade(grades)
+      
+      if @selectedPhrase()
+        return @selectedPhrase().grade
+      
+      return undefined
+    ), this)
 
-  setGrade: (phrase) ->
+  setSelectedPhrase: (phrase) ->
     return if @rubricEditor.finalizing()
     
     # Unhilight previous
@@ -125,17 +140,17 @@ class Criterion
     # Hilight new
     @selectedPhrase(phrase)
     phrase.highlighted(true) if phrase
+
+#   grade: ->
+#     if @selectedPhrase()
+#       return @selectedPhrase().grade
+#     else
+#       return undefined
   
   to_json: ->
     return unless @selectedPhrase()
     
     return { criterion_id: @id, selected_phrase_id: @selectedPhrase().id }
-
-  grade: ->
-    if @selectedPhrase()
-      return @selectedPhrase().grade
-    else
-      return undefined
 
 
 class Phrase
@@ -223,7 +238,7 @@ class @Rubric
     @finalComment = data['finalComment']
 
     if (@gradingMode == 'average' && @grades.length > 0) || @gradingMode == 'sum'
-      @finishable = ko.computed((->
+      @finishable = ko.computed((=>
         for page in @pages
           return false unless page.finished()
         
@@ -349,7 +364,7 @@ class @ReviewEditor extends @Rubric
           category.value.subscribe((newValue) => @saved = false )
     
     if (@gradingMode == 'average' && @grades.length > 0)
-      @averageGrade = ko.computed((-> 
+      @averageGrade = ko.computed((=>
         grades = []
         for page in @pages
           grades.push(page.grade())
@@ -357,7 +372,7 @@ class @ReviewEditor extends @Rubric
         return this.calculateGrade(grades)
       ), this)
     else if @gradingMode == 'sum'
-      @averageGrade = ko.computed((-> 
+      @averageGrade = ko.computed((=>
         grades = []
         for page in @pages
           grade = page.averageGrade()
@@ -433,7 +448,7 @@ class @ReviewEditor extends @Rubric
     this.save({send: true})
     
   clickGrade: (phrase) =>
-    phrase.criterion.setGrade(phrase) if phrase.grade?
+    phrase.criterion.setSelectedPhrase(phrase) if phrase.grade?
     @saved = false
   
   clickPhrase: (phrase) =>
