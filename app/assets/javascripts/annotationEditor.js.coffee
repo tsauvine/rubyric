@@ -1,6 +1,5 @@
 #= require jquery.ui.draggable
 #= require jquery.ui.droppable
-#= require knockout-2.2.1
 #= require reviewEditor
 #= require editable
 
@@ -213,6 +212,9 @@ class SubmissionPage
     @src = ko.observable()
     @alt = ko.observable("Page #{@pageNumber + 1}")
     @nextPage = undefined
+    @width = ko.observable()
+    @containerWidth = ko.observable()
+    @height = ko.observable()
     
     @annotations = ko.observableArray()
     
@@ -226,9 +228,9 @@ class SubmissionPage
     new_zoom = @annotationEditor.zoom()
     pixelsPerCentimeter = 50.0 * new_zoom
     
-    @width = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
-    @containerWidth = ko.observable("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 400)}px")
-    @height = ko.observable("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
+    @width("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
+    @containerWidth("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 400)}px")
+    @height("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
     
     for annotation in @annotations()
       annotation.setZoom(new_zoom)
@@ -333,16 +335,31 @@ class AnnotationEditor extends Rubric
     @page_count = @element.data('page-count')
     @page_width = @element.data('page-width')
     @page_height = @element.data('page-height')
+    initialPageId = @element.data('initial-rubric-page')
+    initialZoom = @element.data('initial-zoom')
     
-    @zoom_options = [
-      {value: 0.25, text: "25 %"},
-      {value: 0.50, text: "50 %"},
-      {value: 1.00, text: "100 %"},
-      {value: 1.50, text: "150 %"},
-      {value: 2.00, text: "200 %"}
-    ]
-    @zoom_selection = ko.observable(@zoom_options[2])
-    @zoom = ko.observable(@zoom_selection().value)
+#     @zoom_options = [
+#       {value: 0.25, text: "25 %"},
+#       {value: 0.50, text: "50 %"},
+#       {value: 0.75, text: "75 %"},
+#       {value: 1.00, text: "100 %"},
+#       {value: 1.25, text: "125 %"},
+#       {value: 1.50, text: "150 %"},
+#       {value: 1.75, text: "175 %"},
+#       {value: 2.00, text: "200 %"}
+#     ]
+    
+    if initialZoom
+      zoom = parseInt(initialZoom) / 100.0
+      zoom = 1.0 if isNaN(zoom)
+      zoom = 0.25 if zoom < 0.25
+      zoom = 2.0 if zoom > 2.0
+    else
+      zoom = 1.0
+    
+    @zoom_selection = ko.observable(zoom * 100)
+    @zoom_selection.extend({ rateLimit: 1000 })
+    @zoom = ko.observable(zoom)
     
     @submission_pages = ko.observableArray()
     @phrasesById = {}
@@ -375,8 +392,20 @@ class AnnotationEditor extends Rubric
     
     ko.applyBindings(this)
     
-    @zoom_selection.subscribe =>
-      @zoom(@zoom_selection().value)
+    # Select initial rubric page    
+    initialPage = @pagesById[parseInt(initialPageId)] if initialPageId
+    if initialPage
+      initialPage.showTab()
+    else
+      $('#tab-overview-link').tab('show')
+      
+    # Subscribe to zoom changes
+    @zoom_selection.subscribe (new_value) =>
+      new_zoom = parseInt(new_value) / 100.0
+      new_zoom = 1.0 if isNaN(new_zoom)
+      new_zoom = 0.25 if new_zoom < 0.25
+      new_zoom = 2.0 if new_zoom > 2.0
+      @zoom(new_zoom)
   
   createSubmissionPages: ->
     previousPage = undefined
@@ -484,8 +513,9 @@ class AnnotationEditor extends Rubric
   
   
   clickGrade: (phrase) =>
-    this.addCommand(new SetSelectedPhraseCommand(phrase))
-    @saved = false
+    unless @gradingMode == 'sum'
+      this.addCommand(new SetSelectedPhraseCommand(phrase))
+      @saved = false
   
   
   clickPhrase: (phrase) =>
@@ -546,6 +576,9 @@ class AnnotationEditor extends Rubric
       status = 'started'
     
     $('#review_status').val(status)
+    
+    $('#zoom_preference').val(@zoom() * 100)
+    #$('#rubric_page_preference').val('true')
     
     @saved = true
     

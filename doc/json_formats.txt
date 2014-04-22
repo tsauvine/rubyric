@@ -1,0 +1,99 @@
+== Rubric ==
+
+{
+  "version": '2',
+  "pages": [
+    {
+      "id": 0,
+      "name": "Sivu 1",
+      "criteria": [
+        {
+          "id":0, 
+          "name":"Kriteeri 1.1",
+          "phrases":[
+             {"id":0, "text":"Mikä meni hyvin\nToinen rivi", "category":0, "grade":5},
+             {"id":1, "text":"<b>Mikä meni huonosti</b>", "category":1, "grade": "Hylätty"},
+             {"id":8, "text":"Jotain muuta","category":2}
+           ]
+        },
+        {
+          "id":1,
+          "name":"Kriteeri 1.2",
+          "phrases": [
+            {"id":8,"text":"Olipa hyvä","category":0},
+            {"id":8,"text":"Olipa huono","category":1}
+          ]
+        }
+      ]
+    },
+  ],
+  "grades": ["Failed",1,2,3,4,5],
+  "gradingMode": "average",
+  "feedbackCategories": [
+    {id:0, name:"Hyvää"},
+    {id:1, name:"Kehitettävää"},
+    {id:2, name:"Muuta"}
+  ],
+  "finalComment": "Loppukaneetti\n<b>Toinen rivi</b>"
+}
+
+
+
+== Review ==
+
+{
+  "version": '2',
+  "pages": [
+    {
+      "id": 0,
+      "grade": 3,
+      "criteria": [
+        {
+          criterion_id: 0,
+          selected_phrase_id: 1
+        }
+      ],
+      "feedback": [
+        {
+          "category_id":0,
+          "text":"Some feedback.\nMore feedback."
+        },
+        {
+          "category_id":1,
+          "text":"Some feedback.\nMore feedback."
+        },
+        {
+          "category_id":2,"text":""
+        }
+      ]
+    }
+  ]
+}
+
+
+
+== Annotation ==
+
+{
+  "annotations": [
+    {
+      "id": 0,
+      "submission_page_number": 2,
+      "phrase_id": 15,
+      "content": "Some feedback",
+      "grade": 5,
+      "page_position": {"x": 739, "y": 124}
+    }
+  ],
+  "pages": [
+    {
+      "id": 0,
+      "grade": 3,
+      "criteria": [
+        {
+          criterion_id: 0,
+          selected_phrase_id: 1
+        }
+    }
+  ]
+}

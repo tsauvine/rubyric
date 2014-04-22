@@ -9,6 +9,8 @@
 /log
 /tmp
 /submissions/
+/pdf_cache/
+/feedback/
 /test/coverage
 /config/database.yml
 /config/initializers/settings.rb

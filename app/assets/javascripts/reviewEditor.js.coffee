@@ -122,7 +122,7 @@ class Criterion
         grades.push(annotation.grade())
       
       if grades.length > 0
-        return  = @rubricEditor.calculateGrade(grades)
+        return @rubricEditor.calculateGrade(grades)
       
       if @selectedPhrase()
         return @selectedPhrase().grade
@@ -249,6 +249,7 @@ class @Rubric
 
   # grades: array of grade values (strings or numbers)
   calculateGrade: (grades) ->
+    console.log grades
     if @gradingMode == 'average'
       return this.calculateGradeMean(grades)
     else if @gradingMode == 'sum'
@@ -269,27 +270,35 @@ class @Rubric
     nonNumericGradesSeen = false
     gradeSum = 0.0
     indexSum = 0
+    indexCount = 0
     
     for grade in grades
       return undefined unless grade?
-    
-      index = @gradeIndexByValue[grade]
-      indexSum += index
       
-      # FIXME: does isNaN think that string "5" is numeric?
-      if isNaN(grade)
+      numericGrade = parseFloat(grade)
+      if isNaN(numericGrade)
         nonNumericGradesSeen = true
+        index = @gradeIndexByValue[grade]
       else
-        gradeSum += grade
+        gradeSum += numericGrade
+        index = @gradeIndexByValue[numericGrade]
     
-    if !@numericGrading
-      meanIndex = Math.round(indexSum / grades.length)
-      return @grades[meanIndex]
-    else if nonNumericGradesSeen
-      return undefined  # Grade must be selected manually
+      if index
+        indexSum += index
+        indexCount += 1
+
+    if @numericGrading
+      if nonNumericGradesSeen
+        return undefined  # Grade must be selected manually
+      else
+        meanGrade = Math.round(gradeSum / grades.length)
+        return meanGrade
     else
-      meanGrade = Math.round(gradeSum / grades.length)
-      return meanGrade
+      return undefined if indexCount < 1
+    
+      meanIndex = Math.round(indexSum / indexCount)
+      return @grades[meanIndex]
+      
   
   #
   # Calculates sum of grades

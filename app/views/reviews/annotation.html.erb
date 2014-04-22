@@ -11,12 +11,16 @@
   data-page-count="<%= @submission.page_count %>"
   data-page-width="<%= @submission.page_width %>"
   data-page-height="<%= @submission.page_height %>"
+  data-initial-rubric-page="<%= params['rubric_page'] || current_user.submission_sort_preference %>"
+  data-initial-zoom="<%= params['zoom'] || current_user.zoom_preference %>"
   >
   <%= form_for @review, :as => :review, :url => review_path(@review) do |f| %>
     <%= f.hidden_field :payload %>
     <%= f.hidden_field :status %>
     <%= f.hidden_field :grade %>
     <%= hidden_field_tag :send_review %>
+    <%= hidden_field_tag :zoom_preference %>
+    <%= hidden_field_tag :rubric_page_preference %>
 
     <div class="rubric">
       <div class="toolbar">
@@ -24,13 +28,14 @@
         
         <div>
           Zoom:
-          <select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select>
+          <!--select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select-->
+          <input class="input-mini" data-bind="value: zoom_selection, valueUpdate: 'input'" />%
         </div>
       </div>
     
       <div class="rubric-container">
         <ul id="tabs" class="nav nav-tabs">
-          <li class="active"><a href="#page-overview" data-toggle='tab'>Overview</a></li>
+          <li class=""><a href="#page-overview" id="tab-overview-link" data-toggle='tab'>Overview</a></li>
           <!-- ko foreach: pages -->
             <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
           <!-- /ko -->
@@ -41,7 +46,7 @@
         </ul>
         
         <div class="tab-content">
-          <div class="tab-pane active" id="page-overview">
+          <div class="tab-pane" id="page-overview">
             <div class="row-fluid">
               <!-- Warnings -->
               <% if (@review.status == 'mailed') %>

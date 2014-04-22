@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140402123710) do
+ActiveRecord::Schema.define(:version => 20140422173812) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -310,12 +310,14 @@ ActiveRecord::Schema.define(:version => 20140402123710) do
     t.string   "persistence_token"
     t.string   "perishable_token"
     t.string   "locale"
-    t.integer  "login_count",        :default => 0, :null => false
+    t.integer  "login_count",                :default => 0, :null => false
     t.datetime "last_request_at"
     t.datetime "last_login_at"
     t.datetime "current_login_at"
     t.integer  "organization_id"
-    t.integer  "failed_login_count", :default => 0, :null => false
+    t.integer  "failed_login_count",         :default => 0, :null => false
+    t.integer  "zoom_preference"
+    t.string   "submission_sort_preference"
   end
 
   add_index "users", ["last_request_at"], :name => "index_users_on_last_request_at"

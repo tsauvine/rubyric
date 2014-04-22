@@ -10,6 +10,8 @@ http://archive.plugins.jquery.com/project/jScrollTouch
 http://archive.plugins.jquery.com/project/Dragscrollable
 http://cubiq.org/iscroll-4
 
+http://www.mypromotionalpens.com/Promotional_Pens_Red_Ink_s/642.htm
+
 mainossivun malli:
 http://www.quicktimesheets.com/
 
@@ -17,7 +19,7 @@ https://detectify.com/
 
 = Soon =
 
-Annotation: params: zoom, rubric page
+Annotation: params: zoom
 
 Exam: student mapping
 
@@ -25,18 +27,18 @@ Exam: flow
 
 Annotation: selected phrases should not be collected when using sum mode
 
-Annotation: Disable draggables if finalized
+
+
+= Later =
 
 Annotation: Calculate phrase grade sum in sum mode
 
-Annotation: selected phrases should not be collected when using sum mode
+Annotation: Disable draggables if finalized
 
 Polish frontpage
 
 Pages cannot be rendered without access token
 
-
-= Later =
 
 Fix Batch assign
 

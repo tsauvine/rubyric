@@ -76,6 +76,19 @@ class ReviewsController < ApplicationController
     @deliver_immediately = @exercise.grader_can_email && params[:send_review] == 'true'
     params[:review][:status] = 'mailing' if @deliver_immediately
     
+    # User preferences
+    if params['zoom_preference']
+      current_user.zoom_preference = params['zoom_preference'].to_i
+      logger.debug "Setting zoom preference: #{current_user.zoom_preference}"
+      current_user.save
+    end
+    
+    if params['rubric_page_preference']
+      current_user.submission_sort_preference = params['rubric_page_preference'].to_i
+      logger.debug "Setting rubric page: #{current_user.submission_sort_preference}"
+      current_user.save
+    end
+    
     if @review.update_from_json(params[:id], params[:review])
       Review.delay.deliver_reviews([@review.id]) if @deliver_immediately
       

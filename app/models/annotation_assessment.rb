@@ -10,7 +10,7 @@ class AnnotationAssessment < Review
       commands = JSON.parse(params['payload'])
       assessment = JSON.parse(review.payload || '{"annotations": [], "pages": []}')
       annotations = []
-      pages = {}
+      pages_by_id = {}
       logger.debug "== Current review =="
       logger.debug assessment
       
@@ -43,31 +43,32 @@ class AnnotationAssessment < Review
         end
       end
       
-      # Load existing pages
+      # Index pages
       assessment['pages'].each do |page|
         page_id = page['id']
-        next if page_id.nil?
-        pages[page_id] = page
+        pages_by_id[page_id] = page unless page_id.nil?
       end
       
       # Set new page grades
       new_page_grades.each do |page_id, new_grade|
-        page = pages[page_id]
+        page = pages_by_id[page_id]
         unless page
           page = {'id' => page_id, 'criteria' => []}
-          pages[page_id] = page
+          pages_by_id[page_id] = page
+          assessment['pages'] << page
         end
+        
         page['grade'] = new_grade
       end
       
       # Set selected phrases
       new_phrase_selections.each do |new_selection|
         page_id = new_selection['page_id']
-        logger.debug "PAGE_ID: #{page_id}"
-        page = pages[page_id]
+        page = pages_by_id[page_id]
         unless page
           page = {'id' => page_id, 'criteria' => []}
-          pages[page_id] = page
+          pages_by_id[page_id] = page
+          assessment['pages'] << page
         end
         
         criterion_id = new_selection['criterion_id']
@@ -75,11 +76,8 @@ class AnnotationAssessment < Review
         
         if criterion
           criterion['selected_phrase_id'] = new_selection['phrase_id']
-          logger.debug "PHRASE_ID: #{new_selection['phrase_id']}"
         else
           criterion = {'criterion_id' => criterion_id, 'selected_phrase_id' => new_selection['phrase_id']}
-          logger.debug "PHRASE_ID: #{new_selection['phrase_id']}"
-          logger.debug "CRITERION_ID: #{criterion_id}"
           page['criteria'] << criterion
         end
       end
@@ -117,12 +115,18 @@ class AnnotationAssessment < Review
         max_id += 1
       end
       
-      # Serialize
       assessment['annotations'] = annotations
-      assessment['pages'] = pages.values
+      #assessment['pages'] = pages.values
+      
+      # Calculate grade
+      # TODO: if grading_mode == 'sum'
+      
+      
+      
       logger.debug "== New review =="
       logger.debug assessment
       
+      # Serialize
       review.payload = assessment.to_json()
       review.save()
     end
