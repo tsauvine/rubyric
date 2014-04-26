@@ -1,0 +1,22 @@
+<h2>Place Order</h2>
+
+<%= form_for @order do |f| %>
+  <form class="form-horizontal">
+    <div class="control-group">
+      <%= f.label :amount %>
+      <div class="controls">
+        <%= f.text_field :amount %>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :description %>
+      <div class="controls">
+        <%= @order.description %>
+      </div>
+    </div>
+    
+    <div class="form-actions">
+      <%= f.button "Place Order", :type=>:submit, :class => "btn btn-primary" %>
+    </div>
+<% end %>

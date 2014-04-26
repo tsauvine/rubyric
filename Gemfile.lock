@@ -74,6 +74,12 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     multi_json (1.9.2)
+    paypal-sdk-core (0.2.8)
+      multi_json (~> 1.0)
+      xml-simple
+    paypal-sdk-rest (0.6.1)
+      paypal-sdk-core (~> 0.2.8)
+      uuidtools (~> 2.1)
     pg (0.17.1)
     polyglot (0.3.4)
     rack (1.4.5)
@@ -128,6 +134,8 @@ GEM
     uglifier (2.5.0)
       execjs (>= 0.3.0)
       json (>= 1.8.0)
+    uuidtools (2.1.4)
+    xml-simple (1.1.3)
 
 PLATFORMS
   ruby
@@ -140,6 +148,7 @@ DEPENDENCIES
   delayed_job_active_record!
   jquery-rails
   jquery-ui-rails
+  paypal-sdk-rest
   pg
   rails (= 3.2.17)
   sass-rails (~> 3.2.3)

@@ -1,0 +1,23 @@
+<h2>Order</h2>
+
+<p>
+  <%= @order.amount %>
+</p>
+<p>
+  <%= @order.description %>
+</p>
+
+<p>
+  <h3>Payment</h3>
+  
+  <% if @order.payment.present? %>
+    <% if @order.payment.state == "approved" %>
+      Paid with
+      <%= @order.payment.payer.payment_method %>
+    <% elsif @order.approve_url %>
+      <%= link_to "Pay with PayPal", @order.approve_url %>
+    <% else %>
+      Payment or completed(<%= @order.payment.state %>) 
+    <% end %>
+  <% end %>
+</p>

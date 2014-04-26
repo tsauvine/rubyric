@@ -90,7 +90,10 @@ Rubyric::Application.routes.draw do
     end
   end
 
-  
+  resources :orders do
+    get :execute
+    get :cancel
+  end
 
   #match '/exercise/new/:instance' => 'exercises#new'
   match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit

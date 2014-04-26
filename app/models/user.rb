@@ -8,13 +8,15 @@ class User < ActiveRecord::Base
     #c.transition_from_restful_authentication = true
   end
 
-  belongs_to :organization
-
   validates :login, :uniqueness => true, :allow_nil => true
   validates :email, :uniqueness => true
   
   attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
 
+  belongs_to :organization
+  
+  has_many :orders
+  
   has_many :group_members
   has_many :groups, :through => :group_members
   #has_and_belongs_to_many :groups
