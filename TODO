@@ -19,14 +19,21 @@ https://detectify.com/
 
 = Soon =
 
+Paypal
+
+Bootstrap 3
+
+Polish frontpage
+
 Annotation: params: zoom
+
+Annotation: selected phrases should not be collected when using sum mode
 
 Exam: student mapping
 
 Exam: flow
 
-Annotation: selected phrases should not be collected when using sum mode
-
+Copy data from hut to com
 
 
 = Later =
@@ -35,16 +42,17 @@ Annotation: Calculate phrase grade sum in sum mode
 
 Annotation: Disable draggables if finalized
 
-Polish frontpage
-
 Pages cannot be rendered without access token
-
 
 Fix Batch assign
 
 Make student list work with GroupMembers
 
 Course new: disclaimer
+
+
+
+Daily hearbeat mail to admin
 
 Rubric editor: if all grades are deleted, phrase grades are not properly cleared
 

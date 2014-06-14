@@ -1,8 +1,15 @@
 class OrdersController < ApplicationController
+  before_filter :load_course
   before_filter :login_required
+  
+  def load_course
+    @course_instance = CourseInstance.find(params[:course_instance_id])
+    @course = @course_instance.course
+  end
   
   def index
     @orders = current_user.orders.all(:limit => 10, :order => "id DESC")
+    @order = Order.new
   end
 
   def new

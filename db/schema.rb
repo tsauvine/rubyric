@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140426141933) do
+ActiveRecord::Schema.define(:version => 20140529153144) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -330,6 +330,7 @@ ActiveRecord::Schema.define(:version => 20140426141933) do
     t.integer  "failed_login_count",         :default => 0, :null => false
     t.integer  "zoom_preference"
     t.string   "submission_sort_preference"
+    t.string   "tester"
   end
 
   add_index "users", ["last_request_at"], :name => "index_users_on_last_request_at"

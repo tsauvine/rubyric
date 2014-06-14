@@ -21,6 +21,7 @@ Rubyric::Application.routes.draw do
 
   resources :course_instances, :only => [:show, :edit, :destroy] do
     post :send_feedback_bundle
+    get :create_example_groups
     
     resources :exercises, :only => [:new, :create, :update]
     
@@ -36,7 +37,10 @@ Rubyric::Application.routes.draw do
       end
     end
     
-    get :create_example_groups
+    resources :orders do
+      get :execute
+      get :cancel
+    end
   end
 
   resources :exercises, :only => [:show, :edit, :destroy] do
@@ -88,11 +92,6 @@ Rubyric::Application.routes.draw do
       post :upload
       get :download
     end
-  end
-
-  resources :orders do
-    get :execute
-    get :cancel
   end
 
   #match '/exercise/new/:instance' => 'exercises#new'

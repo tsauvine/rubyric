@@ -37,7 +37,6 @@
             <li class="<%= active_nav('teachers', 'index') %>"><%= link_to course_teachers_path(@course) do %><i class="icon-user"></i> Instructors<% end %></li>
           <% end %>
 
-
           <% if @course_instance and !@course_instance.new_record? %>
             <!-- Instance -->
             <li class="nav-header">Instance</li>
@@ -47,6 +46,9 @@
               <li class="<%= active_nav('reviewers', 'index') %>"><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-user"></i> Reviewers<% end %></li>
               <!--li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li-->
               <li class="<%= active_nav('groups', 'index') %>"><%= link_to course_instance_groups_path(@course_instance) do %><i class="icon-th"></i> Groups<% end %></li>
+              <% if (current_user.tester || '').include?('billing') %>
+                <li class="<%= active_nav('orders', 'index') %>"><%= link_to course_instance_orders_path(@course_instance) do %><i class="icon-shopping-cart"></i> Billing<% end %></li>
+              <% end %>
             <% end %>
 
             <!-- List of exercises-->

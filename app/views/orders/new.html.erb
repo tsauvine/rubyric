@@ -1,4 +1,21 @@
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'views/orders/new.js' %>
+<% end %>
+
 <h2>Place Order</h2>
+
+<input type="text" id="assignments" class="input-mini"> assignments
+<div id="slider-assignments" style="height:100px;"></div>
+
+<div id="slider-students" style="width: 200px;"></div>
+<input type="text" id="students" class="input-mini"> students
+
+
+<p>
+  <input type="text" id="assessments" class="input-mini"> assessments
+  =
+  <input type="text" id="price" class="input-mini"> €
+</p>
 
 <%= form_for @order do |f| %>
   <form class="form-horizontal">

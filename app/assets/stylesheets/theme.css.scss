@@ -76,3 +76,29 @@ div.topnavi {
   color: #fff;
 }
 
+
+table.pricing {
+  width: auto;
+  
+  
+  th {
+    padding: 1em;
+    text-align: center;
+    font-size: 400%;
+  }
+  
+  td {
+    width: 4em;
+    padding: 2em 1em;
+    vertical-align: middle;
+    text-align: center;
+    font-size: 200%;
+  }
+  
+  td:first-child {
+    width: 2em;
+    text-align: right;
+    font-size: 100%;
+  }
+
+}

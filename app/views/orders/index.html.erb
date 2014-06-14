@@ -1,4 +1,79 @@
-<h2>Orders</h2>
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'views/orders/index.js' %>
+<% end %>
+
+<div class="page-header">
+  <h1>Pricing</h1>
+</div>
+
+<!--
+<table class="table table-bordered pricing">
+  <thead>
+    <tr>
+      <th></th>
+      <th>S</th>
+      <th>M</th>
+      <th>L</th>
+    </tr>
+  </thead>
+  <tr>
+    <td>students</td>
+    <td>20</td>
+    <td>150</td>
+    <td>500</td>
+  </tr>
+  <tr>
+    <td>price</td>
+    <td>FREE</td>
+    <td>99 €</td>
+    <td>299 €</td>
+  </tr>
+</table>
+-->
+
+<div class="row">
+  <div class="span4 offset1">
+    <div class="well">
+      <p style="vertical-align: middle">Pricing: <span style="font-size: 200%; margin-left: 1em;">0.50 € / student</span></p>
+      <p>20 students for FREE</p>
+    </div>
+  </div>
+  <div class="span6">
+    <ul class="muted">
+      <li>If you don't know the number of students at the moment, you can order later. Submissions are received and can be reviewd but you cannot download the results if you exceed quota.</li>
+      <li>If the number of students turn out to be higher than you have paid for, you can pay for the extra students later.</li>
+    </ul>
+  </div>
+</div>
+
+<%= form_for [@course_instance, @order] do |f| %>
+
+  <div class="row">
+    <div class="span4 offset1">
+    
+      <div class="well">
+        <h2>Calculator</h2>
+  
+        <p>
+          <input type="text" id="students" class="input-mini" value="20"> students =
+          <span id="price" style="font-size: 200%; margin-left: 1em;">0</span> <span id="price" style="font-size: 200%">€</span>
+        </p>
+        
+        <p>
+          <div id="slider-students" style="width: 200px;"></div>
+        </p>
+        
+        <p style="margin-top: 3ex;">
+          <%= f.button "Order", :type=>:submit, :class => "btn btn-large btn-primary" %>
+        </p>
+      </div>
+    
+    </div>
+  </div>
+<% end %>
+
+
+<h2>Previous orders</h2>
 
 <table>
   <thead>
@@ -19,7 +94,7 @@
         <td><%= order.state %></td>
         <td><%= order.created_at %></td>
         <td><%= order.description %></td>
-        <td><%= link_to "Details", order_path(order) %></td>
+        <td><%= link_to "Details", course_instance_order_path(course_instance_id: @course_instance, id: order) %></td>
       </tr>
     <% end %>
   </tbody>
