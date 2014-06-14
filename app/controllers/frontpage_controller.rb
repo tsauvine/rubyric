@@ -9,7 +9,7 @@ class FrontpageController < ApplicationController
       render :action => 'course_instances'
     else
       @session = Session.new
-      render :action => 'info', :layout => 'narrow'
+      render :action => 'info', :layout => 'narrow-new'
     end
 
     log "frontpage"

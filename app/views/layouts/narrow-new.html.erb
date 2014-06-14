@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  
+  <title>Rubyric
+    <%= "- #{@exercise.name}" if @exercise && !@exercise.new_record? %>
+  </title>
+  <%= csrf_meta_tag %>
+  <%= stylesheet_link_tag "application-new", :media => "all" %>
+  <%= javascript_include_tag "application" %>
+  <%= yield(:javascript) %>
+  <%= render :partial => 'shared/analytics' -%>
+</head>
+
+<body>
+
+<!-- top -->
+<div class="navbar">
+  <div class="navbar-inner">
+    <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    
+    <ul class="nav pull-right">
+      <% if current_user %>
+        <li><%= link_to "My preferences", preferences_path, :class => 'pull-right' %></li>
+        <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete, :class => 'pull-right' %></li>
+      <% end %>
+    </ul>
+  </div>
+</div>
+
+<div class="container">
+  <!-- Content -->
+  <div class="row">
+    <!-- Flash messages -->
+    <% if flash[:warning] %>
+      <div class="alert"><%= flash[:warning] %></div>
+    <% end %>
+
+    <% if flash[:success] %>
+      <div class="alert alert-success"><%= flash[:success] %></div>
+    <% end %>
+
+    <% if flash[:error] %>
+      <div class="alert alert-error"><%= flash[:error] %></div>
+    <% end %>
+  </div>
+
+  <%= yield  %>
+</div>
+
+<% if content_for?(:footer) -%>
+<footer class="footer">
+  <div class="container">
+    <%= yield(:footer) %>
+  </div>
+</footer>
+<% end -%>
+
+</body>
+</html>
