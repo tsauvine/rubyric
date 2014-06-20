@@ -1,6 +1,9 @@
-<div class="page-header frontpage">
-  <h1>Rubyric</h1>
-</div>
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'views/frontpage/show' %>
+<% end %>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag 'frontpage', :media => "all" %>
+<% end %>
 
 <div class="row">
   <div class="col-sm-12">
@@ -13,25 +16,151 @@
 
 <hr />
 
-<div class="row">
-  <div class="col-sm-3">
-    <div class="">
-      <h2>Students</h2>
-      
-      <p>A link for submitting your assignment can be found from the homepage of your course (most likely in <a href="http://noppa.aalto.fi/">Noppa</a>)</p>
+<div id="carousel" class="carousel slide" data-ride="carousel">
+  <!-- Indicators -->
+  <ol class="carousel-indicators">
+    <li data-target="#carousel" data-slide-to="0" class="active"></li>
+    <li data-target="#carousel" data-slide-to="1"></li>
+    <li data-target="#carousel" data-slide-to="2"></li>
+  </ol>
+
+  <!-- Wrapper for slides -->
+  <div class="carousel-inner">
+    <div class="item active">
+      <%= image_tag('carousel-1.png', :alt => '') %>
+    </div>
+    
+    <div class="item">
+      <%= image_tag('carousel-2.png', :alt => '') %>
+    </div>
+    
+    <div class="item">
+      <%= image_tag('carousel-3.png', :alt => '') %>
     </div>
   </div>
 
-  <div class="col-sm-3 col-sm-offset-1">
-    <div class="">
-      <h2>Teachers</h2>
-      
-      <p>
-        Teachers of Aalto university can freely use rubyric.cs.hut.fi.
-        <%= link_to 'Click here to create a course.', new_course_path %>
-      </p>
-    </div>
+  <!-- Controls -->
+  <a class="left carousel-control" href="#carousel" data-slide="prev">
+    <span class="glyphicon glyphicon-chevron-left"></span>
+  </a>
+  <a class="right carousel-control" href="#carousel" data-slide="next">
+    <span class="glyphicon glyphicon-chevron-right"></span>
+  </a>
+</div>
+
+<!-- Features -->
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Features</h1>
+    <ul class="list-unstyled">
+      <li>Create a drop-box for <strong>receiving submissions</strong>.</li>
+      <li><strong>Distribute submissions</strong> to reviewers.</li>
+      <li>Create <strong>assessment rubrics</strong>.</li>
+      <li>Annotate submissions with <strong>feedback</strong>.</li>
+      <!--li>Send feedback to students by email.</li-->
+    </ul>
   </div>
+  <div class="col-sm-6 text-center">
+    <%= image_tag('stack.jpg', :alt => 'A stack of papers') %>
+  </div>
+</div>
+
+<!-- Why rubrics -->
+<div class="row">
+  <div class="col-sm-6 text-center">
+    <%= image_tag('pen.jpg', :alt => 'Manual assessment') %>
+    
+  </div>
+  <div class="col-sm-6">
+    <h1>Why rubrics</h1>
+    <ul>
+      <li>A <strong>rubric</strong> is an assessment template that defines the assessment criteria and describes what is required to reach different grades.</li>
+      <li>They help to ensure <strong>consistency</strong> when there are multiple reviewers.</li>
+      <li>They make it effortless to give <strong>comprehensive feedback</strong>.
+      Because many students make similar mistakes, large parts of feedback can be constructed from prewritten feedback phrases.</li>
+      <li>It is also possible to use Rubyric as ordinary <strong>annotation tool</strong> without preparing a rubric.</li>
+    </ul>
+  </div>
+  
+</div>
+
+<!-- Who's using -->
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Who's using Rubyric</h1>
+    <ul>
+      <li>So far, over 50 courses at Aalto University</li>
+    </ul>
+  </div>
+  <div class="col-sm-6 text-center">
+    <%= image_tag('computer.jpg', :alt => 'Computer assisted assessment') %>
+  </div>
+</div>
+
+<!-- Privacy -->
+<div class="row">
+  <div class="col-sm-6 text-center">
+    <%= image_tag('university.jpg', :alt => '') %>
+  </div>
+
+  <div class="col-sm-6">
+    <h1>We respect your privacy</h1>
+
+    <ul>
+      <li>
+        <strong>You are in control of your data.</strong><br />
+        <span class="">We do not store copies of students' submissions indefinitely or hand them over to third parties. Submissions and other personal data are deleted from our servers six months after the course is finished. You can download copies for your archiving first, of course.</span>
+      </li>
+      <li>We are a Finnish company with <strong>servers located in Europe</strong>.</li>
+    </ul>
+  </div>
+</div>
+
+<!-- Pricing -->
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Pricing</h1>
+    
+    <p style="font-size: 150%; margin-top: 2ex;"><strong>€ 0.49 / student,</strong> first 20 students for free</p>
+    <p style="margin: 2ex 0ex 4ex 0ex">Price includes one course offering (i.e. one semester) with 5 MB of storage per student.</p>
+    
+    <div class="well">
+      <p>Price calculator</p>
+      <p style="margin: 2ex 0ex 2ex 0ex; text-align: center">
+        <input style="width: 4em;" type="text" id="students" class="input-mini" value="20"> students
+        <span style="margin: 0em 1em;">=</span>
+        <span id="price" style="font-size: 200%">FREE</span>
+      </p>
+      
+      <div id="slider-students" style="margin-top: 2ex"></div>
+      
+      
+    </div> 
+    
+    <%= link_to 'Create a course', new_course_path, :class => 'btn btn-lg btn-primary', :id => 'create-course-button' %>
+  </div>
+  <div class="col-sm-6">
+    
+    
+
+  </div>
+</div>
+
+<!-- Team -->
+<!--
+<div class="row">
+  <div class="col-sm-6">
+    <h1>Who are we</h1>
+  </div>
+  <div class="col-sm-6">
+    
+  </div>
+</div>
+-->
+<% if false %>
+<div class="row">
+
+        
 
   <div class="col-sm-4 col-sm-offset-1">
     <!--
@@ -57,4 +186,20 @@
     -->
   </div>
 </div>
+<% end %>
 
+<% content_for :footer do %>
+  <div class="row">
+    <div class="col-sm-6">
+      <p>
+        Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an edtech company founded by a group of researchers and PhD students from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+      </p>
+    </div>
+    <div class="col-sm-6">
+      <%= image_tag('tapio.jpg', :alt => 'Tapio', :title => 'Tapio Auvinen') %>
+      <img src="http://www.bythemark.fi/images/archie.jpg" alt="Archie" title="Ari Korhonen"/>
+      <img src="http://www.bythemark.fi/images/juhah.jpg" alt="Juha" title="Juha Helminen"/>
+      <img src="http://www.bythemark.fi/images/juhas.jpg" alt="Juha" title="Juha Sorva"/>
+    </div>
+  </div>
+<% end %>

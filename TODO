@@ -16,27 +16,32 @@ mainossivun malli:
 http://www.quicktimesheets.com/
 
 https://detectify.com/
+http://moz.com/blog/new-title-tag-guidelines-preview-tool
+
+arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-Paypal
-
-Bootstrap 3
-
 Polish frontpage
 
-Annotation: params: zoom
+Paypal
+
+Demo
+
+Esite
+
+Test
 
 Annotation: selected phrases should not be collected when using sum mode
 
-Exam: student mapping
 
-Exam: flow
+= Later =
 
 Copy data from hut to com
 
-
-= Later =
+Annotation: params: zoom
+Exam: student mapping
+Exam: flow
 
 Annotation: Calculate phrase grade sum in sum mode
 

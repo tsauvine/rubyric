@@ -50,24 +50,10 @@
 
   <div class="row">
     <div class="span4 offset1">
-    
-      <div class="well">
-        <h2>Calculator</h2>
-  
-        <p>
-          <input type="text" id="students" class="input-mini" value="20"> students =
-          <span id="price" style="font-size: 200%; margin-left: 1em;">0</span> <span id="price" style="font-size: 200%">€</span>
-        </p>
-        
-        <p>
-          <div id="slider-students" style="width: 200px;"></div>
-        </p>
-        
-        <p style="margin-top: 3ex;">
-          <%= f.button "Order", :type=>:submit, :class => "btn btn-large btn-primary" %>
-        </p>
-      </div>
-    
+      <% render 'calculator' %>
+      <p style="margin-top: 3ex;">
+        <%= f.button "Order", :type=>:submit, :class => "btn btn-large btn-primary" %>
+      </p>
     </div>
   </div>
 <% end %>

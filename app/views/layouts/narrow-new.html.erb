@@ -12,11 +12,10 @@
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
   <![endif]-->
   
-  <title>Rubyric
-    <%= "- #{@exercise.name}" if @exercise && !@exercise.new_record? %>
-  </title>
+  <title><% if content_for?(:title)%><%= yield(:title) %><% elsif @exercise && !@exercise.new_record? %><%= @exercise.name %> - <%= @course.name %> - Rubyric<% else %>Rubyric - Annotation and Assessment Tool<% end %></title>
   <%= csrf_meta_tag %>
   <%= stylesheet_link_tag "application-new", :media => "all" %>
+  <%= yield(:stylesheets) %>
   <%= javascript_include_tag "application" %>
   <%= yield(:javascript) %>
   <%= render :partial => 'shared/analytics' -%>

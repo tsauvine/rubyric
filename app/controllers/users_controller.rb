@@ -16,6 +16,7 @@ class UsersController < ApplicationController
     @user.email = params[:email]
     @email_taken = false
 
+    render :action => 'new', :layout => 'narrow-new'
     log "create_user_traditional view"
   end
 
