@@ -16,6 +16,7 @@
 
 <hr />
 
+<% if false %>
 <div id="carousel" class="carousel slide" data-ride="carousel">
   <!-- Indicators -->
   <ol class="carousel-indicators">
@@ -47,6 +48,7 @@
     <span class="glyphicon glyphicon-chevron-right"></span>
   </a>
 </div>
+<% end %>
 
 <!-- Features -->
 <div class="row">
@@ -117,6 +119,7 @@
 </div>
 
 <!-- Pricing -->
+<% if false %>
 <div class="row">
   <div class="col-sm-6">
     <h1>Pricing</h1>
@@ -124,44 +127,28 @@
     <p style="font-size: 150%; margin-top: 2ex;"><strong>€ 0.49 / student,</strong> first 20 students for free</p>
     <p style="margin: 2ex 0ex 4ex 0ex">Price includes one course offering (i.e. one semester) with 5 MB of storage per student.</p>
     
-    <div class="well">
-      <p>Price calculator</p>
-      <p style="margin: 2ex 0ex 2ex 0ex; text-align: center">
-        <input style="width: 4em;" type="text" id="students" class="input-mini" value="20"> students
-        <span style="margin: 0em 1em;">=</span>
-        <span id="price" style="font-size: 200%">FREE</span>
-      </p>
-      
-      <div id="slider-students" style="margin-top: 2ex"></div>
-      
-      
-    </div> 
+    <%= render 'orders/calculator' %>
     
+    <!--
     <%= link_to 'Create a course', new_course_path, :class => 'btn btn-lg btn-primary', :id => 'create-course-button' %>
+    -->
   </div>
   <div class="col-sm-6">
-    
-    
-
   </div>
 </div>
+<% end %>
 
-<!-- Team -->
-<!--
 <div class="row">
-  <div class="col-sm-6">
-    <h1>Who are we</h1>
-  </div>
-  <div class="col-sm-6">
-    
+  <div class="col-sm-12">
+    <div class="alert alert-warning">
+      We are currently upgrading the server.
+    </div>
   </div>
 </div>
--->
+
+
 <% if false %>
 <div class="row">
-
-        
-
   <div class="col-sm-4 col-sm-offset-1">
     <!--
     <h3>Try it for free</h3>
@@ -193,6 +180,11 @@
     <div class="col-sm-6">
       <p>
         Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an edtech company founded by a group of researchers and PhD students from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+      </p>
+      
+      <p>
+        email:
+        contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
       </p>
     </div>
     <div class="col-sm-6">
