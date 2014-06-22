@@ -51,7 +51,8 @@ class UsersController < ApplicationController
       # Create course
       exercise = Course.create_example(@user)
 
-      redirect_to root_path, flash: { success: 'Welcome! An example course has been created for you.' }
+      flash[:success] = 'Welcome! An example course has been created for you.'
+      redirect_to root_path
       log "create_user_traditional success (example exercise #{exercise})"
     else
       logger.debug @user.errors[:email]

@@ -6,6 +6,7 @@
 
 /.bundle
 /db/*.sqlite3
+/crap
 /log
 /tmp
 /submissions/

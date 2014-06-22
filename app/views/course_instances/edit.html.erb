@@ -1,10 +1,10 @@
 <!-- course_instance/show.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'views/course_instances/new' %>
+<% end %>
 
 <div class="page-header">
   <h1><%= "#{@course.full_name} - #{@course_instance.name}" %></h1>
 </div>
 
 <%= render :partial => 'form' %>
-
-
-<%= link_to "Buy", new_order_path(), :class => "btn btn-small" %>

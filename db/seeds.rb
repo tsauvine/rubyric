@@ -11,11 +11,11 @@ puts "Creating example users and courses"
 example_organization = Organization.create(:name => 'Example', :domain => 'example.com')
 
 # Create admin
-user = User.new(:password => 'admin', :password_confirmation => 'admin', :firstname => 'Admin', :lastname => 'User', :email => 'admin@example.com')
-user.login = 'admin'
-user.studentnumber = '12345'
-user.admin = true
-user.save
+# user = User.new(:password => 'admin', :password_confirmation => 'admin', :firstname => 'Admin', :lastname => 'User', :email => 'admin@example.com')
+# user.login = 'admin'
+# user.studentnumber = '12345'
+# user.admin = true
+# user.save
 
 # Example students
 # user = User.new(:password => '45237357', :password_confirmation => '45237357', :firstname => "Student", :lastname => "1", :email => 'student.1@example.com')
@@ -65,10 +65,10 @@ for i in 1..500 do
   user.studentnumber = i.to_s.rjust(5, '0')
   user.login = user.studentnumber
   user.password = "student#{i}"
-  user.password_confirmation = "student#{i}"
+#   user.password_confirmation = "student#{i}"
   user.firstname = 'Student'
   user.lastname = i.to_s
-  user.email = "tsauvine+s#{i}@gmail.com"
+  user.email = "student#{i}@example.com"
   user.organization = example_organization
   user.save
 end
@@ -80,9 +80,9 @@ for i in 1..10 do
   user.login = user.studentnumber
   user.firstname = 'Assistant'
   user.lastname = i.to_s
-  user.email = "tsauvine+a#{i}@gmail.com"
+  user.email = "assistant#{i}@example.com"
   user.password = "assistant#{i}"
-  user.password_confirmation = "assistant#{i}"
+#   user.password_confirmation = "assistant#{i}"
   user.organization = example_organization
   user.save
 end

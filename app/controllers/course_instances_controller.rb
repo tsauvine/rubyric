@@ -26,7 +26,11 @@ class CourseInstancesController < ApplicationController
       @course = Course.new
     end
 
-    @course_instance = CourseInstance.new(:submission_policy => 'authenticated') # :name => Time.now.year
+    @pricing = current_user.get_pricing
+    @pricing.planned_students = 20
+    @course_instance = CourseInstance.new(:submission_policy => 'unauthenticated')
+    @course_instance.course = @course
+    # :name => Time.now.year
     
     render :action => 'new', :layout => 'narrow-new'
     log "create_course_instance #{@course.id}"
@@ -40,18 +44,23 @@ class CourseInstancesController < ApplicationController
     # Authorize
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
     
+    @pricing = @course_instance.pricing
+    
+    render :action => 'edit', :layout => 'narrow-new'
     log "edit_course_instance #{@course_instance.id}"
   end
 
   # POST /course_instances
   # POST /course_instances.xml
   def create
+    @pricing = current_user.get_pricing
+    @pricing.planned_students = params[:planned_students].to_i
+    
     @course_instance = CourseInstance.new(params[:course_instance])
     course_instance_valid = @course_instance.valid?
     
-    if params[:course_id]
-      @course = Course.find(params[:course_id])
-      @course_instance.course_id = @course.id
+    if @course_instance.course_id
+      @course = Course.find(@course_instance.course_id)
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
       course_valid = true
     else
@@ -60,14 +69,20 @@ class CourseInstancesController < ApplicationController
     end
 
     if course_valid && course_instance_valid
+      @pricing.save
+      
       if @course.new_record?
         @course.organization_id = current_user.organization_id
         @course.teachers << current_user
         @course.save
       end
       
+      @course_instance.pricing_id = @pricing.id
       @course_instance.course_id = @course.id
       @course_instance.save
+      
+      current_user.course_count += 1
+      current_user.save
     
       redirect_to @course_instance
       log "create_course_instance success #{@course_instance.id}"
@@ -83,12 +98,17 @@ class CourseInstancesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
+    @pricing = @course_instance.pricing
+    @course_instance.agree_terms = '1'
     if @course_instance.update_attributes(params[:course_instance])
+      @pricing.planned_students = params[:planned_students].to_i
+      @pricing.save
+    
       flash[:success] = t(:instance_updated_flash)
       redirect_to @course_instance
       log "edit_course_instance success #{@course_instance.id}"
     else
-      render :action => "edit"
+      render :action => "edit", :layout => 'narrow-new'
       log "edit_course_instance fail #{@course_instance.id} #{@course_instance.errors.full_messages.join('. ')}"
     end
   end

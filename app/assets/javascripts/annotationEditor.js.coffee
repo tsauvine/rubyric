@@ -298,11 +298,11 @@ class Annotation
     @gradeEditorActive = ko.observable(false)
     @contentEditorActive = ko.observable(false)
     
-    @phrase.criterion.annotations.push(this)
+    @phrase.criterion.annotations.push(this) if @phrase
     
-    console.log @phrase.criterion.grade
-    @phrase.criterion.grade.subscribe (new_value) =>
-      console.log "Grade changed to #{new_value}"
+    #console.log @phrase.criterion.grade
+    #@phrase.criterion.grade.subscribe (new_value) =>
+    #  console.log "Grade changed to #{new_value}"
   
     # Subscribe to screen position changes to update pagePos after dragging.
     @screenPosition.subscribe =>

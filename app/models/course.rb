@@ -62,20 +62,23 @@ class Course < ActiveRecord::Base
 
     course = Course.new(:name => 'Example course')
     course.organization_id = teacher.organization_id if teacher
-    course.save
+    course.save(:validate => false)
     
     course.teachers << teacher if teacher
 
-    instance = CourseInstance.create(:course_id => course.id, :name => Time.now.year)
+    instance = CourseInstance.new(:course_id => course.id, :name => Time.now.year)
+    instance.save(:validate => false)
     t = Time.now + 2.months
     deadline = Time.mktime(t.year, t.month, t.day)
-    exercise = Exercise.create(
+    exercise = Exercise.new(
       :course_instance_id => instance.id,
       :name => 'Assignment 1',
       :deadline => deadline,
       :groupsizemax => 3,
       :review_mode => 'annotation'
     )
+    exercise.initialize_example_rubric
+    exercise.save(:validate => false)
     
     # FIXME: makedirs may throw an exception
     submission_path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
@@ -85,10 +88,6 @@ class Course < ActiveRecord::Base
     instance.create_example_groups(10)
     exercise.create_example_submissions
     
-    # TODO: example rubric
-    
-    #exercise.load_xml(File.new(SUBMISSIONS_PATH + '/esimerkki.xml'))
-
     return exercise
   end
 end

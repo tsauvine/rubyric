@@ -1,0 +1,39 @@
+<div class="row large-gap">
+  <div class="col-sm-12">
+    <h2>Terms and conditions</h2>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-6">
+    <div style="width: 100%; height: 30ex; overflow: scroll; border: 1px solid black; font-size: small;">
+      Following information of students is stored in the system: name, email address, student id, submissions, grades
+      Any identifying information of students (including submissions) are stored for six months after the last deadline of the course and then deleted.
+      User information is not conveyed to third parties unless required by a public authority.
+      By The Mark can use anonymized user information for research purposes.
+      In case of service breaks lasting more than 36 hours in a calendar month, the compensation will be 10 % of the paid price of the service for each starting 36 hour period.
+      The compensation or liability of any damage will be at most the total price of the service. In no event will By The Mark be liable to client for any indirect damages, including any lost profits, lost savings or other incidental, consequential or special damages arising out of the operation or of inability to operate Clients' site or any or any of its web pages, even if By The Mark has been advised of the possibility of such damages.
+    </div>
+  </div>
+  <div class="col-sm-6 text-muted">
+    In a nutshell:
+    <ul>
+      <li>Any identifying information of students (including submissions) are stored for six months after the last deadline of the course and then deleted.</li>
+      <li>User information is not conveyed to third parties unless required by a public authority.</li>
+      <li>The compensation or liability of any damage will be at most the total price of the service. By The Mark will not be liable for any indirect damages.</li>
+    </ul>
+  </div>
+</div>
+<div class="row">
+  <div class="col-sm-12">
+    <div class="form-group<%= @course_instance.errors[:agree_terms].any? ? ' has-error has-feedback' : '' %>">
+      <div class="col-sm-12">
+        <div class="checkbox<%= @course_instance.errors[:agree_terms].any? ? ' bg-danger' : '' %>">
+          <label>
+            <%= f.check_box :agree_terms %>
+            I agree to the terms and conditions
+          </label>
+        </div>
+      </div>
+    </div>
+  </div>
+</div> 

@@ -22,6 +22,8 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
+Etusivulle hinnoitteluun: storage space is limited
+
 Polish frontpage
 
 Paypal

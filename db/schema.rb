@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20140529153144) do
+ActiveRecord::Schema.define(:version => 20140622145508) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -37,6 +37,7 @@ ActiveRecord::Schema.define(:version => 20140529153144) do
     t.string   "locale"
     t.string   "submission_policy"
     t.string   "feedback_delivery_mode"
+    t.integer  "pricing_id"
   end
 
   create_table "course_instances_students", :id => false, :force => true do |t|
@@ -237,6 +238,12 @@ ActiveRecord::Schema.define(:version => 20140529153144) do
     t.string   "feedbacktype", :limit => 32
   end
 
+  create_table "pricings", :force => true do |t|
+    t.string  "type"
+    t.integer "paid_students",    :default => 0, :null => false
+    t.integer "planned_students", :default => 0, :null => false
+  end
+
   create_table "reviews", :force => true do |t|
     t.integer  "user_id"
     t.integer  "submission_id"
@@ -331,6 +338,7 @@ ActiveRecord::Schema.define(:version => 20140529153144) do
     t.integer  "zoom_preference"
     t.string   "submission_sort_preference"
     t.string   "tester"
+    t.integer  "course_count",               :default => 0, :null => false
   end
 
   add_index "users", ["last_request_at"], :name => "index_users_on_last_request_at"

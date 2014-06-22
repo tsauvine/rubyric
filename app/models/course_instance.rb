@@ -9,13 +9,14 @@ class CourseInstance < ActiveRecord::Base
   validates_presence_of :name
   validate :check_agree_terms
   
+  belongs_to :pricing
+  
   # TODO:
   # attr_accessible :name, :description, :active
   attr_accessor :agree_terms
  
   def check_agree_terms
     errors.add(:agree_terms, "Please read the terms and conditions") unless agree_terms == '1'
-    logger.info "****************** (#{agree_terms})"
   end
   
   def has_assistant(user)
