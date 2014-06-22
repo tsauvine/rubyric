@@ -101,8 +101,10 @@ class CourseInstancesController < ApplicationController
     @pricing = @course_instance.pricing
     @course_instance.agree_terms = '1'
     if @course_instance.update_attributes(params[:course_instance])
-      @pricing.planned_students = params[:planned_students].to_i
-      @pricing.save
+      if @pricing
+        @pricing.planned_students = params[:planned_students].to_i
+        @pricing.save
+      end
     
       flash[:success] = t(:instance_updated_flash)
       redirect_to @course_instance

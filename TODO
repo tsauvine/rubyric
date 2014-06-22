@@ -22,21 +22,17 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-Etusivulle hinnoitteluun: storage space is limited
-
-Polish frontpage
-
-Paypal
+Test
 
 Demo
-
-Esite
-
-Test
 
 google plus, facebook
 
 Annotation: selected phrases should not be collected when using sum mode
+
+Clean PDF cache
+
+Paypal
 
 
 = Later =
