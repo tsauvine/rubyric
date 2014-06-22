@@ -1,22 +1,26 @@
 <%= form_for(@course_instance, :html => {:class => 'form-horizontal'}) do |f| %>
   <% if @course.new_record? %>
-    <div class="form-group">
+    <div class="form-group<%= @course.errors[:name].any? ? ' has-error has-feedback' : '' %>">
       <%= label_tag :course_name, 'Course name', :class => 'col-sm-2 control-label' %>
       <div class="col-sm-4">
         <%= text_field_tag :course_name, @course.name, :class => 'form-control' %>
+        <% if @course.errors[:name].any? %>
+          <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+        <% end %>
       </div>
     </div>
   <% end %>
   
-  <div class="form-group">
+  <div class="form-group<%= @course_instance.errors[:name].any? ? ' has-error has-feedback' : '' %>">
     <%= f.label :name, 'Instance name', :class => 'col-sm-2 control-label' %>
     <div class="col-sm-4">
       <%= f.text_field :name, :class => 'form-control' %>
-      <% if @course_instance.errors[:name].empty? %>
-        <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
+      <% if @course_instance.errors[:name].any? %>
+        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
       <% else %>
-        <span class="error"><%= @course_instance.errors[:name][0] %></span>
+        <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
       <% end %>
+      <!--span class="error"><%= @course_instance.errors[:name][0] %></span-->
     </div>
   </div>
   
@@ -66,7 +70,7 @@
   <% end %>
   
   <!-- Number of students -->
-  <div class="row">
+  <div class="row large-gap">
     <div class="col-sm-12">
       <h2>Set the preliminary number of students</h2>
     </div>
@@ -100,7 +104,7 @@
   </div>
   
   <!-- Terms and conditions -->
-  <div class="row">
+  <div class="row large-gap">
     <div class="col-sm-12">
       <h2>Terms and conditions</h2>
     </div>
@@ -127,13 +131,11 @@
   </div>
   <div class="row">
     <div class="col-sm-12">
-      
-    
-      <div class="form-group">
+      <div class="form-group<%= @course_instance.errors[:agree_terms].any? ? ' has-error has-feedback' : '' %>">
         <div class="col-sm-12">
-          <div class="checkbox">
+          <div class="checkbox<%= @course_instance.errors[:agree_terms].any? ? ' bg-danger' : '' %>">
             <label>
-              <%= check_box_tag :agree, false %>
+              <%= f.check_box :agree_terms %>
               I agree to the terms and conditions
             </label>
           </div>
@@ -142,20 +144,25 @@
     </div>
   </div>
   
-  <div class="form-group">
-    <div class="col-sm-10">
-      <% if @course.new_record? %>
-        <%= link_to t(:Cancel), root_path, :class => 'btn' %>
-        <%= f.submit t(:Create), :class => 'btn btn-primary' %>
-      <% elsif @course_instance.new_record? %>
-        <%= link_to t(:Cancel), @course, :class => 'btn' %>
-        <%= f.submit t(:Create), :class => 'btn btn-primary' %>
-      <% else %>
-        <%= link_to t(:Cancel), @course_instance, :class => 'btn' %>
-        <%= f.submit t(:Save), :class => 'btn btn-primary' %>
-      <% end %>
+  <div class="row large-gap">
+    <div class="col-sm-12">
+      <div class="form-group">
+        <div class="col-sm-10">
+          <% if @course.new_record? %>
+            <p><%= f.submit t(:Create), :class => 'btn btn-primary btn-lg' %></p>
+            <p><%= link_to t(:Cancel), root_path, :class => 'btn' %></p>
+          <% elsif @course_instance.new_record? %>
+            <p><%= f.submit t(:Create), :class => 'btn btn-primary btn-lg' %></p>
+            <p><%= link_to t(:Cancel), @course, :class => 'btn' %></p>
+          <% else %>
+            <p><%= f.submit t(:Save), :class => 'btn btn-primary btn-lg' %></p>
+            <p><%= link_to t(:Cancel), @course_instance, :class => 'btn' %></p>
+          <% end %>
+        </div>
+      </div>
     </div>
   </div>
   
-  
+  <div class="row large-gap">
+  </div>
 <% end %>

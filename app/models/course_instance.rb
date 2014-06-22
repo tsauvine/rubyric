@@ -7,10 +7,17 @@ class CourseInstance < ActiveRecord::Base
   has_and_belongs_to_many :assistants, {:class_name => 'User', :join_table => 'assistants_course_instances', :order => :studentnumber}
   
   validates_presence_of :name
+  validate :check_agree_terms
   
   # TODO:
   # attr_accessible :name, :description, :active
-
+  attr_accessor :agree_terms
+ 
+  def check_agree_terms
+    errors.add(:agree_terms, "Please read the terms and conditions") unless agree_terms == '1'
+    logger.info "****************** (#{agree_terms})"
+  end
+  
   def has_assistant(user)
     user && assistants.include?(user)
   end

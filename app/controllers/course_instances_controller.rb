@@ -15,14 +15,20 @@ class CourseInstancesController < ApplicationController
   # GET /course_instances/new.xml
   def new
     # Load course
-    @course = Course.find(params[:course_id])
-    load_course
-
-    # Authorize
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+    if params[:course_id]
+      @course = Course.find(params[:course_id])
+      
+      # Authorize
+      return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+      
+      load_course
+    else
+      @course = Course.new
+    end
 
     @course_instance = CourseInstance.new(:submission_policy => 'authenticated') # :name => Time.now.year
     
+    render :action => 'new', :layout => 'narrow-new'
     log "create_course_instance #{@course.id}"
   end
 
@@ -40,21 +46,33 @@ class CourseInstancesController < ApplicationController
   # POST /course_instances
   # POST /course_instances.xml
   def create
-    # Load course
-    @course = Course.find(params[:course_id])
-    load_course
-    
     @course_instance = CourseInstance.new(params[:course_instance])
-    @course_instance.course_id = @course.id
+    course_instance_valid = @course_instance.valid?
+    
+    if params[:course_id]
+      @course = Course.find(params[:course_id])
+      @course_instance.course_id = @course.id
+      return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+      course_valid = true
+    else
+      @course = Course.new(:name => params[:course_name])
+      course_valid = @course.valid?
+    end
 
-    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
-    if @course_instance.save
-      #flash[:success] = t(:instance_created_flash)
+    if course_valid && course_instance_valid
+      if @course.new_record?
+        @course.organization_id = current_user.organization_id
+        @course.teachers << current_user
+        @course.save
+      end
+      
+      @course_instance.course_id = @course.id
+      @course_instance.save
+    
       redirect_to @course_instance
       log "create_course_instance success #{@course_instance.id}"
     else
-      render :action => 'new'
+      render :action => 'new', :layout => 'narrow-new'
     end
   end
 
