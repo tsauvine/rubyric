@@ -23,36 +23,25 @@
 
 <body>
 
-<!-- top -->
-<div class="navbar">
-  <div class="navbar-inner">
-    <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
-    
-    <ul class="nav pull-right">
-      <% if current_user %>
-        <li><%= link_to "My preferences", preferences_path, :class => 'pull-right' %></li>
-        <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete, :class => 'pull-right' %></li>
-      <% end %>
-    </ul>
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <% if current_user %>
+          <li><%= link_to "My preferences", preferences_path %></li>
+          <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete %></li>
+        <% end %>
+      </ul>
+    </div>
   </div>
-</div>
+</nav>
 
 <div class="container">
-  <!-- Content -->
-  <div class="row">
-    <!-- Flash messages -->
-    <% if flash[:warning] %>
-      <div class="alert"><%= flash[:warning] %></div>
-    <% end %>
-
-    <% if flash[:success] %>
-      <div class="alert alert-success"><%= flash[:success] %></div>
-    <% end %>
-
-    <% if flash[:error] %>
-      <div class="alert alert-error"><%= flash[:error] %></div>
-    <% end %>
-  </div>
+  <%= render 'layouts/messages' %>
 
   <%= yield  %>
 </div>

@@ -5,193 +5,228 @@
   <%= stylesheet_link_tag 'frontpage', :media => "all" %>
 <% end %>
 
-<div class="row">
-  <div class="col-sm-12">
-  Rubyric is an assessment tool that makes it easy to give written feedback to students.
-  With Rubyric, teachers can create rubrics that specify the assessment criteria and contain feedback phrases for typical mistakes.
-  Because many students tend to make similar mistakes, large parts of feedback can be constructed from the prewritten phrases.
-  However, it is still possible to manually edit the phrases to suit each individual case.
-  </div>
-</div>
-
-<hr />
-
-<% if false %>
-<div id="carousel" class="carousel slide" data-ride="carousel">
-  <!-- Indicators -->
-  <ol class="carousel-indicators">
-    <li data-target="#carousel" data-slide-to="0" class="active"></li>
-    <li data-target="#carousel" data-slide-to="1"></li>
-    <li data-target="#carousel" data-slide-to="2"></li>
-  </ol>
-
-  <!-- Wrapper for slides -->
-  <div class="carousel-inner">
-    <div class="item active">
-      <%= image_tag('carousel-1.png', :alt => '') %>
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
     </div>
-    
-    <div class="item">
-      <%= image_tag('carousel-2.png', :alt => '') %>
-    </div>
-    
-    <div class="item">
-      <%= image_tag('carousel-3.png', :alt => '') %>
-    </div>
-  </div>
 
-  <!-- Controls -->
-  <a class="left carousel-control" href="#carousel" data-slide="prev">
-    <span class="glyphicon glyphicon-chevron-left"></span>
-  </a>
-  <a class="right carousel-control" href="#carousel" data-slide="next">
-    <span class="glyphicon glyphicon-chevron-right"></span>
-  </a>
-</div>
-<% end %>
+    <%= form_for @session, :as => :session, :url => session_path, :html => {:class => 'navbar-form nav pull-right'} do |f| %>
+      <div class="form-group">
+        <%= f.text_field :email, :class => 'form-control input-sm text-input', :placeholder => 'Email' %>
+      </div>
+      <div class="form-group">
+        <%= f.password_field :password, :class => 'form-control input-sm text-input', :placeholder => t(:sessions_password_label) %>
+      </div>
+      <div class="checkbox">
+        <label>
+          <%= t(:sessions_remember_label) %>
+          <%= f.check_box :remember_me, :class => 'form-control input-sm' %>
+        </label>
+      </div>
+      
+      <%= f.submit 'Sign In', :class => 'btn btn-default navbar-btn' %>
+    <% end %>
+  </div>
+</nav>
 
-<!-- Features -->
-<div class="row">
-  <div class="col-sm-6">
-    <h1>Features</h1>
-    <ul class="list-unstyled">
-      <li>Create a drop-box for <strong>receiving submissions</strong>.</li>
-      <li><strong>Distribute submissions</strong> to reviewers.</li>
-      <li>Create <strong>assessment rubrics</strong>.</li>
-      <li>Annotate submissions with <strong>feedback</strong>.</li>
-      <!--li>Send feedback to students by email.</li-->
-    </ul>
-  </div>
-  <div class="col-sm-6 text-center">
-    <%= image_tag('stack.jpg', :alt => 'A stack of papers') %>
-  </div>
-</div>
-
-<!-- Why rubrics -->
-<div class="row">
-  <div class="col-sm-6 text-center">
-    <%= image_tag('pen.jpg', :alt => 'Manual assessment') %>
-    
-  </div>
-  <div class="col-sm-6">
-    <h1>Why rubrics</h1>
-    <ul>
-      <li>A <strong>rubric</strong> is an assessment template that defines the assessment criteria and describes what is required to reach different grades.</li>
-      <li>They help to ensure <strong>consistency</strong> when there are multiple reviewers.</li>
-      <li>They make it effortless to give <strong>comprehensive feedback</strong>.
-      Because many students make similar mistakes, large parts of feedback can be constructed from prewritten feedback phrases.</li>
-      <li>It is also possible to use Rubyric as ordinary <strong>annotation tool</strong> without preparing a rubric.</li>
-    </ul>
-  </div>
+<div class="container">
+  <%= render 'layouts/messages' %>
   
-</div>
-
-<!-- Who's using -->
-<div class="row">
-  <div class="col-sm-6">
-    <h1>Who's using Rubyric</h1>
-    <ul>
-      <li>So far, over 50 courses at Aalto University</li>
-    </ul>
-  </div>
-  <div class="col-sm-6 text-center">
-    <%= image_tag('computer.jpg', :alt => 'Computer assisted assessment') %>
-  </div>
-</div>
-
-<!-- Privacy -->
-<div class="row">
-  <div class="col-sm-6 text-center">
-    <%= image_tag('university.jpg', :alt => '') %>
-  </div>
-
-  <div class="col-sm-6">
-    <h1>We respect your privacy</h1>
-
-    <ul>
-      <li>
-        <strong>You are in control of your data.</strong><br />
-        <span class="">We do not store copies of students' submissions indefinitely or hand them over to third parties. Submissions and other personal data are deleted from our servers six months after the course is finished. You can download copies for your archiving first, of course.</span>
-      </li>
-      <li>We are a Finnish company with <strong>servers located in Europe</strong>.</li>
-    </ul>
-  </div>
-</div>
-
-<!-- Pricing -->
-<% if false %>
-<div class="row">
-  <div class="col-sm-6">
-    <h1>Pricing</h1>
-    
-    <p style="font-size: 150%; margin-top: 2ex;"><strong>€ 0.49 / student,</strong> first 20 students for free</p>
-    <p style="margin: 2ex 0ex 4ex 0ex">Price includes one course offering (i.e. one semester) with 5 MB of storage per student.</p>
-    
-    <%= render 'orders/calculator' %>
-    
-    <!--
-    <%= link_to 'Create a course', new_course_path, :class => 'btn btn-lg btn-primary', :id => 'create-course-button' %>
-    -->
-  </div>
-  <div class="col-sm-6">
-  </div>
-</div>
-<% end %>
-
-<div class="row">
-  <div class="col-sm-12">
-    <div class="alert alert-warning">
-      We are currently upgrading the server.
+  <div class="row">
+    <div class="col-sm-12">
+      Rubyric is an online tool that allows you to receive submissions, create assessment rubrics and annotate submissions with feedback.
+      Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
+      However, the phrases can be freely edited in order to give fully personalized feedback for each student.
     </div>
   </div>
-</div>
 
+  <% if true %>
+  <div id="carousel" class="carousel slide hidden-xs hidden-sm" data-ride="carousel">
+    <!-- Indicators -->
+    <ol class="carousel-indicators">
+      <li data-target="#carousel" data-slide-to="0" class="active"></li>
+      <li data-target="#carousel" data-slide-to="1"></li>
+      <li data-target="#carousel" data-slide-to="2"></li>
+    </ol>
 
-<% if false %>
-<div class="row">
-  <div class="col-sm-4 col-sm-offset-1">
-    <!--
-    <h3>Try it for free</h3>
-    <p>
-      <%= link_to 'Create a test account here', new_user_path, :class => 'btn' %>
-    </p>
-    -->
+    <!-- Wrapper for slides -->
+    <div class="carousel-inner">
+      <div class="item active">
+        <%= image_tag('carousel-1.png', :alt => '') %>
+      </div>
+      
+      <div class="item">
+        <%= image_tag('carousel-2.png', :alt => '') %>
+      </div>
+      
+      <div class="item">
+        <%= image_tag('carousel-3.png', :alt => '') %>
+      </div>
+    </div>
 
-    <h2><%=t :frontpage_login_heading %></h2>
-    <% if defined?(SHIB_AALTO_PATH) %>
-      <%= render :partial => 'sessions/aalto' %>
-    <% end %>
-    <% if defined?(SHIB_PATH) %>
-      <%= render :partial => 'sessions/shibboleth' %>
-    <% end %>
-    <%= render :partial => 'sessions/login' %>
-
-    <!--
-    <h3>Contact us</h3>
-    <p>If you want to ask anything about Rubyric, we are happy to help.</p>
-    <p>contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com</p>
-    -->
+    <!-- Controls -->
+    <a class="left carousel-control" href="#carousel" data-slide="prev">
+      <span class="glyphicon glyphicon-chevron-left"></span>
+    </a>
+    <a class="right carousel-control" href="#carousel" data-slide="next">
+      <span class="glyphicon glyphicon-chevron-right"></span>
+    </a>
   </div>
-</div>
-<% end %>
+  <% end %>
 
-<% content_for :footer do %>
+  <!-- Features -->
   <div class="row">
     <div class="col-sm-6">
-      <p>
-        Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an edtech company founded by a group of researchers and PhD students from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
-      </p>
-      
-      <p>
-        email:
-        contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
-      </p>
+      <h1>Features</h1>
+      <ul class="list-unstyled">
+        <li>Create a drop-box for <strong>receiving submissions</strong>.</li>
+        <li><strong>Distribute submissions</strong> to reviewers.</li>
+        <li>Create <strong>assessment rubrics</strong>.</li>
+        <li>Annotate submissions with <strong>feedback</strong>.</li>
+        <!--li>Send feedback to students by email.</li-->
+      </ul>
     </div>
-    <div class="col-sm-6">
-      <%= image_tag('tapio.jpg', :alt => 'Tapio', :title => 'Tapio Auvinen') %>
-      <img src="http://www.bythemark.fi/images/archie.jpg" alt="Archie" title="Ari Korhonen"/>
-      <img src="http://www.bythemark.fi/images/juhah.jpg" alt="Juha" title="Juha Helminen"/>
-      <img src="http://www.bythemark.fi/images/juhas.jpg" alt="Juha" title="Juha Sorva"/>
+    <div class="col-sm-6 text-center hidden-xs hidden-sm">
+      <%= image_tag('stack.jpg', :alt => 'A stack of papers') %>
     </div>
   </div>
-<% end %>
+
+  <!-- Why rubrics -->
+  <div class="row">
+    <div class="col-sm-6 text-center hidden-xs hidden-sm">
+      <%= image_tag('pen.jpg', :alt => 'Manual assessment') %>
+      
+    </div>
+    <div class="col-sm-6">
+      <h1>Why rubrics</h1>
+      <ul class="list-unstyled">
+        <li>A <strong>rubric</strong> is an assessment template that defines the assessment criteria and describes what is required to reach each grade.</li>
+        <li>They help to ensure <strong>consistency</strong> when there are multiple reviewers.</li>
+        <li>They make it effortless to give <strong>comprehensive feedback</strong>.
+        Because many students make similar mistakes, large parts of feedback can be constructed from prewritten feedback phrases.</li>
+        <li>It is also possible to use Rubyric as ordinary <strong>annotation tool</strong> without preparing a rubric.</li>
+      </ul>
+    </div>
+    
+  </div>
+
+  <!-- Who's using -->
+  <div class="row">
+    <div class="col-sm-6">
+      <h1>Who's using Rubyric</h1>
+      <ul class="list-unstyled">
+        <li>So far, Rubyric has been used in over <strong>50 courses</strong></li>
+        <li>to assess <strong>34.000 submissions</strong> from <strong>7000 students</strong>.</li>
+      </ul>
+    </div>
+    <div class="col-sm-6 text-center hidden-xs hidden-sm">
+      <%= image_tag('computer.jpg', :alt => 'Computer assisted assessment') %>
+    </div>
+  </div>
+
+  <!-- Privacy -->
+  <div class="row">
+    <div class="col-sm-6 text-center hidden-xs hidden-sm">
+      <%= image_tag('university.jpg', :alt => '') %>
+    </div>
+
+    <div class="col-sm-6">
+      <h1>We respect your privacy</h1>
+
+      <ul class="list-unstyled">
+        <li>
+          <strong>You are in control of your data.</strong><br />
+          <span class="">We do not store copies of students' submissions indefinitely or hand personal information over to third parties. Submissions and other personal data are deleted from our servers after the course has ended. You can download copies for archiving first, of course.</span>
+        </li>
+        <li>We are a Finnish company with <strong>servers located in Europe</strong>.</li>
+      </ul>
+    </div>
+  </div>
+
+
+  <div class="signup">
+      <div class="row">
+        <div class="col-sm-6">
+          <h1>Try before you buy</h1>
+          
+          <%= render 'orders/calculator' %>
+        </div>
+        <div class="col-sm-6">
+          <h1>Sign up</h1>
+          <div class="well">
+            <%= form_for @user, :html => {:class => 'form-horizontal'} do |f| %>
+              <div class="form-group">
+                <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+                <div class="col-sm-6">
+                  <%= f.text_field :email, :class => 'form-control' %>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <%= f.label :password, 'Password', :class => 'col-sm-4 control-label' %>
+                <div class="col-sm-6">
+                  <%= f.password_field :password, :class => 'form-control' %>
+                </div>
+              </div>
+              
+              <div class="form-group">
+                <div class="col-sm-4 col-sm-offset-4">
+                  <%= f.submit 'Sign up', :class => 'btn btn-lg btn-primary' %>
+                </div>
+              </div>
+            <% end %>
+
+          </div>
+          
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <% if false %>
+  <div class="row">
+    <div class="col-sm-4 col-sm-offset-1">
+      <!--
+      <h3>Try it for free</h3>
+      <p>
+        <%= link_to 'Create a test account here', new_user_path, :class => 'btn' %>
+      </p>
+      -->
+
+      <h2><%=t :frontpage_login_heading %></h2>
+      <% if defined?(SHIB_AALTO_PATH) %>
+        <%= render :partial => 'sessions/aalto' %>
+      <% end %>
+      <% if defined?(SHIB_PATH) %>
+        <%= render :partial => 'sessions/shibboleth' %>
+      <% end %>
+      <%= render :partial => 'sessions/login' %>
+    </div>
+  </div>
+  <% end %>
+</div>
+  
+<div class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-sm-6">
+        <p>
+          Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an edtech company founded by a group of researchers and PhD students from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+        </p>
+        
+        <p>
+          email:
+          contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
+        </p>
+      </div>
+      <div class="col-sm-6 hidden-xs hidden-sm">
+        <%= image_tag('tapio.jpg', :alt => 'Tapio', :title => 'Tapio Auvinen') %>
+        <%= image_tag('archie.jpg', :alt => 'Archie', :title => 'Ari Korhonen') %>
+        <%= image_tag('juhah.jpg', :alt => 'Juha', :title => 'Juha Helminen') %>
+        <%= image_tag('juhas.jpg', :alt => 'Juha', :title => 'Juha Sorva') %>
+      </div>
+    </div>
+  </div>
+</div>

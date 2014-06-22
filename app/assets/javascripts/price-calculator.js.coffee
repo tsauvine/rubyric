@@ -30,9 +30,9 @@ class @PriceCalculator
     
     paidStudents = studentCount - freeStudents
     paidStudents = 0 if paidStudents < 0
-    price = Math.floor(paidStudents * unitPrice)
+    price = Math.round(paidStudents * unitPrice)
     
-    $('#create-course-button').attr('href', "/courses/new?students=#{studentCount}");
+    #$('#create-course-button').attr('href', "/courses/new?students=#{studentCount}");
     
     
     if price < 1

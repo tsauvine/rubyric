@@ -1,66 +1,80 @@
 <!-- frontpage/course_instances.html.erb -->
 
-<!-- Not enrolled -->
 <% if @courses_teacher.size < 1 && @instances_assistant.size < 1 && @instances_student.size < 1 %>
+  <!-- Not enrolled -->
   <div class="page-header">
     <h1 id="enroll-info"><%=t :frontpage_not_enrolled_heading %></h1>
   </div>
-
-  <%=t :frontpage_not_enrolled_info_html, path: new_course_path %>
+  <div class="row">
+    <div class="col-sm-12">
+      <%=t :frontpage_not_enrolled_info_html, path: new_course_path %>
+    </div>
+  </div>
 <% end %>
-
-<!-- As teacher -->
+    
 <% unless @courses_teacher.empty? %>
+  <!-- As teacher -->
   <div class="page-header">
     <h1 id='courses-teacher'><%=t :frontpage_courses_teacher_heading %></h1>
   </div>
 
-  <p>
-  <table>
-    <% @courses_teacher.each do |course| %>
-      <tr>
-        <td><%= link_to course.code, course %></td>
-        <td><%= link_to course.name, course %></td>
+  <div class="row">
+    <div class="col-sm-12 course-list">
 
-        <% course.active_instances.each do |instance| %>
-          <tr>
-            <td></td>
-            <td><%= link_to instance.name, instance %></td>
-          </tr>
+        <% @courses_teacher.each do |course| %>
+          <h2>
+              <%= link_to course.full_name, course %>
+          </h2>
+          <ul class="list-unstyled">
+            <% course.active_instances.each do |instance| %>
+              <li><%= link_to instance.name, instance %></li>
+            <% end %>
+          </ul>
         <% end %>
-      </tr>
-    <% end %>
-  </table>
-  </p>
-
-  <p><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'btn btn-primary' %></p>
+      
+      <p class="large-gap"><%= link_to t(:frontpage_create_course_link), new_course_path, :class => 'btn btn-primary' %></p>
+    </div>
+  </div>
 <% end %>
 
-<!-- As assistant -->
 <% unless @instances_assistant.empty? %>
+  <!-- As assistant -->
   <div class="page-header">
     <h1 id='courses-assistant'><%=t :frontpage_courses_assistant_heading %></h1>
   </div>
-  <ul>
-  <% @instances_assistant.each do |instance| %>
-    <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
-  <% end %>
-  </ul>
+  <div class="row">
+    <div class="col-sm-12">
+      
+      <ul>
+      <% @instances_assistant.each do |instance| %>
+        <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
+      <% end %>
+      </ul>
+    </div>
+  </div>
 <% end %>
 
-<!-- As student -->
 <% unless @instances_student.empty? %>
+  <!-- As student -->
   <div class="page-header">
     <h1 id='courses-student'><%=t :frontpage_courses_student_heading %></h1>
   </div>
-  <ul>
-  <% @instances_student.each do |instance| %>
-    <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
-  <% end %>
-  </ul>
+  <div class="row">
+    <div class="col-sm-12">
+      <ul>
+      <% @instances_student.each do |instance| %>
+        <li><%= link_to "#{instance.course.name} (#{instance.name})", instance %></li>
+      <% end %>
+      </ul>
+    </div>
+  </div>
 <% end %>
 
-<!-- Show all courses -->
 <% if is_admin?(current_user) %>
-  <%= link_to t(:frontpage_show_all_courses), courses_path %>
+  <!-- Show all courses -->
+  <div class="row">
+    <div class="col-sm-12">
+      <%= link_to t(:frontpage_show_all_courses), courses_path %>
+    </div>
+  </div>    
 <% end %>

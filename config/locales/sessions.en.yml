@@ -20,7 +20,7 @@ en:
       forgot_password_button: "Forgot password"
   
   password_resets:
-    password_reset_mailed: "A link for setting a new password has been sent to your email address."
+    password_reset_mailed: "A link for resetting the password has been sent to you by email."
     invalid_link: "Password reset link has expired."
     new:
       reset_hint: "Enter your email address below. You will receive a link for setting a new password."

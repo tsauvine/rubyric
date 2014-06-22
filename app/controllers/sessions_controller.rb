@@ -3,7 +3,7 @@ class SessionsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create]
   #before_filter :require_user, :only => :destroy
 
-  layout 'narrow'
+  layout 'narrow-new'
 
   def new
     @session = Session.new
@@ -29,7 +29,6 @@ class SessionsController < ApplicationController
   end
 
   def destroy
-    flash[:success] = "Logout successful"
     unless current_session
       redirect_to(root_url)
       return

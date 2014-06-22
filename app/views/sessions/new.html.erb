@@ -3,34 +3,32 @@
 </div>
 
 <% if @session.errors.any? %>
-  <div class="alert alert-block">
-    <%= form_tag password_resets_path, :class => 'form-inline' do %>
-      <%= hidden_field_tag :email, params['session']['email'] %>
-      <%=t '.login_failed' %>
-      <%= submit_tag t('.forgot_password_button'), :class => 'btn btn-default btn-small' %>
-    <% end %>
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="alert alert-warning">
+        <%= form_tag password_resets_path, :class => 'form-inline' do %>
+          <%= hidden_field_tag :email, params['session']['email'] %>
+          <%=t '.login_failed' %>
+          <%= submit_tag t('.forgot_password_button'), :class => 'btn btn-default btn-small' %>
+        <% end %>
+      </div>
+    </div>
   </div>
 <% end %>
 
-<!--div class="row"-->
-  <% if defined?(SHIB_AALTO_PATH) %>
-    <div class="row">
-      <div class="span4">
-        <%= render :partial => 'aalto' %>
-      </div>
-    </div>
-  <% end %>
-  <% if defined?(SHIB_PATH) %>
-    <div class="row">
-      <div class="span4">
-        <%= render :partial => 'shibboleth' %>
-      </div>
-    </div>
-  <% end %>
+<%= render :partial => 'login' %>
+
+<% if defined?(SHIB_AALTO_PATH) %>
   <div class="row">
     <div class="span4">
-      <%= render :partial => 'login' %>
+      <%= render :partial => 'aalto' %>
     </div>
   </div>
-
-<!--/div-->
+<% end %>
+<% if defined?(SHIB_PATH) %>
+  <div class="row">
+    <div class="span4">
+      <%= render :partial => 'shibboleth' %>
+    </div>
+  </div>
+<% end %>

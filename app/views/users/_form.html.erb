@@ -1,0 +1,69 @@
+<% if @email_taken %>
+  <!-- Email taken -->
+  <div class="alert alert-warning">
+    <%= form_tag password_resets_path, :class => 'form-inline' do %>
+      <%= hidden_field_tag :email, @user.email %>
+      <p>
+        You already seem to have an account.
+        <%= submit_tag 'Forgot password', :class => 'btn btn-default' %>
+      </p>
+    <% end %>
+  </div>
+<% end %>
+
+<%= form_for @user, :html => {:class => 'form-horizontal'} do |f| %>
+  <!-- User -->
+  <div class="form-group<%= @user.errors[:email].any? ? ' has-error has-feedback' : '' %>">
+    <%= f.label :email, 'Email', :class => 'col-sm-4 control-label' %>
+    <div class="col-sm-6">
+      <%= f.text_field :email, :class => "form-control" %>
+      <% if @user.errors[:email].any? %>
+        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+      <% end %>
+    </div>
+  </div>
+  
+  <div class="form-group<%= @user.errors[:password].any? ? ' has-error has-feedback' : '' %>">
+    <%= f.label :password, 'Password', :class => 'col-sm-4 control-label' %>
+    <div class="col-sm-6">
+      <%= f.password_field :password, :class => 'form-control' %>
+      <% if @user.errors[:password].any? %>
+        <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+      <% end %>
+    </div>
+  </div>
+  <% if @user.errors[:password].any? %>
+    <span class="help-block">Password <%= @user.errors[:password].join(', ') %>.</span>
+  <% end %>
+  
+  <!--
+  <div class="form-group">
+    <%= f.label :password_confirmation, 'Confirm password', :class => 'col-sm-4 control-label' %>
+    <div class="col-sm-6">
+      <%= f.password_field :password_confirmation, :class => 'form-control' %>
+    </div>
+    <% if @user.errors[:password_confirmation] %>
+      <%= @user.errors[:password_confirmation][0] %>
+    <% end %>
+  </div>
+  -->
+
+  <div class="form-group">
+    <div class="col-sm-4 col-sm-offset-4">
+      <%= f.submit 'Sign up', :class => 'btn btn-lg btn-primary' %>
+    </div>
+  </div>
+<% end %><!-- /form -->  
+
+
+<% if false %>
+  <!-- Haka -->
+  <div class="span6">
+    <div>
+      <p class="hint">If you have a user account in a Finnish institute, you can use Haka Login instead:</p>
+
+      <%= link_to image_tag('haka_portrait_large.gif', :alt => 'Haka login'), "/Shibboleth.sso/DS?target=" + url_for(:action => 'shibboleth', :controller => 'sessions', :only_path => false, :protocol => 'https', :demo => true) %>
+    </div>
+  </div>
+<% end %>
+ 

@@ -26,7 +26,9 @@ class CoursesController < ApplicationController
   # GET /courses/new.xml
   def new
     @course = Course.new
+    @course_instance = CourseInstance.new
     
+    render :action => 'new', :layout => 'narrow-new'
     log "create_course"
   end
 
@@ -52,10 +54,9 @@ class CoursesController < ApplicationController
       redirect_to new_course_course_instance_path(:course_id => @course.id)
       log "create_course success #{@course.id}"
     else
-      render :action => "new"
+      render :action => 'new', :layout => 'narrow-new'
       log "create_course fail #{@course.errors.full_messages.join('. ')}"
     end
-
   end
 
   # PUT /courses/1

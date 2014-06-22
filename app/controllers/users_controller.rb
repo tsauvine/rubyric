@@ -25,9 +25,19 @@ class UsersController < ApplicationController
     @user = User.new(params[:user])
     
     if !@user.email.blank? && User.exists?(email: @user.email)
-      @email_taken = true
-      render :action => 'new'
-      return
+      # User exists, try to log in
+      @session = Session.new(params[:user])
+      session[:logout_url] = nil
+
+      if @session.save
+        CustomLogger.info("#{current_user.login} login_signin success")
+        redirect_back_or_default root_url
+        return
+      else
+        @email_taken = true
+        render :action => 'new', :layout => 'narrow-new'
+        return
+      end
     end
     
     if @user.save
@@ -41,12 +51,12 @@ class UsersController < ApplicationController
       # Create course
       exercise = Course.create_example(@user)
 
-      redirect_to exercise
+      redirect_to root_path, flash: { success: 'Welcome! An example course has been created for you.' }
       log "create_user_traditional success (example exercise #{exercise})"
     else
       logger.debug @user.errors[:email]
       # Form not sufficiently filled
-      render :action => 'new'
+      render :action => 'new', :layout => 'narrow-new'
       log "create_user_traditional fail #{@user.errors.full_messages.join('. ')}"
     end
     

@@ -1,8 +1,17 @@
-<%= form_for([@course, @course_instance], :html => {:class => 'form-horizontal'}) do |f| %>
-  <div class="control-group">
-    <%= f.label :name, t(:instance_name_label), :class => 'control-label' %>
-    <div class="controls">
-      <%= f.text_field :name %>
+<%= form_for(@course_instance, :html => {:class => 'form-horizontal'}) do |f| %>
+  <% if @course.new_record? %>
+    <div class="form-group">
+      <%= label_tag :course_name, 'Course name', :class => 'col-sm-2 control-label' %>
+      <div class="col-sm-4">
+        <%= text_field_tag :course_name, @course.name, :class => 'form-control' %>
+      </div>
+    </div>
+  <% end %>
+  
+  <div class="form-group">
+    <%= f.label :name, 'Instance name', :class => 'col-sm-2 control-label' %>
+    <div class="col-sm-4">
+      <%= f.text_field :name, :class => 'form-control' %>
       <% if @course_instance.errors[:name].empty? %>
         <span class="hint"><%=t :instance_name_hint, :year => Time.now.year %></span>
       <% else %>
@@ -12,19 +21,17 @@
   </div>
   
   <!-- Language -->
-  <div class="control-group">
-    <%= f.label :language, t('.language'), :class => 'control-label' %>
-    <div class="controls">
-      <label>
-        <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']])) %>
-      </label>
+  <div class="form-group">
+    <%= f.label :language, t('.language'), :class => 'col-sm-2 control-label' %>
+    <div class="col-sm-4">
+      <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']]), {}, :class => "form-control") %>
     </div>
   </div>
   
   <!-- Submission policy -->
-  <div class="control-group">
-    <%= f.label :submission_policy, t('.submission_policy_label'), :class => 'control-label' %>
-    <div class="controls">
+  <div class="form-group">
+    <%= f.label :submission_policy, t('.submission_policy_label'), :class => 'col-sm-2 control-label' %>
+    <div class="col-sm-10">
       <label class="radio">
         <%= f.radio_button :submission_policy, 'unauthenticated' %>
         <%=t '.policy_unauthenticated' %>
@@ -47,9 +54,9 @@
   
   <!-- Active -->
   <% unless @course_instance.new_record? %>
-    <div class="control-group">
-      <%= f.label :active, t(:instance_active_label), :class => 'control-label' %>
-      <div class="controls">
+    <div class="form-group">
+      <%= f.label :active, t(:instance_active_label), :class => 'col-sm-2 control-label' %>
+      <div class="col-sm-10">
         <label>
           <%= f.check_box :active %>
           <%=t :instance_active_hint %>
@@ -58,9 +65,89 @@
     </div>
   <% end %>
   
-  <div class="control-group">
-    <div class="controls">
-      <% if @course_instance.new_record? %>
+  <!-- Number of students -->
+  <div class="row">
+    <div class="col-sm-12">
+      <h2>Set the preliminary number of students</h2>
+    </div>
+  </div>
+  
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="well">
+        <p style="font-size: 150%; margin-top: 0ex; margin-bottom: 2ex;">€ 0.49 / student, first 20 students for free</p>
+                <!-- <p style="margin: 2ex 0ex 4ex 0ex">Price includes one course offering (i.e. one semester) with 5 MB of storage per student.</p> -->
+                
+        <p style="margin: 2ex 0ex 2ex 0ex; text-align: center">
+          <input style="width: 4em;" type="text" id="students" class="input-mini" value="20"> students
+          <span style="margin: 0em 1em;">=</span>
+          <span id="price" style="font-size: 200%">FREE</span>
+        </p>
+
+        <div id="slider-students" style="margin: 3ex 0ex 2ex 0ex"></div>
+      </div>
+
+    </div>
+    <div class="col-sm-6 text-muted">
+      <p>
+        You can pay later, when the final number of students is known. In case the number of students exceeds the preliminary number, you will receive a warning and have the option to:
+      </p>
+      <ul>
+        <li>upgrade the plan or</li>
+        <li>download and remove excess submissions from the server</li>
+      </ul>
+    </div>
+  </div>
+  
+  <!-- Terms and conditions -->
+  <div class="row">
+    <div class="col-sm-12">
+      <h2>Terms and conditions</h2>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-6">
+      <div style="width: 100%; height: 30ex; overflow: scroll; border: 1px solid black; font-size: small;">
+        Following information of students is stored in the system: name, email address, student id, submissions, grades
+        Any identifying information of students (including submissions) are stored for six months after the last deadline of the course and then deleted.
+        User information is not conveyed to third parties unless required by a public authority.
+        By The Mark can use anonymized user information for research purposes.
+        In case of service breaks lasting more than 36 hours in a calendar month, the compensation will be 10 % of the paid price of the service for each starting 36 hour period.
+        The compensation or liability of any damage will be at most the total price of the service. In no event will By The Mark be liable to client for any indirect damages, including any lost profits, lost savings or other incidental, consequential or special damages arising out of the operation or of inability to operate Clients' site or any or any of its web pages, even if By The Mark has been advised of the possibility of such damages.
+      </div>
+    </div>
+    <div class="col-sm-6 text-muted">
+      In a nutshell:
+      <ul>
+        <li>Any identifying information of students (including submissions) are stored for six months after the last deadline of the course and then deleted.</li>
+        <li>User information is not conveyed to third parties unless required by a public authority.</li>
+        <li>The compensation or liability of any damage will be at most the total price of the service. By The Mark will not be liable for any indirect damages.</li>
+      </ul>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-sm-12">
+      
+    
+      <div class="form-group">
+        <div class="col-sm-12">
+          <div class="checkbox">
+            <label>
+              <%= check_box_tag :agree, false %>
+              I agree to the terms and conditions
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <div class="col-sm-10">
+      <% if @course.new_record? %>
+        <%= link_to t(:Cancel), root_path, :class => 'btn' %>
+        <%= f.submit t(:Create), :class => 'btn btn-primary' %>
+      <% elsif @course_instance.new_record? %>
         <%= link_to t(:Cancel), @course, :class => 'btn' %>
         <%= f.submit t(:Create), :class => 'btn btn-primary' %>
       <% else %>

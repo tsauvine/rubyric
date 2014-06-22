@@ -5,8 +5,7 @@
 <table>
   <% for course in @courses %>
     <tr>
-      <td><%= link_to course.code, course %></td>
-      <td><%= link_to course.name, course %></td>
+      <td><%= link_to course.full_name, course %></td>
       <td class="trash">
         <% if course.has_teacher(current_user) || is_admin?(current_user) %>
           <%= link_to course, :confirm => 'Are you sure?', :method => :delete do image_tag('trash.png', :alt => 'Destroy') end %>
@@ -18,7 +17,6 @@
   <% if @allow_create %>
     <tr>
       <td><%= link_to t(:course_create_link), new_course_path, :class => 'new' %></td>
-      <td></td>
       <td></td>
     </tr>
   <% end %>

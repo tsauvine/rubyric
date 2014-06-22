@@ -1,9 +1,10 @@
 <!-- courses/new.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_include_tag 'views/course_instances/new' %>
+<% end %>
 
 <div class="page-header">
   <h1><%=t :course_new_heading %></h1>
 </div>
 
-<!--p><%=t :course_new_policy %></p-->
-
-<%= render :partial => 'form' %>
+<%= render :partial => 'course_instances/form' %>

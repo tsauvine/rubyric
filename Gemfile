@@ -10,6 +10,7 @@ gem 'pg'
 
 # Gems used only for assets and not required in production environments by default.
 group :assets do
+  gem "sass", "~> 3.2.5"  # Sass is locked for now because of this bug: https://github.com/sass/sass/issues/1028. Remove this line at some point.
   gem 'sass-rails',   '~> 3.2.3'
   gem 'coffee-rails', '~> 3.2.1'
 

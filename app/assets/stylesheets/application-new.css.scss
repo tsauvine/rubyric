@@ -21,6 +21,7 @@
 $carousel-indicator-active-bg:    #888;
 $carousel-indicator-border-color: #888;
 $icon-font-path: "bootstrap-3.1.1/";
+$navbar-height: 40px;
 
 @import "bootstrap-3.1.1/bootstrap";
 /*
@@ -103,6 +104,10 @@ input.error {
 
 hr.large-gap {
   margin-top: 10ex;
+}
+
+p.large-gap {
+  margin-top: 5ex;
 }
 
 /*
@@ -277,6 +282,23 @@ table.histogram td {
   padding: .1em .5em;
 }
 */
+
+.course-list {
+  td {
+    vertical-align: top;
+    padding-right: 1em;
+  }
+  
+  h2 {
+    font-size: 100%;
+    font-weight: bold;
+    margin: 2ex 0 0 0;
+  }
+  
+  ul {
+    margin-left: 2em;
+  }
+}
 
 /******************
  * Frontpage

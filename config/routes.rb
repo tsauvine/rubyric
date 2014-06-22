@@ -15,11 +15,11 @@ Rubyric::Application.routes.draw do
   match 'preferences' => 'users#edit'
 
   resources :courses do
-    resources :course_instances, :only => [:new, :create, :update]
+    resources :course_instances, :only => [:new]
     resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
   end
 
-  resources :course_instances, :only => [:show, :edit, :destroy] do
+  resources :course_instances, :only => [:show, :edit, :destroy, :create, :update] do
     post :send_feedback_bundle
     get :create_example_groups
     

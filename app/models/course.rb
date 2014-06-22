@@ -60,7 +60,7 @@ class Course < ActiveRecord::Base
     example_submission_filename = "#{SUBMISSIONS_PATH}/example.pdf"
     exists = File.exists?(example_submission_filename)
 
-    course = Course.new(:code => '0.123', :name => 'Example course')
+    course = Course.new(:name => 'Example course')
     course.organization_id = teacher.organization_id if teacher
     course.save
     
@@ -82,18 +82,11 @@ class Course < ActiveRecord::Base
     FileUtils.makedirs(submission_path)
 
     # Create groups and submissions
-#     group1 = Group.create(:exercise_id => exercise.id, :name => 'Group 1')
-#     group1.users << User.find_by_studentnumber('123456')
-#     submission1 = Submission.create(:exercise_id => exercise.id, :group_id => group1.id, :extension => 'pdf', :filename => 'example.pdf')
-#     FileUtils.cp(example_submission_filename, "#{submission_path}/#{submission1.id}.pdf") if exists
-
-#     group2 = Group.create(:exercise_id => exercise.id, :name => 'Group 2')
-#     group2.users << User.find_by_studentnumber('234567')
-#     submission2 = Submission.create(:exercise_id => exercise.id, :group_id => group2.id, :extension => 'pdf', :filename => 'example.pdf')
-#     FileUtils.ln_s(example_submission_filename, "#{submission_path}/#{submission2.id}.pdf") if exists
-    # FIXME: ln_s may throw an exception
-
-    # TODO: Create example rubric
+    instance.create_example_groups(10)
+    exercise.create_example_submissions
+    
+    # TODO: example rubric
+    
     #exercise.load_xml(File.new(SUBMISSIONS_PATH + '/esimerkki.xml'))
 
     return exercise

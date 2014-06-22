@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  
+  <title><% if content_for?(:title)%><%= yield(:title) %><% elsif @exercise && !@exercise.new_record? %><%= @exercise.name %> - <%= @course.name %> - Rubyric<% else %>Rubyric - Annotation and Assessment Tool<% end %></title>
+  <%= csrf_meta_tag %>
+  <%= stylesheet_link_tag "application-new", :media => "all" %>
+  <%= yield(:stylesheets) %>
+  <%= javascript_include_tag "application" %>
+  <%= yield(:javascript) %>
+  <%= render :partial => 'shared/analytics' -%>
+</head>
+
+<body>
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <% if current_user %>
+          <li><%= link_to "My preferences", preferences_path %></li>
+          <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <!-- Left navigation -->
+    <div class="col-sm-2 leftnavicolumn">
+      <% if @course and !@course.new_record? %>
+
+        <ul class="nav nav-list well">
+          <!-- Course -->
+          <li class="nav-header">Course</li>
+          <li class="<%= active_nav('courses', 'show') %>"><%= link_to @course.name, course_path(@course) %></li>
+          <% if can? :update, @course %>
+            <li class="<%= active_nav('courses', 'edit') %>"><%= link_to edit_course_path(@course) do %><i class="icon-wrench"></i> Settings<% end %></li>
+            <li class="<%= active_nav('teachers', 'index') %>"><%= link_to course_teachers_path(@course) do %><i class="icon-user"></i> Instructors<% end %></li>
+          <% end %>
+
+          <% if @course_instance and !@course_instance.new_record? %>
+            <!-- Instance -->
+            <li class="nav-header">Instance</li>
+            <li class="<%= active_nav('course_instances', 'show') %>"><%= link_to @course_instance.name, course_instance_path(@course_instance) %></li>
+            <% if can? :update, @course_instance %>
+              <li class="<%= active_nav('course_instances', 'edit') %>"><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
+              <li class="<%= active_nav('reviewers', 'index') %>"><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-user"></i> Reviewers<% end %></li>
+              <!--li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li-->
+              <li class="<%= active_nav('groups', 'index') %>"><%= link_to course_instance_groups_path(@course_instance) do %><i class="icon-th"></i> Groups<% end %></li>
+              <% if (current_user.tester || '').include?('billing') %>
+                <li class="<%= active_nav('orders', 'index') %>"><%= link_to course_instance_orders_path(@course_instance) do %><i class="icon-shopping-cart"></i> Billing<% end %></li>
+              <% end %>
+            <% end %>
+
+            <!-- List of exercises-->
+            <li class="nav-header">Assignments</li>
+            <% @course_instance.exercises.each do |exercise| %>
+              <% if exercise == @exercise && !@exercise.new_record? %>
+                <li class="<%= active_nav('exercises', 'show') %>"><%= link_to exercise.name, exercise_path(exercise) %></li>
+                <% if can? :update, @course_instance %>
+                  <li class="<%= active_nav('exercises', 'edit') %>"><%= link_to edit_exercise_path(@exercise) do %><i class="icon-wrench"></i> Settings<% end %></li>
+                  <li class="<%= active_nav('rubrics', 'edit') %>"><%= link_to edit_exercise_rubric_path(@exercise) do %><i class="icon-th-list"></i> Rubric<% end %></li>
+                  <li class="<%= active_nav('exercises', 'results') %>"><%= link_to exercise_results_path(@exercise) do %><i class="icon-list-alt"></i> Results<% end %></li>
+                  <!--li><%= link_to exercise_statistics_path(@exercise) do %><i class="icon-tasks"></i> Statistics<% end %></li-->
+                <% end %>
+              <% else %>
+                <li><%= link_to exercise.name, exercise_path(exercise) %></li>
+              <% end %>
+            <% end %>
+          <% else %>
+            <!-- List of instances -->
+            <li class="nav-header">Instances</li>
+            <% @course.course_instances.each do |instance| %>
+              <li><%= link_to instance.name, course_instance_path(instance) %></li>
+            <% end %>
+          <% end %>
+
+        </ul>
+      <% end %>
+    </div> <!-- / left column -->
+
+    <!-- Content -->
+    <div class="col-sm-10">
+      <%= render 'layouts/messages' %>
+      
+      <%= yield  %>
+    </div>
+  </div>
+</div>
+
+
+<% if content_for?(:footer) -%>
+<footer class="footer">
+  <div class="container">
+    <%= yield(:footer) %>
+  </div>
+</footer>
+<% end -%>
+
+</body>
+</html>

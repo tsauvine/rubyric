@@ -3,6 +3,7 @@ class User < ActiveRecord::Base
     c.login_field = :email
     c.crypto_provider = Authlogic::CryptoProviders::SCrypt
     c.transition_from_crypto_providers = Authlogic::CryptoProviders::Sha512
+    c.require_password_confirmation = false
     #c.validate_password_field = false
     #c.validate_email_field = false
     #c.transition_from_restful_authentication = true
