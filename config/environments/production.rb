@@ -50,7 +50,7 @@ Rubyric::Application.configure do
 
   # Delivery errors
   config.action_mailer.raise_delivery_errors = true
-  config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.delivery_method = :smtp
 
   # Enable threaded mode
   # config.threadsafe!
