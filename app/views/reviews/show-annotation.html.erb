@@ -11,7 +11,12 @@
   <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
-<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>" data-page-count="<%= @page_count %>">
+<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
+  data-page-count="<%= @page_count %>"
+  data-page-width="<%= @submission.page_width %>"
+  data-page-height="<%= @submission.page_height %>"
+  data-group-token="<%= params[:group_token] %>"
+  >
   <div id="submission-pages" data-bind="foreach: submission_pages">
     <div class="submission-page">
       <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
@@ -26,9 +31,7 @@
             <!-- ko if: phrase -->
               <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
             <!-- /ko -->
-            <div class="clearfix"></div>
           </div>
-          <div class="clearfix"></div>
         </div>
       <!-- /ko -->
     </div>

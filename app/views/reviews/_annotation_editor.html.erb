@@ -187,7 +187,7 @@
         <!-- /ko -->
         
         <% if @review %>
-          <p>
+          <p class="large-gap">
             <button class="btn btn-success" data-bind="click: save">Save</button>
             
             <% if @exercise.grader_can_email %>
@@ -240,7 +240,7 @@
             <!-- ko if: phrase -->
               <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
             <!-- /ko -->
-            <div class="clearfix"></div>
+            <!--div class="clearfix"></div-->
           </div>
         </div>
       <!-- /ko -->

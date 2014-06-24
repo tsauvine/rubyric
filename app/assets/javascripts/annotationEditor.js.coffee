@@ -220,7 +220,8 @@ class SubmissionPage
     
     @annotationEditor.zoom.subscribe =>
       this.updateZoom()
-      @src("#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom()}")  # FIXME: repetition
+      #@src("#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom()}")  # FIXME: repetition
+      this.loadPage()
     
     this.updateZoom()
   
@@ -238,6 +239,7 @@ class SubmissionPage
   
   loadPage: () ->
     url = "#{@annotationEditor.submission_url}?page=#{@pageNumber}&zoom=#{@annotationEditor.zoom()}"
+    url += "&group_token=#{@annotationEditor.group_token}" if @annotationEditor.group_token && @annotationEditor.group_token.length > 0
     @src(url)
   
   # Called after image has been loaded
@@ -335,6 +337,7 @@ class AnnotationEditor extends Rubric
     @page_count = @element.data('page-count')
     @page_width = @element.data('page-width')
     @page_height = @element.data('page-height')
+    @group_token = @element.data('group-token')
     initialPageId = @element.data('initial-rubric-page')
     initialZoom = @element.data('initial-zoom')
     
@@ -374,10 +377,10 @@ class AnnotationEditor extends Rubric
     
     @finalGrade = ko.observable()
     finalGrade = $('#review_grade').val()
-    @finalGrade(finalGrade) if finalGrade != ''
+    @finalGrade(finalGrade) if finalGrade && finalGrade != ''
     
     status = $('#review_status').val()
-    @finalizing(true) if status.length > 0 && status != 'started'
+    @finalizing(true) if status && status.length > 0 && status != 'started'
     
     $('#tab-finish-link').tab('show') if @finalizing()
     
