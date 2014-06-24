@@ -24,18 +24,15 @@ arrayObject = Object::const_get('Array').new
 
 Test
 
-Demo
-
 google plus, facebook
 
 Annotation:
-- do not allow grades for phraseless annotations
-- limit annotation x to page_width * 1.05
 in sum mode:
   - selected phrases should not be collected
 in mean mode:
   - do not highlight selected phrase
-  - skip gradeless phrases when calculating criterion grade
+general:
+- limit annotation x to page_width * 1.05
 
 Clean PDF cache
 

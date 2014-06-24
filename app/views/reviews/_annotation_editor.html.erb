@@ -227,8 +227,10 @@
       
       <!-- ko foreach: annotations -->
         <div class="annotation" data-bind="position: screenPosition, css: {editorActive: gradeEditorActive() || contentEditorActive() }, click: clickAnnotation, clickBubble: false">
-          <div class="grade" data-bind="editable: {value: grade, editorActive: gradeEditorActive, placeholder: '&bull;'}">
-          </div>
+          <!-- ko if: phrase -->
+            <div class="grade" data-bind="editable: {value: grade, editorActive: gradeEditorActive, placeholder: '&bull;'}">
+            </div>
+          <!-- /ko -->
           <div class="content" data-bind="editable: {value: content, editorActive: contentEditorActive, type: 'textarea', placeholder: 'click to edit'}">
           </div>
           <div class="clearfix"></div>

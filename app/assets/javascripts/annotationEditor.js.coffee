@@ -308,10 +308,18 @@ class Annotation
   
     # Subscribe to screen position changes to update pagePos after dragging.
     @screenPosition.subscribe =>
+      console.log "screen position observer triggered"
       screenPos = @screenPosition()
       pagePos = @pagePosition()
       pagePos.x = screenPos.x / @zoom
       pagePos.y = screenPos.y / @zoom
+      
+      # TODO: limit x
+      # if pagePos.x > @submissionPage.width()
+      #   pagePos.x = @submissionPage.width()
+      #   screenPos.x = pagePos.x * @zoom
+      #   @screenPosition.valueHasMutated()
+      
       @pagePosition.valueHasMutated()
     
   setZoom: (new_zoom) ->

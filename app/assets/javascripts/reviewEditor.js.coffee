@@ -119,7 +119,7 @@ class Criterion
     @grade = ko.computed((=>
       grades = []
       for annotation in @annotations()
-        grades.push(annotation.grade())
+        grades.push(annotation.grade()) if annotation.grade()?
       
       if grades.length > 0
         return @rubricEditor.calculateGrade(grades)
@@ -249,7 +249,6 @@ class @Rubric
 
   # grades: array of grade values (strings or numbers)
   calculateGrade: (grades) ->
-    console.log grades
     if @gradingMode == 'average'
       return this.calculateGradeMean(grades)
     else if @gradingMode == 'sum'
