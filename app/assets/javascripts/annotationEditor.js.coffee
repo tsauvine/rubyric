@@ -229,7 +229,7 @@ class SubmissionPage
     pixelsPerCentimeter = 50.0 * new_zoom
     
     @width("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
-    @containerWidth("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 400)}px")
+    @containerWidth("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 320)}px")
     @height("#{Math.round(@annotationEditor.page_height * pixelsPerCentimeter)}px")
     
     for annotation in @annotations()
