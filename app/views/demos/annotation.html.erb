@@ -1,0 +1,19 @@
+<%= content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
+    window.review = undefined;
+  <% end %>
+
+  <%= javascript_include_tag 'annotationEditor' %>
+<% end %>
+
+<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_demo_path(:format => 'png') %>"
+  data-page-count="<%= @submission.page_count %>"
+  data-page-width="<%= @submission.page_width %>"
+  data-page-height="<%= @submission.page_height %>"
+  data-initial-rubric-page="1"
+  data-initial-zoom="100"
+  >
+
+  <%= render 'reviews/annotation_editor' %>
+</div>

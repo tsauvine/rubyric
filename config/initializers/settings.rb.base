@@ -19,7 +19,10 @@ FORCE_SSL = false
 # Uncomment to execute delayed jobs immediately, instead of in a background process
 # Delayed::Worker.delay_jobs = false
 
-# ActionMailer::Base.smtp_settings = { address: 'mail.example.com' }
+# ActionMailer::Base.smtp_settings = {
+#   address: 'localhost'
+#   enable_starttls_auto: false
+# }
 
 # Shibboleth attribute names (attribute-map.xml)
 SHIB_PATH = "/Shibboleth.sso/DS?target="

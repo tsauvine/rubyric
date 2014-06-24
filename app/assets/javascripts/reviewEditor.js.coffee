@@ -327,8 +327,12 @@ class @ReviewEditor extends @Rubric
     @finishedText = ko.observable('')
     @finalizing = ko.observable(false)
     
-    $(window).bind 'beforeunload', =>
-      return "You have unsaved changes. Leave anyway?" unless @saved
+    element = $('#review-editor')
+    @demo_mode = element.data('demo')
+    @initialPageId = element.data('initial-rubric-page')
+    unless @demo_mode
+      $(window).bind 'beforeunload', =>
+        return "You have unsaved changes. Leave anyway?" unless @saved
 
   #
   # Loads the review
@@ -398,8 +402,11 @@ class @ReviewEditor extends @Rubric
     @finishedText.subscribe(=> @saved = false )
     
     # Activate the finalizing tab
-    $('#tab-finish-link').tab('show') if @finalizing()
-    
+    if @finalizing()
+      $('#tab-finish-link').tab('show')
+    else if @initialPageId
+      initialPage = @pagesById[parseInt(@initialPageId)]
+      initialPage.showTab() if initialPage
 
   # Returns the review as JSON
   encodeJSON: ->

@@ -10,6 +10,7 @@
  *
  *= require_self
  *= require theme
+ *= require annotation
  *= require jquery.ui.slider
 
  * require bootstrap-3.1.1/bootstrap
@@ -20,6 +21,7 @@
 // Override some bootstrap variables
 $carousel-indicator-active-bg:    #fff;
 $carousel-indicator-border-color: #fff;
+$carousel-control-color: #ccc;
 $icon-font-path: "bootstrap-3.1.1/";
 $navbar-height: 40px;
 

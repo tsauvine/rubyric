@@ -41,7 +41,6 @@
     </div>
   </div>
 
-  <% if true %>
   <div id="carousel" class="carousel slide hidden-xs hidden-sm" data-ride="carousel">
     <!-- Indicators -->
     <ol class="carousel-indicators">
@@ -82,7 +81,7 @@
       <span class="glyphicon glyphicon-chevron-right"></span>
     </a>
   </div>
-  <% end %>
+  
 
   <!-- Features -->
   <div class="row">
@@ -97,7 +96,12 @@
       </ul>
     </div>
     <div class="col-sm-6 text-center hidden-xs hidden-sm">
-      <%= image_tag('stack.jpg', :alt => 'A stack of papers') %>
+      <!--%= image_tag('stack.jpg', :alt => 'A stack of papers') %-->
+      <p class="pull-right demo-button clearfix">
+        <%= link_to annotation_demo_path, :class => 'btn btn-lg btn-primary' do %>
+          Try the demo <span class="glyphicon glyphicon-chevron-right"></span>
+        <% end %>
+      </p>
     </div>
   </div>
 
@@ -173,7 +177,7 @@
               </div>
               
               <div class="form-group">
-                <%= f.label :password, 'Password', :class => 'col-sm-4 control-label' %>
+                <%= f.label :password, 'Choose a Password', :class => 'col-sm-4 control-label' %>
                 <div class="col-sm-6">
                   <%= f.password_field :password, :class => 'form-control' %>
                 </div>

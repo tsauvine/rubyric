@@ -26,3 +26,16 @@ li {
 .carousel {
   margin-top: 3ex;
 }
+
+.carousel-control {
+  &.left {
+    background-image: none;
+  }
+  &.right {
+    background-image: none;
+  }
+}
+
+.demo-button {
+  margin-top: 1ex 0ex;
+}

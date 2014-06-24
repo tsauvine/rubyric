@@ -33,15 +33,13 @@ class ReviewsController < ApplicationController
   def edit
     @review = Review.find(params[:id])
     @exercise = @review.submission.exercise
+    @submission = @review.submission
     load_course
 
     # Authorization
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
 
     if @review.type == 'AnnotationAssessment'
-      @submission = @review.submission
-      @page_count = @submission.page_count
-      
       render :action => 'annotation', :layout => 'annotation'
       log "edit_annotation #{@review.id},#{@exercise.id}"
     else

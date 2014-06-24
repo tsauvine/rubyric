@@ -1,0 +1,41 @@
+<!-- reviews/edit.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
+  <% end %>
+  <%= javascript_include_tag 'views/reviews/edit' %>
+<% end %>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    
+    <ul class="nav demo-links">
+      <li><%= link_to "Annotation", annotation_demo_path %></li>
+      <li class="active"><%= link_to "Plain text", review_demo_path %></li>
+      <li><%= link_to "Rubric editor", rubric_demo_path %></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <%= hidden_field_tag :review_payload, '' %>
+  <%= hidden_field_tag :review_status, '' %>
+  <%= hidden_field_tag :review_grade, '' %>
+  <%= hidden_field_tag :review_feedback, '' %>
+
+  <div class="alert-warning alert">
+    This is a demo. The review is not saved. Click phrases to construct feedback.
+  </div>
+    
+  <div class="tabbable review-editor" id="review-editor" data-demo="true" data-initial-rubric-page="1">
+    <%= render :partial => 'reviews/review_editor', :locals => {:f => nil} %>
+  </div>
+
+  <!--div class="row-fluid">
+    <div class="span4">
+      <p><%= link_to 'Back', root_path %></p>
+    </div>
+  </div-->
+
+</div>

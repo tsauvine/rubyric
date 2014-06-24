@@ -13,7 +13,29 @@
     border-left: 1px solid black;
   
     .rubric-container {
-      margin: 1em;
+      margin: 4px 1px 4px 4px;
+    }
+    
+    .rubric-content {
+      font-size: 12px;
+      
+      h3 {
+        font-size: 14px;
+        line-height: 18px;
+      }
+      
+      td.grade {
+        padding: 1px;
+        
+        .btn {
+          padding: 4px 8px;
+        }
+      }
+      
+      td.phrase {
+        padding: 1px 1px 1px 3px;
+      }
+      
     }
     
     .toolbar {
@@ -41,31 +63,46 @@
     }
   }
   
+  .submissions-container {
+    margin-top: 60px;
+  }
+  
   .submission-page {
     position: relative;
     /*border: 1px solid red;*/
     /*padding-right: 400px;*/
-    margin: 10px;
+    margin: 10px 0px;
     
     img {
-      border: 1px solid black;
+      border-top: 1px solid black;
+      border-bottom: 1px solid black;
+      border-right: 1px solid black;
       margin-bottom: 10px;
       background: white;
     }
   }
   
+  /*
+  .submission-page:first-child {
+    margin-top: 60px;
+  }
+  */
+  
   .annotation {
-    max-width: 500px;
+    font-size: 12px;
+    max-width: 300px;
     position: absolute;
     top: 0px;
     left: 0px;
-    border: 1px solid #884;
+    border: 1px solid #886;
     background: #ffa;
     cursor: default;
     
     textarea {
-      width: 400px;
+      width: 286px;
       height: 150px;
+      margin-left: -2px;
+      margin-bottom: 2px;
     }
 
     .grade {
@@ -77,15 +114,15 @@
     }
   
     .content {
-      padding: 1px 4px;
+      padding: 1px 0px 1px 2px;
       cursor: pointer;
     }
     
     .statusbar {
       border-top: 1px solid #aa8;
       background: #eea;
-      color: #884;
-      font-size: smaller;
+      color: #886;
+      font-size: 11px;
       font-family: sans-serif;
       padding: 0px 4px;
     }
@@ -99,7 +136,11 @@
       z-index: 1;
     }
   }
-  
+ 
+  .btn-mini {
+    padding: 1px;
+    height: 20px;
+  }
 }
 
 div.annotation-drag-helper {

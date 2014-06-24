@@ -141,7 +141,7 @@ class Submission < ActiveRecord::Base
     image_filename = "#{id}-#{page_number}-#{(zoom * 100).to_i}.#{image_format}"
     image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
     image_exists = File.exist? image_path
-    pixels_per_centimeter = 50.0 * zoom
+    pixels_per_centimeter = 45.0 * zoom
     
     if self.book_mode
       half_width = self.page_width * pixels_per_centimeter / 2
@@ -170,7 +170,7 @@ class Submission < ActiveRecord::Base
     
     unless image_exists
       # Convert pdf to bitmap
-      command = "convert -antialias -density #{pixels_per_centimeter * 2.54} -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      command = "convert -antialias -density #{4 * pixels_per_centimeter * 2.54} -resize 25% -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
       puts command
       system(command)  # This blocks until the png is rendered
       
