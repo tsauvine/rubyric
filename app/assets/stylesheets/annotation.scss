@@ -63,6 +63,10 @@
     }
   }
   
+  .submissions-container {
+    margin-top: 60px;
+  }
+  
   .submission-page {
     position: relative;
     /*border: 1px solid red;*/
@@ -77,6 +81,12 @@
       background: white;
     }
   }
+  
+  /*
+  .submission-page:first-child {
+    margin-top: 60px;
+  }
+  */
   
   .annotation {
     font-size: 12px;

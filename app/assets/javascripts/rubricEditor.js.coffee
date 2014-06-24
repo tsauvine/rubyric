@@ -276,12 +276,15 @@ class RubricEditor
     @pages = ko.observableArray()
 
     @url = $('#rubric-editor').data('url')
+    @demo_mode = $('#rubric-editor').data('demo')
 
-    $(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
+    unless @demo_mode
+      $(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
 
     this.setHelpTexts()
 
-    this.loadRubric(@url)
+    #this.loadRubric(@url)
+    this.parseRubric(window.rubric)
 
   
   subscribeToChanges: ->

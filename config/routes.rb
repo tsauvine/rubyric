@@ -93,6 +93,13 @@ Rubyric::Application.routes.draw do
       get :download
     end
   end
+  
+  resource :demo, :only => [] do
+    get :rubric
+    get :review
+    get :annotation
+    get :submission
+  end
 
   #match '/exercise/new/:instance' => 'exercises#new'
   match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit

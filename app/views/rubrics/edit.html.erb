@@ -1,25 +1,17 @@
 <!-- rubrics/edit.html.erb -->
 <% content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
+  <% end %>
+
   <%= javascript_include_tag 'rubricEditor' %>
 <% end %>
-
-<style>
-.ui-effects-transfer {
-  border: 2px dotted gray;
-}
-
-.dropHover {
-  background: #ff8;
-  border: 1px solid red;
-}
-</style>
 
 <div class="page-header">
   <div class="pull-right">
     <div class="btn-group">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
-        Action
-        <span class="caret"></span>
+        <i class="icon icon-align-justify"></i>
       </a>
       <ul class="dropdown-menu">
         <li><%= link_to 'Upload rubric', upload_exercise_rubric_path(@exercise) %></li>
@@ -32,188 +24,6 @@
   <h1><%= link_to @exercise.name, @exercise %> - Editing rubric</h1>
 </div>
 
-
 <div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">
-  <!-- Tabs -->
-  <div class="row-fluid">
-    <div class="span12">
-      <ul id="tabs" class="nav nav-tabs">
-        <li class="active">
-          <a id="tab-settings-link" href="#tab-settings" data-toggle="tab"><i class="icon-wrench"></i> <strong>Settings</strong></a>
-        </li>
-        <!-- ko foreach: pages -->
-          <li><a data-toggle='tab' data-bind="text: name, attr: { href: tabUrl, id: tabLinkId }"></a></li>
-        <!-- /ko -->
-        
-        <li id="create-page-tab">
-          <a href="#" class="" data-bind="click: clickCreatePage"><i class="icon-plus"></i> Create new page</a>
-        </li>
-      </ul>
-    </div>
-  </div>
-
-  <div id="tab-contents" class="tab-content">
-    <!-- Settings tab -->
-    <div class="tab-pane active" id="tab-settings">
-      <div class="row-fluid">
-        <div class="span4 well">
-          <h3>Grading</h3>
-          
-          <div class="row-fluid">
-            <div class="span6">
-              <p><em>Mode:</em></p>
-              <ul id="grading-mode" class="unstyled">
-                <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="no" /> No grade</label></li>
-                <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="average" /> Mean</label></li>
-                <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="sum" /> Sum</label></li>
-              </ul>
-            </div>
-            
-            <div class="span6" data-bind="visible: $root.gradingMode() == 'average'">
-              <p><em>Scale:</em></p>
-              <table>
-                <tbody class="grading-scale" id="grading-scale" data-bind="sortable: {data: grades, options: {containment: '#grading-scale', axis: 'y', distance: 5}} ">
-                  <tr>
-                    <td data-bind="editable: {value: value, editorActive: editorActive, placeholder: '<grade missing>'}"></td>
-                    <td class="buttons-column">
-                      <div class="buttons">
-                        <i class="icon-pencil edit-grade-button" title="Edit grade" data-bind="click: activateEditor"></i>
-                        <i class="icon-trash delete-phrase-button" title="Delete grade" data-bind="click: deleteGrade"></i>
-                        <i class="icon-resize-vertical move-phrase-button" title="Drag to move grade"></i>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <p>
-                <button class="btn btn-small create-grade-button" data-bind="click: createGrade"><i class="icon-plus"></i> Add grade</button>
-              </p>
-            </div>
-          </div>
-          
-        </div>
-        
-        <div class="span4 well">
-          <i id="tooltip-categories" class="tooltip-help pull-right icon icon-question-sign" data-content="<%=t '.tooltip_categories' %>"></i>
-          <h3>Feedback categories</h3>
-          
-          <!-- ko if: feedbackCategories().length > 1 -->
-            <table>
-              <tbody id="feedback-categories" data-bind="sortable: {data: feedbackCategories, options: {containment: '#feedback-categories', axis: 'y', distance: 5}}">
-                <tr class="category">
-                  <td class="category" data-bind="editable: {value: name, editorActive: editorActive, placeholder: '<no name>'}"></td>
-                  <td class="buttons-column">
-                    <div class="buttons">
-                      <i class="icon-pencil edit-button" title="Edit" data-bind="click: activateEditor"></i>
-                      <i class="icon-trash delete-button" title="Delete" data-bind="click: deleteCategory"></i>
-                      <i class="icon-resize-vertical move-button" title="Drag to move"></i>
-                    </div>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
-          <!-- /ko -->
-          <!-- ko if: feedbackCategories().length <= 1 -->
-            <p class="hint"><%=t '.no-categories' %></p>
-          <!-- /ko -->
-
-          <!-- ko if: $root.feedbackCategories().length < 3 -->
-            <div id="create-category-button" class="btn btn-small" data-bind="click: clickCreateCategory"><i class="icon-plus"></i> Create category</div>
-          <!-- /ko -->
-        </div>
-        <div class="span4 well">
-          <h3>Feedback email</h3>
-
-          <p>
-            Final comment
-            <i id="tooltip-final-comment" class="tooltip-help pull-right icon icon-question-sign" data-content="<%=t '.tooltip_final_comment' %>"></i>
-          </p>
-          <textarea data-bind="value: finalComment"></textarea>
-          
-        </div>
-      </div>
-      <%= link_to @exercise do %><i class="icon-circle-arrow-left"></i> Back to <%= @exercise.name %><% end %>
-    </div>
-    
-    <!-- Rubric page tab -->
-    <!-- ko foreach: pages -->
-      <div class="tab-pane page" data-bind="attr: { id: tabId }">
-        <h2>
-          <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled page'}"></span>
-          <span class="buttons">
-            <i class="icon-pencil edit-page-button" title="Edit title" data-bind="click: activateEditor"></i>
-            <i class="icon-trash delete-page-button" title="Delete page" data-bind="click: deletePage"></i>
-          </span>
-        </h2>
-
-        <div class="rubric" data-bind="sortable: {data: criteria, options: {containment: '#rubric-editor', axis: 'y', distance: 5} }">
-          <div class="criterion">
-            <!-- Heading -->
-            <h3>
-              <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled Criterion' }"></span>
-              <span class="buttons">
-                <i class="icon-pencil edit-criterion-button" title="Edit criterion" data-bind="click: activateEditor"></i>
-                <i class="icon-trash delete-criterion-button" title="Delete criterion" data-bind="click: deleteCriterion"></i>
-                <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
-              </span>
-            </h3>
-
-            <div class="clear"></div>
-
-            <!-- Phrases -->
-            <div class="phrases">
-              <table class="phrases">
-                <tbody data-bind="sortable: { data: phrases, connectClass: 'phrases-container', options: {containment: '#rubric-editor', axis: 'y', distance: 5} }" class="phrases-container">
-                  <tr class="phrase">
-                    <!-- ko if: $root.feedbackCategories().length > 1 -->
-                      <td class="phraseType">
-                        <select class="phraseType" data-bind="options: $root.feedbackCategories, optionsText: 'name', value: category">
-                        </select>
-                      </td>
-                    <!-- /ko -->
-                    <!-- ko if: ($root.gradingMode() == 'average' && $root.grades().length > 0) -->
-                      <td class="phraseType">
-                        <select class="phraseType" data-bind="options: $root.grades, optionsCaption: ' ', optionsText: 'value', value: grade">
-                        </select>
-                      </td>
-                    <!-- /ko -->
-                    <!-- ko if: $root.gradingMode() == 'sum' -->
-                      <td class="phraseType">
-                        <input title="Points (optional)" class="phraseType" type="text" data-bind="value: gradeValue" />
-                      </td>
-                    <!-- /ko -->
-                    <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit'}"></td>
-                    <td class="buttons-column">
-                      <div class="buttons">
-                        <i class="icon-pencil edit-phrase-button" title="Edit phrase" data-bind="click: activateEditor"></i>
-                        <i class="icon-trash delete-phrase-button" title="Delete phrase" data-bind="click: deletePhrase"></i>
-                        <i class="icon-resize-vertical move-phrase-button" title="Drag to move phrase"></i>
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-
-              <!-- Create phrase -->
-              <div class="btn create-phrase-button buttons" data-bind="click: clickCreatePhrase">
-                <i class="icon-plus"></i> Create new phrase
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Create criterion -->
-        <div class="btn create-criterion-button" data-bind="click: clickCreateCriterion">
-          <i class="icon-plus"></i> Create new criterion
-        </div>
-      </div>
-    <!-- /ko -->
-    
-  </div>
-</div> <!-- /tabbable -->
-
-<% content_for :help do %>
-  <div id="final-comment-help" class="hide">
-    Final comment is automatically added in the end of the feedback email.
-  </div>
-<% end %>
+  <%= render 'rubric_editor' %>
+</div>

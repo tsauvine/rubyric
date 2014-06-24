@@ -226,7 +226,7 @@ class SubmissionPage
   
   updateZoom: () ->
     new_zoom = @annotationEditor.zoom()
-    pixelsPerCentimeter = 50.0 * new_zoom
+    pixelsPerCentimeter = 45.0 * new_zoom
     
     @width("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter)}px")
     @containerWidth("#{Math.round(@annotationEditor.page_width * pixelsPerCentimeter + 320)}px")
@@ -392,7 +392,7 @@ class AnnotationEditor extends Rubric
     
     ko.applyBindings(this)
     
-    # Select initial rubric page    
+    # Select initial rubric page
     initialPage = @pagesById[parseInt(initialPageId)] if initialPageId
     if initialPage
       initialPage.showTab()

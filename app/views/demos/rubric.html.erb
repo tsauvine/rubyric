@@ -1,0 +1,33 @@
+<!-- rubrics/edit.html.erb -->
+<% content_for :javascript do %>
+  <%= javascript_tag do %>
+    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
+  <% end %>
+
+  <%= javascript_include_tag 'rubricEditor' %>
+<% end %>
+
+<div class="navbar">
+  <div class="navbar-inner">
+    <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    
+    <ul class="nav demo-links">
+      <li><%= link_to "Annotation", annotation_demo_path %></li>
+      <li><%= link_to "Plain text", review_demo_path %></li>
+      <li class="active"><%= link_to "Rubric editor", rubric_demo_path %></li>
+    </ul>
+  </div>
+</div>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+
+  <div class="alert-warning alert">
+    This is a demo. The rubric is not saved.
+  </div>
+
+  <div class="tabbable rubric-editor" id="rubric-editor" data-demo="true">
+    <%= render 'rubrics/rubric_editor' %>
+  </div>
+
+</div>
