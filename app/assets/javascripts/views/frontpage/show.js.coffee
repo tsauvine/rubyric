@@ -2,5 +2,5 @@
 #= require price-calculator
 
 jQuery ->
-  $('#carousel').carousel(interval: 10000)
+  $('#carousel').carousel(interval: 15000)
   new PriceCalculator()

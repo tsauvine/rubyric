@@ -19,9 +19,9 @@
         <%= f.password_field :password, :class => 'form-control input-sm text-input', :placeholder => t(:sessions_password_label) %>
       </div>
       <div class="checkbox">
-        <label>
+        <label style="margin-right: 8px; font-size: small;">
+          <%= f.check_box :remember_me, :class => 'form-control input-sm', :style => 'margin-top: -2px;' %>
           <%= t(:sessions_remember_label) %>
-          <%= f.check_box :remember_me, :class => 'form-control input-sm' %>
         </label>
       </div>
       
@@ -33,13 +33,14 @@
 <div class="container">
   <%= render 'layouts/messages' %>
   
-  <div class="row">
+  <div class="row intro">
     <div class="col-sm-12">
-      Rubyric is an online tool that allows you to receive submissions, create assessment rubrics and annotate submissions with feedback.
+      Rubyric is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
       Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
-      However, the phrases can be freely edited in order to give fully personalized feedback for each student.
+      However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
     </div>
   </div>
+  
 
   <div id="carousel" class="carousel slide hidden-xs hidden-sm" data-ride="carousel">
     <!-- Indicators -->
@@ -81,14 +82,14 @@
       <span class="glyphicon glyphicon-chevron-right"></span>
     </a>
   </div>
-  
+
 
   <!-- Features -->
   <div class="row">
     <div class="col-sm-6">
       <h1>Features</h1>
       <ul class="list-unstyled">
-        <li>Create a drop-box for <strong>receiving submissions</strong>.</li>
+        <li>Create a form for <strong>receiving submissions</strong>.</li>
         <li><strong>Distribute submissions</strong> to reviewers.</li>
         <li>Create <strong>assessment rubrics</strong>.</li>
         <li>Annotate submissions with <strong>feedback</strong>.</li>
@@ -99,7 +100,7 @@
       <!--%= image_tag('stack.jpg', :alt => 'A stack of papers') %-->
       <p class="pull-right demo-button clearfix">
         <%= link_to annotation_demo_path, :class => 'btn btn-lg btn-primary' do %>
-          Try the demo <span class="glyphicon glyphicon-chevron-right"></span>
+          Try the Demo <span class="glyphicon glyphicon-chevron-right"></span>
         <% end %>
       </p>
     </div>
@@ -130,7 +131,7 @@
       <h1>Who's using Rubyric</h1>
       <ul class="list-unstyled">
         <li>So far, Rubyric has been used in over <strong>50 courses</strong></li>
-        <li>to assess <strong>34.000 submissions</strong> from <strong>7000 students</strong>.</li>
+        <li>to assess <strong>34,000 submissions</strong> from <strong>7,000 students</strong>.</li>
       </ul>
     </div>
     <div class="col-sm-6 text-center hidden-xs hidden-sm">
@@ -166,7 +167,7 @@
           <%= render 'orders/calculator' %>
         </div>
         <div class="col-sm-6">
-          <h1>Sign up</h1>
+          <h1>Sign up <span class="text-muted">&ndash; It's free</span></h1>
           <div class="well">
             <%= form_for @user, :html => {:class => 'form-horizontal'} do |f| %>
               <div class="form-group">
@@ -226,7 +227,7 @@
     <div class="row">
       <div class="col-sm-6">
         <p>
-          Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an edtech company founded by a group of researchers and PhD students from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+          Rubyric is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark</a>, an educational technology company originally founded by a group of researchers and teachers from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
         </p>
         
         <p>
