@@ -66,7 +66,8 @@ class Course < ActiveRecord::Base
     
     course.teachers << teacher if teacher
 
-    instance = CourseInstance.new(:course_id => course.id, :name => Time.now.year)
+    instance = CourseInstance.new(:course_id => course.id, :name => Time.now.year, :submission_pol
+    instance.pricing = PricingFree.create
     instance.save(:validate => false)
     t = Time.now + 2.months
     deadline = Time.mktime(t.year, t.month, t.day)
