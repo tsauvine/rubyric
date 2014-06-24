@@ -72,7 +72,9 @@
   <% end %>
 
   <!-- Pricing -->
-  <%= render "orders/create_#{@pricing.shortname}" %>
+  <% if @pricing %>
+    <%= render "orders/create_#{@pricing.shortname}" %>
+  <% end %>
 
   <!-- Terms and conditions -->
   <% if @course_instance.new_record? %>
