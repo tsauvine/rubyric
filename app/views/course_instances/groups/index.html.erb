@@ -38,7 +38,7 @@
 <% end %>
 
 <div class="row-fluid busy" id="assign-groups">
-  <table class="table table-hover table-condensed">
+  <table class="table table-hover table-condensed hover-buttons">
     <thead>
       <tr>
         <th></th>
@@ -61,8 +61,10 @@
             <span data-bind="text: name"></span> <a class="removeAssignment" href="#">&times;</a>
           </span>
         </td>
-        <td class="hover-buttons">
-          <button class="btn btn-small" data-bind="click: clickAssign">Add reviewer...</button>
+        <td>
+          <div class="hover-buttons">
+            <button class="btn btn-small" data-bind="click: clickAssign">Add reviewer...</button>
+          </div>
         </td>
       </tr>
     </tbody>

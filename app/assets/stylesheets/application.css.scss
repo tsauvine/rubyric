@@ -672,20 +672,23 @@ p.feedback-preview {
 .ui-timepicker-div td { font-size: 90%; }
 .ui-tpicker-grid-label { background: none; border: none; margin: 0; padding: 0; }
 
-.assign-groups {
-  
-}
 
-table.table-hover {
-  td.hover-buttons {
+table.hover-buttons {
+  
+  div.hover-buttons {
     visibility: hidden;
   }
-
-  tr:hover td.hover-buttons {
-    visibility: visible;
+  
+  tr:hover {
+    td {
+      visibility: visible;  /* Needed to work around a chrome bug (Create review buttons don't appear). Try removing this in the future. */
+      div.hover-buttons {
+        visibility: visible;
+      }
+    }
   }
 }
-
+/*
 div.hover-buttons {
   visibility: hidden;
   margin-left: 1em;
@@ -694,6 +697,7 @@ div.hover-buttons {
 tr:hover div.hover-buttons {
   visibility: visible;
 }
+*/
 
 
 

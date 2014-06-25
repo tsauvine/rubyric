@@ -22,8 +22,6 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-Create review -nappi ei näy Chromella
-
 google plus, facebook
 
 Annotation:
