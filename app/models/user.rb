@@ -36,8 +36,6 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :courses_teacher, {:class_name => 'Course', :join_table => 'courses_teachers', :order => :code}
 
   def get_pricing
-    logger.info "************* (#{self.course_count})"
-    
     if self.course_count < 1
       return PricingFree.new
     else

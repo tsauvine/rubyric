@@ -7,13 +7,14 @@ class FrontpageController < ApplicationController
       @instances_student = current_user.course_instances_student
 
       render :action => 'course_instances', :layout => 'narrow-new'
+      log "dashboard"
     else
       @session = Session.new
       @user = User.new
       render :action => 'info', :layout => 'frontpage'
+      log "frontpage"
     end
 
-    log "frontpage"
   end
 
 end

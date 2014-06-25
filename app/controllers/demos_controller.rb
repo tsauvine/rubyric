@@ -5,6 +5,7 @@ class DemosController < ApplicationController
   def rubric
     @exercise = Exercise.new
     @exercise.initialize_example_rubric
+    log "demo_rubric"
   end
 
   def annotation
@@ -12,6 +13,7 @@ class DemosController < ApplicationController
     @exercise = Exercise.new
     @exercise.initialize_example_rubric
     @submission = ExampleSubmission.new
+    log "demo_annotation"
   end
 
   def review
@@ -29,6 +31,7 @@ class DemosController < ApplicationController
     member2.user = user2
     @submission.group = Group.new
     @submission.group.group_members << [member1, member2]
+    log "demo_review"
   end
 
   def submission

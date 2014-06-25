@@ -5,6 +5,7 @@ class PasswordResetsController < ApplicationController
   def new
     @user_not_found = false
     @email = nil
+    log "password_reset_order view"
   end
 
   def create
@@ -20,13 +21,16 @@ class PasswordResetsController < ApplicationController
       @user.deliver_password_reset_instructions
       flash[:success] = t('password_resets.password_reset_mailed')
       redirect_to root_path
+      log "password_reset_order success #{@email}"
     else
       @user_not_found = true
       render :action => :new
+      log "password_reset_order fail #{@email}"
     end
   end
 
   def edit
+    log "password_reset view #{@user.id}"
   end
 
   def update
@@ -36,14 +40,16 @@ class PasswordResetsController < ApplicationController
     end
     
     @user.password = params[:password]
-    @user.password_confirmation = params[:password]
+    #@user.password_confirmation = params[:password]
 
     if @user.save
       flash[:success] = t('password_resets.edit.success_message')
       Session.create(@user)
       redirect_to root_path
+      log "password_reset success #{@user.id}"
     else
       render :action => :edit
+      log "password_reset fail #{@user.id}"
     end
   end
 
@@ -55,6 +61,7 @@ class PasswordResetsController < ApplicationController
     unless @user
       flash[:error] = t('password_resets.invalid_link')
       redirect_to new_password_reset_path
+      return false
     end
   end
 end 

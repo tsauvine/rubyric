@@ -2,6 +2,8 @@ class OrdersController < ApplicationController
   before_filter :load_course
   before_filter :login_required
   
+  # TODO: logging
+  
   def load_course
     @course_instance = CourseInstance.find(params[:course_instance_id])
     @course = @course_instance.course

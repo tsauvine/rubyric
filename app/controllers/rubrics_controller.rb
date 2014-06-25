@@ -34,6 +34,8 @@ class RubricsController < ApplicationController
     respond_to do |format|
       format.json { render :json => { :status => 'ok' } }
     end
+    
+    log "update_rubric #{@exercise.id}"
   end
 
   def preview

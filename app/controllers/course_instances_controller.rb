@@ -33,7 +33,7 @@ class CourseInstancesController < ApplicationController
     # :name => Time.now.year
     
     render :action => 'new', :layout => 'narrow-new'
-    log "create_course_instance #{@course.id}"
+    log "create_course_instance #{@pricing.shortname} #{@course.id}"
   end
 
   # GET /course_instances/1/edit
@@ -88,6 +88,7 @@ class CourseInstancesController < ApplicationController
       log "create_course_instance success #{@course_instance.id}"
     else
       render :action => 'new', :layout => 'narrow-new'
+      log "create_course_instance invalid #{@course_instance.id} #{@course_instance.errors.full_messages.join('. ')}"
     end
   end
 
