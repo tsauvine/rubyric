@@ -22,7 +22,7 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-Test
+Create review -nappi ei näy Chromella
 
 google plus, facebook
 
@@ -38,8 +38,14 @@ Clean PDF cache
 
 Paypal
 
+View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
+
 
 = Later =
+
+Jos menee submitin kautta sign uppiin, niin älä luo esimerkkikurssia
+
+Submit-workflow niin, että opiskelijat luovat tunnukset lennossa
 
 Copy data from hut to com
 

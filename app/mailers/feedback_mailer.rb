@@ -54,7 +54,7 @@ class FeedbackMailer < ActionMailer::Base
     I18n.with_locale(@course_instance.locale || I18n.locale) do
       mail(
         :to => recipients.join(","),
-        :from => from,
+        :reply_to => from,
         :subject => subject,
         :template_path => 'feedback_mailer',
         :template_name => template_name

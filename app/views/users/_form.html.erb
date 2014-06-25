@@ -24,7 +24,7 @@
   </div>
   
   <div class="form-group<%= @user.errors[:password].any? ? ' has-error has-feedback' : '' %>">
-    <%= f.label :password, 'Password', :class => 'col-sm-4 control-label' %>
+    <%= f.label :password, 'Choose a Password', :class => 'col-sm-4 control-label' %>
     <div class="col-sm-6">
       <%= f.password_field :password, :class => 'form-control' %>
       <% if @user.errors[:password].any? %>

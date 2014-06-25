@@ -282,7 +282,7 @@ class @Rubric
         gradeSum += numericGrade
         index = @gradeIndexByValue[numericGrade]
     
-      if index
+      if index?
         indexSum += index
         indexCount += 1
 
@@ -310,7 +310,7 @@ class @Rubric
     for grade in grades
       return undefined unless grade?
       
-      gradeSum += grade unless isNaN(grade)
+      gradeSum += parseFloat(grade) unless isNaN(grade)
     
     return gradeSum
 
