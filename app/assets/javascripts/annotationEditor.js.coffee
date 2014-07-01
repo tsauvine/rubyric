@@ -166,7 +166,7 @@ class CreateAnnotationCommand
 class DeleteAnnotationCommand
   constructor: (@annotation) ->
     @annotation.submissionPage.annotations.remove(@annotation)
-    @annotation.phrase.criterion.annotations.remove(@annotation)
+    @annotation.phrase.criterion.annotations.remove(@annotation) if @annotation.phrase?
     @annotation.deleted = true
   
   undo: ->
@@ -271,8 +271,9 @@ class SubmissionPage
     @annotationEditor.subscribeToAnnotation(command.annotation)
     
 
-  deleteAnnotation: (annotation) =>
+  deleteAnnotation: (annotation, event) =>
     @annotationEditor.addCommand(new DeleteAnnotationCommand(annotation))
+    event.preventDefault()
   
     
 class Annotation
@@ -308,7 +309,6 @@ class Annotation
   
     # Subscribe to screen position changes to update pagePos after dragging.
     @screenPosition.subscribe =>
-      console.log "screen position observer triggered"
       screenPos = @screenPosition()
       pagePos = @pagePosition()
       pagePos.x = screenPos.x / @zoom
