@@ -170,7 +170,12 @@ class Submission < ActiveRecord::Base
     
     unless image_exists
       # Convert pdf to bitmap
-      command = "convert -antialias -density #{4 * pixels_per_centimeter * 2.54} -resize 25% -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      #command = "convert -antialias -density #{4 * pixels_per_centimeter * 2.54} -resize 25% -quality #{image_quality} #{submission_path}[#{pdf_page_number}]#{crop} #{image_path}"
+      
+      command = "gs -q -dNumRenderingThreads=4 -dNOPAUSE -sDEVICE=pngalpha -dFirstPage=#{pdf_page_number+1} -dLastPage=#{pdf_page_number+1} -sOutputFile=#{image_path} -r#{pixels_per_centimeter * 2.54} #{submission_path} -c quit"
+      # -sDEVICE=jpeg -dJPEGQ=90
+      # TODO: book mode
+      
       puts command
       system(command)  # This blocks until the png is rendered
       
@@ -186,8 +191,8 @@ class Submission < ActiveRecord::Base
     # 3 => 0 left
     # 4 => 2 right
     # 5 => 3 left
-    # 5 => 3 right
-    # 6 => 2 left
+    # 6 => 3 right
+    # 7 => 2 left
   end
   
   def page_count
