@@ -17,6 +17,7 @@ http://www.quicktimesheets.com/
 
 https://detectify.com/
 http://moz.com/blog/new-title-tag-guidelines-preview-tool
+https://deveo.com/blog/2013/05/07/server-side-google-analytics-event-tracking-with-rails/
 
 arrayObject = Object::const_get('Array').new
 

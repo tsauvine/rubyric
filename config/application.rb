@@ -62,6 +62,6 @@ module Rubyric
     config.assets.enabled = true
 
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.24'
+    config.assets.version = '1.25'
   end
 end
