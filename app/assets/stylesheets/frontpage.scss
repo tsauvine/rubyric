@@ -62,6 +62,10 @@ li {
   margin-top: 1ex;
 }
 
-.fb-like-container {
+.like-buttons {
   margin-top: 8ex;
+  
+  .social-button {
+    float: left;
+  }
 }
