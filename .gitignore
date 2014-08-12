@@ -15,5 +15,6 @@
 /test/coverage
 /config/database.yml
 /config/paypal.yml
+/config/analytics.yml
 /config/initializers/settings.rb
 /config/initializers/secret_token.rb

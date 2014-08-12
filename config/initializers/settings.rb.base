@@ -35,3 +35,7 @@ SHIB_ATTRIBUTES = {
   :email => 'Shib_mail',
   :lang => 'Shib_preferredLanguage',
 }
+
+GOOGLE_ANALYTICS_SETTINGS = HashWithIndifferentAccess.new
+config = YAML.load_file(Rails.root.join("config", "analytics.yml"))[Rails.env]
+GOOGLE_ANALYTICS_SETTINGS.update(config) if config

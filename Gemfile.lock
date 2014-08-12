@@ -74,6 +74,7 @@ GEM
       treetop (~> 1.4.8)
     mime-types (1.25.1)
     multi_json (1.9.2)
+    netrc (0.7.7)
     paypal-sdk-core (0.2.8)
       multi_json (~> 1.0)
       xml-simple
@@ -109,6 +110,8 @@ GEM
       json (~> 1.4)
     ref (1.0.5)
     request_store (1.0.5)
+    rest_client (1.7.3)
+      netrc (~> 0.7.7)
     sass (3.2.19)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -151,6 +154,7 @@ DEPENDENCIES
   paypal-sdk-rest
   pg
   rails (= 3.2.17)
+  rest_client
   sass (~> 3.2.5)
   sass-rails (~> 3.2.3)
   scrypt
