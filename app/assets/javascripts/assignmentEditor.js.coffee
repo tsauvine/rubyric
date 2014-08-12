@@ -37,8 +37,9 @@ class Group
     @reviewers = ko.observableArray()
     for user_id in data['reviewer_ids']
       reviewer = users[user_id]
-      @reviewers.push(reviewer)
-      reviewer.assignments.push(this)
+      if reviewer
+        @reviewers.push(reviewer)
+        reviewer.assignments.push(this)
     
 
   assignTo: (reviewer) ->

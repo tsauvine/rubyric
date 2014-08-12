@@ -19,7 +19,9 @@ class Submission < ActiveRecord::Base
   end
 
   def has_reviewer?(user)
-    Review.exists?(:submission_id => self.id, :user_id => user.id)
+    return false unless user
+    GroupReviewer.exists?(:group_id => self.group_id, :user_id => user.id) ||
+      Review.exists?(:submission_id => self.id, :user_id => user.id)
   end
 
   # Setter for the form's file field.

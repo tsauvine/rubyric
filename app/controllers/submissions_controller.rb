@@ -11,8 +11,7 @@ class SubmissionsController < ApplicationController
 
   # Download submission
   def show
-    # TODO: @submission.has_reviewer(current_user)
-    return access_denied unless group_membership_validated(@submission.group) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user)
+    return access_denied unless group_membership_validated(@submission.group) || @submission.has_reviewer?(current_user) || @course.has_teacher(current_user)
     
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
     filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"

@@ -15,8 +15,9 @@ class CourseInstances::GroupsController < GroupsController
     
     #user_ids = groups.collect {|group| group.user_ids }
     user_ids = []
-    user_ids << @course_instance.assistant_ids
     user_ids << @course.teacher_ids
+    user_ids << @course_instance.assistant_ids
+    user_ids << @course_instance.student_ids
     users = User.find(user_ids)
     
     @groups_json = { 

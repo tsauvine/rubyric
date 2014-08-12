@@ -181,12 +181,13 @@ class CourseInstance < ActiveRecord::Base
   # batch: string with comma separated student identifiers, each row representing one group. Student identifier can be studentnumber or email.
   def batch_create_groups(batch)
     # Load existing students
-    students_by_studentnumber = {}  # 'studentnumber' => Student
-    students_by_email = {}          # 'email' => Student
+    students_by_studentnumber = {}  # 'studentnumber' => User
+    students_by_email = {}          # 'email' => User
     self.students.each do |student|
       students_by_studentnumber[student.studentnumber] = student
       students_by_email[student.email] = student
     end
+    logger.debug "#{self.students.size} students loaded"
     
     # Load existing groups
     groups_by_student_id = {}     # student_id => [array of groups where the student belongs]
@@ -198,19 +199,19 @@ class CourseInstance < ActiveRecord::Base
     end
     
     # Load assistants
-    assistants = {}
-    assistants_ambiguous_keys = {}
-    assistant_keys = [:email, :studentnumber, :firstname, :lastname, :name]
-    (self.assistants + self.course.teachers).each do |assistant|
-      assistant_keys.each do |key|
-        value = assistant.send(key)
+    reviewers = {}   # key => User
+    reviewers_ambiguous_keys = {}
+    reviewer_keys = [:email, :studentnumber] # , :firstname, :lastname, :name
+    (self.course.teachers + self.assistants + self.students).each do |user|
+      reviewer_keys.each do |key|
+        value = user.send(key)
         next unless value
-        value.downcase!
+        value = value.downcase.strip
         
         # Mark the key as ambiguous if it has been seen already
-        assistants_ambiguous_keys[value] = true if assistants[value]
+        reviewers_ambiguous_keys[value] = true if reviewers[value]
         
-        assistants[value] = assistant
+        reviewers[value] = user
       end
     end
     
@@ -219,7 +220,7 @@ class CourseInstance < ActiveRecord::Base
       student_keys = parts[0].split(',')
       
       # Find or create students
-      group_students = []   # Array of Student objects that were loaded or created based on the input row
+      group_students = []   # Array of User objects that were loaded or created based on the input row
       group_student_ids = []
       current_groups = []   # Array of arrays of Groups, [[groups of first student], [groups of second student], ...]
       student_keys.each do |student_key|
@@ -302,25 +303,25 @@ class CourseInstance < ActiveRecord::Base
       
       # Set reviewers
       if parts.size >= 2
-        assistant_keys = parts[1].split(',')
+        reviewer_keys = parts[1].split(',')
         
-        assistant_keys.each do |assistant_key|
-          assistant_key = assistant_key.strip.downcase
-          next if assistant_key.blank?
+        reviewer_keys.each do |reviewer_key|
+          reviewer_key = reviewer_key.strip.downcase
+          next if reviewer_key.blank?
           
           # Detect ambiguous keys
-          if assistants_ambiguous_keys[assistant_key]
+          if reviewers_ambiguous_keys[reviewer_key]
             # TODO: warn about ambiguous key
             next
           end
           
-          assistant = assistants[assistant_key]
-          unless assistant
-            # TODO: warn that assistant was not found
+          reviewer = reviewers[reviewer_key]
+          unless reviewer
+            # TODO: warn that reviewer was not found
             next
           end
           
-          group.reviewers << assistant unless group.reviewers.include? assistant
+          group.reviewers << reviewer unless group.reviewers.include? reviewer
         end
       end
     end
