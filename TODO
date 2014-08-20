@@ -14,6 +14,7 @@ http://www.mypromotionalpens.com/Promotional_Pens_Red_Ink_s/642.htm
 
 mainossivun malli:
 http://www.quicktimesheets.com/
+http://flipgrid.com/
 
 https://detectify.com/
 http://moz.com/blog/new-title-tag-guidelines-preview-tool
@@ -37,6 +38,22 @@ general:
 Clean PDF cache
 
 View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
+
+
+= Kalmari =
+pakollinen attribuutit
+ cn
+ sn
+ eduPersonPrincipalName
+
+vapaaehtoiset attribuutit
+ displayName
+ eduPersonAffiliation
+ givenName
+ mail (ei pakollinen suomessa)
+ preferredLanguage
+ schacHomeOrganization
+ schacPersonalUniqueCode
 
 
 = Later =
