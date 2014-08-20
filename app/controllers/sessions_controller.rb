@@ -48,29 +48,33 @@ class SessionsController < ApplicationController
 
 
   def shibboleth
-    shibinfo = {
-      :login => request.env[SHIB_ATTRIBUTES[:id]],
-      :studentnumber => (request.env[SHIB_ATTRIBUTES[:studentnumber]] || '').split(':').last,
-      :firstname => request.env[SHIB_ATTRIBUTES[:firstname]],
-      :lastname => request.env[SHIB_ATTRIBUTES[:lastname]],
-      :email => request.env[SHIB_ATTRIBUTES[:email]],
-    }
-    logout_url = request.env[SHIB_ATTRIBUTES[:logout]]
+    if defined?(SHIB_ATTRIBUTES)
+      shibinfo = {
+        :login => request.env[SHIB_ATTRIBUTES[:id]],
+        :studentnumber => (request.env[SHIB_ATTRIBUTES[:studentnumber]] || '').split(':').last,
+        :firstname => request.env[SHIB_ATTRIBUTES[:firstname]],
+        :lastname => request.env[SHIB_ATTRIBUTES[:lastname]],
+        :email => request.env[SHIB_ATTRIBUTES[:email]],
+        :logout_url => request.env[SHIB_ATTRIBUTES[:logout]]
+      }
+    elsif Rails.env == 'development'
+      shibinfo = {
+        :login => 'student41@aalto.fi', #'student1@hut.fi',
+        :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00041' || '').split(':').last,
+        :firstname => 'Student',
+        :lastname => '41',
+        :email => 'student41@example.com',
+        :logout_url => 'http://www.aalto.fi/'
+      }
+    else
+      shibinfo = {}
+    end
 
-#     shibinfo = {
-#       :login => 'student41@aalto.fi', #'student1@hut.fi',
-#       :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00041' || '').split(':').last,
-#       :firstname => 'Student',
-#       :lastname => '41',
-#       :email => 'student41@example.com'
-#     }
-#     logout_url= 'http://www.aalto.fi/'
-
-    shibboleth_login(shibinfo, logout_url)
+    shibboleth_login(shibinfo)
   end
 
 
-  def shibboleth_login(shibinfo, logout_url)
+  def shibboleth_login(shibinfo)
     if shibinfo[:login].blank? && shibinfo[:studentnumber].blank?
       flash[:error] = "Shibboleth login failed (no studentnumber or username received)."
       logger.warn("Shibboleth login failed (missing attributes). #{shibinfo}")
@@ -143,7 +147,7 @@ class SessionsController < ApplicationController
 
     # Create session
     if Session.create(user)
-      session[:logout_url] = logout_url
+      session[:logout_url] = shibinfo[:logout_url]
       logger.info("Logged in #{user.login} (#{user.studentnumber}) (shibboleth)")
     else
       logger.warn("Failed to create session for #{user.login} (#{user.studentnumber}) (shibboleth)")
