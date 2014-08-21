@@ -350,9 +350,12 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    tempfile = @exercise.archive(:only_latest => true)
-    send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
-    tempfile.unlink
+    begin
+      tempfile = @exercise.archive(:only_latest => true)
+      send_file tempfile.path(), :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
+    ensure
+      tempfile.close!
+    end
   end
 
   def create_example_submissions

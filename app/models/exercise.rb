@@ -344,10 +344,13 @@ class Exercise < ActiveRecord::Base
 
     archive = Tempfile.new('rubyric-archive')
 
+    # t = Time.now.strftime("%Y%m%d")
+    # path = "#{prefix}#{t}-#{$$}-#{rand(0x100000000).to_s(36)}"
+
     # Make a temp directory. It is deleted automatically after the block returns.
     Dir.mktmpdir("rubyric") do |temp_dir|
       # Create the actual content directory so that it has a sensible name in the archive
-      content_dir_name = "rubyric-exercise#{self.id}"
+      content_dir_name = "rubyric-exercise#{self.id}" # TODO: use escaped exercise name
       Dir.mkdir "#{temp_dir}/#{content_dir_name}"
 
       # Add contents
@@ -359,14 +362,10 @@ class Exercise < ActiveRecord::Base
           target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
           target_filename << ".#{submission.extension}" unless submission.extension.blank?
 
-          if File.exist?(source_filename)
-            FileUtils.ln_s(source_filename, target_filename)
-          end
+          FileUtils.ln_s(source_filename, target_filename) if File.exist?(source_filename)
 
           # Take only one file per group?
-          if only_latest
-            break
-          end
+          break if only_latest
         end
       end
 

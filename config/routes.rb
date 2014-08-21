@@ -23,7 +23,11 @@ Rubyric::Application.routes.draw do
     post :send_feedback_bundle
     get :create_example_groups
     
-    resources :exercises, :only => [:new, :create, :update]
+    resources :exercises, :only => [:new, :create, :update] do
+      member do
+        get :archive
+      end
+    end
     
     resources :reviewers, :only => [:index, :create, :destroy], :controller => 'course_instances/reviewers'
     
