@@ -383,9 +383,10 @@ class RubricEditor
       # Load grades
       if data['grades']
         for grade in data['grades']
-          grade = new Grade(grade.toString(), @grades)
-          @grades.push(grade)
-          @gradesByValue[grade.value()] = grade
+          if grade?
+            grade = new Grade(grade.toString(), @grades)
+            @grades.push(grade)
+            @gradesByValue[grade.value()] = grade
 
       # Load pages
       for page_data in data['pages']
