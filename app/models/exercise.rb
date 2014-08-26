@@ -1,3 +1,4 @@
+require "shellwords.rb"
 require "rexml/document"
 include REXML
 
@@ -341,28 +342,41 @@ class Exercise < ActiveRecord::Base
 
   def archive(options = {})
     only_latest = options.include? :only_latest
+    group_subdirs = true
 
-    archive = Tempfile.new('rubyric-archive')
-
-    # t = Time.now.strftime("%Y%m%d")
-    # path = "#{prefix}#{t}-#{$$}-#{rand(0x100000000).to_s(36)}"
+    t = Time.now.strftime("%Y%m%d%H%M%S")
+    archive_path = Shellwords.escape(TMP_PATH + "/rubyric-#{self.id}-#{t}.tar.gz")
+    logger.debug("Archive: #{archive_path}")
+    #logger.debug("TempDir: #{temp_dir}")
+    content_dir_name = Shellwords.escape("rubyric-#{self.name}") # TODO: use escaped exercise name
+    #logger.debug("ContentDir: #{content_dir_name}")
 
     # Make a temp directory. It is deleted automatically after the block returns.
-    Dir.mktmpdir("rubyric") do |temp_dir|
+    #Dir.mktmpdir("rubyric") do |temp_dir|
+    temp_dir = TMP_PATH + "/rubyric-#{self.id}-#{t}"
+      Dir.mkdir(temp_dir)
       # Create the actual content directory so that it has a sensible name in the archive
-      content_dir_name = "rubyric-exercise#{self.id}" # TODO: use escaped exercise name
       Dir.mkdir "#{temp_dir}/#{content_dir_name}"
 
       # Add contents
       groups.each do |group|
+        group_dir_name = "#{temp_dir}/#{content_dir_name}/#{group.name}"
+        Dir.mkdir group_dir_name if group_subdirs
+        
         group.submissions.each do |submission|
 
           # Link the submissionn
           source_filename = submission.full_filename
-          target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
-          target_filename << ".#{submission.extension}" unless submission.extension.blank?
+          
+          if group_subdirs
+            target_filename = "#{group_dir_name}/#{submission.filename}"
+          else
+            target_filename = "#{temp_dir}/#{content_dir_name}/#{group.name}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
+            target_filename << ".#{submission.extension}" unless submission.extension.blank?
+          end
 
           FileUtils.ln_s(source_filename, target_filename) if File.exist?(source_filename)
+          logger.debug("Link #{source_filename} -> #{target_filename}")
 
           # Take only one file per group?
           break if only_latest
@@ -371,10 +385,12 @@ class Exercise < ActiveRecord::Base
 
       # Archive the folder
       #puts "tar -zcf #{archive.path()} #{content_dir_name}"
-      system("tar -zc --directory #{temp_dir} --file #{archive.path()} #{content_dir_name}")
-    end
+      command = "tar -zc --dereference --directory #{temp_dir} --file #{archive_path} #{content_dir_name}"
+      logger.debug(command)
+      system(command)
+    #end
 
-    return archive
+    return archive_path
   end
 
   # Creates example submissions for existing groups.
@@ -417,6 +433,10 @@ class Exercise < ActiveRecord::Base
 
   def initialize_example_rubric
     self.rubric = '{"version":"2","pages":[{"id":1,"name":"Final report","criteria":[{"id":1,"name":"Structure","phrases":[{"id":1,"text":"The report is well structured and easy to read.","grade":5},{"id":2,"text":"The report needs some structuring (e.g. introduction, methods, results, conclusions).","grade":3},{"id":5,"text":"The report is difficult to read because it\'s not logically structured.","grade":1},{"id":6,"text":"For example, the conclusions should be in a separate section and not among results."}]},{"id":2,"name":"Scope","phrases":[{"id":3,"text":"The work is well scoped.","grade":5},{"id":4,"text":"The scope is too narrow.","grade":3},{"id":7,"text":"The scope is too wide.","grade":3},{"id":8,"text":"The project does not meet the minimum requirements.","grade":"Fail"}]},{"id":3,"name":"Figures","phrases":[{"id":9,"text":"The figures are well made.","grade":5},{"id":10,"text":"There are some shortcomings in the figures.","grade":3},{"id":12,"text":"The scales should start from zero."},{"id":13,"text":"The figures are not referenced from text."},{"id":11,"text":"Some figures could have been used to illustrate the results.","grade":1}]}]}],"feedbackCategories":[],"grades":["Fail",1,2,3,4,5],"gradingMode":"average","finalComment":""}'
+  end
+
+  def escape_filename(original)
+    original.gsub(/\s+/,'_').gsub(/[^\w.-]/, '')
   end
   
 end
