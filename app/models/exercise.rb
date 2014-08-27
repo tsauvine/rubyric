@@ -361,7 +361,7 @@ class Exercise < ActiveRecord::Base
       # Add contents
       groups.each do |group|
         group_dir_name = "#{temp_dir}/#{content_dir_name}/#{escape_filename(group.users.map {|user| user.studentnumber || user.email}.join('-'))}"
-        Dir.mkdir group_dir_name if group_subdirs
+        Dir.mkdir group_dir_name if group_subdirs && !Dir.exists?(group_dir_name)
         
         group.submissions.each do |submission|
 
