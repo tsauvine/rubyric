@@ -352,8 +352,9 @@ class ExercisesController < ApplicationController
 
     begin
       archive_path = @exercise.archive(:only_latest => true)
-      send_file archive_path, :type => 'application/x-gzip', :filename => "rybyric-exercise-#{@exercise.id}.tar.gz"
+      send_file archive_path, :type => 'application/x-gzip', :filename => @exercise.archive_filename
     ensure
+      # TODO: delete tempdir and archive
       #File.delete(archive_path)
     end
   end
