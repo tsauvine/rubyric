@@ -369,7 +369,7 @@ class Exercise < ActiveRecord::Base
           source_filename = submission.full_filename
           
           if group_subdirs
-            target_filename = Shellwords.escape("#{group_dir_name}/#{submission.filename}")
+            target_filename = "#{group_dir_name}/#{escape_filename(submission.filename)}"
           else
             target_filename = "#{temp_dir}/#{content_dir_name}/#{escape_filename(group.users.map {|user| user.studentnumber || user.email}.join('-'))}-#{submission.created_at.strftime('%Y%m%d%H%M%S')}"
             target_filename << ".#{escape_filename(submission.extension)}" unless submission.extension.blank?
