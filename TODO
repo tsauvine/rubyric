@@ -25,7 +25,13 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
+Haka-login etusivulle
+
+rubyric.cs.hut.fi:hin ilmoitus
+
 google plus, facebook
+
+Default review mode: plain text
 
 Annotation:
 in sum mode:
@@ -33,30 +39,23 @@ in sum mode:
 in mean mode:
   - do not highlight selected phrase
 general:
-- limit annotation x to page_width * 1.05
+- limit annotation_x to page_width * 1.05
 
 Clean PDF cache
 
 View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
 
+Timezones
 
-= Kalmari =
-pakollinen attribuutit
- cn
- sn
- eduPersonPrincipalName
+Tarkista, että opiskelijanumero tulee aina asetettua group_memberille
 
-vapaaehtoiset attribuutit
- displayName
- eduPersonAffiliation
- givenName
- mail (ei pakollinen suomessa)
- preferredLanguage
- schacHomeOrganization
- schacPersonalUniqueCode
-
+Tarkista, että organisaatio tulee asetettua uudelle kurssille
 
 = Later =
+
+Delayed job watchdog
+
+Add restart_delayed_job to bootstrap
 
 Paypal
 
@@ -194,3 +193,19 @@ Rubric editor: y axis constraint in grading scale editor
 Submission list: select finish should unselect first
 
 rubric editor: confirm if removing whole page
+
+
+= Kalmari =
+pakollinen attribuutit
+ cn
+ sn
+ eduPersonPrincipalName
+
+vapaaehtoiset attribuutit
+ displayName
+ eduPersonAffiliation
+ givenName
+ mail (ei pakollinen suomessa)
+ preferredLanguage
+ schacHomeOrganization
+ schacPersonalUniqueCode
