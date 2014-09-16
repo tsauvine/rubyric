@@ -1,6 +1,7 @@
 fi:
   other_language_name: "In English"
   other_language_code: "en"
+  app_title: "Rubyric - Arviointi- ja palautetyökalu"
   
   settings_changeable_later: "Asetuksia voi muuttaa myöhemmin."
   

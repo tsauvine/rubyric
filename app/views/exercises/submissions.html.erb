@@ -9,6 +9,7 @@
     <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
     <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
       <li><%= link_to 'Generate example submissions', exercise_create_example_submissions_path(@exercise) %></li>
+      <li><%= link_to 'Download submissions', exercise_archive_path(@exercise) %></li>
     </ul>
   </div>
   <h1>
@@ -80,7 +81,7 @@
     </tbody>
     <tfoot>
       <tr>
-        <td>
+        <td><%= @groups.size %> groups
         </td>
         <td>
           <button class="btn" id="reviews-select-all" onclick="return false;"> Select all</button>
