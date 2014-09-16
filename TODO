@@ -25,7 +25,7 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-google plus, facebook
+Terms and conditions
 
 Annotation:
 in sum mode:
@@ -40,25 +40,17 @@ Clean PDF cache
 View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
 
 
-= Kalmari =
-pakollinen attribuutit
- cn
- sn
- eduPersonPrincipalName
-
-vapaaehtoiset attribuutit
- displayName
- eduPersonAffiliation
- givenName
- mail (ei pakollinen suomessa)
- preferredLanguage
- schacHomeOrganization
- schacPersonalUniqueCode
-
-
 = Later =
 
+Piilota "Anybody can submit without authenticating." Haka-käyttäjiltä
+
+Piilota feedback categories
+
+My preferences vasemmalle, testaa
+
 Paypal
+
+google plus, facebook
 
 Jos menee submitin kautta sign uppiin, niin älä luo esimerkkikurssia
 
@@ -194,3 +186,19 @@ Rubric editor: y axis constraint in grading scale editor
 Submission list: select finish should unselect first
 
 rubric editor: confirm if removing whole page
+
+
+= Kalmari =
+pakolliset attribuutit
+ cn
+ sn
+ eduPersonPrincipalName
+
+vapaaehtoiset attribuutit
+ displayName
+ eduPersonAffiliation
+ givenName
+ mail (ei pakollinen suomessa)
+ preferredLanguage
+ schacHomeOrganization
+ schacPersonalUniqueCode
