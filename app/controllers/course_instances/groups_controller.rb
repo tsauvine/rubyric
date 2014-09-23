@@ -20,7 +20,7 @@ class CourseInstances::GroupsController < GroupsController
     user_ids << @course_instance.student_ids
     users = User.find(user_ids)
     
-    @groups_json = { 
+    @groups_json = {
       groups: groups.as_json(
                              :only => [:id],
                              :include => [:group_members => {
@@ -30,7 +30,8 @@ class CourseInstances::GroupsController < GroupsController
                                           ],
                              :methods => [:reviewer_ids, :url]
       ),
-      users: users.as_json(:only => [:id, :studentnumber, :email, :firstname, :lastname] ),
+      users: users.as_json(:only => [:id, :studentnumber, :email, :firstname, :lastname]),
+      students: @course_instance.student_ids,
       assistants: @course_instance.assistant_ids,
       teachers: @course.teacher_ids
     }
