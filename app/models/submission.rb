@@ -74,7 +74,7 @@ class Submission < ActiveRecord::Base
 
   # Returns the location of the submitted file in the filesystem.
   def full_filename
-    "#{SUBMISSIONS_PATH}/#{exercise.id}/#{id}.#{extension}"
+    "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}.#{extension}"
   end
 
   # Assigns this submission to be reviewed by user.

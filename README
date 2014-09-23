@@ -6,8 +6,6 @@ sudo gem install bundler
 
 == Install Rubyric
 
-cd rubyric
-
 # Install gems
 bundle install
 
@@ -17,6 +15,7 @@ cp config/initializers/settings.rb.base config/initializers/settings.rb
 cp config/database.yml.base config/database.yml
 
 # Create database, and put password and username to config/database.yml
+sudo -u postgres createdb -O my_username rubyric
 
 # Initialize database
 rake db:setup
@@ -24,4 +23,4 @@ rake db:setup
 
 == Start server
 
-rails server
+bundle exec rails server
