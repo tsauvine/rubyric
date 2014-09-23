@@ -14,7 +14,7 @@ Rubyric::Application.routes.draw do
   end
   match 'preferences' => 'users#edit'
 
-  resources :courses, :only => [:show, :edit, :update] do
+  resources :courses, :only => [:index, :show, :edit, :update] do
     resources :course_instances, :only => [:new]
     resources :teachers, :only => [:index, :create, :destroy], :controller => 'courses/teachers'
   end
@@ -105,6 +105,10 @@ Rubyric::Application.routes.draw do
     get :submission
   end
 
+  resource :admin, :only => [:show] do
+    post :test_mailer
+  end
+  
   #match '/exercise/new/:instance' => 'exercises#new'
   match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
   match 'submit/:exercise' => 'submissions#create', :via => :post

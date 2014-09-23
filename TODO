@@ -25,6 +25,10 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
+Delayed job watchdog
+
+Add restart_delayed_job to bootstrap
+
 Terms and conditions
 
 rubyric.cs.hut.fi:hin ilmoitus
@@ -58,10 +62,6 @@ Tarkista, että opiskelijanumero tulee aina asetettua group_memberille
 Tarkista, että organisaatio tulee asetettua uudelle kurssille
 
 My preferences vasemmalle, testaa
-
-Delayed job watchdog
-
-Add restart_delayed_job to bootstrap
 
 Paypal
 
@@ -161,8 +161,6 @@ submit ja edit group hienomman näköiseksi (fixed layout)
 batch create groups
 
 exercise lakkaa ottamasta palautuksia määräajan jälkeen
-
-test mailer button, test delayed job button
 
 poista group invitationit, jotka ovat vanhentuneet
 
