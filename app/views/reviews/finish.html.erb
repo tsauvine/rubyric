@@ -22,22 +22,24 @@
       <small>(<%=l @review.submission.created_at %>)</small>
     <% end %>
   </div>
-  <div class="span4 well">
-    <!-- Group -->
-    <h3>Group</h3>
+  <% unless @exercise.anonymous_submissions %>
+    <div class="span4 well">
+      <!-- Group -->
+      <h3>Group</h3>
 
-    <table class="table">
-      <tbody>
-        <% @review.submission.group.users.each do |user| %>
-          <tr>
-            <td><%= user.studentnumber %></td>
-            <td><%= user.name %></td>
-            <td><%= user.email %></td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-  </div>
+      <table class="table">
+        <tbody>
+          <% @review.submission.group.users.each do |user| %>
+            <tr>
+              <td><%= user.studentnumber %></td>
+              <td><%= user.name %></td>
+              <td><%= user.email %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% end %>
 </div>
 
 <% if (@review.status != 'mailed') %>

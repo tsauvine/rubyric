@@ -11,14 +11,12 @@ class FeedbackMailer < ActionMailer::Base
     @grader = @review.user
     group = review.submission.group
 
-    if @course.email.blank?
+    if @course.email.blank? && !@exercise.anonymous_graders
       from = @grader.email
     else
       from = @course.email
       #headers["Reply-to"] = @grader.email
     end
-    #unless @exercise.anonymous_graders
-    #end
 
     # Collect receiver addresses
     recipients = []
