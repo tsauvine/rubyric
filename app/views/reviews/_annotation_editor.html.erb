@@ -48,7 +48,7 @@
           <% end %>
         </div>
         
-        <% unless @exercise.new_record? %>
+        <% if !@exercise.new_record? && !@exercise.anonymous_submissions %>
           <div class="row-fluid">
             <div class="well">
               <!-- Group -->

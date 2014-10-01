@@ -52,8 +52,8 @@
           <%= link_to "#{@submission.filename}", submission_demo_path %>
         <% end %>
       </div>
-      <div class="span4 well">
-        <% if @submission && @submission.group %>
+      <% if @submission && @submission.group && !@exercise.anonymous_submissions %>
+        <div class="span4 well">
           <!-- Group -->
           <h3>Group</h3>
 
@@ -68,8 +68,8 @@
               <% end %>
             </tbody>
           </table>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
 
       <!-- Upload review -->
       <div class="span4 well">

@@ -1,19 +1,19 @@
 test: &default
   # Credentials for New APIs
-  client_id: EBWKjlELKMYqRNQ6sYvFo64FtaRLRR5BdHEESmha49TM
-  client_secret: EO422dn3gQLgDbuwqTjzrFgFtaRLRR5BdHEESmha49TM
+  client_id: 00000
+  client_secret: 12345
 
   # Mode can be 'live' or 'sandbox'
   mode: sandbox
 
   # Credentials for Classic APIs
-  username: jb-us-seller_api1.paypal.com
-  password: WX4WTU3S8MY44S7F
-  signature: AFcWxV21C7fd0v3bYYYRCpSSRl31A7yDhhsPUU2XhtMoZXsWHFxu-RWy
-  app_id: APP-80W284485P519543T
+  username: user@example.com
+  password: 12345
+  signature: abcdefg
+  app_id: APP-0000000
   # # With Certificate
   # cert_path: "config/cert_key.pem"
-  sandbox_email_address: Platform.sdk.seller@gmail.com
+  sandbox_email_address: user@example.com
 
   # # IP Address
   # ip_address: 127.0.0.1
@@ -25,4 +25,4 @@ development:
 
 production:
   <<: *default
-  mode: live 
+  mode: live

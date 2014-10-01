@@ -1,7 +1,11 @@
 <tr class="group" id="group<%= assistant_group.id %>">
   <td colspan="4">
-    <!-- Students -->
-    <%= assistant_group.names_with_studentnumbers %>
+    <% if @exercise.anonymous_submissions %>
+      Anonymous
+    <% else %>
+      <!-- Students -->
+      <%= assistant_group.names_with_studentnumbers %>
+    <% end %>
   </td>
 </tr>
 <% assistant_group.submissions.each do |submission| %>

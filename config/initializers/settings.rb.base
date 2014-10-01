@@ -13,7 +13,7 @@ RUBYRIC_EMAIL = "rubyric@example.com"
 # Host is used for links in emails
 RUBYRIC_HOST = "rubyric.example.com"
 
-# Authentication
+# Redirect to SSL
 FORCE_SSL = false
 
 # Uncomment to execute delayed jobs immediately, instead of in a background process
@@ -25,18 +25,14 @@ FORCE_SSL = false
 # }
 
 # Shibboleth attribute names (attribute-map.xml)
-SHIB_PATH = "/Shibboleth.sso/DS?target="
-SHIB_ATTRIBUTES = {
-  :logout => 'logouturl',
-  :id => 'eppn',
-  :studentnumber => 'schacPersonalUniqueCode',
-  :firstname => 'displayName',
-  :lastname => 'sn',
-  :email => 'mail',
-  :lang => 'preferredLanguage',
-  :affiliation => 'unscoped-affiliation',
-}
-
-GOOGLE_ANALYTICS_SETTINGS = HashWithIndifferentAccess.new
-config = YAML.load_file(Rails.root.join("config", "analytics.yml"))[Rails.env]
-GOOGLE_ANALYTICS_SETTINGS.update(config) if config
+# SHIB_PATH = "/Shibboleth.sso/DS?target="
+# SHIB_ATTRIBUTES = {
+#   :logout => 'logouturl',
+#   :id => 'eppn',
+#   :studentnumber => 'schacPersonalUniqueCode',
+#   :firstname => 'displayName',
+#   :lastname => 'sn',
+#   :email => 'mail',
+#   :lang => 'preferredLanguage',
+#   :affiliation => 'unscoped-affiliation',
+# }
