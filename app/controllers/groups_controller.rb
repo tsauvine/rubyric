@@ -120,6 +120,7 @@ class GroupsController < ApplicationController
       #@group.save
 
       if current_user
+        @course_instance.students << current_user unless @course_instance.students.include?(current_user)
         redirect_to submit_path(:exercise => @exercise.id, :group => @group.id)
       else
         redirect_to submit_path(:exercise => @exercise.id, :group_token => @group.access_token)
