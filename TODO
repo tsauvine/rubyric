@@ -25,10 +25,6 @@ arrayObject = Object::const_get('Array').new
 
 = Soon =
 
-Delayed job watchdog
-
-Add restart_delayed_job to bootstrap
-
 Terms and conditions
 
 rubyric.cs.hut.fi:hin ilmoitus
@@ -50,6 +46,7 @@ Clean PDF cache
 View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
 
 Timezones
+
 
 = Later =
 
