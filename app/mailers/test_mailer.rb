@@ -4,7 +4,7 @@ class TestMailer < ActionMailer::Base
   
   def test_email(address, options = {})
     @delayed = options[:delayed]
-    mail(:subject => "[Rubyric] Mailer test", :to => RUBYRIC_EMAIL)
+    mail(:subject => "[Rubyric] Mailer test", :to => address)
   end
 
 end
