@@ -40,15 +40,24 @@ class SubmissionsController < ApplicationController
   
   # Submit
   def new
-    @exercise = Exercise.find(params[:exercise])
+    if @course_instance.submission_policy == 'lti'
+      # LTI
+      return unless authorize_lti
+      @exercise = Exercise.find_by_(params[:context_id])
+      @user = nil   # todo later: remember LTI users
+    else
+      # Standalone
+      @exercise = Exercise.find(params[:exercise])
+      @user = current_user
+    end
+    
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
-    @user = current_user
     @is_teacher = @course.has_teacher(current_user)
     
     # Authorization
     # TODO: redirect to appropriate IdP
-    return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
+    return access_denied unless current_user || ['unauthenticated', 'lti'].include?(@course_instance.submission_policy)
 
     # Check that instance is active and student is enrolled
     return unless @is_teacher || submission_policy_accepted
@@ -124,22 +133,27 @@ class SubmissionsController < ApplicationController
 
     @submission = Submission.new
     log "submit view #{@exercise.id}"
+    
+    # TODO: LTI params must be resubmitted by the submission form
   end
 
   def create
+    if @course_instance.submission_policy == 'lti'
+      # LTI
+      return unless authorize_lti
+      @user = nil   # todo later: remember LTI users
+    else
+      # Standalone
+      @user = current_user
+    end
+    
     @submission = Submission.new(params[:submission])
     @exercise = @submission.exercise
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
-    @is_teacher = @course.has_teacher(current_user)
-    user = current_user
+    @is_teacher = @course.has_teacher(@user)
     
-    logger.debug "Submit"
-    
-    unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
-      logger.debug "Login required"
-      return access_denied
-    end
+    return access_denied unless logged_in? || ['unauthenticated', 'lti'].include?(@course_instance.submission_policy)
     logger.debug "Login accepted"
 
     # Check that instance is active and student is enrolled
@@ -155,12 +169,13 @@ class SubmissionsController < ApplicationController
       logger.debug "Membership accepted"
     else
       logger.debug "No group specified"
-      if @exercise.groupsizemax <= 1 && current_user
+      if @course_instance.submission_policy == 'lti' || (@exercise.groupsizemax <= 1 && current_user)
         logger.debug "Creating group of one"
         # Create a group automatically
-        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => user.studentnumber})
+        groupname = @user ? @user.studentnumber : 'untitled group' # FIXME: groupname in LTI
+        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
         group.save(:validate => false)
-        group.add_member(user)
+        group.add_member(@user) if @user  # FIXME: LTI user must be created
 
         @submission.group = group
       else
@@ -191,7 +206,10 @@ class SubmissionsController < ApplicationController
     end
     
     logger.debug "Submission successful"
-    redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    #if @course_instance.submission_policy == 'lti'
+      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    #else
+    #end
   end
 
   # Assign to current user and start review
@@ -235,7 +253,7 @@ class SubmissionsController < ApplicationController
     redirect_to @exercise
   end
   
-  
+    
   private
   
   def submission_policy_accepted
@@ -258,5 +276,53 @@ class SubmissionsController < ApplicationController
     end
     
     return true
+  end
+  
+  def authorize_lti
+    key = params['oauth_consumer_key']
+    
+    unless key
+      @heading =  "No consumer key"
+      render :template => "shared/error"
+      return false
+    end
+    
+    secret = OAUTH_CREDS[key]
+    unless secret
+      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
+      @tp.lti_msg = "Your consumer didn't use a recognized key."
+      @tp.lti_errorlog = "You did it wrong!"
+      @heading =  "Consumer key wasn't recognized"
+      render :template => "shared/error"
+      return false
+    end
+    
+    @tp = IMS::LTI::ToolProvider.new(key, secret, params)
+    
+    unless @tp.valid_request?(request)
+      @heading =  "The OAuth signature was invalid"
+      render :template => "shared/error"
+      return false
+    end
+    
+    if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
+      @heading =  "Your request is too old."
+      render :template => "shared/error"
+      return false
+    end
+    
+    if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
+      @heading =  "Why are you reusing the nonce?"
+      render :template => "shared/error"
+      return false
+    end
+    
+    @username = @tp.username("Dude")
+    return true
+  end
+  
+  def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)
+    # some kind of caching solution or something to keep a short-term memory of used nonces
+    false
   end
 end

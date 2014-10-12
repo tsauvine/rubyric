@@ -36,3 +36,5 @@ FORCE_SSL = false
 #   :lang => 'preferredLanguage',
 #   :affiliation => 'unscoped-affiliation',
 # }
+
+OAUTH_CREDS = {"test" => "secret", "testing" => "supersecret"}

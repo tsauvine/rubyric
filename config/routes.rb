@@ -86,6 +86,11 @@ Rubyric::Application.routes.draw do
       match 'move' => 'submissions#move', :via => [:get, :post]
     end
   end
+  
+  resource :lti, :only => [] do
+    post :tool
+    get :tool
+  end
 
   resources :reviews, :only => [:show, :edit, :update] do
     member do

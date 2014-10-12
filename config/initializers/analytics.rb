@@ -1,4 +1,4 @@
-path = Rails.root.join("config", "paypal.yml")
+path = "config/paypal.yml"
 if File.exist? path
   PayPal::SDK::Core::Config.load(path, Rails.env)
   PayPal::SDK::Core::Config.logger = Rails.logger
