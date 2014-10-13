@@ -277,52 +277,5 @@ class SubmissionsController < ApplicationController
     
     return true
   end
-  
-  def authorize_lti
-    key = params['oauth_consumer_key']
-    
-    unless key
-      @heading =  "No consumer key"
-      render :template => "shared/error"
-      return false
-    end
-    
-    secret = OAUTH_CREDS[key]
-    unless secret
-      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
-      @tp.lti_msg = "Your consumer didn't use a recognized key."
-      @tp.lti_errorlog = "You did it wrong!"
-      @heading =  "Consumer key wasn't recognized"
-      render :template => "shared/error"
-      return false
-    end
-    
-    @tp = IMS::LTI::ToolProvider.new(key, secret, params)
-    
-    unless @tp.valid_request?(request)
-      @heading =  "The OAuth signature was invalid"
-      render :template => "shared/error"
-      return false
-    end
-    
-    if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
-      @heading =  "Your request is too old."
-      render :template => "shared/error"
-      return false
-    end
-    
-    if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
-      @heading =  "Why are you reusing the nonce?"
-      render :template => "shared/error"
-      return false
-    end
-    
-    @username = @tp.username("Dude")
-    return true
-  end
-  
-  def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)
-    # some kind of caching solution or something to keep a short-term memory of used nonces
-    false
-  end
+
 end
