@@ -47,6 +47,8 @@ class Exercise < ActiveRecord::Base
   end
 
   def rubric_content
+    return {} unless self.rubric
+
     JSON.parse(self.rubric)
   end
   
