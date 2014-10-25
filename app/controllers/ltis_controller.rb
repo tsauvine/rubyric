@@ -1,30 +1,44 @@
 require 'ims/lti'
 require 'oauth/request_proxy/rack_request'
 
+
+# aplus
+# resource_link_id: harjoitus1
+# context_id: ohjelmointi1
+
+
 class LtisController < ApplicationController
   def tool
     return unless authorize_lti
 
-#     signature = OAuth::Signature.build(request, :consumer_secret => @tp.consumer_secret)
-#     logger.debug "SIGNATURE_BASE_STRING: #{signature.signature_base_string}"
-#     logger.debug "SECRET: #{signature.send(:secret)}"
-    # @tp.lti_msg = "Sorry that tool was so boring"
+    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
+    unless @exercise
+      @heading =  "This course is not configured"
+      render :template => "shared/error"
+      return
+    end
     
-    # TODO:
-    # add lticontext column to exercise
-    # add lticontext to exercise settings form
-    
-    @exercise = Exercise.find_by_lticontext(params[:context_id])
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
     
-    @is_teacher = false # @course.has_teacher(current_user) # todo later: check role
+    #@user = nil
+    #@is_teacher = false # @course.has_teacher(current_user) # todo later: check role
     
     # TODO: create user, group and groupmember
-    params[:user_id]
+    # Find user
+    GroupMember.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).find_each do |member|
+      member.group
+    end
     
-    @user = nil # todo later: load user
-    @group = nil
+    unless @group
+      groupname = 'untitled group' # TODO: groupname in LTI
+      group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
+      group.save(:validate => false)
+    
+      member = GroupMember.new(:email => params[:lis_person_contact_email_primary])
+      member.group = @group
+      member.save()
+    end
     
     # todo later: Check that instance is active
     

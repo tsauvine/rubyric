@@ -1,6 +1,8 @@
 Rubyric::Application.routes.draw do 
   resource :session, :only => [:new, :create, :destroy] do
     get 'shibboleth'
+    get 'lti'
+    post 'lti'
   end
 
   resources :password_resets, :only => [ :new, :create, :edit, :update ]

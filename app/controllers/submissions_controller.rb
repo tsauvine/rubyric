@@ -37,27 +37,17 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  
   # Submit
   def new
-    if @course_instance.submission_policy == 'lti'
-      # LTI
-      return unless authorize_lti
-      @exercise = Exercise.find_by_(params[:context_id])
-      @user = nil   # todo later: remember LTI users
-    else
-      # Standalone
-      @exercise = Exercise.find(params[:exercise])
-      @user = current_user
-    end
-    
+    @user = current_user
+    @exercise = Exercise.find(params[:exercise])
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
     @is_teacher = @course.has_teacher(current_user)
     
     # Authorization
     # TODO: redirect to appropriate IdP
-    return access_denied unless current_user || ['unauthenticated', 'lti'].include?(@course_instance.submission_policy)
+    return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
 
     # Check that instance is active and student is enrolled
     return unless @is_teacher || submission_policy_accepted
@@ -133,27 +123,17 @@ class SubmissionsController < ApplicationController
 
     @submission = Submission.new
     log "submit view #{@exercise.id}"
-    
-    # TODO: LTI params must be resubmitted by the submission form
   end
 
   def create
-    if @course_instance.submission_policy == 'lti'
-      # LTI
-      return unless authorize_lti
-      @user = nil   # todo later: remember LTI users
-    else
-      # Standalone
-      @user = current_user
-    end
-    
+    @user = current_user
     @submission = Submission.new(params[:submission])
     @exercise = @submission.exercise
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
     @is_teacher = @course.has_teacher(@user)
     
-    return access_denied unless logged_in? || ['unauthenticated', 'lti'].include?(@course_instance.submission_policy)
+    return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
     logger.debug "Login accepted"
 
     # Check that instance is active and student is enrolled
@@ -169,13 +149,21 @@ class SubmissionsController < ApplicationController
       logger.debug "Membership accepted"
     else
       logger.debug "No group specified"
-      if @course_instance.submission_policy == 'lti' || (@exercise.groupsizemax <= 1 && current_user)
-        logger.debug "Creating group of one"
-        # Create a group automatically
-        groupname = @user ? @user.studentnumber : 'untitled group' # FIXME: groupname in LTI
+      if @course_instance.submission_policy == 'lti'
+        groupname = session[:lti_email]
         group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
         group.save(:validate => false)
-        group.add_member(@user) if @user  # FIXME: LTI user must be created
+        member = GroupMember.new(:email => session[:lti_email])
+        member.user = current_user
+        member.save
+        @submission.group = group
+      elsif @exercise.groupsizemax <= 1 && current_user
+        logger.debug "Creating group of one"
+        # Create a group automatically
+        groupname = @user ? @user.studentnumber : 'untitled group'
+        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
+        group.save(:validate => false)
+        group.add_member(@user) if @user
 
         @submission.group = group
       else
@@ -253,7 +241,7 @@ class SubmissionsController < ApplicationController
     redirect_to @exercise
   end
   
-    
+  
   private
   
   def submission_policy_accepted
