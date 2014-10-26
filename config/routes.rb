@@ -1,6 +1,7 @@
 Rubyric::Application.routes.draw do 
   resource :session, :only => [:new, :create, :destroy] do
     get 'shibboleth'
+    post 'lti'
   end
 
   resources :password_resets, :only => [ :new, :create, :edit, :update ]
@@ -86,7 +87,7 @@ Rubyric::Application.routes.draw do
       match 'move' => 'submissions#move', :via => [:get, :post]
     end
   end
-
+  
   resources :reviews, :only => [:show, :edit, :update] do
     member do
       get :finish

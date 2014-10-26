@@ -23,6 +23,14 @@ https://deveo.com/blog/2013/05/07/server-side-google-analytics-event-tracking-wi
 
 arrayObject = Object::const_get('Array').new
 
+= LTI =
+https://www.edu-apps.org/code.html
+https://github.com/instructure/ims-lti
+http://www.imsglobal.org/lti/
+
+update exercises set lti_consumer='aalto.fi', lti_context_id='ohjelmointi1', lti_resource_link_id='harjoitus1' where id=2;
+UPDATE course_instances set submission_policy='lti' where id=1;
+
 = Soon =
 
 Terms and conditions

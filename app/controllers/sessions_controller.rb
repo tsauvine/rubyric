@@ -1,3 +1,6 @@
+require 'ims/lti'
+require 'oauth/request_proxy/rack_request'
+
 # Rubyric
 class SessionsController < ApplicationController
   #before_filter :require_no_user, :only => [:new, :create]
@@ -167,4 +170,108 @@ class SessionsController < ApplicationController
       redirect_back_or_default(root_url)
     end
   end
+  
+  
+  def lti
+    return unless authorize_lti
+    
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first
+    
+    # Create new account or update an existing
+    unless user
+      logger.debug "User not found. Trying to create."
+
+      # Find organization
+      organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
+      
+      # New user
+      user = User.new()
+      user.organization = organization
+      user.lti_consumer = params['oauth_consumer_key']
+      user.lti_user_id = params[:user_id]
+      user.reset_persistence_token
+      if user.save(:validate => false)
+        logger.info("Created new user #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+        CustomLogger.info("#{params['oauth_consumer_key']}/#{params['user_id']} create_user_lti success")
+      else
+        logger.info("Failed to create new user (LTI). Errors: #{user.errors.full_messages.join('. ')}")
+        flash[:error] = "Failed to create new user. #{user.errors.full_messages.join('. ')}"
+        CustomLogger.info("#{params['oauth_consumer_key']}/#{params['user_id']} create_user_lti fail")
+        render :action => 'new'
+        return
+      end
+    end
+
+    # Create session
+    if Session.create(user)
+      #session[:logout_url] = shibinfo[:logout_url]
+      session[:lti_email] = params[:lis_person_contact_email_primary]
+      logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+    else
+      logger.warn("Failed to create session for #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+      flash[:error] = 'LTI login failed.'
+      render :action => 'new'
+      return
+    end
+    CustomLogger.info("#{user.login} login_LTI success")
+
+    # Redirect to submit
+    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
+    if @exercise
+      redirect_to submit_path(:exercise => @exercise.id)
+    else
+      @heading =  "This course is not configured"
+      render :template => "shared/error"
+      return
+    end
+  end
+  
+  def authorize_lti
+    key = params['oauth_consumer_key']
+    
+    unless key
+      @heading =  "No consumer key"
+      render :template => "shared/error"
+      return false
+    end
+    
+    secret = OAUTH_CREDS[key]
+    unless secret
+      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
+      @tp.lti_msg = "Your consumer didn't use a recognized key."
+      @tp.lti_errorlog = "You did it wrong!"
+      @heading =  "Consumer key wasn't recognized"
+      render :template => "shared/error"
+      return false
+    end
+    
+    @tp = IMS::LTI::ToolProvider.new(key, secret, params)
+    
+    unless @tp.valid_request?(request)
+      @heading =  "The OAuth signature was invalid"
+      render :template => "shared/error"
+      return false
+    end
+    
+    if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
+      @heading =  "Your request is too old."
+      render :template => "shared/error"
+      return false
+    end
+    
+    if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
+      @heading =  "Why are you reusing the nonce?"
+      render :template => "shared/error"
+      return false
+    end
+    
+    @username = @tp.username("Dude")
+    return true
+  end
+  
+  def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)
+    # some kind of caching solution or something to keep a short-term memory of used nonces
+    false
+  end
+  
 end

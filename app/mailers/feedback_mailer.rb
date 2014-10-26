@@ -21,10 +21,10 @@ class FeedbackMailer < ActionMailer::Base
     # Collect receiver addresses
     recipients = []
     group.group_members.each do |member|
-      if member.user
-        recipients << member.user.email unless member.user.email.blank?
-      else
-        recipients << member.email unless member.email.blank?
+      if !member.email.blank?
+        recipients << member.email
+      elsif member.user && !member.user.email.blank?
+        recipients << member.user.email
       end
     end
 

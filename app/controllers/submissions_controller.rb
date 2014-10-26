@@ -37,13 +37,12 @@ class SubmissionsController < ApplicationController
     end
   end
   
-  
   # Submit
   def new
+    @user = current_user
     @exercise = Exercise.find(params[:exercise])
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
-    @user = current_user
     @is_teacher = @course.has_teacher(current_user)
     
     # Authorization
@@ -127,19 +126,14 @@ class SubmissionsController < ApplicationController
   end
 
   def create
+    @user = current_user
     @submission = Submission.new(params[:submission])
     @exercise = @submission.exercise
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
-    @is_teacher = @course.has_teacher(current_user)
-    user = current_user
+    @is_teacher = @course.has_teacher(@user)
     
-    logger.debug "Submit"
-    
-    unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
-      logger.debug "Login required"
-      return access_denied
-    end
+    return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
     logger.debug "Login accepted"
 
     # Check that instance is active and student is enrolled
@@ -155,12 +149,22 @@ class SubmissionsController < ApplicationController
       logger.debug "Membership accepted"
     else
       logger.debug "No group specified"
-      if @exercise.groupsizemax <= 1 && current_user
+      if @course_instance.submission_policy == 'lti'
+        groupname = session[:lti_email]
+        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
+        group.save(:validate => false)
+        member = GroupMember.new(:email => session[:lti_email])
+        member.group = group
+        member.user = current_user
+        member.save
+        @submission.group = group
+      elsif @exercise.groupsizemax <= 1 && current_user
         logger.debug "Creating group of one"
         # Create a group automatically
-        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => user.studentnumber})
+        groupname = @user ? @user.studentnumber : 'untitled group'
+        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
         group.save(:validate => false)
-        group.add_member(user)
+        group.add_member(@user) if @user
 
         @submission.group = group
       else
@@ -191,7 +195,10 @@ class SubmissionsController < ApplicationController
     end
     
     logger.debug "Submission successful"
-    redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    #if @course_instance.submission_policy == 'lti'
+      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    #else
+    #end
   end
 
   # Assign to current user and start review
@@ -259,4 +266,5 @@ class SubmissionsController < ApplicationController
     
     return true
   end
+
 end
