@@ -154,6 +154,7 @@ class SubmissionsController < ApplicationController
         group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
         group.save(:validate => false)
         member = GroupMember.new(:email => session[:lti_email])
+        member.group = group
         member.user = current_user
         member.save
         @submission.group = group

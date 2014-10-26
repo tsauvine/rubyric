@@ -104,10 +104,12 @@ ActiveRecord::Schema.define(:version => 20141013071849) do
     t.text     "rubric"
     t.string   "review_mode"
     t.boolean  "share_rubric",            :default => false
+    t.string   "lti_consumer"
     t.string   "lti_context_id"
+    t.string   "lti_resource_link_id"
   end
 
-  add_index "exercises", ["lti_context_id"], :name => "index_exercises_on_lti_context_id"
+  add_index "exercises", ["lti_consumer", "lti_context_id"], :name => "index_exercises_on_lti_consumer_and_lti_context_id"
 
   create_table "feedbacks", :force => true do |t|
     t.integer  "review_id"
@@ -342,14 +344,13 @@ ActiveRecord::Schema.define(:version => 20141013071849) do
     t.string   "submission_sort_preference"
     t.string   "tester"
     t.integer  "course_count",               :default => 0, :null => false
+    t.string   "lti_consumer"
     t.string   "lti_user_id"
-    t.string   "lti_context_id"
-    t.integer  "lti_course_id"
   end
 
   add_index "users", ["last_request_at"], :name => "index_users_on_last_request_at"
   add_index "users", ["login"], :name => "index_users_on_login"
-  add_index "users", ["lti_user_id"], :name => "index_users_on_lti_user_id"
+  add_index "users", ["lti_consumer", "lti_user_id"], :name => "index_users_on_lti_consumer_and_lti_user_id"
   add_index "users", ["persistence_token"], :name => "index_users_on_persistence_token"
 
 end

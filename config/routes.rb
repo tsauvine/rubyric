@@ -1,7 +1,6 @@
 Rubyric::Application.routes.draw do 
   resource :session, :only => [:new, :create, :destroy] do
     get 'shibboleth'
-    get 'lti'
     post 'lti'
   end
 
@@ -89,11 +88,6 @@ Rubyric::Application.routes.draw do
     end
   end
   
-  resource :lti, :only => [] do
-    post :tool
-    get :tool
-  end
-
   resources :reviews, :only => [:show, :edit, :update] do
     member do
       get :finish

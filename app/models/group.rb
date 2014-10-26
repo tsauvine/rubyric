@@ -23,10 +23,16 @@ class Group < ActiveRecord::Base
   def names_with_studentnumbers
     self.group_members.collect do |member|
       if member.user
-        if member.user.studentnumber.blank?
-          member.user.name
+        if member.user.studentnumber.blank? && member.user.name.blank?
+          if member.user.email.blank?
+            member.email
+          else
+            member.user.email
+          end
         else
-          "#{member.user.name} (#{member.user.studentnumber})"
+          text = ''
+          text << "#{member.user.name} " unless member.user.name.blank?
+          text << "(#{member.user.studentnumber})" unless  member.user.studentnumber.blank?
         end
       else
         member.email
