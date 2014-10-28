@@ -38,7 +38,13 @@
                   <% unless @course_instance.submission_policy == 'unauthenticated' %>
                     <td><%= member.user.name %></td>
                   <% end %>
-                  <td><%= member.user.email %></td>
+                  <td>
+                  <% if member.user.email.blank? %>
+                    <%= member.email %>
+                  <% else %>
+                    <%= member.user.email %>
+                  <% end %>
+                  </td>
                   <td></td>
                 </tr>
               <% else %>
@@ -54,16 +60,18 @@
           </tbody>
         </table>
 
-        <p>
-          <%= link_to t('.edit_group'), edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
-          <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
-          -%>
-        </p>
-        <p>
-          <% if current_user && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
-            <%= link_to t('.choose_group'), exercise_groups_path(:exercise_id => @exercise.id) %><br />
-          <% end %>
-        </p>
+        <% unless @course_instance.submission_policy == 'lti' %>
+          <p>
+            <%= link_to t('.edit_group'), edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
+            <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
+            -%>
+          </p>
+          <p>
+            <% if current_user && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
+              <%= link_to t('.choose_group'), exercise_groups_path(:exercise_id => @exercise.id) %><br />
+            <% end %>
+          </p>
+        <% end %>
       </div>
     </div>
   <% end %>

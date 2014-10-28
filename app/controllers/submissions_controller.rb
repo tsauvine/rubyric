@@ -149,16 +149,16 @@ class SubmissionsController < ApplicationController
       logger.debug "Membership accepted"
     else
       logger.debug "No group specified"
-      if @course_instance.submission_policy == 'lti'
-        groupname = session[:lti_email]
-        group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
-        group.save(:validate => false)
-        member = GroupMember.new(:email => session[:lti_email])
-        member.group = group
-        member.user = current_user
-        member.save
-        @submission.group = group
-      elsif @exercise.groupsizemax <= 1 && current_user
+#       if @course_instance.submission_policy == 'lti'
+#         groupname = session[:lti_email]
+#         group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
+#         group.save(:validate => false)
+#         member = GroupMember.new(:email => session[:lti_email])
+#         member.group = group
+#         member.user = current_user
+#         member.save
+#         @submission.group = group
+      if @exercise.groupsizemax <= 1 && current_user
         logger.debug "Creating group of one"
         # Create a group automatically
         groupname = @user ? @user.studentnumber : 'untitled group'
