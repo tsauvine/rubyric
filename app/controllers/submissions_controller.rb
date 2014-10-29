@@ -195,10 +195,7 @@ class SubmissionsController < ApplicationController
     end
     
     logger.debug "Submission successful"
-    #if @course_instance.submission_policy == 'lti'
-      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
-    #else
-    #end
+    redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
   end
 
   # Assign to current user and start review

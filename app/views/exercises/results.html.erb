@@ -24,7 +24,11 @@
   <tbody>
     <% @results.each do |result| %>
       <tr>
-        <td><%= result[0].studentnumber %></td>
+        <% if @course_instance.submission_policy == 'lti' && result[0].user %>
+          <td><%= result[0].user.lti_user_id %></td>
+        <% else %>
+          <td><%= result[0].studentnumber %></td>
+        <% end %>
         <td><%= result[0].firstname %></td>
         <td><%= result[0].lastname %></td>
         <td><%= result[0].email %></td>

@@ -197,7 +197,6 @@ class SessionsController < ApplicationController
     # Create session
     if Session.create(user)
       session[:logout_url] = params[:launch_presentation_return_url]
-      session[:lti_email] = params[:lis_person_contact_email_primary]  # TODO: get rid of this
       logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
     else
       logger.warn("Failed to create session for #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
@@ -205,7 +204,7 @@ class SessionsController < ApplicationController
       render :action => 'new'
       return
     end
-    CustomLogger.info("#{user.login} login_LTI success")
+    CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
 
     # Redirect to submit
     redirect_to submit_path(:exercise => exercise.id, :group => group.id)
