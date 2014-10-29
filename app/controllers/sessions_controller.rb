@@ -190,7 +190,8 @@ class SessionsController < ApplicationController
 
     # Create or find group, TODO: handle errors
     group = if params[:custom_group_members]
-      find_or_create_group(JSON.parse(CGI.unescapeHTML(params[:custom_group_members])), exercise, user, organization, params['oauth_consumer_key'])
+      logger.info("LTI request: #{params[:custom_group_members]}")
+      find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
     else
       find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
     end
