@@ -185,7 +185,7 @@ class SessionsController < ApplicationController
     end
     
     # Find or create user, TODO: handle errors
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || create_lti_user(params['oauth_consumer_key'], params[:user_id], organization)
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || create_lti_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance)
 
     # Create or find group, TODO: handle errors
     group = if params[:custom_group_members]
@@ -245,7 +245,7 @@ class SessionsController < ApplicationController
       
       # Create group
       payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization)
+        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization, exercise.course_instance)
         logger.debug "Creating member: #{member['user']} #{member['email']}"
         member = GroupMember.new(:email => member['email'])
         member.group = group
@@ -261,7 +261,7 @@ class SessionsController < ApplicationController
     group
   end
   
-  def create_lti_user(oauth_consumer_key, lti_user_id, organization)
+  def create_lti_user(oauth_consumer_key, lti_user_id, organization, course_instance)
     logger.debug "Creating user #{lti_user_id}"
     
     user = User.new()
@@ -270,6 +270,8 @@ class SessionsController < ApplicationController
     user.organization = organization
     user.reset_persistence_token
     if user.save(:validate => false)
+      course_instance.students << user unless course_instance.students.include?(user)
+      
       logger.info("Created new user #{oauth_consumer_key}/#{lti_user_id} (LTI)")
       CustomLogger.info("#{oauth_consumer_key}/#{lti_user_id} create_user_lti success")
     else

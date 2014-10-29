@@ -182,10 +182,13 @@ class CourseInstance < ActiveRecord::Base
   def batch_create_groups(batch)
     # Load existing students
     students_by_studentnumber = {}  # 'studentnumber' => User
+    students_by_lti_user_id = {}
     students_by_email = {}          # 'email' => User
     self.students.each do |student|
       students_by_studentnumber[student.studentnumber] = student
+      students_by_lti_user_id[student.lti_user_id] = student
       students_by_email[student.email] = student
+      logger.debug "(#{student.id} #{student.lti_user_id}) => #{student}"
     end
     logger.debug "#{self.students.size} students loaded"
     
@@ -227,6 +230,7 @@ class CourseInstance < ActiveRecord::Base
         student_key.strip!
         next if student_key.empty?
         
+        student = nil
         if student_key.include?('@')
           # Search by email
           search_key = student_key
@@ -247,7 +251,9 @@ class CourseInstance < ActiveRecord::Base
         else
           # Search by studentnumber
           search_key = student_key
-          student = students_by_studentnumber[search_key]        # Search from students in the course
+          student = students_by_studentnumber[search_key] || students_by_lti_user_id[search_key]       # Search from students in the course
+          
+          logger.debug "STUDENT: #{student} (#{search_key})"
           
           unless student
             relation = User.where(:studentnumber => search_key) # Search from database
@@ -255,22 +261,27 @@ class CourseInstance < ActiveRecord::Base
             student = relation.first
             
             # Create new user
-            unless student
+            if !student && self.submission_policy != 'lti'
               student = User.new(:firstname => '', :lastname => '')
               student.studentnumber = search_key
               student.organization_id = self.course.organization_id
               student.save(:validate => false)
             end
-            self.students << student  # Add student to course
-            students_by_studentnumber[student.studentnumber] = student
-            students_by_email[student.email] = student
+            
+            if student
+              self.students << student  # Add student to course
+              students_by_studentnumber[student.studentnumber] = student
+              students_by_email[student.email] = student
+            end
           end
         end
         
-        g = groups_by_student_id[student.id] || []
-        current_groups << g
-        group_students << student
-        group_student_ids << student.id
+        if student
+          g = groups_by_student_id[student.id] || []
+          current_groups << g
+          group_students << student
+          group_student_ids << student.id
+        end
       end
       
       next if group_students.empty?
@@ -291,11 +302,16 @@ class CourseInstance < ActiveRecord::Base
       # Create group if not found
       unless group
         group_name = (group_students.collect { |user| user.studentnumber }).join('_')
-        group = Group.create(:name => group_name, :course_instance_id => self.id, :max_size => group_students.size)
-        
-        group.users << group_students
-        
+        group = Group.new(:name => group_name, :course_instance_id => self.id, :max_size => group_students.size)
+        group.save(:validate => false)
+
         group_students.each do |student|
+          member = GroupMember.new(:email => student.email, :studentnumber => student.studentnumber)
+          member.group = group
+          member.user = student
+          member.save(:validate => false)
+          group.group_members << member
+          
           groups_by_student_id[student.id] ||= []
           groups_by_student_id[student.id] << group
         end

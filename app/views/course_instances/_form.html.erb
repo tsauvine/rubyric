@@ -30,7 +30,7 @@
   <div class="form-group">
     <%= f.label :language, t('.language'), :class => 'col-sm-2 control-label' %>
     <div class="col-sm-4">
-      <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']]), {}, :class => "form-control") %>
+      <%= f.select(:locale, options_for_select([['English', 'en'], ['Finnish', 'fi']], @course_instance.locale), {}, :class => "form-control") %>
     </div>
   </div>
 
@@ -54,6 +54,10 @@
         <% else %>
           <%= link_to t('.policy_provide_list_link'), batch_course_instance_groups_path(@course_instance), :target => '_blank' %>
         <% end %>
+      </label>
+      <label class="radio">
+        <%= f.radio_button :submission_policy, 'lti' %>
+        <%=t '.policy_lti' %> <span class="hint"><%=t '.policy_lti_hint' %></span>
       </label>
     </div>
   </div>

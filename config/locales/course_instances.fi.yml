@@ -9,6 +9,8 @@ fi:
       policy_enrolled: "Vain kurssille rekisteröityneet opiskelijat voivat palauttaa."
       policy_provide_list: "(Opiskelijalista syötettävä.)"
       policy_provide_list_link: "(Syötä opiskelijalista täällä.)"
+      policy_lti: "LTI-integraatio"
+      policy_lti_hint: "(Ota yhteys lti@rubyric.com)"
       language: "Käyttöliittymän kieli"
       
   # New

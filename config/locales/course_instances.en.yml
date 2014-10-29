@@ -9,6 +9,8 @@ en:
       policy_enrolled: "Only enrolled students can submit."
       policy_provide_list: "(You must provide a student list.)"
       policy_provide_list_link: "(You must provide a student list here.)"
+      policy_lti: "LTI integration"
+      policy_lti_hint: "(Contact lti@rubyric.com)"
       language: "Interface language"
   
   # New
