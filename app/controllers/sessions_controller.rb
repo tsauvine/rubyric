@@ -186,7 +186,7 @@ class SessionsController < ApplicationController
     end
     
     # Find or create user, TODO: handle errors
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || create_lti_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance)
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || create_lti_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance, params[:custom_student_id])
 
     # Create or find group, TODO: handle errors
     group = if params[:custom_group_members]
@@ -247,7 +247,7 @@ class SessionsController < ApplicationController
       
       # Create group
       payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization, exercise.course_instance)
+        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'])
         logger.debug "Creating member: #{member['user']} #{member['email']}"
         member = GroupMember.new(:email => member['email'])
         member.group = group
@@ -263,13 +263,14 @@ class SessionsController < ApplicationController
     group
   end
   
-  def create_lti_user(oauth_consumer_key, lti_user_id, organization, course_instance)
+  def create_lti_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber)
     logger.debug "Creating user #{lti_user_id}"
     
     user = User.new()
     user.lti_consumer = oauth_consumer_key
     user.lti_user_id = lti_user_id
     user.organization = organization
+    user.studentnumber = studentnumber
     user.reset_persistence_token
     if user.save(:validate => false)
       course_instance.students << user unless course_instance.students.include?(user)
