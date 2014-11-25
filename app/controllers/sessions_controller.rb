@@ -249,7 +249,7 @@ class SessionsController < ApplicationController
       payload.each do |member|
         group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'])
         logger.debug "Creating member: #{member['user']} #{member['email']}"
-        member = GroupMember.new(:email => member['email'])
+        member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'])
         member.group = group
         member.user = group_user
         member.save
