@@ -146,15 +146,17 @@ class Submission < ActiveRecord::Base
     pixels_per_centimeter = 45.0 * zoom
     
     if self.book_mode
-      half_width = self.page_width * pixels_per_centimeter / 2
-      height = self.page_height * pixels_per_centimeter
+      #half_width = self.page_width * pixels_per_centimeter / 2
+      #height = self.page_height * pixels_per_centimeter
       mod = page_number % 4
       div = page_number / 4
       
       if page_number % 2 == 0
-        crop = " -crop #{half_width.to_i}x#{height.to_i}+#{half_width.to_i}+0"  # right side
+        #crop = " -crop #{half_width.to_i}x#{height.to_i}+#{half_width.to_i}+0"  # right side
+        gravity = "East"
       else
-        crop = " -crop #{half_width.to_i}x#{height.to_i}+0+0"                   # left side
+        #crop = " -crop #{half_width.to_i}x#{height.to_i}+0+0"                   # left side
+        gravity = "West"
       end
       
       if mod == 0 || mod == 3
@@ -176,10 +178,13 @@ class Submission < ActiveRecord::Base
       
       command = "gs -q -dNumRenderingThreads=4 -dNOPAUSE -sDEVICE=pngalpha -dFirstPage=#{pdf_page_number+1} -dLastPage=#{pdf_page_number+1} -sOutputFile=#{image_path} -r#{pixels_per_centimeter * 2.54} #{submission_path} -c quit"
       # -sDEVICE=jpeg -dJPEGQ=90
-      # TODO: book mode
-      
-      puts command
+      #puts command
       system(command)  # This blocks until the png is rendered
+      
+      if self.book_mode
+        command = "convert -gravity #{gravity} -crop 50%x100% #{image_path} #{image_path}"
+        system(command)
+      end
       
       # TODO: remove obsolete renderings from cache
       # rm id-page_number*
@@ -224,7 +229,11 @@ class Submission < ActiveRecord::Base
       exit_status = wait_thr.value
     end
     
-    count *= 2 if self.book_mode
+    if self.book_mode
+      count *= 2 
+      self.page_width /= 2
+    end
+    
     self.page_count = count
     self.save()
     
