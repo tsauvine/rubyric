@@ -45,7 +45,8 @@ class ExercisesController < ApplicationController
       render :action => 'submissions'
     else
       # Student's or assistant's view
-
+      I18n.locale = @course_instance.locale || I18n.locale
+      
       # Find reviews of the user
       assigned_group_ids = current_user.assigned_group_ids
       @assigned_groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).order('groups.id, submissions.created_at DESC').all

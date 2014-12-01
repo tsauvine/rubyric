@@ -4,3 +4,13 @@ en:
   
   # Edit
   exercise_settings_heading: "Assignment settings"
+
+  exercises:
+    my_submissions:
+      my_submissions: "My submissions"
+      submissions: "Submissions"
+      reviews: "Reviews"
+      view_feedback_from: "Review (%{name})"
+      anonymous_feedback: "Review %{number}"
+      new_submission_button: "New submission"
+      

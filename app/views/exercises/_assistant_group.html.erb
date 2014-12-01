@@ -10,7 +10,9 @@
 </tr>
 <% assistant_group.submissions.each do |submission| %>
   <tr class="submission" id="submission<%= submission.id %>">
-    <td rowspan="<%= [submission.reviews.size,1].max %>">
+    <% visible_reviews = submission.reviews.select {|review| review.user == current_user}.size %>
+    
+    <td rowspan="<%= [visible_reviews, 1].max %>">
       <div class="dropdown pull-right">
         <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
@@ -27,16 +29,17 @@
 
     <!-- Reviews -->
     <% row = 0; submission.reviews.each do |review| %>
+        <% next unless review.user == current_user %>
         <% if (row > 0) %>
           <tr class="submission">
         <% end; row += 1 %>
         <td>
           <% if current_user != review.user %>
-            <%= link_to review.user.name, review %>
+            <%= link_to review.user.name, review_path(:id => review.id, :ref => 'exercises') %>
           <% elsif ['mailed','invalidated'].include?(review.status) %>
-            <%= link_to review.user.name, finish_review_path(review.id) %>
+            <%= link_to review.user.name, review_path(:id => review.id, :ref => 'exercises') %>
           <% else %>
-            <%= link_to review.user.name, edit_review_path(review.id) %>
+            <%= link_to "#{review.user.name} - edit review", edit_review_path(review.id) %>
           <% end %>
         </td>
         <td><%= review.status %></td>

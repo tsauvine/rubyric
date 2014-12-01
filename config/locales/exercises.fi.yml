@@ -5,3 +5,12 @@ fi:
   # Edit
   exercise_settings_heading: "Harjoituksen asetukset"
 
+  exercises:
+    my_submissions:
+      my_submissions: "Omat palautukset"
+      submissions: "Palautukset"
+      reviews: "Arvostelut"
+      view_feedback_from: "Palaute (%{name})"
+      anonymous_feedback: "Palaute %{number}"
+      new_submission_button: "Uusi palautus"
+      
