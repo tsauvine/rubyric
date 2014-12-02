@@ -1,4 +1,10 @@
 <div class="row-fluid">
+  <% unless @exercise.new_record? %>
+    <%= link_to exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}"), :class => 'back-button pull-left', :title => 'Return to menu' do %>
+      <i class='icon icon-arrow-left'></i>
+    <% end %>
+  <% end %>
+ 
   <ul id="tabs" class="nav nav-tabs">
     <li class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
 
@@ -116,7 +122,7 @@
             <table class="phrases">
               <tbody data-bind="foreach: phrases">
                 <tr class="phrase">
-                  <td class="grade" data-bind="if: grade != undefined">
+                  <td class="grade" data-bind="if: grade !== undefined">
                     <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
                   </td>
                   <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>

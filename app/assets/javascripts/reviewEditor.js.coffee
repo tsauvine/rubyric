@@ -463,11 +463,11 @@ class @ReviewEditor extends @Rubric
     this.save({send: true})
     
   clickGrade: (phrase) =>
+    phrase.page.addPhrase(phrase.content, phrase.categoryId) # unless phrase.criterion.selectedPhrase()?
     phrase.criterion.setSelectedPhrase(phrase) if phrase.grade?
     @saved = false
   
   clickPhrase: (phrase) =>
-    phrase.page.addPhrase(phrase.content, phrase.categoryId)
     this.clickGrade(phrase)
     
   clickCancelFinalize: (data, event) =>
