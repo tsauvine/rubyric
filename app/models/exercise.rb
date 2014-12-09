@@ -445,4 +445,27 @@ class Exercise < ActiveRecord::Base
     self.rubric = '{"version":"2","pages":[{"id":1,"name":"Final report","criteria":[{"id":1,"name":"Structure","phrases":[{"id":1,"text":"The report is well structured and easy to read.","grade":5},{"id":2,"text":"The report needs some structuring (e.g. introduction, methods, results, conclusions).","grade":3},{"id":5,"text":"The report is difficult to read because it\'s not logically structured.","grade":1},{"id":6,"text":"For example, the conclusions should be in a separate section and not among results."}]},{"id":2,"name":"Scope","phrases":[{"id":3,"text":"The work is well scoped.","grade":5},{"id":4,"text":"The scope is too narrow.","grade":3},{"id":7,"text":"The scope is too wide.","grade":3},{"id":8,"text":"The project does not meet the minimum requirements.","grade":"Fail"}]},{"id":3,"name":"Figures","phrases":[{"id":9,"text":"The figures are well made.","grade":5},{"id":10,"text":"There are some shortcomings in the figures.","grade":3},{"id":12,"text":"The scales should start from zero."},{"id":13,"text":"The figures are not referenced from text."},{"id":11,"text":"Some figures could have been used to illustrate the results.","grade":1}]}]}],"feedbackCategories":[],"grades":["Fail",1,2,3,4,5],"gradingMode":"average","finalComment":""}'
   end
   
+  
+  # returns a Hash: {'student_id' => [grade, grade, ...]}
+  def student_results
+    results = {}
+    
+    Group.where(:course_instance_id => self.course_instance_id).includes([{:submissions => [:reviews => :user, :group => :users]}, :users]).each do |group|
+      group.submissions.each do |submission|
+        next unless submission.exercise_id == self.id
+        submission.reviews.each do |review|
+          next unless review.include_in_results?
+          
+          group.group_members.each do |member|
+            student_id = member.user.studentnumber || member.user.email
+            results[student_id] ||= []
+            results[student_id] << review.grade
+          end
+        end
+      end
+    end
+    
+    results
+  end
+  
 end

@@ -1,0 +1,7 @@
+<table>
+  <% @results.each do |student_id, grades| -%>
+    <tr>
+      <td><%= student_id %></td><td><% grades.each do |grade| -%>,<%= grade %><% end -%></td>
+    </tr>
+  <% end -%>
+</table>
