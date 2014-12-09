@@ -1,4 +1,4 @@
 studentnumber,first name,last name,email,grade,reviewer
 <% @results.each do |result| -%>
-<% if @course_instance.submission_policy == 'lti' && result[0].user %><%= result[0].user.lti_user_id %><% else %><%= result[0].studentnumber %><% end %>,<%= result[0].firstname %>,<%= result[0].lastname %>,<%= result[0].email %>,<%= result[1].grade %>,<%= result[1].user.name %>
+<% if @course_instance.submission_policy == 'lti' && result[0].user %><%= result[0].user.lti_user_id %><% else %><%= result[0].studentnumber %><% end %>,<%= result[0].firstname %>,<%= result[0].lastname %>,<%= result[0].email %>,<%= result[1].grade %>,<%= result[1].user.name %> (<%= result[1].user.studentnumber %>)
 <% end -%>

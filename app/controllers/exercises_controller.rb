@@ -150,6 +150,7 @@ class ExercisesController < ApplicationController
     @groups.each do |group|
       best_review = nil
       best_grade = Float::MIN
+      all_reviews = []
       
       # Collect the reviews that should be included in the results
       group.submissions.each do |submission|
@@ -164,13 +165,19 @@ class ExercisesController < ApplicationController
             best_review = review
             best_grade = grade
           end
+          
+          all_reviews << review
         end
       end
       
-      if best_review
+      if !params[:all_reviews] && best_review
         @results.concat group.group_members.collect {|member| [member, best_review]}
       else
-        # FIXME: add all reviews
+        group.group_members.each do |member|
+          all_reviews.each do |review|
+            @results << [member, review]
+          end
+        end
       end
     end
     
