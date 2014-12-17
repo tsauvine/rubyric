@@ -23,7 +23,7 @@ class @PriceCalculator
     
   updatePrice: (studentCount) ->
     return if isNaN(studentCount) || !studentCount
-    unitPrice = 0.49
+    unitPrice = 0.99
     freeStudents = 20
     maxStudents = 1000
     # $("#slider-studentCount").slider("value")

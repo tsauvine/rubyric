@@ -118,7 +118,7 @@ class Submission < ActiveRecord::Base
     ex.deadline && self.created_at > ex.deadline
   end
   
-  # Returns the path of the png rendeing of the submission
+  # Returns the path of the png rendering of the submission
   # This method blocks until the png is rendered and available.
   # returns false if the png cannot be rendered
   def image_path(page_number, zoom)
