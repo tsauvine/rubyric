@@ -50,6 +50,7 @@ Rubyric::Application.routes.draw do
 
   resources :exercises, :only => [:show, :edit, :destroy] do
     get 'results'
+    get 'student_results'
     get 'statistics'
     get 'batch_assign'
     post 'batch_assign'
