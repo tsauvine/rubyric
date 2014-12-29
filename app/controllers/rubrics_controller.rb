@@ -63,8 +63,10 @@ class RubricsController < ApplicationController
       @exercise.save
       redirect_to edit_exercise_rubric_path(@exercise)
       log "rubric_upload success #{@exercise.id}"
+      return
     else
       log "rubric_upload view #{@exercise.id}"
+      render :action => :upload, :layout => 'narrow-new'
     end
   end
 

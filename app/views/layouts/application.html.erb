@@ -44,7 +44,7 @@
             <% if can? :update, @course_instance %>
               <li class="<%= active_nav('course_instances', 'edit') %>"><%= link_to edit_course_instance_path(@course_instance) do %><i class="icon-wrench"></i> Settings<% end %></li>
               <li class="<%= active_nav('reviewers', 'index') %>"><%= link_to course_instance_reviewers_path(@course_instance) do %><i class="icon-user"></i> Reviewers<% end %></li>
-              <!--li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li-->
+              <li class="<%= active_nav('students', 'show') %>"><%= link_to course_instance_students_path(@course_instance) do %><i class="icon-user"></i> Students<% end %></li>
               <li class="<%= active_nav('groups', 'index') %>"><%= link_to course_instance_groups_path(@course_instance) do %><i class="icon-th"></i> Groups<% end %></li>
               <% if (current_user.tester || '').include?('billing') %>
                 <li class="<%= active_nav('orders', 'index') %>"><%= link_to course_instance_orders_path(@course_instance) do %><i class="icon-shopping-cart"></i> Billing<% end %></li>

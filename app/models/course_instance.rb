@@ -188,9 +188,7 @@ class CourseInstance < ActiveRecord::Base
       students_by_studentnumber[student.studentnumber] = student
       students_by_lti_user_id[student.lti_user_id] = student
       students_by_email[student.email] = student
-      logger.debug "(#{student.id} #{student.lti_user_id}) => #{student}"
     end
-    logger.debug "#{self.students.size} students loaded"
     
     # Load existing groups
     groups_by_student_id = {}     # student_id => [array of groups where the student belongs]
@@ -252,8 +250,6 @@ class CourseInstance < ActiveRecord::Base
           # Search by studentnumber
           search_key = student_key
           student = students_by_studentnumber[search_key] || students_by_lti_user_id[search_key]       # Search from students in the course
-          
-          logger.debug "STUDENT: #{student} (#{search_key})"
           
           unless student
             relation = User.where(:studentnumber => search_key) # Search from database

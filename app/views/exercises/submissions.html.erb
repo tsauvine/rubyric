@@ -115,3 +115,7 @@
     </tfoot>
   </table>
 <% end %>
+
+<% if current_user.tester == 'alpha' %>
+  <%= link_to 'Batch upload submissions', batch_upload_exercise_submissions_path(:exercise_id => @exercise.id) %>
+<% end %>

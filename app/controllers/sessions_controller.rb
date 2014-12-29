@@ -326,7 +326,7 @@ class SessionsController < ApplicationController
       return false
     end
     
-    @username = @tp.username("Dude")
+    #@username = @tp.username("Dude")
     return true
   end
   

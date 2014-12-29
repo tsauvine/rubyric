@@ -11,8 +11,6 @@ class Submission < ActiveRecord::Base
   has_many :reviews, {:order => :id, :dependent => :destroy }
 
   after_create :write_file
-  #after_destroy :delete_file
-
 
   def has_member?(user)
     group.has_member?(user)
@@ -30,7 +28,7 @@ class Submission < ActiveRecord::Base
 
     # Get the extension
     tar = @file_data.original_filename.index('.tar.')
-    if (tar)
+    if tar
       self.extension = @file_data.original_filename.slice(tar + 1, @file_data.original_filename.length - tar - 1)
     else
       self.extension = @file_data.original_filename.split(".").last

@@ -68,6 +68,13 @@ Rubyric::Application.routes.draw do
       end
     end
 
+    resources :submissions, :only => [:create], :controller => 'exercises/submissions' do
+      collection do
+        get 'batch_upload'
+        post 'batch_upload'
+      end
+    end
+
     resources :groups
   end
 
