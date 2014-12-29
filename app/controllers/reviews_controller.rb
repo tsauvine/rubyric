@@ -75,17 +75,15 @@ class ReviewsController < ApplicationController
     params[:review][:status] = 'mailing' if @deliver_immediately
     
     # User preferences
-    if params['zoom_preference']
-      current_user.zoom_preference = params['zoom_preference'].to_i
-      logger.debug "Setting zoom preference: #{current_user.zoom_preference}"
-      current_user.save
-    end
+    current_user.zoom_preference = params['zoom_preference'].to_i if params['zoom_preference']
     
     if params['rubric_page_preference']
       current_user.submission_sort_preference = params['rubric_page_preference'].to_i
-      logger.debug "Setting rubric page: #{current_user.submission_sort_preference}"
-      current_user.save
+    else
+      current_user.submission_sort_preference = nil
     end
+    
+    current_user.save
     
     if @review.update_from_json(params[:id], params[:review])
       Review.delay.deliver_reviews([@review.id]) if @deliver_immediately
@@ -93,7 +91,16 @@ class ReviewsController < ApplicationController
       respond_to do |format|
         format.json { head :no_content } # TODO: ok
         format.html {
-          redirect_to @exercise
+          if params[:save] == 'next'
+            next_review_id = @exercise.next_review(current_user, @review)
+            if next_review_id
+              redirect_to edit_review_path(:id => next_review_id)
+            else
+              redirect_to @exercise
+            end
+          else
+            redirect_to @exercise
+          end
         }
       end
     else

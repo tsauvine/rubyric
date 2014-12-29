@@ -37,6 +37,7 @@ class ExercisesController < ApplicationController
       # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
+      # TODO: move this to model. This is duplicated in Exercise.next_review.
       @groups = Group.where(:course_instance_id => @course_instance.id)
         .includes([:users, {:submissions => {:reviews => :user}}])
         .where(:submissions => {:exercise_id => @exercise.id})

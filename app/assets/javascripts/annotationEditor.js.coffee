@@ -589,7 +589,11 @@ class AnnotationEditor extends Rubric
     $('#review_status').val(status)
     
     $('#zoom_preference').val(@zoom() * 100)
-    #$('#rubric_page_preference').val('true')
+    
+    active_tab = $('#tabs li.active a').attr('href')
+    if active_tab
+      page_id = active_tab.substring(6)
+      $('#rubric_page_preference').val(page_id) if !isNaN(page_id)
     
     @saved = true
     

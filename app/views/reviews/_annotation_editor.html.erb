@@ -26,7 +26,10 @@
         <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
       <!-- /ko -->
       <% unless @exercise.new_record? %>
-        <button type="submit" class="btn btn-success" data-bind="click: save">Save</button>
+        <button name="save" value="save" type="submit" class="btn btn-success" data-bind="click: save">Save</button>
+        <% if current_user && current_user.tester == 'alpha' %>
+          <button name="save" value="next" type="submit" class="btn btn-success" data-bind="click: save">Next</button>
+        <% end %>
       <% end %>
     </ul>
     
@@ -192,6 +195,10 @@
             
             <% if @exercise.grader_can_email %>
               <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
+            <% end %>
+            
+            <% if current_user && current_user.tester == 'alpha' %>
+              <button name="save" value="next" type="submit" class="btn btn-success" data-bind="click: save">Next</button>
             <% end %>
           </p>
         <% end %>

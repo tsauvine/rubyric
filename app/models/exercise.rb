@@ -472,4 +472,39 @@ text":"The figures are not referenced from text."},{"id":11,"text":"Some figures
     results
   end
   
+  # Returns the id of the review that is next in sequence for the user.
+  # Returns nil if no more reviews are in queue.
+  def next_review(user, done_review)
+    done_group_id = done_review.submission.group_id
+    
+    groups = Group.where(:course_instance_id => course_instance_id)
+        .includes(:submissions => :reviews)
+        .where(:submissions => {:exercise_id => self.id})
+        .order('groups.id, submissions.created_at DESC, reviews.id')
+    
+    # Find the next group
+    previous_group_id = nil
+    next_group = nil
+    groups.each do |group|
+      if previous_group_id == done_group_id
+        next_group = group
+        break
+      end
+      previous_group_id = group.id
+    end
+    
+    return nil unless next_group
+    
+    # Find the first review of the group
+    next_group.submissions.each do |submission|
+      next unless submission.exercise_id == self.id
+      return submission.reviews.first unless submission.reviews.empty?
+    end
+    
+    # No review found. Create a new review.
+    submission = next_group.submissions.first
+    return nil unless submission
+    submission.assign_to(user)
+  end
+  
 end
