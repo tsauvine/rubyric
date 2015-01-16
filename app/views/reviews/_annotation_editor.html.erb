@@ -151,6 +151,14 @@
       <div class="tab-pane" id="tab-finish">
         <h2>Finalize Feedback</h2>
         
+        <p class="hint">Here you can type additional comments that appear in the feedback email.</p>
+        
+        <% if defined? f %>
+          <%= f.text_area :feedback, :style => "width: 95%; height: 400px;", 'data-bind' => "value: finishedText" %>
+        <% else %>
+          <%= text_area_tag :review_feedback, '', :style => "width: 95%; height: 400px;", 'data-bind' => "value: finishedText" %>
+        <% end %>
+        
         <!-- ko if: gradingMode == 'average' && $root.grades.length > 0 -->
           <h3>Grades</h3>
           <table>
@@ -168,7 +176,7 @@
             </tfoot>
           </table>
         
-          <h3>Final Grade</h3>
+          <h3>Choose final Grade</h3>
           <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
         <!-- /ko -->
         <!-- ko if: gradingMode == 'sum'-->

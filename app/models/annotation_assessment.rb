@@ -5,6 +5,7 @@ class AnnotationAssessment < Review
     Review.transaction do
       review = Review.find(id)
       review.grade = params['grade']
+      review.feedback = params['feedback']
       review.status = params['status']
       
       commands = JSON.parse(params['payload'])

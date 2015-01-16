@@ -23,6 +23,8 @@ https://deveo.com/blog/2013/05/07/server-side-google-analytics-event-tracking-wi
 
 arrayObject = Object::const_get('Array').new
 
+http://www.ctan.org/pkg/pdfcomment
+
 = LTI =
 https://www.edu-apps.org/code.html
 https://github.com/instructure/ims-lti
@@ -39,6 +41,10 @@ näytä lti-kursseille tuloslistassa lti_user_id
 Terms and conditions
 
 rubyric.cs.hut.fi:hin ilmoitus
+
+Enter zoom-fieldissä submittaa formin
+
+Parempi kilke määräajan valitsemiseen
 
 google plus, facebook
 
@@ -60,6 +66,14 @@ Timezones
 
 
 = Later =
+
+Opiskelija voi poistua ryhmästä
+
+Opettaja voi poistaa opiskelijoita ryhmästä
+
+Arvioijille voi lähettää viestin, että työt on jaettu
+
+Vertaisarvioinnissa pitäisi voida katsoa, ketkä ovat tehneet arvioinnit
 
 Piilota "Anybody can submit without authenticating." Haka-käyttäjiltä
 

@@ -387,6 +387,9 @@ class AnnotationEditor extends Rubric
     finalGrade = $('#review_grade').val()
     @finalGrade(finalGrade) if finalGrade && finalGrade != ''
     
+    @finishedText = ko.observable('')
+    @finishedText($('#review_feedback').val() || '')
+    
     status = $('#review_status').val()
     @finalizing(true) if status && status.length > 0 && status != 'started'
     
@@ -398,6 +401,8 @@ class AnnotationEditor extends Rubric
       do (page) =>
         page.grade.subscribe (new_grade) =>
           this.addCommand(new SetPageGradeCommand(page, new_grade))
+
+    @finishedText(@finalComment) if @finishedText().length < 1 && @finalComment? && @finalComment.length > 0
 
     this.parseReview(window.review)
     

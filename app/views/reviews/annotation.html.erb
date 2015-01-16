@@ -22,7 +22,7 @@
     <%= hidden_field_tag :zoom_preference %>
     <%= hidden_field_tag :rubric_page_preference %>
 
-    <%= render 'reviews/annotation_editor' %>
+    <%= render :partial => 'reviews/annotation_editor', :locals => {:f => f} %>
     
   <% end %>
 </div>
