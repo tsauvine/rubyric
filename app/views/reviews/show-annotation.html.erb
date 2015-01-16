@@ -5,36 +5,75 @@
   <% end %>
 
   <%= javascript_include_tag 'annotationEditor' %>
+  <%= javascript_include_tag 'views/frontpage/show' %>
 <% end %>
 
-<div class="page-header">
-  <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
-</div>
+<% content_for :stylesheets do %>
+  <%= stylesheet_link_tag 'frontpage', :media => "all" %>
+<% end %>
 
-<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
-  data-page-count="<%= @page_count %>"
-  data-page-width="<%= @submission.page_width %>"
-  data-page-height="<%= @submission.page_height %>"
-  data-group-token="<%= params[:group_token] %>"
-  >
-  <div id="submission-pages" data-bind="foreach: submission_pages">
-    <div class="submission-page">
-      <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
-      
-      <!-- ko foreach: annotations -->
-        <div class="annotation" data-bind="position: screenPosition, clickBubble: false">
-          <div class="grade" data-bind="text: grade">
-          </div>
-          <div class="content" data-bind="html: escaped_content">
-          </div>
-          <div class="statusbar">
-            <!-- ko if: phrase -->
-              <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
-            <!-- /ko -->
-          </div>
+
+<div class="container-fluid">
+  <div class="page-header">
+    <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+  </div>
+  
+  <div class="row-fluid">
+    <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
+      data-page-count="<%= @page_count %>"
+      data-page-width="<%= @submission.page_width %>"
+      data-page-height="<%= @submission.page_height %>"
+      data-group-token="<%= params[:group_token] %>"
+      >
+      <div id="submission-pages" data-bind="foreach: submission_pages">
+        <div class="submission-page">
+          <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+          
+          <!-- ko foreach: annotations -->
+            <div class="annotation" data-bind="position: screenPosition, clickBubble: false">
+              <div class="grade" data-bind="text: grade">
+              </div>
+              <div class="content" data-bind="html: escaped_content">
+              </div>
+              <div class="statusbar">
+                <!-- ko if: phrase -->
+                  <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
+                <!-- /ko -->
+              </div>
+            </div>
+          <!-- /ko -->
         </div>
-      <!-- /ko -->
+        <!--hr /-->
+      </div>
     </div>
-    <!--hr /-->
   </div>
 </div>
+    
+<!-- Promotion -->
+<div class="footer">
+  <div class="container">
+    <div class="row intro">
+      <div class="col-sm-12">
+        <p>
+          <a href="http://rubyric.com">Rubyric</a> is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
+          Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
+          However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
+        </p>
+      </div>
+    </div>
+  
+    <div class="row">
+      <div class="col-sm-12">
+        <p>
+          <a href="http://rubyric.com">Rubyric</a> is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark Oy</a>, an educational technology company originally founded by a group of researchers and teachers from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+        </p>
+        
+        <p>
+          email:
+          contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+

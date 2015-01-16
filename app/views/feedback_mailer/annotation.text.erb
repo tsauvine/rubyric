@@ -1,4 +1,13 @@
 <%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %>
 
+<% unless @exercise.anonymous_graders %><%=t :Reviewer %>: <%= @grader.firstname %> <%= @grader.lastname %> (<%= @grader.email %>)
+<% end -%>
+<% unless @review.grade.blank? %><%=t :Grade %>: <%= @review.grade %>
+<% end -%>
+
+<% if @review.feedback && !@review.feedback.strip.empty? -%>
+<%= word_wrap(@review.feedback || '', :line_width => 76).html_safe %>
+<% end -%>
+
 Feedback is available at:
 <%= @review_url %>

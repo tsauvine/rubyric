@@ -9,15 +9,13 @@ class ReviewsController < ApplicationController
     @exercise = @submission.exercise
     load_course
 
-    logger.debug "Access control"
     return access_denied unless group_membership_validated(@group) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user)
-    logger.debug "Access control done"
     
     if @review.type == 'AnnotationAssessment'
       @submission = @review.submission
       @page_count = @submission.page_count
       
-      render :action => 'show-annotation', :layout => 'annotation'
+      render :action => 'show-annotation', :layout => 'plain-new'
       log "view_annotation #{@review.id},#{@exercise.id}"
     else
       respond_to do |format|
