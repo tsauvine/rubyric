@@ -260,7 +260,7 @@ class @Rubric
   # Calculates average grade
   # If @numericGrading if true, average grade is calculated as the average value of the given grades.
   # If @numericGrading if false, average index is used instead.
-  # If some grade null or undefined, undefined is returned.
+  # If some grade is null or undefined, undefined is returned.
   # grades: array of grade values (strings or numbers)
   #
   calculateGradeMean: (grades) ->
@@ -288,7 +288,7 @@ class @Rubric
 
     if @numericGrading
       if nonNumericGradesSeen
-        return undefined  # Grade must be selected manually
+        return ''  # Grade must be selected manually
       else
         meanGrade = Math.round(gradeSum / grades.length)
         return meanGrade
