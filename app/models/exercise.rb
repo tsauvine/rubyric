@@ -442,11 +442,9 @@ class Exercise < ActiveRecord::Base
   end
 
   def initialize_example_rubric
-    self.rubric = '{"version":"2","pages":[{"id":1,"name":"Final report","criteria":[{"id":1,"name":"Structure","phrases":[{"id":1,"text":"The report is well structured and easy to read.","grade":5},{"id":2,"text":"The report needs some structuring (e.g. introduction, methods, results, conclusions).","grade":3},{"id":5,"text":"The report is difficult to read because it\'s not logically structured.","grade":1},{"id":6,"text":"For example, the conclusions should be in a separate section and not among results."}]},'\
-    '{"id":2,"name":"Scope","phrases":[{"id":3,"text":"The work is well scoped.","grade":5},{"id":4,"text":"The scope is too narrow.","grade":3},{"id":7,"text":"The scope is too wide.","grade":3},{"id":8,"text":"The project does not meet the minimum requirements.","grade":"Fail"}]},'\
-    '{"id":3,"name":"Figures","phrases":[{"id":9,"text":"The figures are well made.","grade":5},{"id":10,"text":"There are some shortcomings in the figures.","grade":3},{"id":12,"text":"The scales should start from zero."},{"id":13,"
-text":"The figures are not referenced from text."},{"id":11,"text":"Some figures could have been used to illustrate the results.","grade":1}]}'\
-    ']}],"feedbackCategories":[],"grades":["Fail",1,2,3,4,5],"gradingMode":"average","finalComment":""}'
+    self.rubric = '{"version":"2","pages":[{"id":1,"name":"Final report","criteria":[{"id":1,"name":"Structure","phrases":[{"id":1,"text":"The report is well structured and easy to read.","grade":5},{"id":2,"text":"The report needs some structuring (e.g. introduction, methods, results, conclusions).","grade":3},{"id":5,"text":"The report is difficult to read because it\'s not logically structured.","grade":1},{"id":6,"text":"For example, the conclusions should be in a separate section and not among results."}]},
+{"id":2,"name":"Scope","phrases":[{"id":3,"text":"The work is well scoped.","grade":5},{"id":4,"text":"The scope is too narrow.","grade":3},{"id":7,"text":"The scope is too wide.","grade":3},{"id":8,"text":"The project does not meet the minimum requirements.","grade":"Fail"}]},
+{"id":3,"name":"Figures","phrases":[{"id":9,"text":"The figures are well made.","grade":5},{"id":10,"text":"There are some shortcomings in the figures.","grade":3},{"id":12,"text":"The scales should start from zero."},{"id":13,"text":"The figures are not referenced from text."},{"id":11,"text":"Some figures could have been used to illustrate the results.","grade":1}]}]}],"feedbackCategories":[],"grades":["Fail",1,2,3,4,5],"gradingMode":"average","finalComment":""}'
   end
   
   
