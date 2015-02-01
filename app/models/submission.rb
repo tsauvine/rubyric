@@ -209,7 +209,8 @@ class Submission < ActiveRecord::Base
     
     count = 1
     Open3.popen3('pdfinfo', self.full_filename()) do |stdin, stdout, stderr, wait_thr|
-      while line = stdout.gets
+      # Do encoding to handle invalid utf-8 characters that sometimes appear in the output of pdfinfo
+      while line = stdout.gets.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
         if line =~ /^Pages/  # Read page count
           parts = line.split(':')
           next if parts.size < 2
