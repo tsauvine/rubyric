@@ -32,7 +32,8 @@ class Group < ActiveRecord::Base
         else
           text = ''
           text << "#{member.user.name} " unless member.user.name.blank?
-          text << "(#{member.user.studentnumber})" unless  member.user.studentnumber.blank?
+          text << "(#{member.user.studentnumber})" unless member.user.studentnumber.blank?
+          text
         end
       else
         member.email
