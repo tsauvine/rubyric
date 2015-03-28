@@ -9,7 +9,7 @@
     <div>
       Zoom:
       <!--select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select-->
-      <input class="input-mini" data-bind="value: zoom_selection, valueUpdate: 'input'" />%
+      <input class="input-mini" data-bind="value: zoom_selection, valueUpdate: 'input', event: { keypress: $root.zoomKeypress }" /> <!-- valueUpdate: 'input' -->
     </div>
   </div>
 
@@ -241,7 +241,8 @@
       <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
       
       <!-- ko foreach: annotations -->
-        <div class="annotation" data-bind="position: screenPosition, css: {editorActive: gradeEditorActive() || contentEditorActive() }, click: clickAnnotation, clickBubble: false">
+        <div class="annotation" data-bind="position: screenPosition, css: {editorActive: gradeEditorActive() || contentEditorActive(), minimized: minimized() && !gradeEditorActive() && !contentEditorActive() }, click: clickAnnotation, clickBubble: false">
+          <i class="icon icon-align-left minimized-phrase"></i>
           <!-- ko if: phrase -->
             <div class="grade" data-bind="editable: {value: grade, editorActive: gradeEditorActive, placeholder: '&bull;'}">
             </div>
@@ -254,11 +255,17 @@
             <button class="btn btn-mini pull-right" title="Delete annotation" data-bind="click: $parent.deleteAnnotation, clickBubble: false">
               <i class="icon icon-remove"></i>
             </button>
+            <button class="btn btn-mini pull-right minimize-button" title="Minimize" data-bind="click: $parent.minimizeAnnotation, clickBubble: false">
+              <i class="icon icon-chevron-down"></i>
+            </button>
+            <button class="btn btn-mini pull-right maximize-button" title="Maximize" data-bind="click: $parent.maximizeAnnotation, clickBubble: false">
+              <i class="icon icon-chevron-up"></i>
+            </button>
             <!-- ko if: phrase -->
               <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
             <!-- /ko -->
-            <!--div class="clearfix"></div-->
           </div>
+        
         </div>
       <!-- /ko -->
     </div>

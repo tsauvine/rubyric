@@ -213,6 +213,7 @@ class SubmissionPage
     @alt = ko.observable("Page #{@pageNumber + 1}")
     @nextPage = undefined
     @width = ko.observable()
+    @pageWidth = ko.observable(@annotationEditor.page_width * 45.0)
     @containerWidth = ko.observable()
     @height = ko.observable()
     
@@ -275,6 +276,11 @@ class SubmissionPage
     @annotationEditor.addCommand(new DeleteAnnotationCommand(annotation))
     event.preventDefault()
   
+  minimizeAnnotation: (annotation, event) =>
+    annotation.minimize()
+  
+  maximizeAnnotation: (annotation, event) =>
+    annotation.maximize()
     
 class Annotation
   constructor: (options) ->
@@ -287,6 +293,7 @@ class Annotation
     @escaped_content = (options['content'] || '').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
     @grade = ko.observable(options['grade'])
     @zoom = options.zoom || 1.0
+    @minimized = ko.observable(false)
     
     screenPosition = options['screenPosition']
     pagePosition = options['pagePosition']
@@ -296,7 +303,9 @@ class Annotation
     screenPosition = {x: pagePosition.x * @zoom, y: pagePosition.y * @zoom} if !screenPosition && pagePosition
     
     @pagePosition = ko.observable(pagePosition || {x: 0, y: 0})
+    @minimized(true) if @pagePosition().x < 0.9 * @submissionPage.pageWidth()
     @screenPosition = ko.observable(screenPosition || {x: 0, y: 0})
+    this.limitCoordinates()
     
     @gradeEditorActive = ko.observable(false)
     @contentEditorActive = ko.observable(false)
@@ -313,14 +322,8 @@ class Annotation
       pagePos = @pagePosition()
       pagePos.x = screenPos.x / @zoom
       pagePos.y = screenPos.y / @zoom
-      
-      # TODO: limit x
-      # if pagePos.x > @submissionPage.width()
-      #   pagePos.x = @submissionPage.width()
-      #   screenPos.x = pagePos.x * @zoom
-      #   @screenPosition.valueHasMutated()
-      
       @pagePosition.valueHasMutated()
+      this.limitCoordinates()
     
   setZoom: (new_zoom) ->
     @zoom = new_zoom
@@ -331,9 +334,30 @@ class Annotation
     screenPos.y = pagePos.y * @zoom
     @screenPosition.valueHasMutated()
   
+  limitCoordinates: ->
+    screenPos = @screenPosition()
+    pagePos = @pagePosition()
+    
+    # Limit x
+    if pagePos.x > @submissionPage.pageWidth() + 8
+      pagePos.x = @submissionPage.pageWidth() + 8
+      screenPos.x = pagePos.x * @zoom
+      screenPos.updated = false
+      @pagePosition.valueHasMutated()
+      @screenPosition.valueHasMutated()
   
+  # Note: This method is necessary for catching clicks and preventing bubbling
   clickAnnotation: ->
-    # Catch clicks and prevent bubbling
+    this.maximize() if @minimized()
+
+  minimize: ->
+    @minimized(true)
+  
+  maximize: ->
+    @minimized(false)
+    
+  toggleMinimize: ->
+    @minimized(!@minimized())
 
 
 class AnnotationEditor extends Rubric
@@ -556,7 +580,9 @@ class AnnotationEditor extends Rubric
     page.createAnnotation(options)
     this.clickGrade(phrase)
   
-
+  zoomKeypress: (data, event) ->
+    event.keyCode != 13
+  
   printJson: ->
     console.log @commandBuffer.as_json()
 
