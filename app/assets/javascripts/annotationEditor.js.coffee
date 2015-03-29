@@ -340,7 +340,7 @@ class Annotation
     
     # Limit x
     if pagePos.x > @submissionPage.pageWidth() + 8
-      pagePos.x = @submissionPage.pageWidth() + 8
+      pagePos.x = @submissionPage.pageWidth() + 7
       screenPos.x = pagePos.x * @zoom
       screenPos.updated = false
       @pagePosition.valueHasMutated()
