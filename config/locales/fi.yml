@@ -14,6 +14,7 @@ fi:
   Language: 'Kieli'
   Reviewer: 'Arvioija'
   Grade: 'Arvosana'
+  Feedback_available_at: 'Voit katsoa palautetta osoitteessa'
 
  # Used in array.to_sentence.
   support:
