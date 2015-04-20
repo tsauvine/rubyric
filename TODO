@@ -67,6 +67,12 @@ Timezones
 
 = Later =
 
+Annotation: sum-moodissa jos on tekstimuotoisia pistemääriä, ei voi päästä finalize-tilaan
+
+Annotation: saven jälkeen mene listassa oikean ryhmän kohdalle
+
+Annotation: Jos editoi arvosanaa ja painaa esc-tulee null arvosanaksi.
+
 Opiskelija voi poistua ryhmästä
 
 Opettaja voi poistaa opiskelijoita ryhmästä
