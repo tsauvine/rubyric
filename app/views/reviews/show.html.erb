@@ -4,6 +4,15 @@
   <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
+<% if @course.has_teacher(current_user) && @review.status == 'mailed' %>
+  <div class="row">
+    <div class="alert">
+      <p>This review has already been mailed and cannot be modified any more.</p>
+      <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn' %>
+    </div>
+  </div>
+<% end %>
+
 <p>
   Submission:
   <%=l @submission.created_at, :format => :long %>

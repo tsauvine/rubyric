@@ -15,9 +15,18 @@
 
 <div class="container-fluid">
   <div class="page-header">
-    <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+    <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %> </h1>
   </div>
   
+  <% if @course.has_teacher(current_user) && @review.status == 'mailed' %>
+    <div class="row-fluid">
+      <div class="alert alert-warning">
+        <p>This review has already been mailed and cannot be modified any more.</p>
+        <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn btn-default' %>
+      </div>
+    </div>
+  <% end %>
+
   <div class="row-fluid">
     <div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
       data-page-count="<%= @page_count %>"
@@ -56,32 +65,39 @@
     </div>
   </div>
 </div>
-    
-<!-- Promotion -->
-<div class="footer">
-  <div class="container">
-    <div class="row intro">
-      <div class="col-sm-12">
-        <p>
-          <a href="http://rubyric.com">Rubyric</a> is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
-          Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
-          However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
-        </p>
-      </div>
+
+<% if params[:ref] == 'exercises' %>
+  <div class="row-fluid">
+    <div class="col-sm-12">
+      <p><%= link_to 'Back', @exercise %></p>
     </div>
-  
-    <div class="row">
-      <div class="col-sm-12">
-        <p>
-          <a href="http://rubyric.com">Rubyric</a> is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark Oy</a>, an educational technology company originally founded by a group of researchers and teachers from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
-        </p>
-        
-        <p>
-          email:
-          contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
-        </p>
+  </div>
+<% else %>
+  <!-- Promotion -->
+  <div class="footer">
+    <div class="container">
+      <div class="row intro">
+        <div class="col-sm-12">
+          <p>
+            <a href="http://rubyric.com">Rubyric</a> is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
+            Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
+            However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
+          </p>
+        </div>
+      </div>
+    
+      <div class="row">
+        <div class="col-sm-12">
+          <p>
+            <a href="http://rubyric.com">Rubyric</a> is hosted by <a href="http://www.bythemark.com/" target="_blank">By The Mark Oy</a>, an educational technology company originally founded by a group of researchers and teachers from <a href="http://www.aalto.fi/en/" target="_blank">Aalto University</a>, Finland.
+          </p>
+          
+          <p>
+            email:
+            contact<span class="obfuscate">-REMOVE-THIS-</span>@rubyric.com
+          </p>
+        </div>
       </div>
     </div>
   </div>
-</div>
-
+<% end %>
