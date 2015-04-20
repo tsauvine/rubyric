@@ -11,11 +11,10 @@ class FeedbackMailer < ActionMailer::Base
     @grader = @review.user
     group = review.submission.group
 
-    if @course.email.blank? && !@exercise.anonymous_graders
-      from = @grader.email
-    else
-      from = @course.email
-      #headers["Reply-to"] = @grader.email
+    if !@course.email.blank?
+      headers["Reply-to"] = @course.email
+    elsif !@exercise.anonymous_graders
+      headers["Reply-to"] = @grader.email
     end
 
     # Collect receiver addresses
@@ -52,11 +51,11 @@ class FeedbackMailer < ActionMailer::Base
     I18n.with_locale(@course_instance.locale || I18n.locale) do
       mail(
         :to => recipients.join(","),
-        :reply_to => from,
         :subject => subject,
         :template_path => 'feedback_mailer',
         :template_name => template_name
       )
+      #:reply_to => from,
     end
 
     # Set status

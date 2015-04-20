@@ -30,12 +30,20 @@
           <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
           
           <!-- ko foreach: annotations -->
-            <div class="annotation" data-bind="position: screenPosition, clickBubble: false">
+            <div class="annotation" data-bind="position: screenPosition, click: clickAnnotation, clickBubble: false, css: {minimized: minimized()}">
+              <span class="glyphicon glyphicon-align-left minimized-phrase"></span>
+             
               <div class="grade" data-bind="text: grade">
               </div>
               <div class="content" data-bind="html: escaped_content">
               </div>
               <div class="statusbar">
+                <button class="btn btn-mini pull-right minimize-button" title="Minimize" data-bind="click: $parent.minimizeAnnotation, clickBubble: false">
+                  <span class="glyphicon glyphicon-chevron-down"></span>
+                </button>
+                <button class="btn btn-mini pull-right maximize-button" title="Maximize" data-bind="click: $parent.maximizeAnnotation, clickBubble: false">
+                  <span class="glyphicon glyphicon-chevron-up"></span>
+                </button>
                 <!-- ko if: phrase -->
                   <span data-bind="text: phrase.criterion.page.name"></span> / <span data-bind="text: phrase.criterion.name"></span>
                 <!-- /ko -->

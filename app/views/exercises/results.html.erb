@@ -18,6 +18,7 @@
       <th>last name</th>
       <th>email</th>
       <th>grade</th>
+      <th>submitted_at</th>
       <th>reviewer</th>
     </tr>
   </thead>
@@ -33,6 +34,7 @@
         <td><%= result[0].lastname %></td>
         <td><%= result[0].email %></td>
         <td><%= result[1].grade %></td>
+        <td><%= result[1].submission.created_at %></td>
         <td><%= result[1].user.name %> (<%= result[1].user.studentnumber %>)</td>
       </tr>
     <% end %>

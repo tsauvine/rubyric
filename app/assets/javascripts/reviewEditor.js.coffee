@@ -309,8 +309,7 @@ class @Rubric
     
     for grade in grades
       return undefined unless grade?
-      
-      gradeSum += parseFloat(grade) unless isNaN(grade)
+      gradeSum += parseFloat(grade) if $.isNumeric(grade)
     
     return gradeSum
 

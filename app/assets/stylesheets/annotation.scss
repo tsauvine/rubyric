@@ -132,19 +132,45 @@
       padding: 0px 4px;
     }
     
+    .minimized-phrase {
+      display: none;
+    }
+    
+    .maximize-button {
+      display: none;
+    }
     
     button {
       margin-left: 4px;
     }
     
     &.editorActive {
-      z-index: 2;
+      z-index: 3;
     }
   }
  
   .btn-mini {
     padding: 1px;
     height: 20px;
+  }
+  
+  .annotation.minimized {
+    .minimized-phrase {
+      display: block;
+      margin: 4px;
+    }
+    
+    .statusbar, .grade, .content { display: none }
+  }
+  
+  .annotation.minimized:hover {
+    .minimized-phrase, .minimize-button { display: none }
+    
+    .maximize-button, .statusbar, .grade, .content { display: block }
+  }
+  
+  .annotation:hover {
+    z-index: 2;
   }
 }
 
