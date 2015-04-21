@@ -25,6 +25,7 @@ FORCE_SSL = false
 # }
 
 # Shibboleth attribute names (attribute-map.xml)
+# SHIB_ROOT_PATH = "/Shibboleth.sso/"
 # SHIB_PATH = "/Shibboleth.sso/DS?target="
 # SHIB_ATTRIBUTES = {
 #   :logout => 'logouturl',
