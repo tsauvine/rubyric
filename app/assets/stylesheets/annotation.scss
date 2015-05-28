@@ -147,6 +147,11 @@
     &.editorActive {
       z-index: 3;
     }
+    
+    &.droppableHover {
+      border: 4px solid #aa8;
+      margin: -3px 0px 0px -3px;
+    }
   }
  
   .btn-mini {

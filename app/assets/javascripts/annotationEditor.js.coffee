@@ -41,7 +41,9 @@ ko.bindingHandlers.droppable = {
     
     dropOptions = {
       tolerance: 'touch'
-      accept: 'tr.phrase'
+      accept: 'tr.phrase,div.annotation'
+      greedy: true
+      hoverClass: 'droppableHover'
       drop: (event, ui) ->
         dragObject = ko.dataFor(ui.draggable.get(0))
         dropCallback(viewModel, dragObject, event, ui)
@@ -166,7 +168,10 @@ class CreateAnnotationCommand
 class DeleteAnnotationCommand
   constructor: (@annotation) ->
     @annotation.submissionPage.annotations.remove(@annotation)
-    @annotation.phrase.criterion.annotations.remove(@annotation) if @annotation.phrase?
+    if @annotation.phrase?
+      @annotation.phrase.annotations.remove(@annotation)
+      @annotation.phrase.criterion.annotations.remove(@annotation)
+      
     @annotation.deleted = true
   
   undo: ->
@@ -310,7 +315,9 @@ class Annotation
     @gradeEditorActive = ko.observable(false)
     @contentEditorActive = ko.observable(false)
     
-    @phrase.criterion.annotations.push(this) if @phrase
+    if @phrase
+      @phrase.annotations.push(this)
+      @phrase.criterion.annotations.push(this)
     
     #console.log @phrase.criterion.grade
     #@phrase.criterion.grade.subscribe (new_value) =>
@@ -337,14 +344,18 @@ class Annotation
   limitCoordinates: ->
     screenPos = @screenPosition()
     pagePos = @pagePosition()
+    pageWidth = @submissionPage.pageWidth()
+    
+    return if pagePos.x <= pageWidth + 8 && pagePos.x >= 0
     
     # Limit x
-    if pagePos.x > @submissionPage.pageWidth() + 8
-      pagePos.x = @submissionPage.pageWidth() + 7
-      screenPos.x = pagePos.x * @zoom
-      screenPos.updated = false
-      @pagePosition.valueHasMutated()
-      @screenPosition.valueHasMutated()
+    pagePos.x = pageWidth + 7 if pagePos.x > pageWidth + 8
+    pagePos.x = 0 if pagePos.x < 0
+      
+    screenPos.x = pagePos.x * @zoom
+    screenPos.updated = false
+    @pagePosition.valueHasMutated()
+    @screenPosition.valueHasMutated()
   
   # Note: This method is necessary for catching clicks and preventing bubbling
   clickAnnotation: ->
@@ -474,6 +485,7 @@ class AnnotationEditor extends Rubric
         'content': raw_annotation['content']
         'grade': raw_annotation['grade']
         'pagePosition': raw_annotation['page_position']
+        'zoom': @zoom()
       }
     
       annotation = new Annotation(options)
@@ -564,8 +576,9 @@ class AnnotationEditor extends Rubric
   
   
   dropPhrase: (page, phrase, event, ui) =>
+    return if phrase instanceof Annotation  # Ignore drag'n'dropped Annotations
     return if @finalizing()
-  
+    
     offset = $(event.target).offset()
     
     options = {
@@ -579,6 +592,20 @@ class AnnotationEditor extends Rubric
     
     page.createAnnotation(options)
     this.clickGrade(phrase)
+  
+  dropPhraseToAnnotation: (receiverAnnotation, draggedAnnotation, event, ui) =>
+    #console.log draggedAnnotation
+    if draggedAnnotation instanceof Annotation
+      addedText = draggedAnnotation.content()
+      this.addCommand(new DeleteAnnotationCommand(draggedAnnotation))
+    else
+      addedText = draggedAnnotation.content
+    
+    oldContent = receiverAnnotation.content()
+    newContent = oldContent + '\n' + addedText
+    receiverAnnotation.content(newContent)
+    
+    this.addCommand(new ModifyAnnotationCommand(receiverAnnotation, {content: newContent}))
   
   zoomKeypress: (data, event) ->
     event.keyCode != 13

@@ -15,7 +15,7 @@ class Page
     @averageGrade = ko.computed((=>
       grades = []
       for criterion in @criteria()
-        grades.push(criterion.grade()) if criterion.gradeRequired
+        grades.push(criterion.grade()) if criterion.gradeRequired || criterion.grade()?
       
       return @rubric.calculateGrade(grades)
     ), this)
@@ -156,6 +156,7 @@ class Criterion
 class Phrase
   constructor: (@page, @criterion) ->
     @highlighted = ko.observable(false)
+    @annotations = ko.observableArray()
 
   load_json: (data) ->
     @id = data['id']

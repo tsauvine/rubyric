@@ -20,7 +20,17 @@
       <% end %>
 
       <!-- ko foreach: pages -->
-        <li><a data-bind="text: name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
+        <li>
+          <a data-bind="attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'>
+            <span data-bind="text: name"></span>
+            <!-- ko if: $root.gradingMode == 'sum'-->
+              <span class="btn btn-small page-grade" data-bind="text: averageGrade"></span>
+            <!-- /ko -->
+            <!-- ko if: $root.gradingMode == 'average' && $root.grades.length > 0 -->
+              <span class="btn btn-small page-grade" data-bind="text: grade"></span>
+            <!-- /ko -->
+          </a>
+        </li>
       <!-- /ko -->
       <!-- ko if: finishable() || finalizing() -->
         <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
@@ -101,7 +111,7 @@
               <h3>
                 <span data-bind="text: name"></span>
                 
-                <span data-bind="text: grade()" type="button" class="btn highlighted"></span>
+                <span data-bind="text: grade()" type="button" class="btn btn-small highlighted"></span>
               </h3>
 
               <!-- Phrases -->
@@ -120,7 +130,12 @@
                         <!-- /ko -->
                       </td>
                     
-                      <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
+                      <td class="phrase" data-bind="click: $root.clickPhrase">
+                        <span data-bind="html: escaped_content"></span>
+                        <!-- ko if: annotations().length > 0 -->
+                          <span class="badge pull-right" data-bind="text: annotations().length"></span>
+                        <!-- /ko -->
+                      </td>
                     </tr>
                   </tbody>
                 </table>
@@ -252,7 +267,7 @@
       <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
       
       <!-- ko foreach: annotations -->
-        <div class="annotation" data-bind="position: screenPosition, css: {editorActive: gradeEditorActive() || contentEditorActive(), minimized: minimized() && !gradeEditorActive() && !contentEditorActive() }, click: clickAnnotation, clickBubble: false">
+        <div class="annotation" data-bind="position: screenPosition, droppable: {drop: $root.dropPhraseToAnnotation}, css: {editorActive: gradeEditorActive() || contentEditorActive(), minimized: minimized() && !gradeEditorActive() && !contentEditorActive() }, click: clickAnnotation, clickBubble: false">
           <i class="icon icon-align-left minimized-phrase"></i>
           <!-- ko if: phrase -->
             <div class="grade" data-bind="editable: {value: grade, editorActive: gradeEditorActive, placeholder: '&bull;'}">

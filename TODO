@@ -42,8 +42,6 @@ Terms and conditions
 
 rubyric.cs.hut.fi:hin ilmoitus
 
-Enter zoom-fieldissä submittaa formin
-
 Parempi kilke määräajan valitsemiseen
 
 google plus, facebook
@@ -55,8 +53,6 @@ in sum mode:
   - selected phrases should not be collected
 in mean mode:
   - do not highlight selected phrase
-general:
-- limit annotation_x to page_width * 1.05
 
 Clean PDF cache
 
@@ -73,9 +69,9 @@ Annotation: saven jälkeen mene listassa oikean ryhmän kohdalle
 
 Annotation: Jos editoi arvosanaa ja painaa esc-tulee null arvosanaksi.
 
-Opiskelija voi poistua ryhmästä
+Opiskelijan pitäisi voida poistua ryhmästä
 
-Opettaja voi poistaa opiskelijoita ryhmästä
+Opettajan pitäisi voida poistaa opiskelijoita ryhmästä
 
 Arvioijille voi lähettää viestin, että työt on jaettu
 
@@ -92,8 +88,6 @@ Tarkista, että organisaatio tulee asetettua uudelle kurssille
 My preferences vasemmalle, testaa
 
 Paypal
-
-google plus, facebook
 
 Jos menee submitin kautta sign uppiin, niin älä luo esimerkkikurssia
 
