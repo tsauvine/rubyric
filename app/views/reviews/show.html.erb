@@ -20,15 +20,20 @@
 </p>
 
 <% unless @exercise.anonymous_graders %>
-  <p>Reviewer: <%= @grader.firstname %> <%= @grader.lastname %></p>
+  <p>Reviewer: <%= @grader.name %></p>
 <% end %>
 
 <% unless @review.grade.blank? %>
   <p>Grade: <%= @review.grade %></p>
 <% end %>
 
+<% unless @review.feedback.blank? %>
+  <p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
+<% end %>
 
-<p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
+<% unless @review.filename.blank? %>
+  <p>Uploaded feedback: <%= link_to @review.filename, download_review_path(@review) %></p>
+<% end %>
 
 <% if params[:ref] == 'exercises' %>
   <p><%= link_to 'Back', @exercise %></p>
