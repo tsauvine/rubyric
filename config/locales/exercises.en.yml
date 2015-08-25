@@ -13,4 +13,4 @@ en:
       view_feedback_from: "Review (%{name})"
       anonymous_feedback: "Review %{number}"
       new_submission_button: "New submission"
-      
+      no_submissions: "No submissions to this assignment"

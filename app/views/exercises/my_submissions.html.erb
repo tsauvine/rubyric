@@ -27,14 +27,13 @@
 
 
 <!-- Submissions -->
+<% if @assigned_groups.empty? %>
+  <h2><%=t '.submissions' %></h2>
+<% else %>
+  <h2 class="gap"><%=t '.my_submissions' %></h2>
+<% end %>
+
 <% unless @available_groups.empty? %>
-  <% if @assigned_groups.empty? %>
-    <h2><%=t '.submissions' %></h2>
-  <% else %>
-    <h2 class="gap"><%=t '.my_submissions' %></h2>
-  <% end %>
-  
-  <p>
   <table class="assignments">
     <% @available_groups.each do |group| %>
       <% submissions = group.submissions.where(:exercise_id => @exercise.id) %>
@@ -46,7 +45,7 @@
       
       <% if submissions.empty? %>
         <tr class="submission">
-          <td colspan='3'>No submissions to this assignment</td>
+          <td colspan='3'><%= t '.no_submissions' %></td>
         </tr>
       <% else %>
         <% submissions.each do |submission| %>
@@ -71,7 +70,8 @@
       <tr class="spacer"><td colspan="3"></td></tr>
     <% end %>
   </table>
-  </p>
-
-  <p class=""><%= link_to t('.new_submission_button'), submit_url(@exercise.id), :class => 'btn' %></p>
+<% else %>
+  <p class="hint"><%= t '.no_submissions' %></p>
 <% end %>
+
+<p class=""><%= link_to t('.new_submission_button'), submit_url(@exercise.id), :class => 'btn' %></p>

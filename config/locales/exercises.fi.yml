@@ -13,4 +13,4 @@ fi:
       view_feedback_from: "Palaute (%{name})"
       anonymous_feedback: "Palaute %{number}"
       new_submission_button: "Uusi palautus"
-      
+      no_submissions: "Ei palautuksia tähän harjoitukseen"
