@@ -163,7 +163,7 @@ class Phrase
     @categoryId = data['category']
     @grade = data['grade']
     @content = data['text']
-    @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+    @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />').replace(/&/,'&amp;')
     
     @criterion.gradeRequired = true if @grade?
 

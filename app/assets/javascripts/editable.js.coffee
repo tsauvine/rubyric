@@ -24,7 +24,7 @@ ko.bindingHandlers.editable = {
       original_value = ko.utils.unwrapObservable(options.value)
       
       if original_value?
-        shown_value = original_value.toString()
+        shown_value = original_value.toString().replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
       else
         shown_value = ''
       
@@ -99,8 +99,7 @@ ko.bindingHandlers.editable = {
       value = placeholder if placeholder && value.length < 1
       
       # Escape nasty characters
-      value = value.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
+      value = value.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
 
       el.html(value)
-
 }
