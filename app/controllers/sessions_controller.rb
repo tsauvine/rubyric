@@ -79,6 +79,7 @@ class SessionsController < ApplicationController
 
 
   def shibboleth_login(shibinfo)
+    # Give up if no parameters are received
     if shibinfo[:login].blank? && shibinfo[:studentnumber].blank?
       flash[:error] = "Shibboleth login failed (no studentnumber or username received)."
       logger.warn("Shibboleth login failed (missing attributes). #{shibinfo}")
@@ -96,6 +97,7 @@ class SessionsController < ApplicationController
     # Login must be null, otherwise the account may belong to someone else from another organization.
     if !user && !shibinfo[:studentnumber].blank?
       logger.debug "Trying to find by studentnumber #{shibinfo[:studentnumber]}"
+      # TODO: user organization ID
       user = User.find_by_studentnumber(shibinfo[:studentnumber], :conditions => "login IS NULL")
     end
     
