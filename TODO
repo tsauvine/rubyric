@@ -63,6 +63,8 @@ Timezones
 
 = Later =
 
+Switch to Pundit
+
 Use pdftoppm instead of ghostscript
 http://tech.velmont.net/nicer-pdf2png-with-poppler/
 

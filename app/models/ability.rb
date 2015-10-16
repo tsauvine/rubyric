@@ -6,7 +6,7 @@ class Ability
     
     
     if user.admin?
-    #     can :manage, :all
+      can :update, Course, CourseInstance, Exercise
     else
     #     can :read, :all
     end
