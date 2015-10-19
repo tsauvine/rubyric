@@ -38,13 +38,27 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+pisteytyksessä rajattu vaihteluväli
+
+Muutokset tallennettu-teksti rubriikkieditorissa
+
+Save vs. next page -testit
+
+Lopullisen palautetestin esikatselu
+
+Invalidated-tila
+
+Timezones
+
+Archive expired courses
+
+Clean PDF cache, Backup
+
 Terms and conditions
 
 rubyric.cs.hut.fi:hin ilmoitus
 
 Parempi kilke määräajan valitsemiseen
-
-google plus, facebook
 
 Default review mode: plain text
 
@@ -54,14 +68,14 @@ in sum mode:
 in mean mode:
   - do not highlight selected phrase
 
-Clean PDF cache
-
 View mailed review: Groupissa ei näy mitään, jos vain emailit on asetettu
 
-Timezones
+google plus, facebook
 
 
 = Later =
+
+Editing rubric while reviewing
 
 Switch to Pundit
 
