@@ -17,7 +17,10 @@ class Page
       for criterion in @criteria()
         grades.push(criterion.grade()) if criterion.gradeRequired || criterion.grade()?
       
-      return @rubric.calculateGrade(grades)
+      grade = @rubric.calculateGrade(grades)
+      grade = @minSum if @minSum? && grade < @minSum
+      grade = @maxSum if @maxSum? && grade > @maxSum
+      return grade
     ), this)
     
     @finished = ko.computed((=>
@@ -32,6 +35,8 @@ class Page
   load_rubric: (data) ->
     @name = data['name']
     @id = data['id']
+    @minSum = data['minSum']
+    @maxSum = data['maxSum']
     
     # Prepare feedback containers
     for category in @rubric.feedbackCategories
@@ -103,6 +108,8 @@ class Criterion
   constructor: (@rubricEditor, @page, data) ->
     @id = data['id']
     @name = data['name']
+    @minSum = data['minSum']
+    @maxSum = data['maxSum']
     @phrases = []
     @phrasesById = {} # id => Phrase
     @selectedPhrase = ko.observable()  # Phrase object which is selected as the grade
@@ -122,7 +129,10 @@ class Criterion
         grades.push(annotation.grade()) if annotation.grade()?
       
       if grades.length > 0
-        return @rubricEditor.calculateGrade(grades)
+        grade = @rubricEditor.calculateGrade(grades)
+        grade = @minSum if @minSum? && grade < @minSum
+        grade = @maxSum if @maxSum? && grade > @maxSum
+        return grade
       
       if @selectedPhrase()
         return @selectedPhrase().grade
@@ -141,12 +151,6 @@ class Criterion
     @selectedPhrase(phrase)
     phrase.highlighted(true) if phrase
 
-#   grade: ->
-#     if @selectedPhrase()
-#       return @selectedPhrase().grade
-#     else
-#       return undefined
-  
   to_json: ->
     return unless @selectedPhrase()
     

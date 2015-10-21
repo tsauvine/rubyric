@@ -371,8 +371,8 @@ class Annotation
     @minimized(!@minimized())
 
 
-class AnnotationEditor extends Rubric
-  constructor: () ->
+class @AnnotationEditor extends Rubric
+  constructor: (rawRubric) ->
     super()
     
     @element = $('#annotation-editor')
@@ -430,7 +430,7 @@ class AnnotationEditor extends Rubric
     
     $('#tab-finish-link').tab('show') if @finalizing()
     
-    this.parseRubric(window.rubric)
+    this.parseRubric(rawRubric)
     
     for page in @pages
       do (page) =>
@@ -659,6 +659,3 @@ class AnnotationEditor extends Rubric
   
   saveAndSend: ->
     this.save({send: true})
-
-jQuery ->
-  new AnnotationEditor

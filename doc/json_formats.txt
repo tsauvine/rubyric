@@ -1,27 +1,32 @@
 == Rubric ==
 
 {
-  "version": '2',
+  "version": '3',
   "pages": [
     {
       "id": 0,
-      "name": "Sivu 1",
+      "name": "Page 1",
+      minSum: 0,
+      maxSum: 20,
       "criteria": [
         {
-          "id":0, 
-          "name":"Kriteeri 1.1",
+          "id": 0,
+          "name": "Criterion 1.1",
+          minSum: 0,
+          maxSum: 5,
+          instructions: "Instructions for <b>grader</b>",
           "phrases":[
-             {"id":0, "text":"Mikä meni hyvin\nToinen rivi", "category":0, "grade":5},
-             {"id":1, "text":"<b>Mikä meni huonosti</b>", "category":1, "grade": "Hylätty"},
-             {"id":8, "text":"Jotain muuta","category":2}
+             {"id": 0, "text": "What went well\nSecond line", "category": 0, "grade": 5},
+             {"id": 1, "text": "<b>Things to improve</b>", "category": 1, "grade": "Failed"},
+             {"id": 3, "text": "Something else","category": 2}
            ]
         },
         {
           "id":1,
-          "name":"Kriteeri 1.2",
+          "name":"Criterion 1.2",
           "phrases": [
-            {"id":8,"text":"Olipa hyvä","category":0},
-            {"id":8,"text":"Olipa huono","category":1}
+            {"id": 4,"text": "Good work!","category": 0},
+            {"id": 5,"text": "You fail!","category": 1}
           ]
         }
       ]
@@ -30,11 +35,11 @@
   "grades": ["Failed",1,2,3,4,5],
   "gradingMode": "average",
   "feedbackCategories": [
-    {id:0, name:"Hyvää"},
-    {id:1, name:"Kehitettävää"},
-    {id:2, name:"Muuta"}
+    {id:0, name:"Strengths"},
+    {id:1, name:"Weaknesses"},
+    {id:2, name:"Other comments"}
   ],
-  "finalComment": "Loppukaneetti\n<b>Toinen rivi</b>"
+  "finalComment": "Final comment\n<b>Other line</b>"
 }
 
 
