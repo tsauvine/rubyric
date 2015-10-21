@@ -1,8 +1,6 @@
 <!-- reviews/edit.html.erb -->
 <% content_for :javascript do %>
-  <%= javascript_tag do %>
-    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
-  <% end %>
+  <%= javascript_include_tag exercise_rubric_path(@exercise.id, format: 'js') %>
   <%= javascript_include_tag 'views/reviews/edit' %>
 <% end %>
 
