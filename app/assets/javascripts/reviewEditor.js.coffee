@@ -367,8 +367,10 @@ class @ReviewEditor extends @Rubric
     if data
       for page_data in data['pages']
         page = @pagesById[page_data['id']]
-        page.load_review(page_data) if page
-        
+        continue unless page
+
+        page.load_review(page_data)
+
         # Subscribe to grade changes
         page.grade.subscribe(=> @saved = false)
     
