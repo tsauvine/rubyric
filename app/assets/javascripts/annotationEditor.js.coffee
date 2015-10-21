@@ -371,8 +371,8 @@ class Annotation
     @minimized(!@minimized())
 
 
-class AnnotationEditor extends Rubric
-  constructor: () ->
+class @AnnotationEditor extends Rubric
+  constructor: (rubric, review) ->
     super()
     
     @element = $('#annotation-editor')
@@ -430,7 +430,7 @@ class AnnotationEditor extends Rubric
     
     $('#tab-finish-link').tab('show') if @finalizing()
     
-    this.parseRubric(window.rubric)
+    this.parseRubric(rubric)
     
     for page in @pages
       do (page) =>
@@ -439,7 +439,7 @@ class AnnotationEditor extends Rubric
 
     @finishedText(@finalComment) if @finishedText().length < 1 && @finalComment? && @finalComment.length > 0
 
-    this.parseReview(window.review)
+    this.parseReview(review)
     
     ko.applyBindings(this)
     
@@ -659,6 +659,3 @@ class AnnotationEditor extends Rubric
   
   saveAndSend: ->
     this.save({send: true})
-
-jQuery ->
-  new AnnotationEditor

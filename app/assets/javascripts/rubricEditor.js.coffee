@@ -261,9 +261,8 @@ class FeedbackCategory
     @editorActive(true)
 
 
-class RubricEditor
-
-  constructor: () ->
+class @RubricEditor
+  constructor: (rawRubric, @url, @demo_mode) ->
     @saved = true
     @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
@@ -275,16 +274,15 @@ class RubricEditor
     @finalComment = ko.observable('')
     @pages = ko.observableArray()
 
-    @url = $('#rubric-editor').data('url')
-    @demo_mode = $('#rubric-editor').data('demo')
+    $('.tooltip-help').popover({placement: 'right', trigger: 'hover', html: true})
+    #$('#tooltip-final-comment').popover({placement: 'right', trigger: 'hover', html: true})
 
     unless @demo_mode
       $(window).bind 'beforeunload', => return "You have unsaved changes. Leave anyway?" unless @saved
 
     this.setHelpTexts()
 
-    #this.loadRubric(@url)
-    this.parseRubric(window.rubric)
+    this.parseRubric(rawRubric)
 
   
   subscribeToChanges: ->
@@ -439,10 +437,3 @@ class RubricEditor
         alert('Server is not responding')
       else
         alert(errorThrown)
-
-
-jQuery ->
-  new RubricEditor()
-
-  $('.tooltip-help').popover({placement: 'right', trigger: 'hover', html: true})
-  #$('#tooltip-final-comment').popover({placement: 'right', trigger: 'hover', html: true})

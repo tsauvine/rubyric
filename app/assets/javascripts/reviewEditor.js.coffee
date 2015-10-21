@@ -163,7 +163,7 @@ class Phrase
     @categoryId = data['category']
     @grade = data['grade']
     @content = data['text']
-    @escaped_content = @content.replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />').replace(/&/,'&amp;')
+    @escaped_content = @content.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br />')
     
     @criterion.gradeRequired = true if @grade?
 
@@ -197,7 +197,7 @@ class @Rubric
         callback() if callback
   
   #
-  # Parses the JSON data returned by the server. See loadRubric.
+  # Parses the JSON data returned by the server.
   #
   parseRubric: (data) ->
     data ||= {}
@@ -530,7 +530,7 @@ class @ReviewEditor extends @Rubric
         finalText += '\n'
     
     # Final comment
-    finalText += '\n' + @finalComment if @finalComment.length > 0
+    finalText += '\n' + @finalComment if @finalComment? && @finalComment.length > 0
     
     @finishedText(finalText)
   

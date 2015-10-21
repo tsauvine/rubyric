@@ -1,8 +1,11 @@
 <!-- rubrics/edit.html.erb -->
 <% content_for :javascript do %>
-  <%= javascript_include_tag 'rubricEditor' %>
-  <%= javascript_include_tag exercise_rubric_path(@exercise.id, format: 'js') %>
+  <%= javascript_include_tag 'views/rubrics/edit' %>
 <% end %>
+
+<form>
+  <%= hidden_field_tag :rubric_payload, @exercise.rubric %>
+</form>
 
 <div class="page-header">
   <div class="pull-right">
@@ -18,7 +21,7 @@
     <button class="btn btn-success" data-bind="click: clickSaveRubric">Save</button>
   </div>
   
-  <h1><%= link_to @exercise.name, @exercise %> - Editing rubric</h1>
+  <h1><%= link_to @exercise do %><i class='icon icon-arrow-left'></i><%= @exercise.name %><% end %> - Editing rubric</h1>
 </div>
 
 <div class="tabbable rubric-editor" id="rubric-editor" data-url="<%= exercise_rubric_url(@exercise.id) %>">

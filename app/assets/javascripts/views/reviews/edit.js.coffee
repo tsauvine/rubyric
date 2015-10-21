@@ -2,5 +2,9 @@
 
 jQuery ->
   editor = new ReviewEditor()
-  editor.parseRubric(window.rubric)
+
+  rawRubric = $('#rubric_payload').val()
+  rubric = $.parseJSON(rawRubric) if rawRubric.length > 0
+  editor.parseRubric(rubric)
+
   editor.loadReview()
