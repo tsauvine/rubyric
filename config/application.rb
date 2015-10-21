@@ -43,7 +43,7 @@ module Rubyric
     # JavaScript files you want as :defaults (application.js is always included).
     #config.action_view.javascript_expansions[:defaults] = %w(jquery jquery-ui rails)
     config.assets.precompile += ['assignmentEditor.js', 'editExercise.js', 'editInstructors.js', 'reviewEditor.js', 'rubricEditor.js', 'submissions.js', 'bootstrap.js', 'annotationEditor.js', 'price-calculator.js.coffee',
-      'views/frontpage/show.js', 'views/orders/index.js', 'views/orders/new.js', 'views/reviews/edit.js', 'views/course_instances/new.js',
+      'views/frontpage/show.js', 'views/orders/index.js', 'views/orders/new.js', 'views/reviews/edit.js', 'views/reviews/annotation.js', 'views/rubrics/edit.js', 'views/course_instances/new.js',
       'frontpage.css', 'application-new.css'
     ]
 
