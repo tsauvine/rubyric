@@ -10,7 +10,6 @@ class RubricsController < ApplicationController
     respond_to do |format|
       format.html { render text: @exercise.rubric }
       format.json { render json: @exercise.rubric }
-      format.js { render action: :show }
     end
   end
 
