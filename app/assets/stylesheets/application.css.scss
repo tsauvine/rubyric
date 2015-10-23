@@ -253,12 +253,19 @@ table.histogram td {
       margin-top: 1.5em;
       margin-bottom: 0.2em;
     }
+    
+    .grading-instructions {
+      color: gray;
+      font-style: italic;
+      font-size: 12px;
+      margin: 2px 0px;
+    }
   }
   
   table.phrases {
     background: #F8F8F8;
     width: 100%;
-    margin: 0em 0em 0em 0em;
+    margin: 2px 0px;
     
     tr {
       border: 1px solid gray;
@@ -401,166 +408,114 @@ p.feedback-preview {
 
 .rubric-editor {
   padding: 0em 0em 1em 0em;
-
-  .grading-scale input {
-    width: 100%;
+  
+  textarea {
+    width: 100%
+  }
+  
+  i {
+    vertical-align: middle;
   }
 
-  .weight {
-    /*font-size: small;*/
-    color: black;
+  .weight input {
+    width: 3em;
+  }
+    
+  div.criterion-title {
+    padding: 0;
+    
+    h3, .buttons {
+      float: left;
+    }
+    
+    h3, .buttons i {
+      line-height: 26px;
+      vertical-align: middle;
+      margin: 0px;
+      padding: 0px;
+    }
+    
+    .buttons {
+      margin: 0px 10px;
+    }
+    
+    .sumRangeSummary {
+      color: gray;
+      margin-left: 1em;
+    }
+
+    .sumRange, .weight {
+      input {
+        height: 16px;
+        font-size: 11px;
+        margin: 0px 2px;
+      }
+    }
+    
+    .sumRange {
+      margin-left: 2em;
+      
+      input {
+        width: 2em;
+      }
+    }
+    
+    .addInstructions a {
+      color: gray;
+      font-size: 11px;
+      line-height: 26px;
+      
+      &:hover {
+        text-decoration: none;
+        border-bottom: 1px dotted gray;
+      }
+    }
   }
 
   .buttons i {
     cursor: pointer;
   }
 
-  .buttons,
-  .criterion .create-phrase-button
-  {
+  .buttons {
     visibility: hidden;
   }
 
-  .page h2:hover .buttons,
+  h2:hover .buttons,
+  h3:hover .buttons,
   .criterion:hover .buttons,
   tr:hover .buttons
   {
     visibility: visible;
   }
-
-  td.phrase {
-    width: auto;
-  }
-    
-  td.buttons-column {
-    width: 80px;
-    text-align: center;
-  }
-
-  textarea {
-    width: 100%
-  }
-
-  div.grading {
-    margin-top: 4em;
-  }
-
-  .section {
-    margin: 0em 0em 3em 0em;
-    padding: 0em 1em;
-
-    border: 1px solid gray;
-    -moz-border-radius: .5em;
-    background: white;
-  }
-
-  .section h2 {
-    font-size: 120%;
-    font-weight: normal;
-    border-bottom: 1px solid #cc1414;
-    color: #cc1414;
-    margin: .5em 0px 1em 0em;
-  }
-
-  .section h2 span {
-    cursor: pointer;
-  }
-
-  .item {
-    padding: .5em;
-    margin: 1em 0em 2em 0em;
-    border: 1px solid white;
-  }
-
-  .item h3 {
-    margin-left: 0em;
-    margin-bottom: .5em;
-    margin-top: 0em;
-  }
-
-  .item h3 span {
-    cursor: pointer;
-  }
-
-  .item .buttons {
-    visibility: hidden;
-  }
-
-  .item:hover {
-    border: 1px dotted navy;
-  }
-
-  .item:hover .buttons {
-    visibility: visible;
-  }
-
-  .item .grading-options {
-    margin-top: 1em;
-    /*font-size: .9em;*/
-  }
-
-  .itemGradingOption {
-    cursor: pointer;
-  }
-
-  .section-grading-options {
-    margin: 2em 1em 1em 0em;
-    padding: 0em;
-  }
-
-
-  .section-grading-options table {
-    border-bottom: 1px solid #808080;
-  }
-
-  .section-grading-options td {
-    border-left: 1px solid #808080;
-    border-right: 1px solid #808080;
-    padding: .1em .5em;
-  }
-
-  .section-grading-options .points {
-    text-align: center;
-  }
-
-  .section-grading-options h3 {
-    margin-top: 0em;
-  }
-
-  .section-grading-options span {
-    cursor: pointer;
+  
+  .criterion:hover .sumRangeSummary {
+    display: none;
   }
 
   table.phrases {
-    width: 100%;
-    background: #f8f8f8;
-    border: 1px solid #808080;
-  }
-
-  .phrases td {
-    border-bottom: 1px solid #808080;
-    border-right: none;
-    border-left: none;
-    padding: 1px;
-  }
-
-
-  td.phraseType {
-    width: 6em;
-    text-align: center;
-  }
-
-  select.phraseType {
-    width: 5em;
+    td {
+      padding: 1px;
+    }
+    
+    td.phrase {
+      width: auto;
+    }
+    
+    td.phraseType {
+      width: 6em;
+      text-align: center;
+    
+      input, select {
+        width: 5em;
+      }
+    }
+    
+    td.buttons-column {
+      width: 80px;
+      text-align: center;
+    }
   }
   
-  input.phraseType {
-    width: 5em;
-  }
-
-  td.type-selection {
-    width: 100px;
-  }
 }
 
 .ui-effects-transfer {

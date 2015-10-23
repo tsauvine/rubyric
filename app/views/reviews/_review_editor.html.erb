@@ -104,6 +104,9 @@
         </div>
       <!-- /ko -->
       
+      <!-- Grading instructions (page) -->
+      <p class="grading-instructions" data-bind="text: instructions"></p>
+      
       <!-- Rubric -->
       <div class="rubric" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
         <div class="criterion">
@@ -114,10 +117,12 @@
               <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
             <!-- /ko -->
           </h3>
-
-          <!-- Phrases -->
           <div class="clear"></div>
           
+          <!-- Grading instructions (criterion) -->
+          <p class="grading-instructions" data-bind="text: instructions"></p>
+          
+          <!-- Phrases -->
           <div class="phrases">
             <table class="phrases">
               <tbody data-bind="foreach: phrases">

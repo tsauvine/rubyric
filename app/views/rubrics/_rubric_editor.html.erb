@@ -106,7 +106,7 @@
   <!-- ko foreach: pages -->
     <div class="tab-pane page" data-bind="attr: { id: tabId }">
       <h2>
-        <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled page'}"></span>
+        <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled page', inputPlaceholder: 'Page title'}"></span>
         <span class="buttons">
           <i class="icon-pencil edit-page-button" title="Edit title" data-bind="click: activateEditor"></i>
           <i class="icon-trash delete-page-button" title="Delete page" data-bind="click: deletePage"></i>
@@ -116,16 +116,35 @@
       <div class="rubric" data-bind="sortable: {data: criteria, options: {containment: '#rubric-editor', axis: 'y', distance: 5} }">
         <div class="criterion">
           <!-- Heading -->
-          <h3>
-            <span class="title" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled Criterion' }"></span>
+          <div class="criterion-title">
+            <h3>
+              <span class="title" title="criterion title (click to edit)" data-bind="editable: {value: name, editorActive: editorActive, placeholder: 'Untitled Criterion', inputPlaceholder: 'Criterion title' }"></span>
+              <span class="sumRangeSummary" data-bind="html: sumRangeHtml"></span>
+            </h3>
+            
+            <span class="sumRange buttons" title="clamp to this range (optional)">
+              <input placeholder="min" type="text" data-bind="value: minSum, valueUpdate: 'input'" />&ndash;<input placeholder="max" class="sumRange" type="text" data-bind="value: maxSum, valueUpdate: 'input'" />
+            </span>
+            
+            <!-- ko if: !instructions() || instructions().length == 0 -->
+              <span class="buttons addInstructions">
+                <a data-bind="click: addInstructions">Add grading instructions</a>
+              </span>
+            <!-- /ko -->
+            
             <span class="buttons">
-              <i class="icon-pencil edit-criterion-button" title="Edit criterion" data-bind="click: activateEditor"></i>
+              <i class="icon-pencil edit-criterion-button" title="Edit criterion title" data-bind="click: activateEditor"></i>
               <i class="icon-trash delete-criterion-button" title="Delete criterion" data-bind="click: deleteCriterion"></i>
               <i class="icon-resize-vertical move-criterion-button" title="Drag to move criterion"></i>
             </span>
-          </h3>
+              
+            <div class="clear"></div>
+          </div>
 
-          <div class="clear"></div>
+          <!-- Grading instructions -->
+          <!-- ko if: (instructions() && instructions().length > 0) || instructionsEditorActive() -->
+            <p class="grading-instructions" title="Instructions for reviewer (click to edit)" data-bind="editable: {value: instructions, editorActive: instructionsEditorActive, type: 'textarea', inputPlaceholder: 'Instructions for reviewer'}"></p>
+          <!-- /ko -->
 
           <!-- Phrases -->
           <div class="phrases">
@@ -149,7 +168,7 @@
                       <input title="Points (optional)" class="phraseType" type="text" data-bind="value: gradeValue" />
                     </td>
                   <!-- /ko -->
-                  <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit'}"></td>
+                  <td class="phrase" data-bind="editable: {value: content, editorActive: editorActive, type: 'textarea', placeholder: 'click to edit', inputPlaceholder: 'Feedback phrase'}"></td>
                   <td class="buttons-column">
                     <div class="buttons">
                       <i class="icon-pencil edit-phrase-button" title="Edit phrase" data-bind="click: activateEditor"></i>

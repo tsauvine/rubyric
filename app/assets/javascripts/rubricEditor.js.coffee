@@ -5,6 +5,11 @@
 #= require editable
 
 # TODO
+
+# update knockout and knockout-sortable
+# validate sum range http://stackoverflow.com/questions/14582450/comparing-two-fields-with-knockout-validation
+# add sum range to page
+
 # preview (grader)
 # preview (mail)
 # page weights
@@ -18,7 +23,20 @@ class Page
     @name = ko.observable('')
     @criteria = ko.observableArray()
     @editorActive = ko.observable(false)
+    @minSum = ko.observable()
+    @maxSum = ko.observable()
+    @instructions = ko.observable()
     
+    @sumRangeHtml = ko.computed(() ->
+        min = @minSum()
+        max = @maxSum()
+        
+        if min? && min.length > 0 || max? && max.length > 0
+          "(#{if min? && min.length>0 then min else '-&infin;'} &ndash; #{if max? && max.length>0 then max else '&infin;'})"
+        else
+          ''
+      , this)
+
     @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
     @criteria.subscribe => @rubricEditor.saved = false if @rubricEditor
     
@@ -37,7 +55,6 @@ class Page
         return "page-#{@id()}-link"
       , this)
 
-
   initializeDefault: () ->
     @id(@rubricEditor.nextId('page'))
     @name('Untitled page')
@@ -50,15 +67,16 @@ class Page
     criterion.name('Criterion 2')
     @criteria.push(criterion)
 
-
   load_json: (data) ->
     @id(@rubricEditor.nextId('page', parseInt(data['id'])))
     @name(data['name'])
+    @minSum(data['minSum'])
+    @maxSum(data['maxSum'])
+    @instructions(data['instructions'])
 
     # Load criteria
     for criterion_data in data['criteria']
       @criteria.push(new Criterion(@rubricEditor, this, criterion_data))
-
 
   to_json: ->
     criteria = @criteria().map (criterion) -> criterion.to_json()
@@ -73,10 +91,8 @@ class Page
 #       tolerance: 'pointer'
 #     })
 
-
   showTab: ->
     $('#' + @tabLinkId()).tab('show')
-
 
   #
   # Deltes this page
@@ -103,21 +119,37 @@ class Page
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
-    @name = ko.observable('')
     @phrases = ko.observableArray()
     @editorActive = ko.observable(false)
+    @instructionsEditorActive = ko.observable(false)
     
-    if data
-      this.load_json(data)
-    else
-      this.initializeDefault()
+    this.load_json(data || {})
+    this.initializeDefault() unless data?
     
     @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
     @phrases.subscribe => @rubricEditor.saved = false if @rubricEditor
+
+  load_json: (data) ->
+    @name = ko.observable(data['name'] || '')
+    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
+    @minSum = ko.observable(data['minSum'])
+    @maxSum = ko.observable(data['maxSum'])
+    @instructions = ko.observable(data['instructions'])
     
+    @sumRangeHtml = ko.computed(() ->
+        min = @minSum()
+        max = @maxSum()
+        
+        if min? && min.length > 0 || max? && max.length > 0
+          "(#{if min? && min.length>0 then min else '-&infin;'} &ndash; #{if max? && max.length>0 then max else '&infin;'})"
+        else
+          ''
+      , this)
+
+    for phrase_data in (data['phrases'] || [])
+      @phrases.push(new Phrase(@rubricEditor, this, phrase_data))
+
   initializeDefault: () ->
-    @id = @rubricEditor.nextId('criterion')
-    
     phrase = new Phrase(@rubricEditor, this)
     phrase.content("What went well")
     phrase.category(0)
@@ -127,21 +159,12 @@ class Criterion
     phrase.content("What could be improved")
     phrase.category(1)
     @phrases.push(phrase)
-    
-    
-  load_json: (data) ->
-    @name(data['name'])
-    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
-
-    for phrase_data in data['phrases']
-      @phrases.push(new Phrase(@rubricEditor, this, phrase_data))
-
 
   to_json: ->
     phrases = @phrases().map (phrase) -> phrase.to_json()
-
-    return {id: @id, name: @name(), phrases: phrases}
-
+    instructions = @instructions()
+    instructions = undefined if !instructions? || instructions.length == 0
+    return {id: @id, name: @name(), minSum: @minSum(), maxSum: @maxSum(), instructions: instructions, phrases: phrases}
   
   activateEditor: ->
     @editorActive(true)
@@ -156,6 +179,10 @@ class Criterion
 
   deleteCriterion: ->
     @page.criteria.remove(this)
+    
+
+  addInstructions: ->
+    @instructionsEditorActive(true)
 
 
 class Phrase

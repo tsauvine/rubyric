@@ -37,6 +37,7 @@ class Page
     @id = data['id']
     @minSum = data['minSum']
     @maxSum = data['maxSum']
+    @instructions = data['instructions']
     
     # Prepare feedback containers
     for category in @rubric.feedbackCategories
@@ -110,6 +111,7 @@ class Criterion
     @name = data['name']
     @minSum = data['minSum']
     @maxSum = data['maxSum']
+    @instructions = data['instructions']
     @phrases = []
     @phrasesById = {} # id => Phrase
     @selectedPhrase = ko.observable()  # Phrase object which is selected as the grade
