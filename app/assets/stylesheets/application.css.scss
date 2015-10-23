@@ -413,8 +413,12 @@ p.feedback-preview {
     width: 100%
   }
   
-  i {
+  /*i {
     vertical-align: middle;
+  }*/
+  
+  .grading-scale input {
+    width: 100%;
   }
 
   .weight input {
@@ -509,13 +513,12 @@ p.feedback-preview {
         width: 5em;
       }
     }
-    
-    td.buttons-column {
-      width: 80px;
-      text-align: center;
-    }
   }
   
+  td.buttons-column {
+    width: 80px;
+    text-align: center;
+  }
 }
 
 .ui-effects-transfer {

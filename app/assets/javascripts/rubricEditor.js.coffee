@@ -1,12 +1,10 @@
-#= require knockout-2.2.1
+#= require knockout-3.1.0
 #= require bootstrap
 #= require jquery.ui.sortable
-#= require knockout-sortable-0.7.3
+#= require knockout-sortable-0.11.0
 #= require editable
 
 # TODO
-
-# update knockout and knockout-sortable
 # validate sum range http://stackoverflow.com/questions/14582450/comparing-two-fields-with-knockout-validation
 # add sum range to page
 
