@@ -160,6 +160,22 @@ h1 .hint, h2 .hint, h3 .hint {
   color: gray;
 }
 
+.transient-message {
+  opacity: 0;
+  padding: 2px 5px;
+  
+  &.success {
+    color: #080;
+  }
+  
+  &.error {
+    background: #faa;
+    color: #800;
+  }
+}
+
+
+
 /******************
  * Help box
  ******************/

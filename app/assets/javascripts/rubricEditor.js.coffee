@@ -345,6 +345,7 @@ class RubricEditor
 
   constructor: () ->
     @saved = true
+    @busySaving = ko.observable(false)
     @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
     @gradingMode = ko.observable('average')    # String
@@ -504,6 +505,10 @@ class RubricEditor
     }
     json_string = JSON.stringify(json)
 
+    # Activate animation and disable button
+    @busySaving(true)
+    $('#save-message').css('opacity', 0).removeClass('success').removeClass('error')
+
     # AJAX call
     $.ajax
       type: 'PUT',
@@ -513,7 +518,11 @@ class RubricEditor
       dataType: 'json'
       success: (data) =>
         @saved = true
-        alert('Changes saved')
+        @busySaving(false)
+        $('#save-message').text('Changes saved').addClass('success').css('opacity', 1).fadeTo(5000, 0)
+      error: (data) =>
+        @busySaving(false)
+        $('#save-message').text('Failed to save changes. Try again after a while.').addClass('error').css('opacity', 1)
 
 
   #
