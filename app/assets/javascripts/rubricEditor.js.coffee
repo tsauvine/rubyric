@@ -2,12 +2,13 @@
 #= require bootstrap
 #= require jquery.ui.sortable
 #= require knockout-sortable-0.11.0
+#= require knockout-validation-2.0.3
 #= require editable
 
 # TODO
-# validate sum range http://stackoverflow.com/questions/14582450/comparing-two-fields-with-knockout-validation
 # add sum range to page
-
+# editable: undefined value, then edit and cancel => value is set to "undefined" string
+# reorder pages
 # preview (grader)
 # preview (mail)
 # page weights
@@ -21,9 +22,26 @@ class Page
     @name = ko.observable('')
     @criteria = ko.observableArray()
     @editorActive = ko.observable(false)
-    @minSum = ko.observable()
-    @maxSum = ko.observable()
+    @minSum = ko.observable().extend(number: true)
+    @maxSum = ko.observable().extend(number: true)
+    @maxSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value >= other
+            message: 'Must be greater than minimum'
+            params: @minSum
+        }
+    @minSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value <= other
+            message: 'Must be less than maximum'
+            params: @maxSum
+        }
     @instructions = ko.observable()
+    @instructionsEditorActive = ko.observable(false)
     
     @sumRangeHtml = ko.computed(() ->
         min = @minSum()
@@ -79,7 +97,18 @@ class Page
   to_json: ->
     criteria = @criteria().map (criterion) -> criterion.to_json()
 
-    return {id: @id(), name: @name(), criteria: criteria}
+    instructions = @instructions()
+    instructions = undefined if !instructions? || instructions.length == 0
+    
+    minSum = @minSum()
+    maxSum = @maxSum()
+    minSum = undefined if !$.isNumeric(minSum)
+    maxSum = undefined if !$.isNumeric(maxSum)
+    if minSum > maxSum
+      minSum = undefined
+      maxSum = undefined
+
+    return {id: @id(), name: @name(), instructions: instructions, minSum: minSum, maxSum: maxSum, criteria: criteria}
 
     # TODO: Criteria can be dropped into page tabs
 #     @tab.droppable({
@@ -114,6 +143,8 @@ class Page
   activateEditor: ->
     @editorActive(true)
 
+  addInstructions: ->
+    @instructionsEditorActive(true)
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
@@ -127,11 +158,28 @@ class Criterion
     @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
     @phrases.subscribe => @rubricEditor.saved = false if @rubricEditor
 
-  load_json: (data) ->
+  load_json: (data) =>
     @name = ko.observable(data['name'] || '')
     @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
-    @minSum = ko.observable(data['minSum'])
-    @maxSum = ko.observable(data['maxSum'])
+    @minSum = ko.observable(data['minSum']).extend(number: true)
+    @maxSum = ko.observable(data['maxSum']).extend(number: true)
+    @maxSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value >= other
+            message: 'Must be greater than minimum'
+            params: @minSum
+        }
+    @minSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value <= other
+            message: 'Must be less than maximum'
+            params: @maxSum
+        }
+    
     @instructions = ko.observable(data['instructions'])
     
     @sumRangeHtml = ko.computed(() ->
@@ -160,13 +208,22 @@ class Criterion
 
   to_json: ->
     phrases = @phrases().map (phrase) -> phrase.to_json()
+    
     instructions = @instructions()
     instructions = undefined if !instructions? || instructions.length == 0
-    return {id: @id, name: @name(), minSum: @minSum(), maxSum: @maxSum(), instructions: instructions, phrases: phrases}
+    
+    minSum = @minSum()
+    maxSum = @maxSum()
+    minSum = undefined if !$.isNumeric(minSum)
+    maxSum = undefined if !$.isNumeric(maxSum)
+    if minSum > maxSum
+      minSum = undefined
+      maxSum = undefined
+    
+    return {id: @id, name: @name(), minSum: minSum, maxSum: maxSum, instructions: instructions, phrases: phrases}
   
   activateEditor: ->
     @editorActive(true)
-
 
   clickCreatePhrase: ->
     phrase = new Phrase(@rubricEditor, this)
@@ -174,11 +231,9 @@ class Criterion
 
     phrase.activateEditor()
 
-
   deleteCriterion: ->
     @page.criteria.remove(this)
     
-
   addInstructions: ->
     @instructionsEditorActive(true)
 
@@ -419,7 +474,13 @@ class RubricEditor
         page.load_json(page_data)
         @pages.push(page)
     
+    ko.validation.init
+      insertMessages: false
+      decorateInputElement: true
+      errorElementClass: 'invalid'
+    
     ko.applyBindings(this)
+    
     this.subscribeToChanges()
     @saved = true
 

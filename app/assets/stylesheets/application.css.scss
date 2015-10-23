@@ -253,13 +253,6 @@ table.histogram td {
       margin-top: 1.5em;
       margin-bottom: 0.2em;
     }
-    
-    .grading-instructions {
-      color: gray;
-      font-style: italic;
-      font-size: 12px;
-      margin: 2px 0px;
-    }
   }
   
   table.phrases {
@@ -300,6 +293,13 @@ table.histogram td {
   }
 }
 
+.grading-instructions {
+  color: gray;
+  font-style: italic;
+  font-size: 12px;
+  margin: 2px 0px;
+}
+  
 .review-editor {
   box-sizing: border-box;
   -moz-box-sizing: border-box;
@@ -413,23 +413,17 @@ p.feedback-preview {
     width: 100%
   }
   
-  /*i {
-    vertical-align: middle;
-  }*/
-  
   .grading-scale input {
     width: 100%;
   }
 
-  .weight input {
-    width: 3em;
+  div.page-title {
+    margin-bottom: 3ex;
   }
-    
-  div.criterion-title {
-    padding: 0;
-    
-    h3, .buttons {
-      float: left;
+  
+  div.criterion-title, div.page-title {
+    h2, h3 {
+      display: inline;
     }
     
     h3, .buttons i {
@@ -447,20 +441,15 @@ p.feedback-preview {
       color: gray;
       margin-left: 1em;
     }
-
-    .sumRange, .weight {
-      input {
-        height: 16px;
-        font-size: 11px;
-        margin: 0px 2px;
-      }
-    }
     
     .sumRange {
       margin-left: 2em;
       
       input {
         width: 2em;
+        height: 16px;
+        font-size: 11px;
+        margin: 0px 2px;
       }
     }
     
@@ -468,6 +457,7 @@ p.feedback-preview {
       color: gray;
       font-size: 11px;
       line-height: 26px;
+      cursor: pointer;
       
       &:hover {
         text-decoration: none;
@@ -476,23 +466,26 @@ p.feedback-preview {
     }
   }
 
-  .buttons i {
-    cursor: pointer;
-  }
-
   .buttons {
     visibility: hidden;
+    
+    i {
+      cursor: pointer;
+    }
   }
 
   h2:hover .buttons,
   h3:hover .buttons,
   .criterion:hover .buttons,
+  .page-title:hover .buttons,
   tr:hover .buttons
   {
     visibility: visible;
   }
   
-  .criterion:hover .sumRangeSummary {
+  .criterion:hover .sumRangeSummary,
+  .page-title:hover .sumRangeSummary
+  {
     display: none;
   }
 
@@ -518,6 +511,10 @@ p.feedback-preview {
   td.buttons-column {
     width: 80px;
     text-align: center;
+  }
+  
+  input.invalid {
+    background: #faa;
   }
 }
 
