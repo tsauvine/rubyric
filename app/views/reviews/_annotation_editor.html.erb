@@ -103,6 +103,9 @@
               Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
             </div>
           <!-- /ko -->
+          
+          <!-- Grading instructions (page) -->
+          <p class="grading-instructions" data-bind="text: instructions"></p>
         
           <!-- Rubric -->
           <div class="rubric-content" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
@@ -113,10 +116,12 @@
                 
                 <span data-bind="text: grade()" type="button" class="btn btn-small highlighted"></span>
               </h3>
-
-              <!-- Phrases -->
               <div class="clear"></div>
+
+              <!-- Grading instructions -->
+              <p class="grading-instructions" data-bind="text: instructions"></p>
               
+              <!-- Phrases -->
               <div class="phrases">
                 <table class="phrases">
                   <tbody data-bind="foreach: phrases">

@@ -19,7 +19,9 @@ ko.bindingHandlers.editable = {
     options = valueAccessor()
     el = $(element)
 
+    # Edit or display?
     if ko.utils.unwrapObservable(options.editorActive)
+      # Edit
       type = ko.utils.unwrapObservable(options.type) || 'textfield'
       original_value = ko.utils.unwrapObservable(options.value)
       
@@ -33,10 +35,16 @@ ko.bindingHandlers.editable = {
       #  observable($(element).datepicker("getDate"));
     
       # Create editor
-      if 'textarea' == type
-        input = $("<textarea>#{shown_value}</textarea>")
+      inputPlaceholder = ko.utils.unwrapObservable(options.inputPlaceholder)
+      if inputPlaceholder?
+        inputPlaceholderHtml = " placeholder='#{inputPlaceholder}'"
       else
-        input = $("<input type='textfield' value='#{shown_value}' />")
+        inputPlaceholderHtml = ''
+      
+      if 'textarea' == type
+        input = $("<textarea#{inputPlaceholderHtml}>#{shown_value}</textarea>")
+      else
+        input = $("<input type='textfield'#{inputPlaceholderHtml} value='#{shown_value}' />")
 
       # Event handlers
       okHandler = (event) =>
@@ -87,6 +95,7 @@ ko.bindingHandlers.editable = {
       #)
     
     else
+      # Display
       placeholder = ko.utils.unwrapObservable(options.placeholder) || '-'
       value = ko.utils.unwrapObservable(options.value)
       

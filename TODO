@@ -38,6 +38,11 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+Bugi:
+  - arvioi työ niin, että se on finalized ja tallenna
+  - mene uudelleen editoimaan, canceloi finalisointi, editoi arviointia niin että finalizable=false, editoi niin että finalizable=true
+  - tabit menevät sekaisin
+
 pisteytyksessä rajattu vaihteluväli
 
 Muutokset tallennettu-teksti rubriikkieditorissa

@@ -1,10 +1,14 @@
-#= require knockout-2.2.1
+#= require knockout-3.1.0
 #= require bootstrap
 #= require jquery.ui.sortable
-#= require knockout-sortable-0.7.3
+#= require knockout-sortable-0.11.0
+#= require knockout-validation-2.0.3
 #= require editable
 
 # TODO
+# add sum range to page
+# editable: undefined value, then edit and cancel => value is set to "undefined" string
+# reorder pages
 # preview (grader)
 # preview (mail)
 # page weights
@@ -18,7 +22,37 @@ class Page
     @name = ko.observable('')
     @criteria = ko.observableArray()
     @editorActive = ko.observable(false)
+    @minSum = ko.observable().extend(number: true)
+    @maxSum = ko.observable().extend(number: true)
+    @maxSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value >= other
+            message: 'Must be greater than minimum'
+            params: @minSum
+        }
+    @minSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value <= other
+            message: 'Must be less than maximum'
+            params: @maxSum
+        }
+    @instructions = ko.observable()
+    @instructionsEditorActive = ko.observable(false)
     
+    @sumRangeHtml = ko.computed(() ->
+        min = @minSum()
+        max = @maxSum()
+        
+        if min? && min.length > 0 || max? && max.length > 0
+          "(#{if min? && min.length>0 then min else '-&infin;'} &ndash; #{if max? && max.length>0 then max else '&infin;'})"
+        else
+          ''
+      , this)
+
     @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
     @criteria.subscribe => @rubricEditor.saved = false if @rubricEditor
     
@@ -37,7 +71,6 @@ class Page
         return "page-#{@id()}-link"
       , this)
 
-
   initializeDefault: () ->
     @id(@rubricEditor.nextId('page'))
     @name('Untitled page')
@@ -50,20 +83,32 @@ class Page
     criterion.name('Criterion 2')
     @criteria.push(criterion)
 
-
   load_json: (data) ->
     @id(@rubricEditor.nextId('page', parseInt(data['id'])))
     @name(data['name'])
+    @minSum(data['minSum'])
+    @maxSum(data['maxSum'])
+    @instructions(data['instructions'])
 
     # Load criteria
     for criterion_data in data['criteria']
       @criteria.push(new Criterion(@rubricEditor, this, criterion_data))
 
-
   to_json: ->
     criteria = @criteria().map (criterion) -> criterion.to_json()
 
-    return {id: @id(), name: @name(), criteria: criteria}
+    instructions = @instructions()
+    instructions = undefined if !instructions? || instructions.length == 0
+    
+    minSum = @minSum()
+    maxSum = @maxSum()
+    minSum = undefined if !$.isNumeric(minSum)
+    maxSum = undefined if !$.isNumeric(maxSum)
+    if minSum > maxSum
+      minSum = undefined
+      maxSum = undefined
+
+    return {id: @id(), name: @name(), instructions: instructions, minSum: minSum, maxSum: maxSum, criteria: criteria}
 
     # TODO: Criteria can be dropped into page tabs
 #     @tab.droppable({
@@ -73,10 +118,8 @@ class Page
 #       tolerance: 'pointer'
 #     })
 
-
   showTab: ->
     $('#' + @tabLinkId()).tab('show')
-
 
   #
   # Deltes this page
@@ -100,24 +143,59 @@ class Page
   activateEditor: ->
     @editorActive(true)
 
+  addInstructions: ->
+    @instructionsEditorActive(true)
 
 class Criterion
   constructor: (@rubricEditor, @page, data) ->
-    @name = ko.observable('')
     @phrases = ko.observableArray()
     @editorActive = ko.observable(false)
+    @instructionsEditorActive = ko.observable(false)
     
-    if data
-      this.load_json(data)
-    else
-      this.initializeDefault()
+    this.load_json(data || {})
+    this.initializeDefault() unless data?
     
     @editorActive.subscribe => @rubricEditor.saved = false if @rubricEditor
     @phrases.subscribe => @rubricEditor.saved = false if @rubricEditor
+
+  load_json: (data) =>
+    @name = ko.observable(data['name'] || '')
+    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
+    @minSum = ko.observable(data['minSum']).extend(number: true)
+    @maxSum = ko.observable(data['maxSum']).extend(number: true)
+    @maxSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value >= other
+            message: 'Must be greater than minimum'
+            params: @minSum
+        }
+    @minSum.extend
+        validation: {
+            validator: (value, other) ->
+              return true if !value? || value.length == 0 || !other? || other.length == 0
+              return value <= other
+            message: 'Must be less than maximum'
+            params: @maxSum
+        }
     
+    @instructions = ko.observable(data['instructions'])
+    
+    @sumRangeHtml = ko.computed(() ->
+        min = @minSum()
+        max = @maxSum()
+        
+        if min? && min.length > 0 || max? && max.length > 0
+          "(#{if min? && min.length>0 then min else '-&infin;'} &ndash; #{if max? && max.length>0 then max else '&infin;'})"
+        else
+          ''
+      , this)
+
+    for phrase_data in (data['phrases'] || [])
+      @phrases.push(new Phrase(@rubricEditor, this, phrase_data))
+
   initializeDefault: () ->
-    @id = @rubricEditor.nextId('criterion')
-    
     phrase = new Phrase(@rubricEditor, this)
     phrase.content("What went well")
     phrase.category(0)
@@ -127,25 +205,25 @@ class Criterion
     phrase.content("What could be improved")
     phrase.category(1)
     @phrases.push(phrase)
-    
-    
-  load_json: (data) ->
-    @name(data['name'])
-    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
-
-    for phrase_data in data['phrases']
-      @phrases.push(new Phrase(@rubricEditor, this, phrase_data))
-
 
   to_json: ->
     phrases = @phrases().map (phrase) -> phrase.to_json()
-
-    return {id: @id, name: @name(), phrases: phrases}
-
+    
+    instructions = @instructions()
+    instructions = undefined if !instructions? || instructions.length == 0
+    
+    minSum = @minSum()
+    maxSum = @maxSum()
+    minSum = undefined if !$.isNumeric(minSum)
+    maxSum = undefined if !$.isNumeric(maxSum)
+    if minSum > maxSum
+      minSum = undefined
+      maxSum = undefined
+    
+    return {id: @id, name: @name(), minSum: minSum, maxSum: maxSum, instructions: instructions, phrases: phrases}
   
   activateEditor: ->
     @editorActive(true)
-
 
   clickCreatePhrase: ->
     phrase = new Phrase(@rubricEditor, this)
@@ -153,9 +231,11 @@ class Criterion
 
     phrase.activateEditor()
 
-
   deleteCriterion: ->
     @page.criteria.remove(this)
+    
+  addInstructions: ->
+    @instructionsEditorActive(true)
 
 
 class Phrase
@@ -264,6 +344,7 @@ class FeedbackCategory
 class @RubricEditor
   constructor: (rawRubric, @url, @demo_mode) ->
     @saved = true
+    @busySaving = ko.observable(false)
     @idCounters = {page: 0, criterion: 0, phrase: 0, feedbackCategory: 0}
     
     @gradingMode = ko.observable('average')    # String
@@ -392,7 +473,13 @@ class @RubricEditor
         page.load_json(page_data)
         @pages.push(page)
     
+    ko.validation.init
+      insertMessages: false
+      decorateInputElement: true
+      errorElementClass: 'invalid'
+    
     ko.applyBindings(this)
+    
     this.subscribeToChanges()
     @saved = true
 
@@ -416,6 +503,10 @@ class @RubricEditor
     }
     json_string = JSON.stringify(json)
 
+    # Activate animation and disable button
+    @busySaving(true)
+    $('#save-message').css('opacity', 0).removeClass('success').removeClass('error')
+
     # AJAX call
     $.ajax
       type: 'PUT',
@@ -425,7 +516,11 @@ class @RubricEditor
       dataType: 'json'
       success: (data) =>
         @saved = true
-        alert('Changes saved')
+        @busySaving(false)
+        $('#save-message').text('Changes saved').addClass('success').css('opacity', 1).fadeTo(5000, 0)
+      error: (data) =>
+        @busySaving(false)
+        $('#save-message').text('Failed to save changes. Try again after a while.').addClass('error').css('opacity', 1)
 
 
   #

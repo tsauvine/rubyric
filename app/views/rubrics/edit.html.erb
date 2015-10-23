@@ -8,7 +8,7 @@
 </form>
 
 <div class="page-header">
-  <div class="pull-right">
+  <div class="pull-right" style="text-align: right">
     <div class="btn-group">
       <a class="btn dropdown-toggle" data-toggle="dropdown" href="#">
         <i class="icon icon-align-justify"></i>
@@ -18,7 +18,15 @@
         <li><%= link_to 'Download rubric', download_exercise_rubric_path(@exercise) %></li>
       </ul>
     </div>
-    <button class="btn btn-success" data-bind="click: clickSaveRubric">Save</button>
+    <button class="btn btn-success" data-bind="click: clickSaveRubric, enable: !busySaving()">
+      <!-- ko if: busySaving() -->
+        <%= image_tag('ajax-loader-small.gif', :alt => 'Saving') %>
+      <!-- /ko -->
+      <!-- ko if: !busySaving() -->
+        Save
+      <!-- /ko -->
+    </button>
+    <p id="save-message" class="transient-message">Changes saved</p>
   </div>
   
   <h1><%= link_to @exercise do %><i class='icon icon-arrow-left'></i><%= @exercise.name %><% end %> - Editing rubric</h1>
