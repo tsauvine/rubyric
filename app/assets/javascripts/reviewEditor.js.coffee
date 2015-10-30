@@ -68,11 +68,7 @@ class Page
         criterion = @criteriaById[criterion_data['criterion_id']]
         continue unless criterion
         
-        phrase = criterion.phrasesById[criterion_data['selected_phrase_id']]
-        continue unless phrase
-        
-        criterion.selectedPhrase(phrase)
-        phrase.highlighted(true)
+        criterion.selectedPhrase(criterion.phrasesById[criterion_data['selected_phrase_id']])
     
     @grade(data['grade']) if data['grade']?
 
@@ -126,32 +122,44 @@ class Criterion
       @page.rubric.phrasesById[phrase.id] = phrase
     
     @grade = ko.computed((=>
+      console.log "Calculating grade"
+      
       grades = []
       for annotation in @annotations()
-        grades.push(annotation.grade()) if annotation.grade()?
+        if annotation.grade()?
+          grades.push(annotation.grade())
+          console.log "Annotation grade: #{annotation.grade()}"
       
-      if grades.length > 0
-        grade = @rubricEditor.calculateGrade(grades)
-        grade = @minSum if @minSum? && grade < @minSum
-        grade = @maxSum if @maxSum? && grade > @maxSum
-        return grade
+      grade = if grades.length > 0
+        @rubricEditor.calculateGrade(grades)
+      else if @selectedPhrase()
+        console.log "Selected phrase: #{@selectedPhrase().grade}"
+        @selectedPhrase().grade
+      else
+        undefined
+    
+      if @minSum? && grade < @minSum
+        grade = @minSum
+        console.log "Clamping to minimum: #{@minSum}"
+      if @maxSum? && grade > @maxSum
+        grade = @maxSum
+        console.log "Clamping to maximum: #{@maxSum}"
       
-      if @selectedPhrase()
-        return @selectedPhrase().grade
-      
-      return undefined
+      return grade
     ), this)
-
+    
+    
+  annotationsHaveGrades: ->
+    for annotation in @annotations()
+      return true if annotation.grade()?
+    
+    return false
+  
   setSelectedPhrase: (phrase) ->
     return if @rubricEditor.finalizing()
-    
-    # Unhilight previous
-    previousPhrase = @selectedPhrase()
-    previousPhrase.highlighted(false) if previousPhrase
-    
+  
     # Hilight new
     @selectedPhrase(phrase)
-    phrase.highlighted(true) if phrase
 
   to_json: ->
     return unless @selectedPhrase()
@@ -161,7 +169,6 @@ class Criterion
 
 class Phrase
   constructor: (@page, @criterion) ->
-    @highlighted = ko.observable(false)
     @annotations = ko.observableArray()
 
   load_json: (data) ->

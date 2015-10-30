@@ -6,7 +6,6 @@
 #= require editable
 
 # TODO
-# add sum range to page
 # editable: undefined value, then edit and cancel => value is set to "undefined" string
 # reorder pages
 # preview (grader)

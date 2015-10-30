@@ -128,7 +128,7 @@
               <tbody data-bind="foreach: phrases">
                 <tr class="phrase">
                   <td class="grade" data-bind="if: grade !== undefined">
-                    <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted:  highlighted() }" type="button" class="btn"></button>
+                    <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: $parent.selectedPhrase() == $data }" type="button" class="btn"></button>
                   </td>
                   <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
                 </tr>

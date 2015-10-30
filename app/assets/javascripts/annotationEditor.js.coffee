@@ -115,10 +115,9 @@ ko.bindingHandlers.position = {
 }
 
 class SetSelectedPhraseCommand
-  constructor: (@phrase) ->
+  constructor: (@criterion, phrase) ->
     # TODO: @previous_phrase = ...
-    
-    @phrase.criterion.setSelectedPhrase(phrase) if phrase.grade?
+    @criterion.setSelectedPhrase(phrase)
     
   undo: ->
     # TODO
@@ -565,15 +564,14 @@ class @AnnotationEditor extends Rubric
   
   
   clickGrade: (phrase) =>
-    unless @gradingMode == 'sum'
-      this.addCommand(new SetSelectedPhraseCommand(phrase))
+    if @gradingMode != 'sum' && !phrase.criterion.annotationsHaveGrades()
+      this.addCommand(new SetSelectedPhraseCommand(phrase.criterion, phrase))
       @saved = false
   
   
   clickPhrase: (phrase) =>
-    # TODO: add annotation
-    this.clickGrade(phrase)
-  
+    # TODO: add annotation or show hint
+    # this.clickGrade(phrase)
   
   dropPhrase: (page, phrase, event, ui) =>
     return if phrase instanceof Annotation  # Ignore drag'n'dropped Annotations
@@ -590,8 +588,12 @@ class @AnnotationEditor extends Rubric
       zoom: @zoom()
     }
     
+    # Unset manually selected phrase
+    if @gradingMode != 'sum'
+      this.addCommand(new SetSelectedPhraseCommand(phrase.criterion, undefined))
+    
     page.createAnnotation(options)
-    this.clickGrade(phrase)
+    @saved = false
   
   dropPhraseToAnnotation: (receiverAnnotation, draggedAnnotation, event, ui) =>
     #console.log draggedAnnotation

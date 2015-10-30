@@ -38,18 +38,20 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+Miten SetSelectedPhrase(undefined) hanskataan serveripäässä?
+
+Jos klikkaa fraasia, näytä vihje, että vedä ja pudota
+
+Disabloi finalize-moodi annotaatioeditorissa
+
 Bugi:
   - arvioi työ niin, että se on finalized ja tallenna
   - mene uudelleen editoimaan, canceloi finalisointi, editoi arviointia niin että finalizable=false, editoi niin että finalizable=true
   - tabit menevät sekaisin
 
-pisteytyksessä rajattu vaihteluväli
-
-Muutokset tallennettu-teksti rubriikkieditorissa
-
 Save vs. next page -testit
 
-Lopullisen palautetestin esikatselu
+Lopullisen palautetekstin esikatselu
 
 Invalidated-tila
 
@@ -65,8 +67,6 @@ rubyric.cs.hut.fi:hin ilmoitus
 
 Parempi kilke määräajan valitsemiseen
 
-Default review mode: plain text
-
 Annotation:
 in sum mode:
   - selected phrases should not be collected
@@ -79,6 +79,9 @@ google plus, facebook
 
 
 = Later =
+
+Mean-moodissa voi valita sivulle arvosanan min-max-välin ulkopuolelta
+Miten tekstimuotoisten arvosanojen hilight toimii annotoidessa mean-modessa? (hilight if parent.grade == grade)
 
 Editing rubric while reviewing
 
