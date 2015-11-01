@@ -38,6 +38,8 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+Jos on min-max-väli ja valitsee tekstimuotoisen arvosanan, ei pitäisi clampata
+
 Miten SetSelectedPhrase(undefined) hanskataan serveripäässä?
 
 Jos klikkaa fraasia, näytä vihje, että vedä ja pudota

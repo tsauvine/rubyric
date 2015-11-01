@@ -123,11 +123,12 @@ class SetSelectedPhraseCommand
     # TODO
     
   as_json: ->
+    phrase_id = @phrase.id if @phrase?
     {
       command: 'set_selected_phrase'
-      phrase_id: @phrase.id
-      criterion_id: @phrase.criterion.id
-      page_id: @phrase.criterion.page.id
+      phrase_id: phrase_id
+      criterion_id: @criterion.id
+      page_id: @criterion.page.id
     }
 
 class SetPageGradeCommand

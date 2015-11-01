@@ -141,12 +141,12 @@
       <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
       
       <!-- Grades -->
-      <!-- ko if: $root.gradingMode == 'average' && $root.grades.length > 0 -->
+      <!-- ko if: $root.gradingMode == 'average' && selectableGrades.length > 0 -->
         <hr />
         <h3>Grade</h3>
         
         <p>
-          <select data-bind="options: $root.grades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
+          <select data-bind="options: selectableGrades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
           <!-- ko if: averageGrade -->
             Calculated mean: <strong data-bind="text: averageGrade"></strong>
           <!-- /ko -->

@@ -6,6 +6,7 @@ class Page
     @nextPage = undefined
     @criteria = ko.observableArray()
     @criteriaById = {}          # id => Criterion
+    @selectableGrades = []
     @grade = ko.observable()
     @phrasesHidden = ko.observable(false)
 
@@ -18,8 +19,11 @@ class Page
         grades.push(criterion.grade()) if criterion.gradeRequired || criterion.grade()?
       
       grade = @rubric.calculateGrade(grades)
-      grade = @minSum if @minSum? && grade < @minSum
-      grade = @maxSum if @maxSum? && grade > @maxSum
+      
+      if @rubric.gradingMode == 'sum'
+        grade = @minSum if @minSum? && grade < @minSum
+        grade = @maxSum if @maxSum? && grade > @maxSum
+      
       return grade
     ), this)
     
@@ -55,7 +59,9 @@ class Page
       criterion = new Criterion(@rubricEditor, this, criterion_data)
       @criteria.push(criterion)
       @criteriaById[criterion.id] = criterion
-  
+      
+    for grade in @rubricEditor.grades || []
+      @selectableGrades.push(grade) if isNaN(grade) || ((!@minSum? || grade >= @minSum) && (!@maxSum? || grade <= @maxSum))
   
   load_review: (data) ->
     if data['feedback'] && data['feedback'].length > 0
@@ -122,28 +128,22 @@ class Criterion
       @page.rubric.phrasesById[phrase.id] = phrase
     
     @grade = ko.computed((=>
-      console.log "Calculating grade"
-      
       grades = []
       for annotation in @annotations()
         if annotation.grade()?
           grades.push(annotation.grade())
-          console.log "Annotation grade: #{annotation.grade()}"
       
       grade = if grades.length > 0
         @rubricEditor.calculateGrade(grades)
       else if @selectedPhrase()
-        console.log "Selected phrase: #{@selectedPhrase().grade}"
         @selectedPhrase().grade
       else
         undefined
     
       if @minSum? && grade < @minSum
         grade = @minSum
-        console.log "Clamping to minimum: #{@minSum}"
       if @maxSum? && grade > @maxSum
         grade = @maxSum
-        console.log "Clamping to maximum: #{@maxSum}"
       
       return grade
     ), this)
