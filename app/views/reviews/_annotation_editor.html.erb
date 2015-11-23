@@ -131,7 +131,7 @@
                           <span data-bind="text: grade"></span>
                         <!-- /ko -->
                         <!-- ko if: $root.gradingMode == 'average' -->
-                          <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: grade == $parent.grade() }" type="button" class="btn"></button>
+                          <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: $parent.selectedPhrase() == $data }" type="button" class="btn"></button>
                         <!-- /ko -->
                       </td>
                     

@@ -21,8 +21,9 @@ class Page
       grade = @rubric.calculateGrade(grades)
       
       if @rubric.gradingMode == 'sum'
-        grade = @minSum if @minSum? && grade < @minSum
-        grade = @maxSum if @maxSum? && grade > @maxSum
+        numeric_grade = parseFloat(grade)
+        grade = @minSum if @minSum? && !isNaN(numeric_grade) && numeric_grade < @minSum
+        grade = @maxSum if @maxSum? && !isNaN(numeric_grade) && numeric_grade > @maxSum
       
       return grade
     ), this)
@@ -39,8 +40,8 @@ class Page
   load_rubric: (data) ->
     @name = data['name']
     @id = data['id']
-    @minSum = data['minSum']
-    @maxSum = data['maxSum']
+    @minSum = if data['minSum']? then parseFloat(data['minSum']) else undefined
+    @maxSum = if data['maxSum']? then parseFloat(data['maxSum']) else undefined
     @instructions = data['instructions']
     
     # Prepare feedback containers
@@ -61,7 +62,8 @@ class Page
       @criteriaById[criterion.id] = criterion
       
     for grade in @rubricEditor.grades || []
-      @selectableGrades.push(grade) if isNaN(grade) || ((!@minSum? || grade >= @minSum) && (!@maxSum? || grade <= @maxSum))
+      numeric_grade = parseFloat(grade)
+      @selectableGrades.push(grade) if isNaN(numeric_grade) || ((!@minSum? || numeric_grade >= @minSum) && (!@maxSum? || numeric_grade <= @maxSum))
   
   load_review: (data) ->
     if data['feedback'] && data['feedback'].length > 0
@@ -111,8 +113,8 @@ class Criterion
   constructor: (@rubricEditor, @page, data) ->
     @id = data['id']
     @name = data['name']
-    @minSum = data['minSum']
-    @maxSum = data['maxSum']
+    @minSum = if data['minSum']? then parseFloat(data['minSum']) else undefined
+    @maxSum = if data['maxSum']? then parseFloat(data['maxSum']) else undefined
     @instructions = data['instructions']
     @phrases = []
     @phrasesById = {} # id => Phrase
@@ -133,16 +135,24 @@ class Criterion
         if annotation.grade()?
           grades.push(annotation.grade())
       
+#       console.log @name
+#       console.log grades
+      
       grade = if grades.length > 0
+#         console.log "a"
         @rubricEditor.calculateGrade(grades)
       else if @selectedPhrase()
+#         console.log "b"
         @selectedPhrase().grade
       else
+#         console.log "c"
         undefined
-    
-      if @minSum? && grade < @minSum
+      
+      numeric_grade = parseFloat(grade)
+#       console.log "parseFloat(#{grade})=#{numeric_grade}, !isNaN() #{!isNaN(numeric_grade)}"
+      if @minSum? && !isNaN(numeric_grade) && numeric_grade < @minSum
         grade = @minSum
-      if @maxSum? && grade > @maxSum
+      if @maxSum? && !isNaN(numeric_grade) && numeric_grade > @maxSum
         grade = @maxSum
       
       return grade
@@ -234,7 +244,7 @@ class @Rubric
     if data['grades']
       i = 0
       for grade_data in data['grades']
-        @numericGrading = true if !isNaN(grade_data)
+        @numericGrading = true if !isNaN(parseFloat(grade_data))
         @grades.push(grade_data)
         @gradeIndexByValue[grade_data] = i
         i++
