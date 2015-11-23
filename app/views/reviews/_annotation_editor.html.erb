@@ -248,7 +248,7 @@
 </div> <!-- /rubric -->
 
 <div id="submission-pages" class="submission-pages">
-  <% unless @review %>
+  <% if @exercise.new_record? %>
     <div class="navbar">
       <div class="navbar-inner">
         <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>

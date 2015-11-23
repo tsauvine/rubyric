@@ -78,19 +78,21 @@
       <% end %>
 
       <!-- Upload review -->
-      <div class="span4 well">
-        <h3>Upload feedback</h3>
-        <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
-      
-        <% if @review %>
-          <% if @review.filename.blank? %>
-            <%= link_to 'Upload feedback', upload_review_path(@review) %>
-          <% else %>
-            <p><%= link_to @review.filename, download_review_path(@review) %></p>
-            <%= link_to 'Upload again', upload_review_path(@review) %>
+      <% unless @exercise.new_record? %>
+        <div class="span4 well">
+          <h3>Upload feedback</h3>
+          <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
+        
+          <% if @review %>
+            <% if @review.filename.blank? %>
+              <%= link_to 'Upload feedback', upload_review_path(@review) %>
+            <% else %>
+              <p><%= link_to @review.filename, download_review_path(@review) %></p>
+              <%= link_to 'Upload again', upload_review_path(@review) %>
+            <% end %>
           <% end %>
-        <% end %>
-      </div>
+        </div>
+      <% end %>
     </div>
   </div> <!-- /tab-overview -->
   
