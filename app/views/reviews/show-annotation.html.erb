@@ -1,17 +1,6 @@
 <%= content_for :javascript do %>
-  <%= javascript_tag do %>
-    window.rubric = <%= (@exercise.rubric || 'undefined').html_safe %>;
-    window.review = <%= (@review.payload || 'undefined').html_safe %>;
-  <% end %>
-
-  <%= javascript_include_tag 'annotationEditor' %>
-  <%= javascript_include_tag 'views/frontpage/show' %>
+  <%= javascript_include_tag 'views/reviews/annotation' %>
 <% end %>
-
-<% content_for :stylesheets do %>
-  <%= stylesheet_link_tag 'frontpage', :media => "all" %>
-<% end %>
-
 
 <div class="container-fluid">
   <div class="page-header">
@@ -101,3 +90,6 @@
     </div>
   </div>
 <% end %>
+
+<%= hidden_field_tag :rubric_payload, @exercise.rubric %>
+<%= hidden_field_tag :review_payload, @review.payload %>
