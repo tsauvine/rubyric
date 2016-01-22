@@ -1,5 +1,5 @@
 class SubmissionsController < ApplicationController
-  before_filter :load_submission, :except => [:new, :create]
+  before_filter :load_submission, :except => [:new, :create, :aplus_get, :aplus_submit]
 
   layout 'narrow'
 
@@ -36,6 +36,7 @@ class SubmissionsController < ApplicationController
       end
     end
   end
+
   
   # Submit
   def new
@@ -120,6 +121,47 @@ class SubmissionsController < ApplicationController
     else
       @submissions = []
     end
+
+    @submission = Submission.new
+    log "submit view #{@exercise.id}"
+  end
+  
+  def aplus_get
+    # params:
+    #   submission_url
+    #   post_url
+    #   max_points
+    
+    # LTI authorization
+    return unless authorize_lti
+    
+    # Find exercise
+    organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
+    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+    
+    # TODO: if teacher, create exercise
+    
+    unless @exercise
+      @heading =  "This course is not configured"
+      render :template => "shared/error"
+      return
+    end
+    load_course
+    I18n.locale = @course_instance.locale || I18n.locale
+    
+    # Find or create user, TODO: handle errors
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id])
+    @is_teacher = @course.has_teacher(current_user)
+
+    # Create or find group, TODO: handle errors
+    @group = if params[:custom_group_members]
+      logger.info("LTI request: #{params[:custom_group_members]}")
+      lti_find_or_create_group(JSON.parse(params[:custom_group_members]), @exercise, @user, organization, params['oauth_consumer_key'])
+    else
+      lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, organization, params['oauth_consumer_key'])
+    end
+
+    CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} aplus GET success")
 
     @submission = Submission.new
     log "submit view #{@exercise.id}"
@@ -239,6 +281,7 @@ class SubmissionsController < ApplicationController
     redirect_to @exercise
   end
   
+
   
   private
   

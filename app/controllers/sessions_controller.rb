@@ -61,7 +61,7 @@ class SessionsController < ApplicationController
         :email => request.env[SHIB_ATTRIBUTES[:email]],
         :logout_url => request.env[SHIB_ATTRIBUTES[:logout]]
       }
-    elsif Rails.env == 'development'
+    elsif Rails.env == 'development' && request.local?
       shibinfo = {
         :login => 'student41@aalto.fi', #'student1@hut.fi',
         :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00041' || '').split(':').last,
@@ -188,14 +188,14 @@ class SessionsController < ApplicationController
     end
     
     # Find or create user, TODO: handle errors
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || create_lti_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance, params[:custom_student_id])
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance, params[:custom_student_id])
 
     # Create or find group, TODO: handle errors
     group = if params[:custom_group_members]
       logger.info("LTI request: #{params[:custom_group_members]}")
-      find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
+      lti_find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
     else
-      find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
+      lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
     end
 
     # Create session
@@ -214,127 +214,5 @@ class SessionsController < ApplicationController
     redirect_to submit_path(:exercise => exercise.id, :group => group.id)
   end
   
-  
-  private
-  
-  # Returns group
-  # payload: [{"user":"lti_user_id","name":"Full Name","email":"user@example.com"},{"user":"lti_user_id","name":"Full Name","email":"user@example.com"}]
-  def find_or_create_group(payload, exercise, user, organization, lti_consumer)
-    group = nil
-    
-    # Find groups that the user is part of
-    available_groups = Group.where('course_instance_id=? AND user_id=?', exercise.course_instance_id, user.id).joins(:users).order(:name).all
-    
-    requested_lti_ids = payload.collect {|member| member['user']}
-    logger.debug "Requested lti_ids: #{requested_lti_ids}"
-    
-    # Find the group that matches
-    matching_groups = available_groups.select do |group|
-      existing_lti_ids = group.users.collect {|user| user.lti_user_id}
-      logger.debug "Existing lti_ids: #{existing_lti_ids}"
-      
-      # Are the arrays identical, ignoring order?
-      identical = requested_lti_ids.size == existing_lti_ids.size and requested_lti_ids & existing_lti_ids == requested_lti_ids
-      logger.debug "Identical: #{identical}"
-      identical
-    end
-    
-    if matching_groups.empty?
-      logger.debug "No existing group found. Creating."
-      
-      groupname = payload.collect{|member| member['email']}.join(', ')
-      logger.debug "Groupo name: #{groupname}"
-      group = Group.new({:course_instance_id => exercise.course_instance_id, :exercise_id => exercise.id, :name => groupname})
-      group.save(:validate => false)
-      
-      # Create group
-      payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || create_lti_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'])
-        logger.debug "Creating member: #{member['user']} #{member['email']}"
-        member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'])
-        member.group = group
-        member.user = group_user
-        member.save
-      end
-    else
-      logger.debug "Using existing group."
-      # Use existing group
-      group = matching_groups.first
-    end
-    
-    group
-  end
-  
-  def create_lti_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber)
-    logger.debug "Creating user #{lti_user_id}"
-    
-    user = User.new()
-    user.lti_consumer = oauth_consumer_key
-    user.lti_user_id = lti_user_id
-    user.organization = organization
-    user.studentnumber = studentnumber
-    user.reset_persistence_token
-    if user.save(:validate => false)
-      course_instance.students << user unless course_instance.students.include?(user)
-      
-      logger.info("Created new user #{oauth_consumer_key}/#{lti_user_id} (LTI)")
-      CustomLogger.info("#{oauth_consumer_key}/#{lti_user_id} create_user_lti success")
-    else
-      logger.info("Failed to create new user (LTI). Errors: #{user.errors.full_messages.join('. ')}")
-      flash[:error] = "Failed to create new user. #{user.errors.full_messages.join('. ')}"
-      CustomLogger.info("#{oauth_consumer_key}/#{lti_user_id} create_user_lti fail")
-      raise "Failed to create user"
-    end
-
-    user
-  end
-  
-  def authorize_lti
-    key = params['oauth_consumer_key']
-    
-    unless key
-      @heading =  "No consumer key"
-      render :template => "shared/error"
-      return false
-    end
-    
-    secret = OAUTH_CREDS[key]
-    unless secret
-      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
-      @tp.lti_msg = "Your consumer didn't use a recognized key."
-      @tp.lti_errorlog = "You did it wrong!"
-      @heading =  "Consumer key wasn't recognized"
-      render :template => "shared/error"
-      return false
-    end
-    
-    @tp = IMS::LTI::ToolProvider.new(key, secret, params)
-    
-    unless @tp.valid_request?(request)
-      @heading =  "The OAuth signature was invalid"
-      render :template => "shared/error"
-      return false
-    end
-    
-    if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
-      @heading =  "Your request is too old."
-      render :template => "shared/error"
-      return false
-    end
-    
-    if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
-      @heading =  "Why are you reusing the nonce?"
-      render :template => "shared/error"
-      return false
-    end
-    
-    #@username = @tp.username("Dude")
-    return true
-  end
-  
-  def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)
-    # some kind of caching solution or something to keep a short-term memory of used nonces
-    false
-  end
   
 end

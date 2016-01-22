@@ -38,6 +38,16 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+A+ async grader
+
+Edge serverille
+
+Peer review
+
+Peer reviewn LTI launch
+
+Pisteet takaisin A+:aan
+
 Jos on min-max-väli ja valitsee tekstimuotoisen arvosanan, ei pitäisi clampata
 
 Miten SetSelectedPhrase(undefined) hanskataan serveripäässä?
