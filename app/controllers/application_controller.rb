@@ -155,7 +155,7 @@ class ApplicationController < ActionController::Base
     user
   end
   
-  def authorize_lti
+  def authorize_lti(options = {})
     # Testing mode
     if Rails.env == 'development' && request.local?
       params['oauth_consumer_key'] = 'aalto.fi'
@@ -178,7 +178,7 @@ class ApplicationController < ActionController::Base
       @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
       @tp.lti_msg = "Unrecognized LTI consumer key."
       @tp.lti_errorlog = "You did it wrong!"
-      @heading =  "Unrecognized LTI consumer key."
+      @heading =  "LTI error: unrecognized consumer key"
       logger.warn "LTI consumer key for #{key} has not been configured"
       render :template => "shared/error"
       return false
@@ -186,20 +186,20 @@ class ApplicationController < ActionController::Base
     
     @tp = IMS::LTI::ToolProvider.new(key, secret, params)
     
-    unless @tp.valid_request?(request)
-      @heading =  "The OAuth signature was invalid"
+    if !options[:skip_verification] && !@tp.valid_request?(request)
+      @heading =  "LTI error: invalid OAuth signature"
       render :template => "shared/error"
       return false
     end
     
     if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
-      @heading =  "Your request is too old."
+      @heading =  "LTI error: request too old"
       render :template => "shared/error"
       return false
     end
     
     if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
-      @heading =  "Why are you reusing the nonce?"
+      @heading =  "LTI error: reused nonce"
       render :template => "shared/error"
       return false
     end

@@ -317,7 +317,15 @@ class SubmissionsController < ApplicationController
 
   # LTI authorization
   def load_lti
-    return false unless authorize_lti
+    return false unless authorize_lti(skip_verification: true)
+    
+    # Authorized IP?
+    remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
+    unless ['127.0.0.1', '130.233.195.24'].include? remote_ip
+      @heading =  "LTI error: Requests only allowed from A+"
+      render :template => "shared/error"
+      return false
+    end
     
     # Find exercise
     organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
