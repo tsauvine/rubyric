@@ -51,7 +51,7 @@ class SubmissionsController < ApplicationController
     return access_denied unless current_user || @course_instance.submission_policy == 'unauthenticated'
 
     # Check that instance is active and student is enrolled
-    return unless @is_teacher || submission_policy_accepted
+    return unless @is_teacher || submission_policy_accepted?
     
     # Find groups that the user is part of
     if @is_teacher
@@ -127,44 +127,52 @@ class SubmissionsController < ApplicationController
   end
   
   def aplus_get
-    # params:
-    #   submission_url
-    #   post_url
-    #   max_points
+    if load_lti
+      @submission = Submission.new
+      CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} aplus GET success")
+      log "submit view #{@exercise.id}"
+    end
+  end
+  
+  def aplus_submit
+    return unless load_lti
     
-    # LTI authorization
-    return unless authorize_lti
+    @submission = Submission.new()
     
-    # Find exercise
-    organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
-    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
-    
-    # TODO: if teacher, create exercise
-    
-    unless @exercise
-      @heading =  "This course is not configured"
-      render :template => "shared/error"
+    # Check that instance is active and student is enrolled
+    unless @is_teacher || submission_policy_accepted?
+      @status = 'error'
       return
     end
-    load_course
-    I18n.locale = @course_instance.locale || I18n.locale
+    logger.debug "Submission policy accepted"
     
-    # Find or create user, TODO: handle errors
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id])
-    @is_teacher = @course.has_teacher(current_user)
+    # Group information comes from LTI
+    @submission.group = @group
 
-    # Create or find group, TODO: handle errors
-    @group = if params[:custom_group_members]
-      logger.info("LTI request: #{params[:custom_group_members]}")
-      lti_find_or_create_group(JSON.parse(params[:custom_group_members]), @exercise, @user, organization, params['oauth_consumer_key'])
+    # Check the file
+    if params[:file].blank?
+      logger.debug "No file submitted"
+      flash[:error] = t('submissions.new.missing_file')
+      
+      @status = 'error'
+      return
     else
-      lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, organization, params['oauth_consumer_key'])
+      @submission.file = params[:file]
     end
+    logger.debug "Submission accepted"
 
-    CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} aplus GET success")
-
-    @submission = Submission.new
-    log "submit view #{@exercise.id}"
+    
+    if @submission.save
+      AplusSubmission.create(submission: @submission, submission_url: params['submission_url'])
+      @status = 'accepted'
+      log "submit success #{@submission.id},#{@exercise.id}"
+    else
+      @status = 'error'
+      flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
+      log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
+    end
+    
+    logger.debug "A+ Submission successful"
   end
 
   def create
@@ -179,7 +187,7 @@ class SubmissionsController < ApplicationController
     logger.debug "Login accepted"
 
     # Check that instance is active and student is enrolled
-    return unless @is_teacher || submission_policy_accepted
+    return unless @is_teacher || submission_policy_accepted?
     logger.debug "Submission policy accepted"
     
     if @submission.group
@@ -285,7 +293,7 @@ class SubmissionsController < ApplicationController
   
   private
   
-  def submission_policy_accepted
+  def submission_policy_accepted?
     logger.debug "Checking submission policy"
     
     # Check that instance is open
@@ -307,4 +315,35 @@ class SubmissionsController < ApplicationController
     return true
   end
 
+  # LTI authorization
+  def load_lti
+    return false unless authorize_lti
+    
+    # Find exercise
+    organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
+    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+    
+    # TODO: if teacher, create exercise
+    
+    unless @exercise
+      @heading =  "This LTI exercise is not configured"
+      render :template => "shared/error"
+      return
+    end
+    load_course
+    I18n.locale = @course_instance.locale || I18n.locale
+    
+    # Find or create user, TODO: handle errors
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id])
+    @is_teacher = @course.has_teacher(current_user)
+
+    # Create or find group, TODO: handle errors
+    @group = if params[:custom_group_members]
+      logger.info("LTI request: #{params[:custom_group_members]}")
+      lti_find_or_create_group(JSON.parse(params[:custom_group_members]), @exercise, @user, organization, params['oauth_consumer_key'])
+    else
+      lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, organization, params['oauth_consumer_key'])
+    end
+  end
+  
 end

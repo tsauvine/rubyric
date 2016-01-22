@@ -159,8 +159,8 @@ class ApplicationController < ActionController::Base
     # Testing mode
     if Rails.env == 'development' && request.local?
       params['oauth_consumer_key'] = 'aalto.fi'
-      params[:context_id] = 'Plus/test2016'
-      params[:resource_link_id] = 'testi1'
+      params[:context_id] = 'plus.cs.hut.fi/test/test-01/'
+      params[:resource_link_id] = 'aplusexercise1412'
       params[:user_id] = '1'
       return true
     end

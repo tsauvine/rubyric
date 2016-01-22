@@ -1,0 +1,14 @@
+<!-- submissions/aplus-submit.html.erb -->
+<% content_for(:meta) do %>
+  <meta name="max-points" value="<%= @exercise.max_points %>" />
+  <meta name="DC.title"><%= @exercise.name %></meta>
+  <meta name="DC.Description"><%= @exercise.submit_pre_message %></meta>
+  <meta name="status"><%= @status %></meta>
+<% end %>
+
+<div id="exercise">
+  <% if @status == 'accepted' && !@exercise.submit_post_message.blank? %>
+    <p><%= @exercise.submit_post_message %></p>
+  <% end %>
+</div>
+

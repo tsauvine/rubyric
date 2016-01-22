@@ -9,6 +9,7 @@ class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
   has_many :reviews, {:order => :id, :dependent => :destroy }
+  has_one :aplus_submission
 
   after_create :write_file
 

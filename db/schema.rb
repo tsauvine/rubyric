@@ -11,7 +11,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20141013071849) do
+ActiveRecord::Schema.define(:version => 20160122011127) do
+
+  create_table "aplus_submissions", :force => true do |t|
+    t.integer "submission_id",  :null => false
+    t.string  "submission_url"
+  end
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
