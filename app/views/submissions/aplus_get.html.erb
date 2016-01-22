@@ -1,0 +1,26 @@
+<% content_for(:meta) do %>
+  <meta name="max-points" value="<%= @exercise.max_points %>" />
+  <meta name="DC.title"><%= @exercise.name %></meta>
+  <meta name="DC.Description"><%= @exercise.submit_pre_message %></meta>
+<% end %>
+
+<!-- submissions/aplus-form.html.erb.html.erb -->
+
+<div class="page-header">
+  <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
+</div>
+
+<div class="exercise">
+  <% unless @exercise.submit_pre_message.blank? %>
+    <p><%= @exercise.submit_pre_message %></p>
+  <% end %>
+
+  <!-- Upload -->
+  <%= form_for @submission, :html => { :multipart => true } do |f| %>
+    <h2><%=t 'submissions.new.submit_heading' %></h2>
+    <p><%= file_field_tag 'file' %></p>
+
+    <p><%= f.submit t('submissions.new.submit_button'), :class => 'btn btn-primary' %></p>
+  <% end %>
+</div>
+  
