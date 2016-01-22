@@ -192,12 +192,11 @@ class ApplicationController < ActionController::Base
       return false
     end
     
-    logger.info "LTI timestamps: local #{Time.now.utc}, LTI #{@tp.request_oauth_timestamp}"
-#     if Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60
-#       @heading =  "LTI error: request too old"
-#       render :template => "shared/error"
-#       return false
-#     end
+    if @tp.request_oauth_timestamp && (Time.now.utc.to_i - @tp.request_oauth_timestamp.to_i > 60*60)
+      @heading =  "LTI error: request too old"
+      render :template => "shared/error"
+      return false
+    end
     
     if was_nonce_used_in_last_x_minutes?(@tp.request_oauth_nonce, 60)
       @heading =  "LTI error: reused nonce"

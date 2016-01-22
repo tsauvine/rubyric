@@ -137,7 +137,7 @@ class SubmissionsController < ApplicationController
   def aplus_submit
     return unless load_lti
     
-    @submission = Submission.new()
+    @submission = Submission.new(exercise: @exercise, authenticated: true)
     
     # Check that instance is active and student is enrolled
     unless @is_teacher || submission_policy_accepted?
