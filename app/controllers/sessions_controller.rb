@@ -63,11 +63,11 @@ class SessionsController < ApplicationController
       }
     elsif Rails.env == 'development' && request.local?
       shibinfo = {
-        :login => 'student41@aalto.fi', #'student1@hut.fi',
-        :studentnumber => ('urn:mace:terena.org:schac:personalUniqueCode:fi:tkk.fi:student:00041' || '').split(':').last,
-        :firstname => 'Student',
-        :lastname => '41',
-        :email => 'student41@example.com',
+        :login => params[:eppn] || 'student41@aalto.fi', #'student1@hut.fi',
+        :studentnumber => (params[:studentnumber] || 'urn:mace:terena.org:schac:personalUniqueCode:fi:aalto.fi:student:00041' || '').split(':').last,
+        :firstname => 'Shibboleth',
+        :lastname => 'Test',
+        :email => params[:email] || 'student41@example.com',
         :logout_url => 'http://www.aalto.fi/'
       }
     else
