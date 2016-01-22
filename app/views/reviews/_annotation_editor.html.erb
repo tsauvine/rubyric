@@ -131,7 +131,7 @@
                           <span data-bind="text: grade"></span>
                         <!-- /ko -->
                         <!-- ko if: $root.gradingMode == 'average' -->
-                          <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: grade == $parent.grade() }" type="button" class="btn"></button>
+                          <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: $parent.selectedPhrase() == $data }" type="button" class="btn"></button>
                         <!-- /ko -->
                       </td>
                     
@@ -248,7 +248,7 @@
 </div> <!-- /rubric -->
 
 <div id="submission-pages" class="submission-pages">
-  <% unless @review %>
+  <% if @exercise.new_record? %>
     <div class="navbar">
       <div class="navbar-inner">
         <%= link_to root_path, :class => 'brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>

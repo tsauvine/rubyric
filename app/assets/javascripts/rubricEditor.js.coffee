@@ -158,8 +158,12 @@ class Criterion
     @phrases.subscribe => @rubricEditor.saved = false if @rubricEditor
 
   load_json: (data) =>
+    if data['id']
+      @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
+    else
+      @id = @rubricEditor.nextId('criterion')
+      
     @name = ko.observable(data['name'] || '')
-    @id = @rubricEditor.nextId('criterion', parseInt(data['id']))
     @minSum = ko.observable(data['minSum']).extend(number: true)
     @maxSum = ko.observable(data['maxSum']).extend(number: true)
     @maxSum.extend

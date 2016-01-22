@@ -9,7 +9,7 @@ class DemosController < ApplicationController
   end
 
   def annotation
-    @review = nil
+    @review = Review.new
     @exercise = Exercise.new
     @exercise.initialize_example_rubric
     @submission = ExampleSubmission.new
@@ -17,7 +17,7 @@ class DemosController < ApplicationController
   end
 
   def review
-    @review = nil
+    @review = Review.new
     @exercise = Exercise.new
     @exercise.initialize_example_rubric
     @submission = ExampleSubmission.new

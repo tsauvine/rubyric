@@ -115,9 +115,9 @@ ko.bindingHandlers.position = {
 }
 
 class SetSelectedPhraseCommand
-  constructor: (@criterion, phrase) ->
+  constructor: (@criterion, @phrase) ->
     # TODO: @previous_phrase = ...
-    @criterion.setSelectedPhrase(phrase)
+    @criterion.setSelectedPhrase(@phrase)
     
   undo: ->
     # TODO
