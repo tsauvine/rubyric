@@ -11,9 +11,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160122011127) do
+ActiveRecord::Schema.define(:version => 20160122083608) do
 
-  create_table "aplus_submissions", :force => true do |t|
+  create_table "aplus_submissions", :id => false, :force => true do |t|
     t.integer "submission_id",  :null => false
     t.string  "submission_url"
   end
@@ -43,7 +43,12 @@ ActiveRecord::Schema.define(:version => 20160122011127) do
     t.string   "submission_policy"
     t.string   "feedback_delivery_mode"
     t.integer  "pricing_id"
+    t.string   "lti_consumer"
+    t.string   "lti_context_id"
+    t.string   "lti_resource_link_id"
   end
+
+  add_index "course_instances", ["lti_consumer", "lti_context_id"], :name => "index_course_instances_on_lti_consumer_and_lti_context_id"
 
   create_table "course_instances_students", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -317,6 +322,7 @@ ActiveRecord::Schema.define(:version => 20160122011127) do
     t.float    "page_width"
     t.float    "page_height"
     t.boolean  "authenticated", :default => false, :null => false
+    t.string   "type"
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

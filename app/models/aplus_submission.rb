@@ -1,3 +1,3 @@
-class AplusSubmission < ActiveRecord::Base 
-  belongs_to :submission
+class AplusSubmission < Submission
+  
 end

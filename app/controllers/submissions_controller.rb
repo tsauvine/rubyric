@@ -137,7 +137,7 @@ class SubmissionsController < ApplicationController
   def aplus_submit
     return unless load_lti
     
-    @submission = Submission.new(exercise: @exercise, authenticated: true)
+    @submission = AplusSubmission.new(exercise: @exercise, authenticated: true, submission_url: params['submission_url'])
     
     # Check that instance is active and student is enrolled
     unless @is_teacher || submission_policy_accepted?
@@ -163,7 +163,6 @@ class SubmissionsController < ApplicationController
 
     
     if @submission.save
-      AplusSubmission.create(submission: @submission, submission_url: params['submission_url'])
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
     else

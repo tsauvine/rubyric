@@ -287,6 +287,9 @@ class Review < ActiveRecord::Base
     
     # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
+      
+      # TODO: handle A+ submissions
+      
       begin
         FeedbackMailer.review(review).deliver
       #rescue Net::SMTPFatalError => e
