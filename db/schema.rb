@@ -13,11 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20160122083608) do
 
-  create_table "aplus_submissions", :id => false, :force => true do |t|
-    t.integer "submission_id",  :null => false
-    t.string  "submission_url"
-  end
-
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_instance_id"

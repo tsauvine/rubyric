@@ -181,22 +181,21 @@ class SessionsController < ApplicationController
     # Find exercise
     organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
     exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
-    unless exercise
+    
+    if exercise
+      course_instance = exercise.course_instance
+    else
+      course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+    end
+    
+    if !exercise && !course_instance
       @heading =  "This course is not configured"
       render :template => "shared/error"
       return
     end
     
     # Find or create user, TODO: handle errors
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, exercise.course_instance, params[:custom_student_id])
-
-    # Create or find group, TODO: handle errors
-    group = if params[:custom_group_members]
-      logger.info("LTI request: #{params[:custom_group_members]}")
-      lti_find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
-    else
-      lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
-    end
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, course_instance, params[:custom_student_id])
 
     # Create session
     if Session.create(user)
@@ -209,9 +208,27 @@ class SessionsController < ApplicationController
       return
     end
     CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
+    
+    if exercise
+      if ex.deadline && Time.now < ex.deadline
+        # Before deadline, go to submit
+        # Create or find group, TODO: handle errors
+        group = if params[:custom_group_members]
+          logger.info("LTI request: #{params[:custom_group_members]}")
+          lti_find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
+        else
+          lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
+        end
 
-    # Redirect to submit
-    redirect_to submit_path(:exercise => exercise.id, :group => group.id)
+        # Redirect to submit
+        redirect_to submit_path(:exercise => exercise.id, :group => group.id)
+      else
+        # After deadline, go to dashboard view
+        redirect_to exercise_path(:exercise => exercise.id)
+      end
+    else
+      redirect_to course_instance_path(:id => course_instance.id)
+    end
   end
   
   

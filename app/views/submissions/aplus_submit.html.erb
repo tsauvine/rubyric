@@ -1,9 +1,9 @@
 <!-- submissions/aplus-submit.html.erb -->
 <% content_for(:meta) do %>
   <meta name="max-points" value="<%= @exercise.max_points %>" />
-  <meta name="DC.title"><%= @exercise.name %></meta>
-  <meta name="DC.Description"><%= @exercise.submit_pre_message %></meta>
-  <meta name="status"><%= @status %></meta>
+  <meta name="DC.title" value="<%= @exercise.name %>" />
+  <meta name="DC.Description" value="<%= @exercise.submit_pre_message %>" />
+  <meta name="status" value="<%= @status %>" />
 <% end %>
 
 <div id="exercise">
@@ -11,4 +11,3 @@
     <p><%= @exercise.submit_post_message %></p>
   <% end %>
 </div>
-
