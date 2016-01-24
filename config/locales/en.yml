@@ -14,6 +14,7 @@ en:
   Language: 'Language'
   Reviewer: 'Reviewer'
   Grade: 'Grade'
+  collaborative_review: 'Collaborative review'
   Feedback_available_at: 'Feedback is available at'
   
   #################

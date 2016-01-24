@@ -6,4 +6,11 @@ module ApplicationHelper
     controller.controller_name == target_controller && controller.action_name == target_action ? 'active' : ''
   end
 
+  def reviewer_name(review)
+    if review.user
+      review.user.name
+    else
+      t 'collaborative_review'
+    end
+  end
 end

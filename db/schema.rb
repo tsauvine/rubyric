@@ -11,7 +11,12 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160122083608) do
+ActiveRecord::Schema.define(:version => 20160124143806) do
+
+  create_table "aplus_submissions", :force => true do |t|
+    t.integer "submission_id",  :null => false
+    t.string  "submission_url"
+  end
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -112,6 +117,8 @@ ActiveRecord::Schema.define(:version => 20160122083608) do
     t.string   "lti_consumer"
     t.string   "lti_context_id"
     t.string   "lti_resource_link_id"
+    t.integer  "peer_review_goal"
+    t.string   "collaborative_mode"
   end
 
   add_index "exercises", ["lti_consumer", "lti_context_id"], :name => "index_exercises_on_lti_consumer_and_lti_context_id"
@@ -316,8 +323,9 @@ ActiveRecord::Schema.define(:version => 20160122083608) do
     t.integer  "page_count"
     t.float    "page_width"
     t.float    "page_height"
-    t.boolean  "authenticated", :default => false, :null => false
+    t.boolean  "authenticated",      :default => false, :null => false
     t.string   "type"
+    t.string   "aplus_feedback_url"
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

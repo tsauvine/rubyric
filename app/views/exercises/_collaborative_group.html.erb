@@ -1,0 +1,29 @@
+<div class="group" id="group<%= collaborative_group.id %>">
+  <!-- Name -->
+  <% if @exercise.anonymous_submissions %>
+    <h3>Group <%= collaborative_group.id %></h3>
+  <% else %>
+    <h3><%= collaborative_group.name %></h3>
+  <% end %>
+
+  <!-- Reviews -->
+  <ul class="list-unstyled">
+    <% collaborative_group.submissions.each do |submission| %>
+      <% review_count = 0 %>
+      <% submission.reviews.each do |review| %>
+        <% next if review.user == current_user %>
+        <% review_count += 1 %>
+        <% if @exercise.collaborative_mode == 'review' %>
+          <li><%= link_to "#{submission.filename}", edit_review_path(:id => review.id, :ref => 'exercises') %></li>
+        <% else %>
+          <li><%= link_to "#{submission.filename}", review_path(:id => review.id, :ref => 'exercises') %></li>
+        <% end %>
+      <% end %>
+      
+      <% if review_count == 0 %>
+        <li><%= link_to "#{submission.filename}", submission %></li>
+      <% end %>
+      
+    <% end %>
+  </ul>
+</div>

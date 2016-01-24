@@ -28,7 +28,7 @@
       <tbody>
         <tr>
           <% @submission.reviews.each do |review| %>
-            <td><%= review.user.name %></td>
+            <td><%= reviewer_name(review) %></td>
             <td><%= review.status %></td>
           <% end %>
         </tr>

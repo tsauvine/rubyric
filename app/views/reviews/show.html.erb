@@ -19,7 +19,7 @@
   (<%= link_to "#{@submission.extension}", submission_url(@submission, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
 </p>
 
-<% unless @exercise.anonymous_graders %>
+<% if !@exercise.anonymous_graders && @grader %>
   <p>Reviewer: <%= @grader.name %></p>
 <% end %>
 

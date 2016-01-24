@@ -108,7 +108,7 @@ hr.large-gap {
   margin-top: 10ex;
 }
 
-p.large-gap, div.large-gap {
+.large-gap, .gap {
   margin-top: 5ex;
 }
 
@@ -636,7 +636,8 @@ p.feedback-preview {
  **************/
 
 .assignments {
-
+  margin-bottom: 1em;
+  
   .submission td {
     border: 1px solid #808080;
     padding: .2em .5em;
@@ -659,6 +660,15 @@ p.feedback-preview {
   .spacer {
   }
 
+}
+
+.collaborative-assignments {
+  h3 {
+    margin: 1em 0em 0em 0em;
+  }
+  ul {
+    margin-left: 1em;
+  }
 }
 
 

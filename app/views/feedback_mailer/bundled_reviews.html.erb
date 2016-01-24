@@ -4,7 +4,7 @@
 <h2><%= review.submission.exercise.name %></h2>
 
 <p>
-<%=t :Reviewer %>: <%= review.user.firstname %> <%= review.user.lastname %> <a href="mailto:<%= review.user.email %>">(<%= review.user.email %>)</a>
+<% if review.user %><%=t :Reviewer %>: <%= review.user.firstname %> <%= review.user.lastname %> <a href="mailto:<%= review.user.email %>">(<%= review.user.email %>)</a><% end %>
 <% unless review.grade.blank? %><br /><%=t :Grade %>: <%= review.grade %><% end -%>
 </p>
 

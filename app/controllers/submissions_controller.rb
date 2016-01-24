@@ -11,7 +11,7 @@ class SubmissionsController < ApplicationController
 
   # Download submission
   def show
-    return access_denied unless group_membership_validated(@submission.group) || @submission.has_reviewer?(current_user) || @course.has_teacher(current_user)
+    return access_denied unless group_membership_validated(@submission.group) || @submission.has_reviewer?(current_user) || @course.has_teacher(current_user) || (@exercise.collaborative_mode != '' && @course_instance.has_student(current_user))
     
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
     filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
@@ -137,7 +137,7 @@ class SubmissionsController < ApplicationController
   def aplus_submit
     return unless load_lti
     
-    @submission = AplusSubmission.new(exercise: @exercise, authenticated: true, submission_url: params['submission_url'])
+    @submission = AplusSubmission.new(exercise: @exercise, authenticated: true, aplus_feedback_url: params['submission_url'])
     
     # Check that instance is active and student is enrolled
     unless @is_teacher || submission_policy_accepted?
@@ -218,7 +218,7 @@ class SubmissionsController < ApplicationController
         @submission.group = group
       else
         flash[:error] = 'No group selected'
-        redirect_to submit_path(:exercise => @submission.exercise_id)
+        redirect_to submit_path(:exercise => @submission.exercise_id, :ref => params[:ref])
         return
       end
     end
@@ -228,7 +228,7 @@ class SubmissionsController < ApplicationController
     if params[:file].blank?
       logger.debug "No file submitted"
       flash[:error] = t('submissions.new.missing_file')
-      redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token])
+      redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token], :ref => params[:ref])
       return
     else
       @submission.file = params[:file]
@@ -238,13 +238,19 @@ class SubmissionsController < ApplicationController
     if @submission.save
       flash[:success] = t('submissions.new.submission_received')
       log "submit success #{@submission.id},#{@exercise.id}"
+      
+      AnnotationAssessment.create(:submission_id => @submission.id) if @exercise.collaborative_mode == 'review'
     else
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
     end
     
     logger.debug "Submission successful"
-    redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    if params[:ref] == 'exercises'
+      redirect_to exercise_path(:id => @submission.exercise_id)
+    else
+      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+    end
   end
 
   # Assign to current user and start review

@@ -56,6 +56,25 @@
     # <h2>Message to be shown after submitting (HTML allowed):</h2>
     # f.text_area :submit_post_message, :rows => 3, :cols => 80
   %>
+  
+  <!-- Peer review -->
+  <div class="control-group">
+    <%= f.label :peer_review_goal, 'Peer review', :class => 'control-label' %>
+    <div class="controls">
+      <%= f.text_field :peer_review_goal, :class => 'input-small' %>
+      <span class="hint">(Number of peer reviews conducted by each student)</span>
+    </div>
+  </div>
+  
+  <!-- Review mode -->
+  <div class="control-group">
+    <%= f.label :collaborative_mode, 'Collaborative mode', :class => 'control-label' %>
+    <div class="controls">
+      <label>
+        <%= f.select(:collaborative_mode, options_for_select([['No', nil], ["View others' submissions and feedback", 'view'], ["Construct feedback collaboratively", 'review']], @exercise.collaborative_mode)) %>
+      </label>
+    </div>
+  </div>
 
   <div class="control-group">
     <%= f.label :anonymous_graders, 'Anonymous reviewers', :class => 'control-label' %>
@@ -92,5 +111,4 @@
     </div>
   </div>
   
- 
 <% end %>

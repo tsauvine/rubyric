@@ -6,72 +6,55 @@
   <h1><%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %></h1>
 </div>
 
+<!-- My submissions -->
+<% unless @is_assistant %>
+  <%= render :partial => 'my_submissions' %>
+<% end %>
+
+
 <!-- Reviews -->
-<% unless @assigned_groups.empty? %>
+<% if !@assigned_groups.empty? || (@exercise.peer_review_goal && @exercise.peer_review_goal > 0) %>
   <h2><%=t '.reviews' %></h2>
-
-  <table class="assignments">
-    <thead>
-      <tr>
-        <td>Submission</td>
-        <td>Review</td>
-        <td>Status</td>
-        <td>Grade</td>
-      </tr>
-    </thead>
-    <tbody id="submissions_table">
-      <%= render :partial => 'assistant_group', :collection => @assigned_groups %>
-    </tbody>
-  </table>
-<% end %>
-
-
-<!-- Submissions -->
-<% if @assigned_groups.empty? %>
-  <h2><%=t '.submissions' %></h2>
-<% else %>
-  <h2 class="gap"><%=t '.my_submissions' %></h2>
-<% end %>
-
-<% unless @available_groups.empty? %>
-  <table class="assignments">
-    <% @available_groups.each do |group| %>
-      <% submissions = group.submissions.where(:exercise_id => @exercise.id) %>
-      <tr class="group">
-        <td colspan='3'>
-          <%= group.name %>
-        </td>
-      </tr>
-      
-      <% if submissions.empty? %>
-        <tr class="submission">
-          <td colspan='3'><%= t '.no_submissions' %></td>
-        </tr>
-      <% else %>
-        <% submissions.each do |submission| %>
-          <tr class="submission">
-            <td><%=l submission.created_at, :format => :long %></td>
-            <td>(<%= link_to "#{submission.extension}", submission %>)</td>
-            <td>
-              <% submission.reviews.each_with_index do |review, number| %>
-                <% if review.status == 'mailed' %>
-                  <%= link_to @exercise.anonymous_graders ? t('.anonymous_feedback', :number => number + 1) : t('.view_feedback_from', :name => review.user.name), review_path(:id => review.id, :ref => 'exercises') %>
-                  <% unless review.filename.blank? %>
-                    (<%= link_to review.filename, download_review_path(review) %>)
-                  <% end %>
-                  <br />
-                <% end %>
-              <% end %>
-            </td>
-          </tr>
-        <% end %>
-      <% end %>
-      
-      <tr class="spacer"><td colspan="3"></td></tr>
+  
+  <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 %>
+    <% if @exercise.peer_review_goal == 1 %>
+      <p class="hint"><%= t('.peer_review_hint_singular') %></p>
+    <% else %>
+      <p class="hint"><%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %></p>
     <% end %>
-  </table>
-<% else %>
-  <p class="hint"><%= t '.no_submissions' %></p>
+    
+    <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
+  <% end %>
+
+  <% unless @assigned_groups.empty? %>
+    <table class="assignments">
+      <thead>
+        <tr>
+          <td>Submission</td>
+          <td>Review</td>
+          <td>Status</td>
+          <td>Grade</td>
+        </tr>
+      </thead>
+      <tbody id="submissions_table">
+        <%= render :partial => 'assistant_group', :collection => @assigned_groups %>
+      </tbody>
+    </table>
+  <% end %>
 <% end %>
 
-<p class=""><%= link_to t('.new_submission_button'), submit_url(@exercise.id), :class => 'btn' %></p>
+
+<!-- Viewable peer groups -->
+<% unless @viewable_peer_groups.empty? %>
+  <div class="collaborative-assignments">
+    <h2 class="large-gap"><%=t '.viewable_groups' %></h2>
+
+    <p class="hint"><%= t '.viewable_groups_instructions' %></p>
+    
+    <%= render :partial => 'collaborative_group', :collection => @viewable_peer_groups %>
+  </div>
+<% end %>
+
+<% if @is_assistant %>
+  <%= render :partial => 'my_submissions' %>
+<% end %>

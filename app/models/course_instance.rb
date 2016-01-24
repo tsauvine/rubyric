@@ -23,6 +23,10 @@ class CourseInstance < ActiveRecord::Base
     user && assistants.include?(user)
   end
 
+  def has_student(user)
+    user && students.include?(user)
+  end
+
   def add_students_csv(csv)
     add_users_csv(csv, students)
   end

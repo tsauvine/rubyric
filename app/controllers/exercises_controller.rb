@@ -1,3 +1,5 @@
+require 'set.rb'
+
 class ExercisesController < ApplicationController
   before_filter :login_required
 
@@ -30,34 +32,43 @@ class ExercisesController < ApplicationController
 
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
-
-      @exercise = Exercise.find(params[:id])
-      load_course
-
-      # Authorization
       return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-      # TODO: move this to model. This is duplicated in Exercise.next_review.
-      @groups = Group.where(:course_instance_id => @course_instance.id)
-        .includes([:users, {:submissions => {:reviews => :user}}])
-        .where(:submissions => {:exercise_id => @exercise.id})
-        .order('groups.id, submissions.created_at DESC, reviews.id')
-
+      @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
       render :action => 'submissions'
     else
       # Student's or assistant's view
       I18n.locale = @course_instance.locale || I18n.locale
+      @is_assistant = @course_instance.has_assistant(current_user)
       
-      # Find reviews of the user
-      assigned_group_ids = current_user.assigned_group_ids
-      @assigned_groups = Group.where(:id => assigned_group_ids).includes([:users, {:submissions => {:reviews => :user}}]).where(:submissions => {:exercise_id => @exercise.id}).order('groups.id, submissions.created_at DESC').all
+      # Find reviews assigned to the user
+      explicitly_assigned_groups = Set.new(current_user.assigned_group_ids)
+      @assigned_groups = Set.new
+      
+      # Find peer groups whose submissions the user can view
+      @viewable_peer_groups = Set.new
+      
+      @exercise.groups_with_submissions.order('submissions.created_at DESC, reviews.id').each do |group|
+        @assigned_groups << group if explicitly_assigned_groups.include?(group.id)
+        
+        group.submissions.each do |submission|
+          @viewable_peer_groups << group if @exercise.collaborative_mode != '' && !group.users.include?(current_user)
+            
+          submission.reviews.each do |review|
+            @assigned_groups << group if review.user == current_user
+          end
+        end
+      end
+
+      @assigned_groups = @assigned_groups.to_a
+      @viewable_peer_groups = @viewable_peer_groups.to_a
       
       #Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
 
       # Find groups of the user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
       
-      render :action => 'my_submissions'
+      render :action => 'my_submissions', :layout => 'fluid-new'
     end
     
     log "exercise view #{@exercise.id}"
@@ -391,4 +402,49 @@ class ExercisesController < ApplicationController
     log "create_example_submissions #{@exercise.id}"
   end
 
+  # Assign to current user and start review
+  def create_peer_review
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+    return access_denied unless @course_instance.has_student(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user)
+
+    review = nil
+    submission = nil
+    Exercise.transaction do
+      # Count the reviews of each group. Skip user's own groups.
+      # result: [ {:group => Group, :count => integer}, ... ]
+      review_counts = []
+      @exercise.groups_with_submissions.each do |group|
+        next if group.users.include?(current_user)
+        next if group.submissions.empty?
+        
+        review_count = 0
+        skip = false
+        group.submissions.each do |submission|
+          review_count += submission.reviews.size
+          skip = true if submission.reviews.any? {|review| review.user == current_user}
+        end
+        next if skip
+        
+        review_counts << {:group => group, :count => review_count }
+      end
+      
+      if review_counts.empty?
+        redirect_to @exercise, :warning => 'Nothing to review'
+        return
+      end
+
+      # Select the group with the least reviews
+      review_counts.sort! {|a,b| a[:count] <=> b[:count]}
+      group = review_counts.first
+      submission = group[:group].submissions.first
+      
+      review = submission.assign_to(current_user)
+    end
+
+    redirect_to edit_review_path(review)
+    log "create_peer_review #{submission.id},#{@exercise.id}"
+  end
+
+  
 end

@@ -50,9 +50,9 @@
             <%= check_box 'reviews_checkboxes', review.id, {:class => 'review_check ' + (review.status == 'finished' ? ' review_check_finished' : '')} %>
             
             <% if ['mailed','invalidated'].include?(review.status) %>
-              <%= link_to review.user.name, review_path(review.id, :ref => 'exercises') %>
+              <%= link_to reviewer_name(review), review_path(review.id, :ref => 'exercises') %>
             <% else %>
-              <%= link_to review.user.name, edit_review_path(review.id) %>
+              <%= link_to reviewer_name(review), edit_review_path(review.id) %>
             <% end %>
           </td>
           <td><%= review.status %></td>

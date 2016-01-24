@@ -14,7 +14,7 @@
       <%= hidden_field_tag "reviews[#{review.id}]", '1' %>
       <tr>
         <td><%= (review.submission.group.users.collect { |user| "#{h(user.name)} (#{h(user.studentnumber)})" }).join(', ') %></td>
-        <td><%= review.user.name %></td>
+        <td><%= reviewer_name(review) %></td>
         <td><%= review.status %></td>
       </tr>
     <% end %>

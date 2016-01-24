@@ -13,7 +13,7 @@ class FeedbackMailer < ActionMailer::Base
 
     if !@course.email.blank?
       headers["Reply-to"] = @course.email
-    elsif !@exercise.anonymous_graders
+    elsif !@exercise.anonymous_graders && @grader
       headers["Reply-to"] = @grader.email
     end
 

@@ -35,11 +35,11 @@
         <% end; row += 1 %>
         <td>
           <% if current_user != review.user %>
-            <%= link_to review.user.name, review_path(:id => review.id, :ref => 'exercises') %>
+            <%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %>
           <% elsif ['mailed','invalidated'].include?(review.status) %>
-            <%= link_to review.user.name, review_path(:id => review.id, :ref => 'exercises') %>
+            <%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %>
           <% else %>
-            <%= link_to "#{review.user.name} - edit review", edit_review_path(review.id) %>
+            <%= link_to "#{reviewer_name(review)} - edit review", edit_review_path(review.id) %>
           <% end %>
         </td>
         <td><%= review.status %></td>

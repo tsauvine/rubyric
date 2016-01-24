@@ -19,6 +19,12 @@ class Exercise < ActiveRecord::Base
   
   # Feedback grouping options: exercise, sections, categories
 
+  # Returns a relation representing groups who have submitted this exercise. Users and submissions are eager loaded.
+  def groups_with_submissions
+    Group.where(:course_instance_id => self.course_instance_id)
+      .includes([:users, {:submissions => {:reviews => :user}}])
+      .where(:submissions => {:exercise_id => self.id})
+  end
   
   # Assigns submissions evenly to the given users
   # submission_ids: array of submission ids
@@ -475,10 +481,7 @@ class Exercise < ActiveRecord::Base
   def next_review(user, done_review)
     done_group_id = done_review.submission.group_id
     
-    groups = Group.where(:course_instance_id => course_instance_id)
-        .includes(:submissions => :reviews)
-        .where(:submissions => {:exercise_id => self.id})
-        .order('groups.id, submissions.created_at DESC, reviews.id')
+    groups = self.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
     
     # Find the next group
     previous_group_id = nil

@@ -8,8 +8,9 @@ class ReviewsController < ApplicationController
     @group = @submission.group
     @exercise = @submission.exercise
     load_course
+    I18n.locale = @course_instance.locale || I18n.locale
 
-    return access_denied unless group_membership_validated(@group) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user)
+    return access_denied unless group_membership_validated(@group) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || (@exercise.collaborative_mode != '' && @course_instance.has_student(current_user))
     
     if @review.type == 'AnnotationAssessment'
       @submission = @review.submission
@@ -33,9 +34,10 @@ class ReviewsController < ApplicationController
     @exercise = @review.submission.exercise
     @submission = @review.submission
     load_course
+    I18n.locale = @course_instance.locale || I18n.locale
 
     # Authorization
-    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user) || (@exercise.collaborative_mode == 'review' && @course_instance.has_student(current_user))
 
     if @review.type == 'AnnotationAssessment'
       render :action => 'annotation', :layout => 'annotation'
@@ -54,7 +56,7 @@ class ReviewsController < ApplicationController
     params[:review] ||= {}
 
     # Authorization
-    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user)
+    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user) || (@exercise.collaborative_mode == 'review' && @course_instance.has_student(current_user))
 
     # Check that the review has not been mailed
     if @review.status == 'mailed'

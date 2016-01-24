@@ -38,9 +38,8 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
-A+ async grader
-
-Edge serverille
+UPDATE course_instances SET lti_consumer='aalto.fi', lti_context_id='plus.cs.hut.fi/test/test-01/', lti_resource_link_id='aplus1621' WHERE id=139;
+UPDATE exercises SET review_mode='collaborative' WHERE id=191;
 
 Peer review
 

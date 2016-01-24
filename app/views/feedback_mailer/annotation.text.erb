@@ -1,6 +1,6 @@
 <%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %>
 
-<% unless @exercise.anonymous_graders %><%=t :Reviewer %>: <%= @grader.firstname %> <%= @grader.lastname %> (<%= @grader.email %>)
+<% if !@exercise.anonymous_graders && @grader %><%=t :Reviewer %>: <%= @grader.firstname %> <%= @grader.lastname %> (<%= @grader.email %>)
 <% end -%>
 <% unless @review.grade.blank? %><%=t :Grade %>: <%= @review.grade %>
 <% end -%>
