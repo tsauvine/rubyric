@@ -408,6 +408,7 @@ class ExercisesController < ApplicationController
     load_course
     return access_denied unless @course_instance.has_student(current_user) || @course_instance.has_assistant(current_user) || @course.has_teacher(current_user)
 
+    # TODO: move most of this to model
     review = nil
     submission = nil
     Exercise.transaction do
@@ -437,7 +438,7 @@ class ExercisesController < ApplicationController
       # Select the group with the least reviews
       review_counts.sort! {|a,b| a[:count] <=> b[:count]}
       group = review_counts.first
-      submission = group[:group].submissions.first
+      submission = group[:group].submissions.last
       
       review = submission.assign_to(current_user)
     end

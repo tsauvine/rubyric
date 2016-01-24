@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(:version => 20160124143806) do
     t.string   "lti_context_id"
     t.string   "lti_resource_link_id"
     t.integer  "peer_review_goal"
-    t.string   "collaborative_mode"
+    t.string   "collaborative_mode",      :default => ""
   end
 
   add_index "exercises", ["lti_consumer", "lti_context_id"], :name => "index_exercises_on_lti_consumer_and_lti_context_id"
