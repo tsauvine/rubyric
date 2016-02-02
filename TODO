@@ -51,12 +51,9 @@ Opettajat pääsevät Plussasta Rubyriciin vasemmalta menusta ilman kirjautumist
 
 = Soon =
 
-Testaa:
-  LTI-käyttäjät lisätään kurssille
+My preferences ei toimi, ainakaan LTI-käyttäjälle
 
-Peer reviewn LTI launch
-
-Pisteet takaisin A+:aan
+Jos usering nimi on tyhjä, niin instructorin lisäämisessä näkyy 'null'
 
 Jos on min-max-väli ja valitsee tekstimuotoisen arvosanan, ei pitäisi clampata
 

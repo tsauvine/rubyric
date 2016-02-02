@@ -242,7 +242,7 @@ class SessionsController < ApplicationController
         redirect_to submit_path(:exercise => exercise.id, :group => group.id)
       else
         # After deadline, go to dashboard view
-        redirect_to exercise_path(:exercise => exercise.id)
+        redirect_to exercise_path(:id => exercise.id)
       end
     else
       redirect_to course_instance_path(:id => course_instance.id)
