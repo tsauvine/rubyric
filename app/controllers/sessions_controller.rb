@@ -188,15 +188,23 @@ class SessionsController < ApplicationController
       course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
     end
     
-    if !exercise && !course_instance
+    if !course_instance
       @heading =  "This course is not configured"
       render :template => "shared/error"
       return
     end
     
-    # Find or create user, TODO: handle errors
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, course_instance, params[:custom_student_id])
-
+    # Find or create user
+    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
+    unless user
+      @heading =  "Failed to create user account"
+      logger.error("Failed to user (LTI)")
+      render :template => "shared/error"
+      return
+    end
+    
+    course_instance.students << user unless course_instance.students.include?(user) || course_instance.assistants.include?(user) || course_instance.course.teachers.include?(user)
+    
     # Create session
     if Session.create(user)
       session[:logout_url] = params[:launch_presentation_return_url]

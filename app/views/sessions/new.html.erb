@@ -2,7 +2,7 @@
   <h1><%=t :sessions_login_heading %></h1>
 </div>
 
-<% if @session.errors.any? %>
+<% if @session && @session.errors.any? %>
   <div class="row">
     <div class="col-sm-6">
       <div class="alert alert-warning">

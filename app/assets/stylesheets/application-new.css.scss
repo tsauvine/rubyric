@@ -669,6 +669,17 @@ p.feedback-preview {
   ul {
     margin-left: 1em;
   }
+  
+  ul.reviews {
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+    
+    li {
+      display: inline;
+      margin: 0em 0.5em;
+    }
+  }
 }
 
 

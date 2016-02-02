@@ -115,7 +115,7 @@ class ApplicationController < ActionController::Base
       
       # Create group
       payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || lti_create_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'])
+        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || lti_create_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'], nil, nil)
         logger.debug "Creating member: #{member['user']} #{member['email']}"
         member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'])
         member.group = group
@@ -131,7 +131,7 @@ class ApplicationController < ActionController::Base
     group
   end
   
-  def lti_create_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber)
+  def lti_create_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber, lastname, firstname)
     logger.debug "Creating user #{lti_user_id}"
     
     user = User.new()
@@ -139,6 +139,8 @@ class ApplicationController < ActionController::Base
     user.lti_user_id = lti_user_id
     user.organization = organization
     user.studentnumber = studentnumber
+    user.lastname = lastname
+    user.firstname = firstname
     user.reset_persistence_token
     if user.save(:validate => false)
       course_instance.students << user unless course_instance.students.include?(user)

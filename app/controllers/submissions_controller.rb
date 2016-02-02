@@ -355,7 +355,7 @@ class SubmissionsController < ApplicationController
     I18n.locale = @course_instance.locale || I18n.locale
     
     # Find or create user, TODO: handle errors
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id])
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
     @is_teacher = @course.has_teacher(current_user)
 
     # Create or find group, TODO: handle errors
