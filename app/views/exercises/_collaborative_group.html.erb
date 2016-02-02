@@ -10,7 +10,7 @@
   <ul class="submissions list-unstyled">
     <% collaborative_group.submissions.each do |submission| %>
       <li>
-        <%= link_to "#{submission.filename}", submission %>
+        <%= link_to "#{submission.filename}", submission_path(submission) %>
         <ul class="reviews">
           <% submission.reviews.each do |review| %>
             <% next if review.user == current_user %>
