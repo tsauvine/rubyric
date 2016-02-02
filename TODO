@@ -36,6 +36,19 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 
+= Koodiaapinen =
+- opiskelija palauttaa A+:n kautta, lisätään kurssille
+- opettaja menee Rubyriciin plussan kautta
+- opiskelija menee Rubyriciin A+:n kautta ja vertaisarvioi 5 muun tehtävät
+- opiskelija menee plussan kautta Rubyriciin, pystyy katsomaan ja kommentoimaan muiden palautuksia
+- teksti/koodivastaus muuttuu PDF:ksi annotointia varten
+- pisteet takaisin plussaan
+
+
+
+Opettajat pääsevät Plussasta Rubyriciin vasemmalta menusta ilman kirjautumista (LTI:llä) ja heillä on Rubyricissä opettajaooikeudet. Jos Rubyriciin luo uusia harjoituksia, niin minun pitää säätää niille LTI-kytkentä. Sitä ei pysty tekemään kälistä. Loin plussaan suljettuna oleville kierroksille malliksi harjoituksia, joita opettajat pääsevät kokeilemaan.
+
+
 = Soon =
 
 UPDATE course_instances SET lti_consumer='aalto.fi', lti_context_id='plus.cs.hut.fi/test/test-01/', lti_resource_link_id='aplus1621' WHERE id=139;

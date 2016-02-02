@@ -209,8 +209,18 @@ class SessionsController < ApplicationController
     end
     CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
     
+    # Add student to course
+    is_instructor = (params['roles']|| '').split(',').any? {|role| role.strip == 'Instructor'}
+    if is_instructor
+      logger.info("LTI: user #{user.id} is instructor (#{params['roles']})")
+      course_instance.course.teachers << user unless course_instance.course.teachers.include?(user)
+    else
+      logger.info("LTI: user #{user.id} is student (#{params['roles']})")
+      course_instance.students << user unless course_instance.students.include?(user)
+    end
+    
     if exercise
-      if ex.deadline && Time.now < ex.deadline
+      if !is_instructor && ex.deadline && Time.now < ex.deadline
         # Before deadline, go to submit
         # Create or find group, TODO: handle errors
         group = if params[:custom_group_members]
