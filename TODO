@@ -35,32 +35,18 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 
 näytä lti-kursseille tuloslistassa lti_user_id
 
-
 = Koodiaapinen =
+- LTI-bugi
+- teksti/koodivastaus muuttuu PDF:ksi annotointia varten
+- vastaus textareaan
+- pisteet takaisin plussaan
+- "Give the following link to students for submitting" pois
+- drag'n'drop-palautus
+- varoita, jos yrittää mennä kurssille vanhalla versiolla
 + opiskelija palauttaa A+:n kautta, lisätään kurssille
 + opettaja menee Rubyriciin plussan kautta
 + opiskelija menee Rubyriciin A+:n kautta ja vertaisarvioi 5 muun tehtävät
 + opiskelija menee plussan kautta Rubyriciin, pystyy katsomaan ja kommentoimaan muiden palautuksia
-- teksti/koodivastaus muuttuu PDF:ksi annotointia varten
-- vastaus textareaan
-- pisteet takaisin plussaan
-- varoita, jos yrittää mennä kurssille vanhalla versiolla
-
-
-Mao
-
-Näkemäsi virheet johtuivat siitä, että menit Rubyriciin etusivun kautta. Uudet ominaisuudet toimivat vain testibranchissä, johon täytyy mennä osoitteella https://rubyric.com/edge/
-Jos opiskelijat ja opettajat menevät Rubyriciin Plussasta LTI:llä, niin tämän ei pitäisi olla ongelma. Pitänee kuitenkin tehdä joku viritys, että jos joku kuitenkin menee etusivun kautta esim. Hakalla, niin Rubyric vaikka sanoo, että tälle kurssille pitää mennä Plussan kautta.
-
-Opettajat pääsevät Plussasta Rubyriciin vasemmalta menusta ilman kirjautumista (LTI:llä) ja heillä on Rubyricissä opettajaoikeudet. Jos Rubyriciin luo uusia harjoituksia, niin minun pitää säätää niille LTI-kytkentä. Sitä ei pysty tekemään kälistä. Ilmoitelkaa siis minulle heti kun tiedätte, mitä harjoituksia tulee. Loin plussaan suljettuna oleville kierroksille malliksi harjoituksia, joita opettajat pääsevät testailemaan.
-
-Opiskelijoiden LTI-integraatio toimii nyt niin kuin pitää, eli plussasta hypätään Rubyricissä suoraan oikeaan paikkaan. Käli on vielä vähän sekava ja vaatinee ohjeistusta. Erityisesti konkreettisista ehdotuksista tai mockupeista olisi tässä hyötyä.
-
-Opiskelijoiden näkymien testaaminen LTI:llä on vähän hankalaa, kun opiskelijat eivät pääse Plussassa suljetuille kierroksille. Rubyricin opiskelijanäkymiä voi kuitenkin testailla näillä testitunnuksilla:
-  email: aapinen1@example.com ... aapinen9@example.com
-  salasana: aapinen1 ... aapinen9
-
-- Tapio
 
 
 = Soon =
