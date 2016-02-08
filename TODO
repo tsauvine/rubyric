@@ -38,9 +38,11 @@ näytä lti-kursseille tuloslistassa lti_user_id
 = Koodiaapinen =
 - LTI-bugi
 - teksti/koodivastaus muuttuu PDF:ksi annotointia varten
+- annotate pictures
 - vastaus textareaan
 - pisteet takaisin plussaan
 - "Give the following link to students for submitting" pois
+- preview, thumbnails
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
 + opiskelija palauttaa A+:n kautta, lisätään kurssille
@@ -51,9 +53,11 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf
+
 My preferences ei toimi, ainakaan LTI-käyttäjälle
 
-Jos usering nimi on tyhjä, niin instructorin lisäämisessä näkyy 'null'
+Jos userin nimi on tyhjä, niin instructorin lisäämisessä näkyy 'null'
 
 Jos on min-max-väli ja valitsee tekstimuotoisen arvosanan, ei pitäisi clampata
 

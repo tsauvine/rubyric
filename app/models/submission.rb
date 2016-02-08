@@ -54,6 +54,8 @@ class Submission < ActiveRecord::Base
         file.write(@file_data.read)
       end
     end
+    
+    Submission.delay.post_process(self.id)
   end
 
   def move(target_exercise)
@@ -74,6 +76,14 @@ class Submission < ActiveRecord::Base
   # Returns the location of the submitted file in the filesystem.
   def full_filename
     "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}.#{extension}"
+  end
+  
+  def converted_html_filename
+    "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}-converted.html"
+  end
+  
+  def converted_pdf_filename
+    "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}-converted.pdf"
   end
 
   # Assigns this submission to be reviewed by user.
@@ -200,6 +210,57 @@ class Submission < ActiveRecord::Base
     # 6 => 3 right
     # 7 => 2 left
   end
+  
+  # Post-processes the submission. ASCII files are converted to HTML with a syntax highlighter. Doc and Docx files are converted to PDF with LibreOffice.
+  def self.post_process(id)
+    submission = Submission.find(id)
+    
+    # Try to recognize submission type
+    file_type = nil
+    Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
+      line = stdout.gets
+      parts = line.split(':')
+      
+      if parts.size < 1
+        logger.error "file command failed: #{line}"
+      elsif parts[1].include?('text')
+        file_type = :ascii
+      elsif parts[1].include?('PDF document')
+        file_type = :pdf
+      elsif parts[1].include?('Composite Document File') || parts[1].include?('Microsoft Word')
+        file_type = :doc
+      end
+    end
+    
+    #logger.info "FILE TYPE: #{file_type}"
+    return unless file_type
+    
+    # Process ascii files with syntax hilighter.
+    if file_type == :ascii
+      submission.convert_ascii_to_pdf()
+    elsif file_type == :doc
+      # TODO: converto to pdf
+    end
+  end
+  
+  def convert_ascii_to_pdf
+    command = "pygmentize -f html -o #{converted_html_filename} #{self.full_filename}"
+    if !system(command)
+      # Pygmentize failed. Try again with plaintext lexer.
+      command = "pygmentize -f html -l text -o #{converted_html_filename} #{self.full_filename}"
+      if !system(command)
+        logger.warn "pygmentize is unable to convert #{self.full_filename} to HTML"
+        return false
+      end
+    end
+  
+    # Convert to PDF
+    command = "wkhtmltopdf #{converted_html_filename} #{converted_pdf_filename}"
+    system(command)
+  
+    return true
+  end
+  
   
   def page_count
     # http://pdf-toolkit.rubyforge.org/
