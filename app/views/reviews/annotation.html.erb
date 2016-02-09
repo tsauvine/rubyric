@@ -17,6 +17,7 @@
     <%= hidden_field_tag :send_review %>
     <%= hidden_field_tag :zoom_preference %>
     <%= hidden_field_tag :rubric_page_preference %>
+    <%= hidden_field_tag :page_sizes, @submission.page_sizes %>
 
     <%= render :partial => 'reviews/annotation_editor', :locals => {:f => f} %>
     

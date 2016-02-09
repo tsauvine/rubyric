@@ -60,7 +60,9 @@
   <% end %>
 </p>
 
-<p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Give this link to students.</span></p>
+<% if @course_instance.submission_policy != 'lti' %>
+  <p><strong>Submit url: </strong><%= link_to submit_url(@exercise.id), submit_url(@exercise.id) %> <span class="hint">- Give this link to students.</span></p>
+<% end %>
   
 <% unless @groups.empty? %>
   <h2>Submissions</h2>

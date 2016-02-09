@@ -250,7 +250,7 @@ class ReviewsController < ApplicationController
           @heading = 'File not found'
           render :template => "shared/error", :layout => 'narrow'
         else
-          send_file @review.full_filename, :type => Mime::Type.lookup_by_extension(@review.extension) || 'application/octet-stream', :filename => @review.filename
+          send_file @review.full_filename, :type => Mime::Type.lookup_by_extension(@review.extension.downcase) || 'application/octet-stream', :filename => @review.filename
           log "download_review #{@review.id},#{@exercise.id}"
         end
       end

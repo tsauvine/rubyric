@@ -16,6 +16,10 @@ RUBYRIC_HOST = "rubyric.example.com"
 # Redirect to SSL
 FORCE_SSL = false
 
+THUMBNAIL_MAX_WIDTH = 256
+THUMBNAIL_MAX_HEIGHT = 256
+THUMBNAIL_DEFAULT_SIZE = 128
+
 # Uncomment to execute delayed jobs immediately, instead of in a background process
 # Delayed::Worker.delay_jobs = false
 

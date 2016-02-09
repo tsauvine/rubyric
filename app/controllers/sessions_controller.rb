@@ -228,7 +228,7 @@ class SessionsController < ApplicationController
     end
     
     if exercise
-      if !is_instructor && ex.deadline && Time.now < ex.deadline
+      if !is_instructor && exercise.deadline && Time.now < exercise.deadline
         # Before deadline, go to submit
         # Create or find group, TODO: handle errors
         group = if params[:custom_group_members]

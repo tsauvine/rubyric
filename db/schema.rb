@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160124143806) do
+ActiveRecord::Schema.define(:version => 20160208172145) do
 
   create_table "aplus_submissions", :force => true do |t|
     t.integer "submission_id",  :null => false
@@ -326,6 +326,9 @@ ActiveRecord::Schema.define(:version => 20160124143806) do
     t.boolean  "authenticated",      :default => false, :null => false
     t.string   "type"
     t.string   "aplus_feedback_url"
+    t.boolean  "annotatable",        :default => false
+    t.string   "conversion"
+    t.text     "page_sizes"
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

@@ -15,7 +15,6 @@ class SubmissionsController < ApplicationController
     
     # logger.info("mime type: #{Mime::Type.lookup_by_extension(@submission.extension)}")
     filename = @submission.filename || "#{@submission.id}.#{@submission.extension}"
-    type = Mime::Type.lookup_by_extension(@submission.extension)
     
     respond_to do |format|
       format.html do
@@ -24,7 +23,7 @@ class SubmissionsController < ApplicationController
           @heading = 'File not found'
           render :template => "shared/error"
         else
-          send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension) || 'application/octet-stream', :filename => filename
+          send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension.downcase) || 'application/octet-stream', :filename => filename
           log "download_submission #{@submission.id},#{@exercise.id}"
         end
       end
@@ -32,8 +31,20 @@ class SubmissionsController < ApplicationController
       format.png do
         response.headers["Expires"] = 1.year.from_now.httpdate
         bitmap_info = @submission.image_path(params[:page], params[:zoom])
+        # TODO: unless bitmap_info
         send_file bitmap_info[:path], :filename => bitmap_info[:filename], :type => bitmap_info[:mimetype], :disposition => 'inline'
       end
+    end
+  end
+  
+  def thumbnail
+    return access_denied unless group_membership_validated(@submission.group) || @submission.has_reviewer?(current_user) || @course.has_teacher(current_user) || (@exercise.collaborative_mode != '' && @course_instance.has_student(current_user))
+    
+    response.headers["Expires"] = 1.year.from_now.httpdate
+    if File.exists? @submission.thumbnail_path
+      send_file @submission.thumbnail_path, :filename => "#{@submission.id}-thumbnail.jpg", :type => 'image/jpeg', :disposition => 'inline'
+    else
+      raise ActiveRecord::RecordNotFound
     end
   end
 

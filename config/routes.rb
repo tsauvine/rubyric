@@ -91,6 +91,7 @@ Rubyric::Application.routes.draw do
   
   resources :submissions, :only => [:show, :new, :create, :destroy] do
     member do
+      get :thumbnail
       get :review
       get :confirm_delete
       match 'move' => 'submissions#move', :via => [:get, :post]

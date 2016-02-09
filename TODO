@@ -36,15 +36,15 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- LTI-bugi
-- teksti/koodivastaus muuttuu PDF:ksi annotointia varten
-- annotate pictures
 - vastaus textareaan
 - pisteet takaisin plussaan
-- "Give the following link to students for submitting" pois
-- preview, thumbnails
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
++ preview, thumbnails
++ LTI-bugi
++ "Give the following link to students for submitting" pois
++ teksti/koodivastaus muuttuu PDF:ksi annotointia varten
++ annotate pictures
 + opiskelija palauttaa A+:n kautta, lisätään kurssille
 + opettaja menee Rubyriciin plussan kautta
 + opiskelija menee Rubyriciin A+:n kautta ja vertaisarvioi 5 muun tehtävät
@@ -54,10 +54,15 @@ näytä lti-kursseille tuloslistassa lti_user_id
 = Soon =
 
 Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf
+sudo add-apt-repository ppa:ecometrica/servers
+sudo apt-get update
+sudo apt-get install wkhtmltopdf
 
 My preferences ei toimi, ainakaan LTI-käyttäjälle
 
 Jos userin nimi on tyhjä, niin instructorin lisäämisessä näkyy 'null'
+
+'Anybobody can submit without authenticating': opettajalle ei näytetä ryhmän valintaa submitissa
 
 Jos on min-max-väli ja valitsee tekstimuotoisen arvosanan, ei pitäisi clampata
 

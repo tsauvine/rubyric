@@ -22,6 +22,18 @@ class Submission < ActiveRecord::Base
     GroupReviewer.exists?(:group_id => self.group_id, :user_id => user.id) ||
       Review.exists?(:submission_id => self.id, :user_id => user.id)
   end
+  
+  def annotatable?
+    self.annotatable
+  end
+  
+  def pdf_filename
+    if self.conversion
+      self.converted_pdf_filename()
+    else
+      self.full_filename()
+    end
+  end
 
   # Setter for the form's file field.
   def file=(file_data)
@@ -85,13 +97,17 @@ class Submission < ActiveRecord::Base
   def converted_pdf_filename
     "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}-converted.pdf"
   end
+  
+  def thumbnail_path
+    "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}-thumbnail.jpg"
+  end
 
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
     options = {:user => user, :submission => self}
     
-    if ['annotation', 'exam'].include?(self.exercise.review_mode) && self.extension == 'pdf'
+    if ['annotation', 'exam'].include?(self.exercise.review_mode) && self.annotatable?
       review = AnnotationAssessment.new(options)
     else
       review = Review.new(options)
@@ -127,23 +143,35 @@ class Submission < ActiveRecord::Base
     ex.deadline && self.created_at > ex.deadline
   end
   
-  # Returns the path of the png rendering of the submission
-  # This method blocks until the png is rendered and available.
-  # returns false if the png cannot be rendered
+  # Returns the path of a bitmap rendering of the submission
+  # This method blocks until the bitmap is rendered and available.
+  # returns false if the image cannot be rendered
   def image_path(page_number, zoom)
     # Sanitize parameters
-    page_number ||= 0
-    page_number = page_number.to_i
-    
     zoom ||= 1.0
     zoom = zoom.to_f
     zoom = 0.01 if zoom < 0.01
     zoom = 4.0 if zoom > 4.0
     
+    page_number ||= 0
+    page_number = page_number.to_i
+    
+    if self.extension == 'pdf' || self.conversion == 'pdf'
+      logger.info "it's a pdf"
+      return image_path_pdf(page_number, zoom)
+    elsif self.conversion == 'image'
+      logger.info "it's an image"
+      return image_path_bitmap(zoom)
+    else
+      raise Exception("Submission #{id} cannot be rendered.")
+    end
+  end
+  
+  def image_path_pdf(page_number, zoom)
     # Call page count to make sure values are cached FIXME
     self.page_count()
     
-    submission_path = self.full_filename()
+    submission_path = self.pdf_filename()
     image_format = 'png'
     image_mimetype = 'image/png'
     #image_format = 'jpg'
@@ -211,40 +239,151 @@ class Submission < ActiveRecord::Base
     # 7 => 2 left
   end
   
+  def image_path_bitmap(zoom)
+    image_mimetype = Mime::Type.lookup_by_extension(self.extension.downcase)
+    image_filename = "#{id}-#{(zoom * 100).to_i}.#{self.extension}"
+    image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
+    logger.info "converted image path: #{image_path}"
+    logger.info "mime type: #{image_mimetype}"
+    
+    # Don't convert if zoom == 1
+    if zoom == 1.0
+      logger.info "zoom=1, skip conversion"
+      return {path: self.full_filename(), filename: image_filename, mimetype: image_mimetype}
+    end
+    
+    # Create renderings path
+    FileUtils.makedirs PDF_CACHE_PATH unless File.exists? PDF_CACHE_PATH
+    
+    unless File.exist? image_path
+      # Convert pdf to bitmap
+      command = "convert -antialias -resize #{zoom * 100}% #{self.full_filename()} #{image_path}"
+      logger.info command
+      system(command)  # This blocks until the bitmap is rendered
+      
+      # TODO: remove obsolete renderings from cache
+      # rm id-*
+    end
+    
+    return {path: image_path, filename: image_filename, mimetype: image_mimetype}
+  end
+  
+  
   # Post-processes the submission. ASCII files are converted to HTML with a syntax highlighter. Doc and Docx files are converted to PDF with LibreOffice.
   def self.post_process(id)
     submission = Submission.find(id)
+    logger.info "Found submission #{submission.id}"
     
     # Try to recognize submission type
-    file_type = nil
     Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
       line = stdout.gets
       parts = line.split(':')
+      logger.info "File type: (#{parts[1]})"
       
       if parts.size < 1
         logger.error "file command failed: #{line}"
+        return
       elsif parts[1].include?('text')
-        file_type = :ascii
+        logger.info "Converting plain text to pdf"
+        submission.convert_ascii_to_pdf()
       elsif parts[1].include?('PDF document')
-        file_type = :pdf
+        logger.info "Post processing pdf"
+        submission.postprocess_pdf()
       elsif parts[1].include?('Composite Document File') || parts[1].include?('Microsoft Word')
-        file_type = :doc
+        logger.info "Converting DOC to PDF"
+        submission.convert_doc_to_pdf()
+      elsif parts[1].include?('image data') 
+        logger.info "Post processing image"
+        submission.postprocess_image()
+      else
+        return
       end
-    end
-    
-    #logger.info "FILE TYPE: #{file_type}"
-    return unless file_type
-    
-    # Process ascii files with syntax hilighter.
-    if file_type == :ascii
-      submission.convert_ascii_to_pdf()
-    elsif file_type == :doc
-      # TODO: converto to pdf
     end
   end
   
+  def postprocess_pdf
+    logger.info "Post processing pdf"
+    self.annotatable = true
+    
+    # TODO: get page count and page sizes
+    self.page_count = 1
+    page_sizes = []
+    Open3.popen3("pdfinfo -l -1 #{self.pdf_filename()}") do |stdin, stdout, stderr, wait_thr|
+      while line = stdout.gets
+        # Do encoding to handle invalid utf-8 characters that sometimes appear in the output of pdfinfo
+        line = line.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')
+        
+        if line =~ /^Pages/  # Read page page_count
+          parts = line.split(':')
+          next if parts.size < 2
+          
+          self.page_count = parts[1].strip.to_i
+          self.page_count *= 2 if self.book_mode
+        elsif line =~ /^Page.*size/  # Read page size
+          logger.info "Page size: (#{line.strip})"
+          parts = line.split(':')
+          next if parts.size < 2
+          
+          values = parts[1].scan(/[0-9\.]+/)
+          page_width = Float(values[0]) * 0.035278 rescue nil  # Convert points to centimeters
+          page_height = Float(values[1]) * 0.035278 rescue nil
+          logger.info "Page size: #{page_width}x#{page_height}"
+          page_width /= 2 if self.book_mode && page_width
+          
+          self.page_height = page_height unless self.page_height
+          self.page_width = page_width unless self.page_width
+          page_sizes << [page_width, page_height]
+        end
+      end
+      
+      exit_status = wait_thr.value
+    end
+    logger.info "Page sizes: #{page_sizes}"
+    
+    self.page_sizes = JSON.generate(page_sizes)
+    logger.info "Page sizes, JSON: #{self.page_sizes}"
+    
+    # Generate thumbnail
+    pixels_per_centimeter = THUMBNAIL_DEFAULT_SIZE.to_f / self.page_height
+    command = "gs -q -dNumRenderingThreads=4 -dNOPAUSE -sDEVICE=jpeg -dJPEGQ=80 -dFirstPage=1 -dLastPage=1 -sOutputFile=#{self.thumbnail_path()} -r#{pixels_per_centimeter * 2.54} #{self.pdf_filename()} -c quit"
+    system(command)
+    logger.info command
+    
+    self.save()
+  end
+  
+  def postprocess_image
+    self.page_count = 1
+    self.annotatable = true
+    self.conversion = 'image'
+    
+    # Get size
+    Open3.popen3("identify -format \"%wx%h\" #{self.full_filename()}") do |stdin, stdout, stderr, wait_thr|
+      line = stdout.gets
+      parts = line.split('x')
+      
+      if parts.size < 1
+        logger.error "failed to determine image size: #{line}"
+        return
+      else
+        self.page_width = parts[0].to_i / 45.0
+        self.page_height = parts[1].to_i / 45.0
+      end
+    end
+    
+    size = [self.page_width, self.page_height].max.to_f
+    zoom = THUMBNAIL_DEFAULT_SIZE / (size * 45.0)
+    
+    # Generate thumbnail
+    command = "convert -antialias -resize #{zoom * 100}% #{self.full_filename()} #{self.thumbnail_path()}"
+    system(command)
+    
+    self.save()
+  end
+  
   def convert_ascii_to_pdf
-    command = "pygmentize -f html -o #{converted_html_filename} #{self.full_filename}"
+    # Syntax hilighting
+    command = "pygmentize -O full,linespans=line -f html -o #{converted_html_filename} #{self.full_filename}"
     if !system(command)
       # Pygmentize failed. Try again with plaintext lexer.
       command = "pygmentize -f html -l text -o #{converted_html_filename} #{self.full_filename}"
@@ -255,10 +394,21 @@ class Submission < ActiveRecord::Base
     end
   
     # Convert to PDF
-    command = "wkhtmltopdf #{converted_html_filename} #{converted_pdf_filename}"
-    system(command)
+    command = "wkhtmltopdf -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
+    logger.info command
+    if !system(command)
+      logger.warn "wkhtmltopdf is unable to convert #{converted_html_filename} to PDF"
+      return
+    end
   
-    return true
+    self.conversion = 'pdf'
+    self.postprocess_pdf()
+  end
+  
+  def convert_doc_to_pdf()
+    # TODO
+    # self.annotatable = true
+    # self.conversion = 'pdf'
   end
   
   
@@ -270,7 +420,9 @@ class Submission < ActiveRecord::Base
     return value if value != nil
     
     count = 1
-    Open3.popen3('pdfinfo', self.full_filename()) do |stdin, stdout, stderr, wait_thr|
+    default_page_size = nil
+    page_sizes = {}
+    Open3.popen3('pdfinfo', "-l -1 #{self.full_filename()}") do |stdin, stdout, stderr, wait_thr|
       # Do encoding to handle invalid utf-8 characters that sometimes appear in the output of pdfinfo
       while line = stdout.gets
         line = line.encode('UTF-8', 'binary', invalid: :replace, undef: :replace, replace: '')

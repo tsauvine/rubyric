@@ -384,6 +384,11 @@ class @AnnotationEditor extends Rubric
     initialPageId = @element.data('initial-rubric-page')
     initialZoom = @element.data('initial-zoom')
     
+    rawPageSizes = $('#page_sizes').val()
+    pageSizes = $.parseJSON(rawPageSizes) if rawPageSizes.length > 0
+    console.log "Raw page sizes: #{pageSizes}"
+    console.log "Page sizes:"
+  
 #     @zoom_options = [
 #       {value: 0.25, text: "25 %"},
 #       {value: 0.50, text: "50 %"},
