@@ -98,6 +98,13 @@
       <%= f.check_box :grader_can_email %> 
     </div>
   </div>
+  
+  <div class="control-group">
+    <%= f.label :submit_pre_message, 'Submission instructions', :class => 'control-label' %><br />
+    <div class="controls">
+      <%= f.text_area :submit_pre_message, :rows => 8, :style => 'width: 30em' %> 
+    </div>
+  </div>
 
   <!-- Save -->
   <div class="control-group">

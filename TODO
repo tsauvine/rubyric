@@ -53,6 +53,8 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+PDF with variable page size
+
 Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf
 sudo add-apt-repository ppa:ecometrica/servers
 sudo apt-get update

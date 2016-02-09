@@ -11,7 +11,7 @@
 
 <div id="exercise">
   <% unless @exercise.submit_pre_message.blank? %>
-    <p><%= @exercise.submit_pre_message %></p>
+    <p><%= @exercise.submit_pre_message.html_safe %></p>
   <% end %>
 
   <!-- Upload -->
