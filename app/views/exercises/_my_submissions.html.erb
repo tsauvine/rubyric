@@ -19,7 +19,7 @@
         <% submissions.each do |submission| %>
           <tr class="submission">
             <td><%=l submission.created_at, :format => :long %></td>
-            <td>(<%= link_to "#{submission.extension}", submission %>)</td>
+            <td>(<%= link_to "#{submission.extension}", submission_path(submission) %>)</td>
             <td>
               <% submission.reviews.each_with_index do |review, number| %>
                 <% if review.status == 'mailed' || @exercise.collaborative_mode != '' %>
