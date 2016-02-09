@@ -394,7 +394,7 @@ class Submission < ActiveRecord::Base
     end
   
     # Convert to PDF
-    command = "wkhtmltopdf -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
+    command = "wkhtmltopdf.sh -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
     logger.info command
     if !system(command)
       logger.warn "wkhtmltopdf is unable to convert #{converted_html_filename} to PDF"

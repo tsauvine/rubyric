@@ -55,10 +55,11 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 PDF with variable page size
 
-Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf
+Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf, xvfb
 sudo add-apt-repository ppa:ecometrica/servers
 sudo apt-get update
 sudo apt-get install wkhtmltopdf
+http://stackoverflow.com/questions/9604625/wkhtmltopdf-cannot-connect-to-x-server
 
 My preferences ei toimi, ainakaan LTI-käyttäjälle
 
