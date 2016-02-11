@@ -339,10 +339,7 @@ class SubmissionsController < ApplicationController
     return true
   end
 
-  # LTI authorization
   def load_lti
-    return false unless authorize_lti(skip_verification: true)
-    
     # Authorized IP?
     remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
     unless ['127.0.0.1', '130.233.195.24'].include? remote_ip

@@ -64,11 +64,11 @@ class SessionsController < ApplicationController
     elsif Rails.env == 'development' && request.local?
       shibinfo = {
         :login => params[:eppn] || 'student41@aalto.fi', #'student1@hut.fi',
+        :email => params[:email] || 'student41@example.com',
         :studentnumber => (params[:studentnumber] || 'urn:mace:terena.org:schac:personalUniqueCode:fi:aalto.fi:student:00041' || '').split(':').last,
         :firstname => 'Shibboleth',
         :lastname => 'Test',
-        :email => params[:email] || 'student41@example.com',
-        :logout_url => 'http://www.aalto.fi/'
+        :logout_url => 'https://www.rubyric.com/'
       }
     else
       shibinfo = {}
@@ -175,38 +175,67 @@ class SessionsController < ApplicationController
   end
   
   
+  # Authenicates LTI request
+  # Creates session
+  # Creates user (unless exists)
+  # Adds user to course (unless already added)
   def lti
-    return unless authorize_lti
+    return unless authenticate_lti_signature
     
-    # Find exercise
-    organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
-    exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+    return unless login_lti_user
     
-    if exercise
-      course_instance = exercise.course_instance
+    if @exercise
+      if !@is_instructor && @exercise.deadline && Time.now < @exercise.deadline
+        # Before deadline, go to submit
+        # Create or find group, TODO: handle errors
+        group = if params[:custom_group_members]
+          logger.info("LTI request: #{params[:custom_group_members]}")
+          lti_find_or_create_group(JSON.parse(params[:custom_group_members]), @exercise, @user, @organization, params['oauth_consumer_key'])
+        else
+          lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, @organization, params['oauth_consumer_key'])
+        end
+
+        # Redirect to submit
+        redirect_to submit_path(:exercise => @exercise.id, :group => group.id)
+      else
+        # After deadline, go to dashboard view
+        redirect_to exercise_path(:id => @exercise.id)
+      end
     else
-      course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+      redirect_to course_instance_path(:id => @course_instance.id)
+    end
+  end
+  
+  def login_lti_user
+    # Find exercise
+    @organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
+    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
+    
+    if @exercise
+      @course_instance = @exercise.course_instance
+    else
+      @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
     end
     
-    if !course_instance
+    if !@course_instance
       @heading =  "This course is not configured"
       render :template => "shared/error"
-      return
+      return false
     end
     
     # Find or create user
-    user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
-    unless user
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], @organization, @course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
+    unless @user
       @heading =  "Failed to create user account"
-      logger.error("Failed to user (LTI)")
+      logger.error("Failed to create user (LTI)")
       render :template => "shared/error"
       return
     end
     
-    course_instance.students << user unless course_instance.students.include?(user) || course_instance.assistants.include?(user) || course_instance.course.teachers.include?(user)
+    @course_instance.students << @user unless @course_instance.students.include?(@user) || @course_instance.assistants.include?(@user) || @course_instance.course.teachers.include?(@user)
     
     # Create session
-    if Session.create(user)
+    if Session.create(@user)
       session[:logout_url] = params[:launch_presentation_return_url]
       logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
     else
@@ -218,34 +247,11 @@ class SessionsController < ApplicationController
     CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
     
     # Add student to course
-    is_instructor = (params['roles']|| '').split(',').any? {|role| role.strip == 'Instructor'}
-    if is_instructor
-      logger.info("LTI: user #{user.id} is instructor (#{params['roles']})")
-      course_instance.course.teachers << user unless course_instance.course.teachers.include?(user)
+    @is_instructor = (params['roles'] || '').split(',').any? {|role| role.strip == 'Instructor'}
+    if @is_instructor
+      @course_instance.course.teachers << @user unless @course_instance.course.teachers.include?(@user)
     else
-      logger.info("LTI: user #{user.id} is student (#{params['roles']})")
-      course_instance.students << user unless course_instance.students.include?(user)
-    end
-    
-    if exercise
-      if !is_instructor && exercise.deadline && Time.now < exercise.deadline
-        # Before deadline, go to submit
-        # Create or find group, TODO: handle errors
-        group = if params[:custom_group_members]
-          logger.info("LTI request: #{params[:custom_group_members]}")
-          lti_find_or_create_group(JSON.parse(params[:custom_group_members]), exercise, user, organization, params['oauth_consumer_key'])
-        else
-          lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], exercise, user, organization, params['oauth_consumer_key'])
-        end
-
-        # Redirect to submit
-        redirect_to submit_path(:exercise => exercise.id, :group => group.id)
-      else
-        # After deadline, go to dashboard view
-        redirect_to exercise_path(:id => exercise.id)
-      end
-    else
-      redirect_to course_instance_path(:id => course_instance.id)
+      @course_instance.students << @user unless @course_instance.students.include?(@user)
     end
   end
   

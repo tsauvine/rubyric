@@ -157,7 +157,11 @@ class ApplicationController < ActionController::Base
     user
   end
   
-  def authorize_lti(options = {})
+  
+  # Authenticates the LTI request
+  # Returns true if the request is legit.
+  # Renders an error message and returns false if LTI params are missing or the request is forged.
+  def authorize_lti!(options = {})
     # Testing mode
     if Rails.env == 'development' && request.local?
       params['oauth_consumer_key'] = 'aalto.fi'
@@ -166,29 +170,33 @@ class ApplicationController < ActionController::Base
       params[:user_id] = '1'
       return true
     end
-    
-    key = params['oauth_consumer_key']
-    
+
+    return authenticate_lti_signature(options)
+  end
+  
+  
+  # Authenticates the LTI signature
+  # Returns true if the request is legit.
+  # Renders an error message and return false otherwise
+  def authenticate_lti_signature(options = {})
     unless params['oauth_consumer_key'] && params[:context_id] && params[:resource_link_id] && params[:user_id]
       @heading =  "Insufficient LTI parameters received"
       render :template => "shared/error"
       return false
     end
     
-    secret = OAUTH_CREDS[key]
+    consumer_key = params['oauth_consumer_key']
+    secret = OAUTH_CREDS[consumer_key]
     unless secret
-      @tp = IMS::LTI::ToolProvider.new(nil, nil, params)
-      @tp.lti_msg = "Unrecognized LTI consumer key."
-      @tp.lti_errorlog = "You did it wrong!"
       @heading =  "LTI error: unrecognized consumer key"
-      logger.warn "LTI consumer key for #{key} has not been configured"
+      logger.warn "LTI consumer key for #{consumer_key} has not been configured"
       render :template => "shared/error"
       return false
     end
     
-    @tp = IMS::LTI::ToolProvider.new(key, secret, params)
+    @tp = IMS::LTI::ToolProvider.new(consumer_key, secret, params)
     
-    if !options[:skip_verification] && !@tp.valid_request?(request)
+    if !@tp.valid_request?(request)
       @heading =  "LTI error: invalid OAuth signature"
       render :template => "shared/error"
       return false
@@ -206,7 +214,6 @@ class ApplicationController < ActionController::Base
       return false
     end
     
-    #@username = @tp.username("Dude")
     return true
   end
   
