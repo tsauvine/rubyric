@@ -1,39 +1,31 @@
 require 'set.rb'
 
 class ExercisesController < ApplicationController
-  before_filter :login_required
-
-  # GET /exercises/manage/1
-#   def manage
-#     @exercise = Exercise.find(params[:id])
-#     load_course
-#
-#     # Authorization
-#     unless @course.has_teacher(current_user) || is_admin?(current_user)
-#       flash[:error] = "Unauthorized"
-#       redirect_to @course
-#       return
-#     end
-#
-#     @groups = @exercise.groups
-#
-#     @graders = Array.new
-#     @graders.concat(@course.teachers.collect {|u| [u.name, u.id]})
-#     @graders << ['= Assistants =', 'assistants']
-#     @graders.concat(@course_instance.assistants.collect {|u| [u.name, u.id]})
-#     @graders << ['= Students =', 'students']
-#     @graders.concat(@course_instance.students.collect {|u| [u.name, u.id]})
-#   end
+  before_filter :login_required, :except => [:show]
 
   # GET /exercises/1
   def show
     @exercise = Exercise.find(params[:id])
     load_course
+    
+    if lti_headers_present?
+      unless authenticate_lti_signature
+        logger.info "Failed to auth LTI signature"
+        return
+      end
+      unless login_lti_user
+        logger.info "Failed to login LTI user"
+        return
+      end
+    else
+      unless login_required()
+        logger.info "Failed to authenticate"
+        return
+      end
+    end
 
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
-      return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
-
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
       render :action => 'submissions'
     else
@@ -42,6 +34,7 @@ class ExercisesController < ApplicationController
       @is_assistant = @course_instance.has_assistant(current_user)
       
       # Find reviews assigned to the user
+      # TODO: move to model
       explicitly_assigned_groups = Set.new(current_user.assigned_group_ids)
       @assigned_groups = Set.new
       
@@ -63,8 +56,6 @@ class ExercisesController < ApplicationController
       @assigned_groups = @assigned_groups.to_a
       @viewable_peer_groups = @viewable_peer_groups.to_a
       
-      #Review.find(:all, :conditions => [ "user_id = ? AND exercise_id = ?", current_user.id, @exercise.id], :joins => 'JOIN submissions ON submissions.id = submission_id', :order => 'submissions.group_id, submissions.created_at DESC')
-
       # Find groups of the user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
       

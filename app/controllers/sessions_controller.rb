@@ -181,7 +181,6 @@ class SessionsController < ApplicationController
   # Adds user to course (unless already added)
   def lti
     return unless authenticate_lti_signature
-    
     return unless login_lti_user
     
     if @exercise
@@ -203,55 +202,6 @@ class SessionsController < ApplicationController
       end
     else
       redirect_to course_instance_path(:id => @course_instance.id)
-    end
-  end
-  
-  def login_lti_user
-    # Find exercise
-    @organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
-    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
-    
-    if @exercise
-      @course_instance = @exercise.course_instance
-    else
-      @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
-    end
-    
-    if !@course_instance
-      @heading =  "This course is not configured"
-      render :template => "shared/error"
-      return false
-    end
-    
-    # Find or create user
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], @organization, @course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
-    unless @user
-      @heading =  "Failed to create user account"
-      logger.error("Failed to create user (LTI)")
-      render :template => "shared/error"
-      return
-    end
-    
-    @course_instance.students << @user unless @course_instance.students.include?(@user) || @course_instance.assistants.include?(@user) || @course_instance.course.teachers.include?(@user)
-    
-    # Create session
-    if Session.create(@user)
-      session[:logout_url] = params[:launch_presentation_return_url]
-      logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
-    else
-      logger.warn("Failed to create session for #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
-      flash[:error] = 'LTI login failed.'
-      render :action => 'new'
-      return
-    end
-    CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
-    
-    # Add student to course
-    @is_instructor = (params['roles'] || '').split(',').any? {|role| role.strip == 'Instructor'}
-    if @is_instructor
-      @course_instance.course.teachers << @user unless @course_instance.course.teachers.include?(@user)
-    else
-      @course_instance.students << @user unless @course_instance.students.include?(@user)
     end
   end
   

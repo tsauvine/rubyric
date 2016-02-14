@@ -158,27 +158,12 @@ class ApplicationController < ActionController::Base
   end
   
   
-  # Authenticates the LTI request
-  # Returns true if the request is legit.
-  # Renders an error message and returns false if LTI params are missing or the request is forged.
-  def authorize_lti!(options = {})
-    # Testing mode
-    if Rails.env == 'development' && request.local?
-      params['oauth_consumer_key'] = 'aalto.fi'
-      params[:context_id] = 'plus.cs.hut.fi/test/test-01/'
-      params[:resource_link_id] = 'aplusexercise1412'
-      params[:user_id] = '1'
-      return true
-    end
-
-    return authenticate_lti_signature(options)
-  end
-  
-  
   # Authenticates the LTI signature
   # Returns true if the request is legit.
-  # Renders an error message and return false otherwise
+  # Renders an error message and returns false otherwise.
   def authenticate_lti_signature(options = {})
+    return true if Rails.env == 'development' && request.local?
+    
     unless params['oauth_consumer_key'] && params[:context_id] && params[:resource_link_id] && params[:user_id]
       @heading =  "Insufficient LTI parameters received"
       render :template => "shared/error"
@@ -213,6 +198,85 @@ class ApplicationController < ActionController::Base
       render :template => "shared/error"
       return false
     end
+    
+    return true
+  end
+  
+  def lti_headers_present?
+    !!params['oauth_consumer_key'] && !!params[:context_id] && !!params[:user_id]
+  end
+  
+  # Attempts to log in an LTI user.
+  # Creates an Organization if a new one is encountered.
+  # If @exercise is defined already, ensures that it matches the exercise specified in the LTI headers. Otherwise, loads @exercise based on the LTI headers. Same goes for @course_instance.
+  # Returns true if sesion was create successfully.
+  # Otherwise, renders an error message and returns false.
+  def login_lti_user
+    # Testing mode
+#     if Rails.env == 'development' && request.local?
+#       params[:oauth_consumer_key] = 'aalto.fi'
+#       params[:context_id] = 'plus.cs.hut.fi/test/test-01/'
+#       params[:resource_link_id] = 'aplusexercise1412'
+#       params[:user_id] = '1'
+#     end
+    
+    # Load course instance or ensure that the one already loaded matches the LTI headers.
+    # (There could be a mismatch if LTI launched with an URL that specifies the exercise or course_instance_id).
+    if defined?(@course_instance)
+      if @course_instance.lti_consumer != params[:oauth_consumer_key] || @course_instance.lti_context_id != params[:context_id]
+        logger.warn "LTI login failed. LTI headers specify course_instance #{params['oauth_consumer_key']}/#{params[:context_id]} but @course_instance (id #{@course_instance.id}), which had alreay been loaded, has lti_consumer=#{@course_instance.lti_consumer || 'nil'}, lti_context_id=#{@course_instance.lti_context_id}."
+        return false
+      end
+    else
+      @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
+      
+      unless @course_instance
+        @heading =  "This course is not configured"
+        logger.warn "LTI login failed. Could not find a course instance with lti_consumer=#{params['oauth_consumer_key']}, lti_context_id=#{params[:context_id]}"
+        render :template => "shared/error"
+        return false
+      end
+    end
+    
+    if defined?(@exercise)
+      if @exercise.lti_resource_link_id != params[:resource_link_id]
+        logger.warn "LTI login failed. LTI headers specify exercise #{params['oauth_consumer_key']}/#{params[:context_id]}/#{params[:resource_link_id]} but @exercise (id #{@exercise.id}), which had alreay been loaded, has lti_resource_link_id=#{@exercise.lti_resource_link_id || 'nil'}"
+        return false
+      end
+    else
+      @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id => params[:resource_link_id]).first
+    end
+    
+    @organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
+
+    # Find or create user
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], @organization, @course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
+    unless @user
+      @heading =  "Failed to create user account"
+      logger.error("Failed to create user (LTI)")
+      render :template => "shared/error"
+      return false
+    end
+    
+    # Add student to course
+    @is_instructor = (params['roles'] || '').split(',').any? {|role| role.strip == 'Instructor'}
+    if @is_instructor
+      @course_instance.course.teachers << @user unless @course_instance.course.teachers.include?(@user)
+    else
+      @course_instance.students << @user unless @course_instance.students.include?(@user) || @course_instance.assistants.include?(@user) || @course_instance.course.teachers.include?(@user)
+    end
+    
+    # Create session
+    if Session.create(@user)
+      session[:logout_url] = params[:launch_presentation_return_url]
+      logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+    else
+      logger.warn("Failed to create session for #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+      flash[:error] = 'Failed to create LTI session'
+      render :action => 'new'
+      return
+    end
+    CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
     
     return true
   end
@@ -270,6 +334,8 @@ class ApplicationController < ActionController::Base
       
       return false
     end
+    
+    return true
   end
   
   rescue_from CanCan::AccessDenied do |exception|

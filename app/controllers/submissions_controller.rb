@@ -357,7 +357,7 @@ class SubmissionsController < ApplicationController
     unless @exercise
       @heading =  "This LTI exercise is not configured"
       render :template => "shared/error"
-      return
+      return false
     end
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
@@ -373,6 +373,8 @@ class SubmissionsController < ApplicationController
     else
       lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, organization, params['oauth_consumer_key'])
     end
+    
+    return true
   end
   
 end
