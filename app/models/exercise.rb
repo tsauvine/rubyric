@@ -9,7 +9,7 @@ class Exercise < ActiveRecord::Base
   
   validates :groupsizemin, :numericality => { :only_integer => true, :greater_than => 0 }
   validates :groupsizemax, :numericality => { :only_integer => true, :greater_than_or_equal_to => :groupsizemin }
-  validates :lti_resource_link_id, :uniqueness => { :scope => :course_instance_id, :message => "resource link ID already taken" }
+  validates :lti_resource_link_id, :uniqueness => { :scope => :course_instance_id, :message => "resource link ID already taken", :allow_blank => true }
   
   validates_presence_of :name
 

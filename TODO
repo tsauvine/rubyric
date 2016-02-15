@@ -39,13 +39,14 @@ näytä lti-kursseille tuloslistassa lti_user_id
 - kuvatehtävän palautus 1 viikolle
   - ensin palautus A+-protokollalla, palautuksesta pisteet
   - "katso muiden palautuksia" LTI-launchilla
-- vastaus textareaan
-- LTI-asetusten säätäminen kälissä
+- plain text -> pdf -konversion zoomaus
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla
 - opettajalle thumbnail-näkymä
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
++ LTI-asetusten säätäminen kälissä
++ vastaus textareaan
 
 = Soon =
 

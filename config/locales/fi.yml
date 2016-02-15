@@ -14,7 +14,7 @@ fi:
   Language: 'Kieli'
   Reviewer: 'Arvioija'
   Grade: 'Arvosana'
-  collaborative_review: 'Yhteisöllinen palaute'
+  collaborative_review: 'Palaute'
   Feedback_available_at: 'Voit katsoa palautetta osoitteessa'
 
  # Used in array.to_sentence.

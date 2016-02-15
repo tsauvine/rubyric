@@ -1,36 +1,39 @@
-<div class="group" id="group<%= collaborative_group.id %>">
-  <!-- Name -->
-  <% if @exercise.anonymous_submissions %>
-    <h3>Group <%= collaborative_group.id %></h3>
-  <% else %>
-    <h3><%= collaborative_group.name %></h3>
-  <% end %>
+<div class="col-lg-4 col-md-6">
+  <div class="group well" id="group<%= collaborative_group.id %>">
+    <!-- Name -->
+    <% if @exercise.anonymous_submissions %>
+      <h3>Group <%= collaborative_group.id %></h3>
+    <% else %>
+      <h3><%= collaborative_group.name %></h3>
+    <% end %>
 
-  <!-- Reviews -->
-  <ul class="submissions list-unstyled">
-    <% collaborative_group.submissions.each do |submission| %>
-      <li>
-        <% if submission.reviews.size > 0 %>
-          <%= image_tag thumbnail_submission_path(submission), :alt => '' %>
-          <%= submission.filename %>
-        <% else %>
-          <%= link_to submission_path(submission) do %>
-            <%= image_tag thumbnail_submission_path(submission), :alt => '' %>
-            <%= submission.filename %>
-          <% end %>
-        <% end %>
-        
-        <ul class="reviews">
-          <% submission.reviews.each do |review| %>
-            <% next if review.user == current_user %>
-            <% if @exercise.collaborative_mode == 'review' %>
-              <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises') %></li>
-            <% else %>
-              <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %></li>
+    <!-- Reviews -->
+    <ul class="submissions list-unstyled">
+      <% collaborative_group.submissions.each do |submission| %>
+        <li>
+          <% if submission.reviews.size > 0 %>
+            <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
+            
+          <% else %>
+            <%= link_to submission_path(submission) do %>
+              <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
             <% end %>
           <% end %>
-        </ul>
-      </li>
-    <% end %>
-  </ul>
+          
+          <%= submission.payload %>
+          
+          <ul class="reviews">
+            <% submission.reviews.each do |review| %>
+              <% next if review.user == current_user %>
+              <% if @exercise.collaborative_mode == 'review' %>
+                <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises') %></li>
+              <% else %>
+                <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %></li>
+              <% end %>
+            <% end %>
+          </ul>
+        </li>
+      <% end %>
+    </ul>
+  </div>
 </div>

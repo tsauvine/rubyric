@@ -1,5 +1,4 @@
 <!-- exercises/submissions.html.erb -->
-
 <% content_for :javascript do %>
   <%= javascript_include_tag 'submissions.js' %>
 <% end %>
@@ -65,57 +64,70 @@
 <% end %>
   
 <% unless @groups.empty? %>
-  <h2>Submissions</h2>
-
-  <%= form_tag exercise_send_reviews_path(@exercise) %>
+  <h2>
+    Submissions
+    <% unless @exercise.collaborative_mode.blank? %>
+      <div class="btn-group">
+        <%= link_to exercise_path(@exercise),                        :class => "btn #{params[:view] != 'thumbnails' ? 'active' : ''}", :title => "List view" do %><i class="icon-align-justify"></i><% end %>
+        <%= link_to exercise_path(@exercise, :view => 'thumbnails'), :class => "btn #{params[:view] == 'thumbnails' ? 'active' : ''}",        :title => "Thumbnail view" do %><i class="icon-th"></i><% end %>
+      </div>
+    <% end %>
+  </h2>
   
-  <table class="assignments hover-buttons">
-    <thead>
-      <tr>
-        <td>Submission</td>
-        <td>Review</td>
-        <td>Status</td>
-        <td>Grade</td>
-      </tr>
-    </thead>
-    <tbody id="submissions_table">
-      <%= render :partial => 'group', :collection => @groups %>
-    </tbody>
-    <tfoot>
-      <tr>
-        <td><%= @groups.size %> groups
-        </td>
-        <td>
-          <button class="btn" id="reviews-select-all" onclick="return false;"> Select all</button>
-          <button class="btn" id="reviews-select-finished" onclick="return false;">Select finished</button>
-          <button class="btn" id="reviews-select-none" onclick="return false;">Select none</button>
-        </td>
-        <td></td>
-        <td></td>
-      </tr>
+  <% if params[:view] == 'thumbnails' %>
+      <%= render :partial => 'collaborative_group', :collection => @groups %>
+    </div>
+  <% else %>
+    <%= form_tag exercise_send_reviews_path(@exercise) do %>
+      <table class="assignments hover-buttons">
+        <thead>
+          <tr>
+            <td>Submission</td>
+            <td>Review</td>
+            <td>Status</td>
+            <td>Grade</td>
+          </tr>
+        </thead>
+        <tbody id="submissions_table">
+          <%= render :partial => 'group', :collection => @groups %>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><%= @groups.size %> groups
+            </td>
+            <td>
+              <button class="btn" id="reviews-select-all" onclick="return false;"> Select all</button>
+              <button class="btn" id="reviews-select-finished" onclick="return false;">Select finished</button>
+              <button class="btn" id="reviews-select-none" onclick="return false;">Select none</button>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
 
-      <tr class="spacer">
-        <td></td>
-        <td></td>
-        <td></td>
-        <td></td>
-      </tr>
+          <tr class="spacer">
+            <td></td>
+            <td></td>
+            <td></td>
+            <td></td>
+          </tr>
 
-      <tr>
-        <td>
-        </td>
-        <td>
-          <p>
-            <button type="submit" class='btn btn-default'>
-              <i class="icon-envelope"></i> Mail selected reviews
-            </button>
-          </p>
-        </td>
-        <td></td>
-        <td></td>
-      </tr>
-    </tfoot>
-  </table>
+          <tr>
+            <td>
+            </td>
+            <td>
+              <p>
+                <button type="submit" class='btn btn-default'>
+                  <i class="icon-envelope"></i> Mail selected reviews
+                </button>
+              </p>
+            </td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tfoot>
+      </table>
+    <% end %>
+  <% end %>
 <% end %>
 
 <% if current_user.tester == 'alpha' %>

@@ -10,15 +10,26 @@
 </div>
 
 <div id="exercise">
-  <% unless @exercise.submit_pre_message.blank? %>
-    <p><%= @exercise.submit_pre_message.html_safe %></p>
-  <% end %>
-
   <!-- Upload -->
   <form action="" method="post" enctype="multipart/form-data">
-    <h2><%=t 'submissions.new.submit_heading' %></h2>
-    <p><%= file_field_tag 'file' %></p>
+    <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
+      <h2><%=t 'submissions.new.submit_heading_file' %></h2>
+    <% else %>
+      <h2><%=t 'submissions.new.submit_heading' %></h2>
+    <% end %>
+    
+    <% unless @exercise.submit_pre_message.blank? %>
+      <p><%= @exercise.submit_pre_message.html_safe %></p>
+    <% end %>
 
+    <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
+      <p><%= file_field_tag 'file' %></p>
+    <% end %>
+    
+    <% if @exercise.submission_type.include?('textarea') %>
+      <p><%= f.text_area :payload, :rows => 5, :style => 'width: 100%' %></p>
+    <% end %>
+    
     <p><%= submit_tag t('submissions.new.submit_button'), :class => 'btn btn-primary' %></p>
   </form>
 </div>

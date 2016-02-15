@@ -16,6 +16,16 @@
     </div>
   </div>
   
+  <% if @course_instance.submission_policy == 'lti' %>
+    <div class="control-group">
+      <%= f.label :lti_resource_link_id, 'LTI resource link ID', :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :lti_resource_link_id %>
+        <span class="hint">e.g. exercise1</span>
+      </div>
+    </div>
+  <% end %>
+  
   <!-- Deadline -->
   <div class="control-group">
     <%= f.label :deadline, :class => 'control-label' %>
@@ -39,6 +49,16 @@
     </div>
   </div>
 
+  <!-- Submission type -->
+  <div class="control-group">
+    <%= f.label :submission_type, 'Submission type', :class => 'control-label' %>
+    <div class="controls">
+      <label>
+        <%= f.select(:submission_type, options_for_select([['File', 'file'], ['Textarea', 'textarea'], ['File and textarea', 'file,textarea']], @exercise.submission_type)) %>
+      </label>
+    </div>
+  </div>
+  
   <!-- Review mode -->
   <div class="control-group">
     <%= f.label :review_mode, 'Review mode', :class => 'control-label' %>

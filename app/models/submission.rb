@@ -157,10 +157,8 @@ class Submission < ActiveRecord::Base
     page_number = page_number.to_i
     
     if self.extension == 'pdf' || self.conversion == 'pdf'
-      logger.info "it's a pdf"
       return image_path_pdf(page_number, zoom)
     elsif self.conversion == 'image'
-      logger.info "it's an image"
       return image_path_bitmap(zoom)
     else
       raise Exception("Submission #{id} cannot be rendered.")
@@ -243,12 +241,12 @@ class Submission < ActiveRecord::Base
     image_mimetype = Mime::Type.lookup_by_extension(self.extension.downcase)
     image_filename = "#{id}-#{(zoom * 100).to_i}.#{self.extension}"
     image_path = "#{PDF_CACHE_PATH}/#{image_filename}"
-    logger.info "converted image path: #{image_path}"
-    logger.info "mime type: #{image_mimetype}"
+    logger.debug "converted image path: #{image_path}"
+    logger.debug "mime type: #{image_mimetype}"
     
     # Don't convert if zoom == 1
     if zoom == 1.0
-      logger.info "zoom=1, skip conversion"
+      logger.debug "zoom=1, skip conversion"
       return {path: self.full_filename(), filename: image_filename, mimetype: image_mimetype}
     end
     
@@ -258,7 +256,7 @@ class Submission < ActiveRecord::Base
     unless File.exist? image_path
       # Convert pdf to bitmap
       command = "convert -antialias -resize #{zoom * 100}% #{self.full_filename()} #{image_path}"
-      logger.info command
+      logger.debug command
       system(command)  # This blocks until the bitmap is rendered
       
       # TODO: remove obsolete renderings from cache
@@ -272,31 +270,32 @@ class Submission < ActiveRecord::Base
   # Post-processes the submission. ASCII files are converted to HTML with a syntax highlighter. Doc and Docx files are converted to PDF with LibreOffice.
   def self.post_process(id)
     submission = Submission.find(id)
-    logger.info "Found submission #{submission.id}"
     
     # Try to recognize submission type
-    Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
-      line = stdout.gets
-      parts = line.split(':')
-      logger.info "File type: (#{parts[1]})"
-      
-      if parts.size < 1
-        logger.error "file command failed: #{line}"
-        return
-      elsif parts[1].include?('text')
-        logger.info "Converting plain text to pdf"
-        submission.convert_ascii_to_pdf()
-      elsif parts[1].include?('PDF document')
-        logger.info "Post processing pdf"
-        submission.postprocess_pdf()
-      elsif parts[1].include?('Composite Document File') || parts[1].include?('Microsoft Word')
-        logger.info "Converting DOC to PDF"
-        submission.convert_doc_to_pdf()
-      elsif parts[1].include?('image data') 
-        logger.info "Post processing image"
-        submission.postprocess_image()
-      else
-        return
+    unless submission.filename.blank?
+      Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
+        line = stdout.gets
+        parts = line.split(':')
+        logger.debug "File type: (#{parts[1]})"
+        
+        if parts.size < 1
+          logger.error "file command failed: #{line}"
+          return
+        elsif parts[1].include?('text')
+          logger.info "Converting plain text to pdf"
+          submission.convert_ascii_to_pdf()
+        elsif parts[1].include?('PDF document')
+          logger.info "Post processing pdf"
+          submission.postprocess_pdf()
+        elsif parts[1].include?('Composite Document File') || parts[1].include?('Microsoft Word')
+          logger.info "Converting DOC to PDF"
+          submission.convert_doc_to_pdf()
+        elsif parts[1].include?('image data') 
+          logger.info "Post processing image"
+          submission.postprocess_image()
+        else
+          return
+        end
       end
     end
   end
@@ -347,7 +346,7 @@ class Submission < ActiveRecord::Base
     pixels_per_centimeter = THUMBNAIL_DEFAULT_SIZE.to_f / self.page_height
     command = "gs -q -dNumRenderingThreads=4 -dNOPAUSE -sDEVICE=jpeg -dJPEGQ=80 -dFirstPage=1 -dLastPage=1 -sOutputFile=#{self.thumbnail_path()} -r#{pixels_per_centimeter * 2.54} #{self.pdf_filename()} -c quit"
     system(command)
-    logger.info command
+    logger.debug command
     
     self.save()
   end

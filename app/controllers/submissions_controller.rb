@@ -160,20 +160,20 @@ class SubmissionsController < ApplicationController
     # Group information comes from LTI
     @submission.group = @group
 
-    # Check the file
-    if params[:file].blank?
+    # Check the file, TODO: check that both file and payload are not blank
+    file_required = @exercise.submission_type.blank? || @exercise.submission_type == 'file'
+    
+    if file_required && params[:file].blank?
       logger.debug "No file submitted"
       flash[:error] = t('submissions.new.missing_file')
-      
-      @status = 'error'
+      redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token], :ref => params[:ref])
       return
-    else
-      @submission.file = params[:file]
     end
-    logger.debug "Submission accepted"
-
+    
+    @submission.file = params[:file] unless params[:file].blank?
     
     if @submission.save
+      logger.debug "Submission accepted"
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
     else
@@ -217,15 +217,6 @@ class SubmissionsController < ApplicationController
       logger.debug "Membership accepted"
     else
       logger.debug "No group specified"
-#       if @course_instance.submission_policy == 'lti'
-#         groupname = session[:lti_email]
-#         group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
-#         group.save(:validate => false)
-#         member = GroupMember.new(:email => session[:lti_email])
-#         member.group = group
-#         member.user = current_user
-#         member.save
-#         @submission.group = group
       if @exercise.groupsizemax <= 1 && current_user
         logger.debug "Creating group of one"
         # Create a group automatically
@@ -243,18 +234,21 @@ class SubmissionsController < ApplicationController
     end
     logger.debug "Group accepted"
 
-    # Check the file
-    if params[:file].blank?
+    # Check the file, TODO: check that both file and payload are not blank
+    file_required = @exercise.submission_type.blank? || @exercise.submission_type == 'file'
+    
+    if file_required && params[:file].blank?
       logger.debug "No file submitted"
       flash[:error] = t('submissions.new.missing_file')
       redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token], :ref => params[:ref])
       return
-    else
-      @submission.file = params[:file]
     end
-    logger.debug "Submission accepted"
-
+    
+    @submission.file = params[:file] unless params[:file].blank?
+    
+    
     if @submission.save
+      logger.debug "Submission accepted"
       flash[:success] = t('submissions.new.submission_received')
       log "submit success #{@submission.id},#{@exercise.id}"
       
