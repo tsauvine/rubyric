@@ -270,11 +270,12 @@ class ApplicationController < ActionController::Base
     if Session.create(@user)
       session[:logout_url] = params[:launch_presentation_return_url]
       logger.info("Logged in #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
+      @current_user = current_session && current_session.record  # reset @current_user cache because it may have been accessed already
     else
       logger.warn("Failed to create session for #{params['oauth_consumer_key']}/#{params['user_id']} (LTI)")
       flash[:error] = 'Failed to create LTI session'
       render :action => 'new'
-      return
+      return false
     end
     CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
     
