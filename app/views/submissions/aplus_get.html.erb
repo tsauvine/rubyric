@@ -27,7 +27,7 @@
     <% end %>
     
     <% if @exercise.submission_type.include?('textarea') %>
-      <p><%= f.text_area :payload, :rows => 5, :style => 'width: 100%' %></p>
+      <p><%= text_area_tag :payload, @submission.payload, :rows => 5, :style => 'width: 100%' %></p>
     <% end %>
     
     <p><%= submit_tag t('submissions.new.submit_button'), :class => 'btn btn-primary' %></p>

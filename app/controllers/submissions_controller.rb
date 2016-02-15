@@ -171,6 +171,7 @@ class SubmissionsController < ApplicationController
     end
     
     @submission.file = params[:file] unless params[:file].blank?
+    @submission.payload = params[:payload]
     
     if @submission.save
       logger.debug "Submission accepted"
@@ -245,7 +246,7 @@ class SubmissionsController < ApplicationController
     end
     
     @submission.file = params[:file] unless params[:file].blank?
-    
+    @submission.payload = params[:payload]
     
     if @submission.save
       logger.debug "Submission accepted"
