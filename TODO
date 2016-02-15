@@ -36,8 +36,14 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- pisteet takaisin plussaan
+- kuvatehtävän palautus 1 viikolle
+  - ensin palautus A+-protokollalla, palautuksesta pisteet
+  - "katso muiden palautuksia" LTI-launchilla
 - vastaus textareaan
+- LTI-asetusten säätäminen kälissä
+- pisteet takaisin plussaan A+-protokollalla
+- pisteet takaisin plussaan LTI-protokollalla
+- opettajalle thumbnail-näkymä
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
 

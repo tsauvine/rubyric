@@ -8,11 +8,12 @@ class CourseInstance < ActiveRecord::Base
   
   validates_presence_of :name
   validate :check_agree_terms
+  validates :lti_context_id, :uniqueness => { :scope => :lti_consumer, :message => "context ID already taken" }
   
   belongs_to :pricing
   
   # TODO:
-  # attr_accessible :name, :description, :active
+  #attr_accessible :name, :description, :active, :locale, :submission_policy, :lti_consumer, :lti_context_id, :lti_resource_link_id, :agree_terms
   attr_accessor :agree_terms
  
   def check_agree_terms

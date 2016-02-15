@@ -1,10 +1,17 @@
 class CourseInstancesController < ApplicationController
-  before_filter :login_required
+  before_filter :login_required, :except => [:show]
 
   # GET /course_instances/1
   def show
     @course_instance = CourseInstance.find(params[:id])
     load_course
+    
+    if lti_headers_present?
+      return unless authenticate_lti_signature
+      return unless login_lti_user
+    else
+      return unless login_required
+    end
 
     @allow_edit = @course.has_teacher(current_user) || is_admin?(current_user)
     

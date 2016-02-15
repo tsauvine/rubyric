@@ -61,7 +61,32 @@
       </label>
     </div>
   </div>
-
+  
+  <% if @course_instance.submission_policy == 'lti' %>
+    <div class="form-group<%= @course_instance.errors[:lti_consumer].any? ? ' has-error has-feedback' : '' %>">
+      <%= f.label :lti_consumer, 'LTI consumer ID', :class => 'col-sm-2 control-label' %>
+      <div class="col-sm-4">
+        <%= f.text_field :lti_consumer, :class => 'form-control' %>
+        <% if @course_instance.errors[:lti_consumer].any? %>
+          <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+        <% else %>
+          <span class="hint">e.g. example.org</span>
+        <% end %>
+      </div>
+    </div>
+    <div class="form-group<%= @course_instance.errors[:lti_context_id].any? ? ' has-error has-feedback' : '' %>">
+      <%= f.label :lti_context_id, 'LTI context ID', :class => 'col-sm-2 control-label' %>
+      <div class="col-sm-4">
+        <%= f.text_field :lti_context_id, :class => 'form-control' %>
+        <% if @course_instance.errors[:lti_context_id].any? %>
+          <span class="glyphicon glyphicon-remove form-control-feedback"></span>
+        <% else %>
+          <span class="hint">e.g. my_course</span>
+        <% end %>
+      </div>
+    </div>
+  <% end %>
+  
   <!-- Active -->
   <% unless @course_instance.new_record? %>
     <div class="form-group">

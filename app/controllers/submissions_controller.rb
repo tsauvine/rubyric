@@ -339,10 +339,7 @@ class SubmissionsController < ApplicationController
     return true
   end
 
-  # LTI authorization
   def load_lti
-    return false unless authorize_lti(skip_verification: true)
-    
     # Authorized IP?
     remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
     unless ['127.0.0.1', '130.233.195.24'].include? remote_ip
@@ -360,7 +357,7 @@ class SubmissionsController < ApplicationController
     unless @exercise
       @heading =  "This LTI exercise is not configured"
       render :template => "shared/error"
-      return
+      return false
     end
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
@@ -376,6 +373,8 @@ class SubmissionsController < ApplicationController
     else
       lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, organization, params['oauth_consumer_key'])
     end
+    
+    return true
   end
   
 end
