@@ -177,6 +177,8 @@ class SubmissionsController < ApplicationController
       logger.debug "Submission accepted"
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
+      
+      AnnotationAssessment.create(:submission_id => @submission.id) if @exercise.collaborative_mode == 'review'
     else
       @status = 'error'
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
