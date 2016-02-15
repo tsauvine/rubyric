@@ -48,7 +48,8 @@ Rubyric::Application.routes.draw do
     end
   end
 
-  resources :exercises, :only => [:edit, :destroy] do
+  resources :exercises, :only => [:edit, :destroy, :show] do
+    post 'lti'
     get 'results'
     get 'student_results'
     get 'statistics'
@@ -78,10 +79,6 @@ Rubyric::Application.routes.draw do
 
     resources :groups
   end
-  get '/exercises/:id' => 'exercises#show', :as => :exercise
-  post '/exercises/:id' => 'exercises#show'
-  #match 'exercises/:id' => 'groups#join', 
-
   match 'groups/:id/join/:token' => 'groups#join', :as => :join_group
 
   resources :invitations, :only => [:show, :destroy], :id => /[^\/]+/ do
