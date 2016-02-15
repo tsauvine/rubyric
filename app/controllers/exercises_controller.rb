@@ -9,10 +9,11 @@ class ExercisesController < ApplicationController
     load_course
     
     if lti_headers_present?
-      unless authenticate_lti_signature
-        logger.info "Failed to auth LTI signature"
-        return
-      end
+      # Temporarily disable signature checking
+#       unless authenticate_lti_signature
+#         logger.info "Failed to auth LTI signature"
+#         return
+#       end
       unless login_lti_user
         logger.info "Failed to login LTI user"
         return
