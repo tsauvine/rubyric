@@ -36,20 +36,10 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- vastaus textareaan
 - pisteet takaisin plussaan
+- vastaus textareaan
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
-+ preview, thumbnails
-+ LTI-bugi
-+ "Give the following link to students for submitting" pois
-+ teksti/koodivastaus muuttuu PDF:ksi annotointia varten
-+ annotate pictures
-+ opiskelija palauttaa A+:n kautta, lisätään kurssille
-+ opettaja menee Rubyriciin plussan kautta
-+ opiskelija menee Rubyriciin A+:n kautta ja vertaisarvioi 5 muun tehtävät
-+ opiskelija menee plussan kautta Rubyriciin, pystyy katsomaan ja kommentoimaan muiden palautuksia
-
 
 = Soon =
 
