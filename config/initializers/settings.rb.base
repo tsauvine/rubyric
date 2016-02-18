@@ -20,6 +20,8 @@ THUMBNAIL_MAX_WIDTH = 256
 THUMBNAIL_MAX_HEIGHT = 256
 THUMBNAIL_DEFAULT_SIZE = 128
 
+ACCEPTED_EMAIL_SOURCES = ['localhost', '127.0.0.1']
+
 # Uncomment to execute delayed jobs immediately, instead of in a background process
 # Delayed::Worker.delay_jobs = false
 

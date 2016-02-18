@@ -311,10 +311,11 @@ class SubmissionsController < ApplicationController
   end
   
   def receive_email
-    return access_denied unless request.local?
+    remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
+    return access_denied unless ACCEPTED_EMAIL_SOURCES.include?(remote_ip)
     
     SubmissionMailer.receive(params[:email])
-    head :created  
+    head :created
   end
   
   private
