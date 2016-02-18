@@ -310,7 +310,12 @@ class SubmissionsController < ApplicationController
     redirect_to @exercise
   end
   
-
+  def receive_email
+    return access_denied unless request.local?
+    
+    SubmissionMailer.receive(params[:email])
+    head :created  
+  end
   
   private
   
@@ -372,12 +377,5 @@ class SubmissionsController < ApplicationController
     end
     
     return true
-  end
-
-  def receive_email
-    return access_denied unless request.local?
-    
-    SubmissionMailer.receive(params[:email])
-    head :created  
   end
 end
