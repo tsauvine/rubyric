@@ -117,6 +117,8 @@ google plus, facebook
 
 = Later =
 
+mail server settings: https://www.digitalocean.com/community/tutorials/how-to-install-and-configure-postfix-as-a-send-only-smtp-server-on-ubuntu-14-04
+
 headless screenhots:
   http://jerel.co/blog/2010/10/using-firefox-on-a-headless-server-to-make-screenshots-of-websites
   http://www.mysql-apache-php.com/website_screenshot.htm
