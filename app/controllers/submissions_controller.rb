@@ -1,5 +1,5 @@
 class SubmissionsController < ApplicationController
-  before_filter :load_submission, :except => [:new, :create, :aplus_get, :aplus_submit]
+  before_filter :load_submission, :except => [:new, :create, :aplus_get, :aplus_submit, :receive_email]
 
   layout 'narrow'
 
@@ -373,5 +373,11 @@ class SubmissionsController < ApplicationController
     
     return true
   end
-  
+
+  def receive_email
+    return access_denied unless request.local?
+    
+    SubmissionMailer.receive(params[:email])
+    head :created  
+  end
 end
