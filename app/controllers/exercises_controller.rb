@@ -1,33 +1,31 @@
 require 'set.rb'
 
 class ExercisesController < ApplicationController
-  before_filter :login_required, :except => [:show]
+  before_filter :login_required, :except => [:lti]
 
+  def lti
+      # Temporarily disable signature checking
+#       unless authenticate_lti_signature
+#         logger.info "Failed to auth LTI signature"
+#         return
+#       end
+    unless login_lti_user
+      logger.info "Failed to login LTI user"
+      return
+    end
+
+    redirect_to @exercise
+  end
+  
   # GET /exercises/1
   def show
     @exercise = Exercise.find(params[:id])
     load_course
     
-    if lti_headers_present?
-      unless authenticate_lti_signature
-        logger.info "Failed to auth LTI signature"
-        return
-      end
-      unless login_lti_user
-        logger.info "Failed to login LTI user"
-        return
-      end
-    else
-      unless login_required()
-        logger.info "Failed to authenticate"
-        return
-      end
-    end
-
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
-      render :action => 'submissions'
+      render :action => 'submissions' # , :layout => 'fluid-new'
     else
       # Student's or assistant's view
       I18n.locale = @course_instance.locale || I18n.locale

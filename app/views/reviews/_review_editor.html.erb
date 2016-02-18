@@ -49,9 +49,15 @@
         <h3>Submission</h3>
 
         <% unless @exercise.new_record? %>
-          <% unless @submission.extension.blank? %>
-            <%= link_to "#{@submission.filename}", @submission %>
-            <small>(<%=l @submission.created_at %>)</small>
+          <% unless @submission.filename.blank? %>
+            <p>
+              <%= link_to "#{@submission.filename}", @submission %>
+              <small>(<%=l @submission.created_at %>)</small>
+            </p>
+          <% end %>
+          
+          <% unless @submission.payload.blank? %>
+            <p><%= @submission.payload %></p>
           <% end %>
         <% else %>
           <!-- Demo -->

@@ -11,10 +11,6 @@
 </div>
 
 <div id="submit-form">
-  <% unless @exercise.submit_pre_message.blank? %>
-    <p><%= @exercise.submit_pre_message.html_safe %></p>
-  <% end %>
-
   <!-- Group -->
   <% if @group && (@exercise.groupsizemax > 1 || @group.group_members.size > 1)  %>
     <div class="row">
@@ -87,7 +83,9 @@
             <tr>
               <td>
                 <%=l submission.created_at, :format => :long %>
-                (<%= link_to "#{submission.extension}", submission_url(submission.id, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
+                <% unless submission.filename.blank? %>
+                  (<%= link_to "#{submission.extension}", submission_url(submission.id, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
+                <% end %>
               </td>
               <td>
                 <% submission.reviews.each do |review| %>
@@ -124,9 +122,24 @@
           <%= hidden_field_tag :member_token, params['member_token'] %>
         <% end -%>
 
-        <h2><%=t '.submit_heading' %></h2>
+        <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
+          <h2><%=t '.submit_heading_file' %></h2>
+        <% else %>
+          <h2><%=t '.submit_heading' %></h2>
+        <% end %>
+        
+        <% unless @exercise.submit_pre_message.blank? %>
+          <p><%= @exercise.submit_pre_message.html_safe %></p>
+        <% end %>
+        
         <div id="exercise">
-          <p><%= file_field_tag 'file' %></p>
+          <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
+            <p><%= file_field_tag 'file' %></p>
+          <% end %>
+          
+          <% if @exercise.submission_type.include?('textarea') %>
+            <p><%= text_area_tag :payload, @submission.payload, :rows => 5, :style => 'width: 100%' %></p>
+          <% end %>
 
           <p><%= f.submit t('.submit_button'), :class => 'btn btn-primary' %></p>
         </div>

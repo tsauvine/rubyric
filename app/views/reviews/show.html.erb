@@ -14,13 +14,19 @@
 <% end %>
 
 <p>
-  Submission:
+  <b>Submission:</b>
   <%=l @submission.created_at, :format => :long %>
-  (<%= link_to "#{@submission.extension}", submission_url(@submission, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
+  <% unless @submission.filename.blank? %>
+    (<%= link_to "#{@submission.extension}", submission_url(@submission, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
+  <% end %>
 </p>
 
+<% unless @submission.payload.blank? %>
+  <p><%= @submission.payload %></p>
+<% end %>
+
 <% if !@exercise.anonymous_graders && @grader %>
-  <p>Reviewer: <%= @grader.name %></p>
+  <p><b>Reviewer:</b> <%= @grader.name %></p>
 <% end %>
 
 <% unless @review.grade.blank? %>

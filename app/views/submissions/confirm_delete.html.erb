@@ -6,7 +6,7 @@
 <div class="row-fluid">
   <div class="span6">
     <% if @submission.reviews.empty? %>
-      <p><%= button_to "Delete", @submission, :method => :delete, :class => 'btn btn-primary' %></p>
+      <p><%= button_to "Delete", submission_path(@submission), :method => :delete, :class => 'btn btn-primary' %></p>
     <% else %>
       <div class="alert alert-error">
         Submission cannot be deleted because it has reviews.

@@ -39,23 +39,14 @@ näytä lti-kursseille tuloslistassa lti_user_id
 - kuvatehtävän palautus 1 viikolle
   - ensin palautus A+-protokollalla, palautuksesta pisteet
   - "katso muiden palautuksia" LTI-launchilla
-- vastaus textareaan
-- LTI-asetusten säätäminen kälissä
+- plain text -> pdf -konversion zoomaus
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla
 - opettajalle thumbnail-näkymä
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
-+ preview, thumbnails
-+ LTI-bugi
-+ "Give the following link to students for submitting" pois
-+ teksti/koodivastaus muuttuu PDF:ksi annotointia varten
-+ annotate pictures
-+ opiskelija palauttaa A+:n kautta, lisätään kurssille
-+ opettaja menee Rubyriciin plussan kautta
-+ opiskelija menee Rubyriciin A+:n kautta ja vertaisarvioi 5 muun tehtävät
-+ opiskelija menee plussan kautta Rubyriciin, pystyy katsomaan ja kommentoimaan muiden palautuksia
-
++ LTI-asetusten säätäminen kälissä
++ vastaus textareaan
 
 = Soon =
 

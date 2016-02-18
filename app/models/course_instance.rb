@@ -8,7 +8,7 @@ class CourseInstance < ActiveRecord::Base
   
   validates_presence_of :name
   validate :check_agree_terms
-  validates :lti_context_id, :uniqueness => { :scope => :lti_consumer, :message => "context ID already taken" }
+  validates :lti_context_id, :uniqueness => { :scope => :lti_consumer, :message => "context ID already taken", :allow_blank => true }
   
   belongs_to :pricing
   
