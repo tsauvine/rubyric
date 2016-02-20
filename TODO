@@ -36,17 +36,19 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- kuvatehtävän palautus 1 viikolle
-  - ensin palautus A+-protokollalla, palautuksesta pisteet
-  - "katso muiden palautuksia" LTI-launchilla
-- plain text -> pdf -konversion zoomaus
+- jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
+- näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
+- lisää tietokantaan tieto, onko thumbnail saatavissa
+- plain text-palautusten annotointi
+- plain text -> pdf -konversion default-zoom
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla
-- opettajalle thumbnail-näkymä
+- jos collaborative-moodissa ei ole muiden palautuksia, niin näytä 'Ei vielä palautuksia'
+- ScratchJR-kurssille mallirubriikki
+- ohjeistusta review-näkymään opiskelijoille
+
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
-+ LTI-asetusten säätäminen kälissä
-+ vastaus textareaan
 
 = Soon =
 

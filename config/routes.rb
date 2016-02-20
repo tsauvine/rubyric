@@ -123,7 +123,7 @@ Rubyric::Application.routes.draw do
   #match '/exercise/new/:instance' => 'exercises#new'
   match 'submit/:exercise' => 'submissions#new', :via => :get, :as => :submit
   match 'submit/:exercise' => 'submissions#create', :via => :post
-  match '/receive_email', to: 'submissions#receive_email', :via => [:get, :post]
+  match '/receive_email', to: 'submissions#receive_email', :via => :post
   
   match 'aplus/:exercise' => 'submissions#aplus_get', :via => :get
   match 'aplus/:exercise' => 'submissions#aplus_submit', :via => :post

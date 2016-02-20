@@ -188,9 +188,9 @@ class SubmissionsController < ApplicationController
     # Add user to course
     is_instructor = (params['roles']|| '').split(',').any? {|role| role.strip == 'Instructor'}
     if is_instructor
-      @exercise.course_instance.course.teachers << user unless @exercise.course_instance.course.teachers.include?(@user)
+      @exercise.course_instance.course.teachers << @user unless @exercise.course_instance.course.teachers.include?(@user)
     else
-      @exercise.course_instance.students << user unless @exercise.course_instance.students.include?(@user)
+      @exercise.course_instance.students << @user unless @exercise.course_instance.students.include?(@user)
     end
     
     logger.debug "A+ Submission successful"

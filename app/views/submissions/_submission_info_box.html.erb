@@ -1,7 +1,7 @@
 <div class="well">
   <h4>Submission:</h4>
   <p>
-    <%= link_to @submission.filename, @submission %><br />
+    <%= link_to @submission.filename, submission_path(@submission) %><br />
     <%=l @submission.created_at %><br />
   </p>
 

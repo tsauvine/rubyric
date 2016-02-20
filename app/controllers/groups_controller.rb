@@ -93,12 +93,6 @@ class GroupsController < ApplicationController
     @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax, :course_instance => @exercise.course_instance, :exercise => @exercise)
     @group_members = []
     
-#     if logged_in? && !@is_teacher
-#       member = GroupMember.new(:email => current_user.email)
-#       member.user = current_user
-#       @group_members << member
-#     end
-
     # Read params
     params['email'].each do |member_id, address|
       address.strip!
