@@ -53,17 +53,20 @@ class Submission < ActiveRecord::Base
     self.filename = @file_data.original_filename
   end
 
-  # Saves the file to the filesystem. This is called automatically after create
+  # Saves the file to the filesystem. This is called automatically after create.
+  # (This must be called after create, because we need to know the id.)
   def write_file
-    # This must be called after create, because we need to know the id.
+    #return unless @file_data
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
     FileUtils.makedirs(path)
 
-    if @file_data
-      File.open("#{path}/#{filename}", "wb") do |file|
+    File.open("#{path}/#{filename}", "wb") do |file|
+      if @file_data
         file.write(@file_data.read)
+      else
+        file.write(self.payload)
       end
     end
     
@@ -297,6 +300,8 @@ class Submission < ActiveRecord::Base
           return
         end
       end
+    else
+      submission.convert_plaintext_payload_to_pdf()
     end
   end
   

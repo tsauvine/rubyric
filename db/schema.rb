@@ -118,7 +118,7 @@ ActiveRecord::Schema.define(:version => 20160215004529) do
     t.string   "lti_context_id"
     t.string   "lti_resource_link_id"
     t.integer  "peer_review_goal"
-    t.string   "collaborative_mode",      :default => ""
+    t.string   "collaborative_mode"
     t.string   "submission_type"
   end
 

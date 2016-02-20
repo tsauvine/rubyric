@@ -12,15 +12,22 @@
       <% collaborative_group.submissions.each do |submission| %>
         <li>
           <% if submission.reviews.size > 0 %>
-            <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
-            
+            <% if submission.annotatable? %>
+              <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
+            <% else %>
+              <%= submission.filename %>
+            <% end %>
           <% else %>
             <%= link_to submission_path(submission) do %>
-              <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
+              <% if submission.annotatable? %>
+                <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
+              <% else %>
+                <%= submission.filename %>
+              <% end %>
             <% end %>
           <% end %>
           
-          <%= submission.payload %>
+          <%= truncate(submission.payload, :length => 256) %>
           
           <ul class="reviews">
             <% submission.reviews.each do |review| %>

@@ -38,8 +38,6 @@ näytä lti-kursseille tuloslistassa lti_user_id
 = Koodiaapinen =
 - jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
 - näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
-- lisää tietokantaan tieto, onko thumbnail saatavissa
-- plain text-palautusten annotointi
 - plain text -> pdf -konversion default-zoom
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla

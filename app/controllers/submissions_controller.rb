@@ -170,7 +170,13 @@ class SubmissionsController < ApplicationController
       return
     end
     
-    @submission.file = params[:file] unless params[:file].blank?
+    if params[:file].blank?
+      t = Time.now
+      @submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
+    else
+      @submission.file = params[:file]
+      @submission.extension = 'txt'
+    end
     @submission.payload = params[:payload]
     
     if @submission.save
@@ -247,7 +253,13 @@ class SubmissionsController < ApplicationController
       return
     end
     
-    @submission.file = params[:file] unless params[:file].blank?
+    if params[:file].blank?
+      t = Time.now
+      @submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
+      @submission.extension = 'txt'
+    else
+      @submission.file = params[:file]
+    end
     @submission.payload = params[:payload]
     
     if @submission.save

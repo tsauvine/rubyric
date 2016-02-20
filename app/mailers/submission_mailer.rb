@@ -54,8 +54,11 @@ class SubmissionMailer < ActionMailer::Base
       logger.info "No attachment"
       
       # Create a submission and put message body to payload
+      t = Time.now
       @submission = Submission.new(:exercise => @exercise, :group => @group)
       @submission.payload = email.body
+      @submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
+      @submission.extension = 'txt'
       @submission.save
     end
   end
