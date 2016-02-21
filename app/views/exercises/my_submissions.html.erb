@@ -23,8 +23,6 @@
       <% else %>
         <p class="hint"><%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %></p>
       <% end %>
-      
-      <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
     <% else %>
       <p class="hint"><%= t('.peer_review_submit_first') %></p>
     <% end %>
@@ -45,11 +43,16 @@
       </tbody>
     </table>
   <% end %>
+  
+  <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && @own_submission_count > 0 %>
+    <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
+  <% end %>
+
 <% end %>
 
 
 <!-- Viewable peer groups -->
-<% if @course_instance.has_student(current_user) && !@viewable_peer_groups.empty? %>
+<% if @course_instance.has_student(current_user) && !@viewable_peer_groups.empty? && @own_submission_count > 0 %>
   <div class="collaborative-assignments">
     <h2 class="large-gap"><%=t '.viewable_groups' %></h2>
 

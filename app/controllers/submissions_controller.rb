@@ -187,8 +187,6 @@ class SubmissionsController < ApplicationController
       if @exercise.collaborative_mode == 'review'
         if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
           AnnotationAssessment.create(:submission_id => @submission.id)
-        else
-          Review.create(:submission_id => @submission.id)
         end
       end
     else
@@ -276,8 +274,6 @@ class SubmissionsController < ApplicationController
       if @exercise.collaborative_mode == 'review'
         if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
           AnnotationAssessment.create(:submission_id => @submission.id)
-        else
-          Review.create(:submission_id => @submission.id)
         end
       end
     else
@@ -326,10 +322,10 @@ class SubmissionsController < ApplicationController
   # DELETE /submissions/1
   def destroy
     return access_denied unless @submission.group.has_member?(current_user) || @course.has_teacher(current_user) || is_admin?(current_user)
-    return access_denied unless @submission.reviews.empty?
+    #return access_denied unless @submission.reviews.empty?
 
-    log "delete_submission success #{@submission.id},#{@exercise.id}"
     @submission.destroy
+    log "delete_submission success #{@submission.id},#{@exercise.id}"
 
     redirect_to @exercise
   end

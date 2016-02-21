@@ -39,7 +39,7 @@
           </ul>
           
           <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
-            <%= link_to t('exercises.create_review'), review_submission_path(submission.id), :class => 'btn btn-mini' %>
+            <p><%= link_to t('exercises.create_review'), review_submission_path(submission.id), :class => 'btn btn-default btn-sm' %></p>
           <% end %>
         </div>
         <div class="clearfix"></div>

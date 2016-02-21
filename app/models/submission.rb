@@ -9,7 +9,6 @@ class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
   has_many :reviews, {:order => :id, :dependent => :destroy }
-  has_one :aplus_submission
 
   after_create :write_file
 
@@ -280,6 +279,8 @@ class Submission < ActiveRecord::Base
   def self.post_process(id)
     submission = Submission.find(id)
     
+    !non_annotatable_extensions = ['rkt']
+    
     # Try to recognize submission type
     unless submission.filename.blank?
       Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
@@ -290,7 +291,7 @@ class Submission < ActiveRecord::Base
         if parts.size < 1
           logger.error "file command failed: #{line}"
           return
-        elsif parts[1].include?('text')
+        elsif parts[1].include?('text') && !non_annotatable_extensions.include?(submission.extension)
           logger.info "Converting plain text to pdf"
           submission.convert_ascii_to_pdf()
         elsif parts[1].include?('PDF document')

@@ -20,9 +20,9 @@
           <% if @course_instance.exercises.size > 1 %>
             <li><%= link_to 'Move submission...', move_submission_path(submission) %></li>
           <% end %>
-          <% if submission.reviews.empty? %>
+          <!-- if submission.reviews.empty? -->
             <li><%= link_to 'Delete submission...', confirm_delete_submission_path(submission) %></li>
-          <% end %>
+          <!-- end -->
         </ul>
       </div>
       
