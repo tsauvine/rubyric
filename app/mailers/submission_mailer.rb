@@ -24,7 +24,7 @@ class SubmissionMailer < ActionMailer::Base
     @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax, :course_instance => @exercise.course_instance, :exercise => @exercise)
     @group_members = []
     
-    email.to.each do |address|
+    email.from.each do |address|
       address.strip!
       next if address.blank?
       
@@ -32,7 +32,7 @@ class SubmissionMailer < ActionMailer::Base
       logger.info "Adding group member #{address}"
       member.group = @group
       
-      member.user = @user if member.email == @user.email
+      member.user = @user if @user && member.email == @user.email
       
       @group_members << member
     end
