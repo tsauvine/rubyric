@@ -52,7 +52,7 @@
 
 
 <!-- Viewable peer groups -->
-<% if @course_instance.has_student(current_user) && !@viewable_peer_groups.empty? && @own_submission_count > 0 %>
+<% if @course_instance.has_student(current_user) && !@viewable_peer_groups.empty? %>
   <div class="collaborative-assignments">
     <h2 class="large-gap"><%=t '.viewable_groups' %></h2>
 

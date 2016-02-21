@@ -189,9 +189,14 @@ class SubmissionsController < ApplicationController
       log "submit success #{@submission.id},#{@exercise.id}"
       
       if @exercise.collaborative_mode == 'review'
+        logger.info "Collaborative mode (#{@exercise.collaborative_mode}) == 'review'"
+        logger.info "review mode (#{@exercise.review_mode})"
+        logger.info "annotatable (#{@submission.annotatable?})"
         if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
           AnnotationAssessment.create(:submission_id => @submission.id)
         end
+      else
+        logger.info "Collaborative mode (#{@exercise.collaborative_mode}) != 'review'"
       end
     else
       @status = 'error'
