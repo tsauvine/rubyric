@@ -38,19 +38,25 @@ class Submission < ActiveRecord::Base
   # Setter for the form's file field.
   def file=(file_data)
     @file_data = file_data
+    
+    if file_data.is_a?(Mail::Part)
+      filename = @file_data.filename
+    else
+      filename = @file_data.original_filename
+    end
 
     # Get the extension
-    tar = @file_data.original_filename.index('.tar.')
+    tar = filename.index('.tar.')
     if tar
-      self.extension = @file_data.original_filename.slice(tar + 1, @file_data.original_filename.length - tar - 1)
+      self.extension = filename.slice(tar + 1, filename.length - tar - 1)
     else
-      self.extension = @file_data.original_filename.split(".").last
+      self.extension = filename.split(".").last
     end
 
     # Save the original filename (ignore invalid byte sequences)
-    #self.filename = Iconv.conv('UTF-8//IGNORE', 'UTF-8', @file_data.original_filename) # not Rails 3 compatible
+    #self.filename = Iconv.conv('UTF-8//IGNORE', 'UTF-8', filename) # not Rails 3 compatible
     # TODO: check if utf-8 will cause problems
-    self.filename = @file_data.original_filename
+    self.filename = filename
   end
 
   # Saves the file to the filesystem. This is called automatically after create.
