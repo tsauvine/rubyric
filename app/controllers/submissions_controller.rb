@@ -365,17 +365,28 @@ class SubmissionsController < ApplicationController
     
     # Find exercise
     organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
-    @exercise = Exercise.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id], :lti_resource_link_id => params[:resource_link_id]).first
     
-    # TODO: if teacher, create exercise
+    @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
+    unless @course_instance
+      @heading =  "This LTI course is not configured"
+      logger.warn "LTI login failed. Could not find a course instance with lti_consumer=#{params['oauth_consumer_key']}, lti_context_id=#{params[:context_id]}"
+      render :template => "shared/error"
+      return false
+    end
     
+    @course = @course_instance.course
+    @is_assistant = @course_instance.has_assistant(current_user)
+    @is_teacher = @course.has_teacher(current_user)
+    I18n.locale = @course_instance.locale || I18n.locale
+    
+    @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id => params[:resource_link_id]).first
     unless @exercise
       @heading =  "This LTI exercise is not configured"
       render :template => "shared/error"
       return false
     end
-    load_course
-    I18n.locale = @course_instance.locale || I18n.locale
+    
+    # TODO: if teacher, create exercise
     
     # Find or create user, TODO: handle errors
     @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
