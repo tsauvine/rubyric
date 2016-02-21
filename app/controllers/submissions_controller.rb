@@ -177,9 +177,9 @@ class SubmissionsController < ApplicationController
     if params[:file].blank?
       t = Time.now
       @submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
+      @submission.extension = 'txt'
     else
       @submission.file = params[:file]
-      @submission.extension = 'txt'
     end
     @submission.payload = params[:payload]
     

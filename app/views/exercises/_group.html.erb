@@ -29,7 +29,7 @@
       <!-- Submission -->
       <span <%= submission.late?(@exercise) ? 'class="late"'.html_safe : nil %>><%=l submission.created_at %></span>
       <% unless submission.filename.blank? %>
-        (<%= link_to "#{submission.extension}", submission_path(submission.id), :title => submission.filename %>)
+        (<%= link_to submission.extension || submission.filename, submission_path(submission.id), :title => submission.filename %>)
       <% end %>
     </td>
 
