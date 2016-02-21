@@ -25,7 +25,13 @@
       >
       <div id="submission-pages" data-bind="foreach: submission_pages">
         <div class="submission-page">
-          <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+          <% if @submission.has_html_view? %>
+            <div class="html-view">
+              <%= @submission.html_view.html_safe %>
+            </div>
+          <% else %>
+            <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+          <% end %>
           
           <!-- ko foreach: annotations -->
             <div class="annotation" data-bind="position: screenPosition, click: clickAnnotation, clickBubble: false, css: {minimized: minimized()}">
