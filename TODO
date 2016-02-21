@@ -36,7 +36,6 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
 - näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla
@@ -44,6 +43,7 @@ näytä lti-kursseille tuloslistassa lti_user_id
 - ScratchJR-kurssille mallirubriikki
 - ohjeistusta review-näkymään opiskelijoille
 - plain text -> pdf -konversion default-zoom
++ jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
 
 - drag'n'drop-palautus
 - varoita, jos yrittää mennä kurssille vanhalla versiolla
