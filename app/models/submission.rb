@@ -110,6 +110,14 @@ class Submission < ActiveRecord::Base
     "#{SUBMISSIONS_PATH}/#{exercise_id}/#{id}-thumbnail.jpg"
   end
 
+  def has_html_view?
+    conversion == 'html'
+  end
+  
+  def html_view
+    return IO.read(converted_html_filename)
+  end
+  
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)
@@ -292,8 +300,8 @@ class Submission < ActiveRecord::Base
           logger.error "file command failed: #{line}"
           return
         elsif parts[1].include?('text') && !non_annotatable_extensions.include?(submission.extension)
-          logger.info "Converting plain text to pdf"
-          submission.convert_ascii_to_pdf()
+          logger.info "Converting plain text to html"
+          submission.convert_ascii_to_html()
         elsif parts[1].include?('PDF document')
           logger.info "Post processing pdf"
           submission.postprocess_pdf()
@@ -396,7 +404,7 @@ class Submission < ActiveRecord::Base
     self.save()
   end
   
-  def convert_ascii_to_pdf
+  def convert_ascii_to_html
     # Syntax hilighting
     command = "pygmentize -O full,linespans=line -f html -o #{converted_html_filename} #{self.full_filename}"
     if !system(command)
@@ -409,15 +417,17 @@ class Submission < ActiveRecord::Base
     end
   
     # Convert to PDF
-    command = "wkhtmltopdf.sh -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
-    logger.info command
-    if !system(command)
-      logger.warn "wkhtmltopdf is unable to convert #{converted_html_filename} to PDF"
-      return
-    end
+#     command = "wkhtmltopdf.sh -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
+#     logger.info command
+#     if !system(command)
+#       logger.warn "wkhtmltopdf is unable to convert #{converted_html_filename} to PDF"
+#       return
+#     end
   
-    self.conversion = 'pdf'
-    self.postprocess_pdf()
+    self.conversion = 'html'
+    self.annotatable = true
+    self.save()
+    #self.postprocess_pdf()
   end
   
   def convert_doc_to_pdf()

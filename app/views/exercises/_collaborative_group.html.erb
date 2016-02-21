@@ -32,9 +32,9 @@
             <ul class="reviews">
               <% submission.reviews.each do |review| %>
                 <% if @exercise.collaborative_mode == 'review' && submission.annotatable? %>
-                  <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises') %></li>
+                  <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-default' %></li>
                 <% else %>
-                  <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %></li>
+                  <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-default' %></li>
                 <% end %>
               <% end %>
             </ul>

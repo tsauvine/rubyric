@@ -218,7 +218,8 @@ class SubmissionPage
     @alt = ko.observable("Page #{@pageNumber + 1}")
     @nextPage = undefined
     @width = ko.observable()
-    @pageWidth = ko.observable(@annotationEditor.page_width * 45.0)
+    @pageWidth = ko.observable()
+    @pageWidth(@annotationEditor.page_width * 45.0) if @annotationEditor.page_width?
     @containerWidth = ko.observable()
     @height = ko.observable()
     
@@ -308,7 +309,7 @@ class Annotation
     screenPosition = {x: pagePosition.x * @zoom, y: pagePosition.y * @zoom} if !screenPosition && pagePosition
     
     @pagePosition = ko.observable(pagePosition || {x: 0, y: 0})
-    @minimized(true) if @pagePosition().x < 1.0 * @submissionPage.pageWidth()
+    @minimized(true) if !@submissionPage.pageWidth()? || @pagePosition().x < 1.0 * @submissionPage.pageWidth()
     @screenPosition = ko.observable(screenPosition || {x: 0, y: 0})
     this.limitCoordinates()
     
@@ -346,7 +347,7 @@ class Annotation
     pagePos = @pagePosition()
     pageWidth = @submissionPage.pageWidth()
     
-    return if pagePos.x <= pageWidth + 8 && pagePos.x >= 0
+    return if !pageWidth? || pagePos.x <= pageWidth + 8 && pagePos.x >= 0
     
     # Limit x
     pagePos.x = pageWidth + 7 if pagePos.x > pageWidth + 8
@@ -378,16 +379,18 @@ class @AnnotationEditor extends Rubric
     @element = $('#annotation-editor')
     @submission_url = @element.data('submission-url')
     @page_count = @element.data('page-count')
-    @page_width = @element.data('page-width')
-    @page_height = @element.data('page-height')
+    @page_width = parseFloat(@element.data('page-width'))
+    @page_height = parseFloat(@element.data('page-height'))
+    @page_width = undefined if isNaN(@page_width)
+    @page_height = undefined if isNaN(@page_height)
     @group_token = @element.data('group-token')
     initialPageId = @element.data('initial-rubric-page')
     initialZoom = @element.data('initial-zoom')
     
     rawPageSizes = $('#page_sizes').val()
     pageSizes = $.parseJSON(rawPageSizes) if rawPageSizes.length > 0
-    console.log "Raw page sizes: #{pageSizes}"
-    console.log "Page sizes:"
+    #console.log "Raw page sizes: #{pageSizes}"
+    #console.log "Page sizes:"
   
 #     @zoom_options = [
 #       {value: 0.25, text: "25 %"},

@@ -6,11 +6,13 @@
     <% unless @exercise.new_record? %>
       <div class="pull-right"><%= link_to 'Back to menu', exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}") %></div>
     <% end %>
-    <div>
-      Zoom:
-      <!--select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select-->
-      <input class="input-mini" data-bind="value: zoom_selection, valueUpdate: 'input', event: { keypress: $root.zoomKeypress }" /> <!-- valueUpdate: 'input' -->
-    </div>
+    <% unless @submission.has_html_view? %>
+      <div>
+        Zoom:
+        <!--select class="input-small" data-bind="value: zoom_selection, options: zoom_options, optionsText: 'text'"></select-->
+        <input class="input-mini" data-bind="value: zoom_selection, valueUpdate: 'input', event: { keypress: $root.zoomKeypress }" /> <!-- valueUpdate: 'input' -->
+      </div>
+    <% end %>
   </div>
 
   <div class="rubric-container">
@@ -61,23 +63,25 @@
           <% end %>
         </div>
         
-        <% if !@exercise.new_record? && !@exercise.anonymous_submissions %>
+        <% if !@exercise.new_record? %>
           <div class="row-fluid">
             <div class="well">
               <!-- Group -->
-              <h3>Group</h3>
+              <% unless @exercise.anonymous_submissions %>
+                <h3>Group</h3>
 
-              <table class="table">
-                <tbody>
-                  <% @review.submission.group.group_members.each do |member| %>
-                    <tr>
-                      <td><%= member.studentnumber %></td>
-                      <td><%= member.name %></td>
-                      <td><%= member.email %></td>
-                    </tr>
-                  <% end %>
-                </tbody>
-              </table>
+                <table class="table">
+                  <tbody>
+                    <% @review.submission.group.group_members.each do |member| %>
+                      <tr>
+                        <td><%= member.studentnumber %></td>
+                        <td><%= member.name %></td>
+                        <td><%= member.email %></td>
+                      </tr>
+                    <% end %>
+                  </tbody>
+                </table>
+              <% end %>
               
               <h3>Submission</h3>
               <% unless @exercise.new_record? %>
@@ -269,7 +273,13 @@
   
   <div data-bind="foreach: submission_pages">
     <div class="submission-page" data-bind="droppable: {drop: $root.dropPhrase}, click: clickCreateAnnotation, style: { minWidth: containerWidth() }">
-      <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+      <% if @submission.has_html_view? %>
+        <div class="html-view">
+          <%= @submission.html_view.html_safe %>
+        </div>
+      <% else %>
+        <img data-bind="attr: { src: src, alt: alt }, style: { minWidth: width(), minHeight: height() }, onload: onLoad" />
+      <% end %>
       
       <!-- ko foreach: annotations -->
         <div class="annotation" data-bind="position: screenPosition, droppable: {drop: $root.dropPhraseToAnnotation}, css: {editorActive: gradeEditorActive() || contentEditorActive(), minimized: minimized() && !gradeEditorActive() && !contentEditorActive() }, click: clickAnnotation, clickBubble: false">
