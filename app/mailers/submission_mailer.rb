@@ -4,10 +4,13 @@ class SubmissionMailer < ActionMailer::Base
     
     # Find exercise by 'to' address
     begin
-      to_parts = email.to.split('@')
-      logger.info "Email submission to (#{to_parts[0]})"
-      exercise_id = Integer(to_parts[0])
-      @exercise = Exercise.find(exercise_id)
+      email.to.each do |address|
+        to_parts = address.split('@')
+        logger.info "Email submission to (#{to_parts[0]})"
+        exercise_id = Integer(to_parts[0])
+        @exercise = Exercise.where(:id => exercise_id).first
+        break if @exercise
+      end
     rescue
       logger.warn("Cannot find exercise (#{to_parts})")
       return
@@ -15,7 +18,7 @@ class SubmissionMailer < ActionMailer::Base
     logger.info "Found exercise #{@exercise.id}"
     
     # Find user by email
-    @user = User.find_by_email(email.from)
+    @user = User.find_by_email(email.from.first)
     
     # Create group
     @group = Group.new(:min_size => @exercise.groupsizemin, :max_size => @exercise.groupsizemax, :course_instance => @exercise.course_instance, :exercise => @exercise)
@@ -46,7 +49,8 @@ class SubmissionMailer < ActionMailer::Base
         logger.info "Attachment:"
         #logger.info attachment
         
-        @submission = Submission.new(:exercise => @exercise, :group => @group)
+        submission = Submission.new(:exercise => @exercise, :group => @group)
+        submission.payload = email.body
         submission.file = attachment
         submission.save
       end
@@ -55,11 +59,11 @@ class SubmissionMailer < ActionMailer::Base
       
       # Create a submission and put message body to payload
       t = Time.now
-      @submission = Submission.new(:exercise => @exercise, :group => @group)
-      @submission.payload = email.body
-      @submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
-      @submission.extension = 'txt'
-      @submission.save
+      submission = Submission.new(:exercise => @exercise, :group => @group)
+      submission.payload = email.body
+      submission.filename = "#{t.year}-#{t.month}-#{t.day}.txt"
+      submission.extension = 'txt'
+      submission.save
     end
   end
 end
