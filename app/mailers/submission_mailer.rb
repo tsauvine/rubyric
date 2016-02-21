@@ -12,7 +12,7 @@ class SubmissionMailer < ActionMailer::Base
         break if @exercise
       end
     rescue
-      logger.warn("Cannot find exercise (#{to_parts})")
+      logger.warn("Cannot find exercise (#{email.to})")
       return
     end
     logger.info "Found exercise #{@exercise.id}"

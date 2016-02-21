@@ -184,7 +184,13 @@ class SubmissionsController < ApplicationController
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
       
-      AnnotationAssessment.create(:submission_id => @submission.id) if @exercise.collaborative_mode == 'review'
+      if @exercise.collaborative_mode == 'review'
+        if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
+          AnnotationAssessment.create(:submission_id => @submission.id)
+        else
+          Review.create(:submission_id => @submission.id)
+        end
+      end
     else
       @status = 'error'
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
@@ -267,7 +273,13 @@ class SubmissionsController < ApplicationController
       flash[:success] = t('submissions.new.submission_received')
       log "submit success #{@submission.id},#{@exercise.id}"
       
-      AnnotationAssessment.create(:submission_id => @submission.id) if @exercise.collaborative_mode == 'review'
+      if @exercise.collaborative_mode == 'review'
+        if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
+          AnnotationAssessment.create(:submission_id => @submission.id)
+        else
+          Review.create(:submission_id => @submission.id)
+        end
+      end
     else
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"

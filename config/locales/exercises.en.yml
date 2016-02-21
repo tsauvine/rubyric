@@ -18,6 +18,7 @@ en:
       view_collaborative_feedback: 'View feedback'
       peer_review_hint: "Each students' task is to conduct %{peer_review_count} peer reviews."
       peer_review_hint_singular: "Each students' task is to conduct a peer review."
+      peer_review_submit_first: "You must submit your own assignment before conducting peer reviews."
       new_submission_button: "New submission"
       no_submissions: "No submissions to this assignment"
       new_peer_review: "Create new peer review"

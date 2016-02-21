@@ -17,13 +17,17 @@
   <h2><%=t '.reviews' %></h2>
   
   <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 %>
-    <% if @exercise.peer_review_goal == 1 %>
-      <p class="hint"><%= t('.peer_review_hint_singular') %></p>
+    <% if @own_submission_count > 0 %>
+      <% if @exercise.peer_review_goal == 1 %>
+        <p class="hint"><%= t('.peer_review_hint_singular') %></p>
+      <% else %>
+        <p class="hint"><%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %></p>
+      <% end %>
+      
+      <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
     <% else %>
-      <p class="hint"><%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %></p>
+      <p class="hint"><%= t('.peer_review_submit_first') %></p>
     <% end %>
-    
-    <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
   <% end %>
 
   <% unless @assigned_groups.empty? %>
