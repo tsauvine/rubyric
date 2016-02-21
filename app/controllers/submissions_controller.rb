@@ -23,7 +23,11 @@ class SubmissionsController < ApplicationController
           @heading = 'File not found'
           render :template => "shared/error"
         else
-          send_file @submission.full_filename, :type => Mime::Type.lookup_by_extension(@submission.extension.downcase) || 'application/octet-stream', :filename => filename
+          mime_type = nil
+          mime_type = Mime::Type.lookup_by_extension(@submission.extension.downcase) unless @submission.extension.blank?
+          mime_type ||= 'application/octet-stream'
+          
+          send_file @submission.full_filename, :type => mime_type, :filename => filename
           log "download_submission #{@submission.id},#{@exercise.id}"
         end
       end
