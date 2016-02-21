@@ -310,6 +310,10 @@ class Submission < ActiveRecord::Base
     else
       submission.convert_plaintext_payload_to_pdf()
     end
+    
+    if submission.exercise.collaborative_mode == 'review' && ['annotation', 'exam'].include?(submission.exercise.review_mode) && submission.annotatable?
+      AnnotationAssessment.create(:submission_id => submission.id)
+    end
   end
   
   def postprocess_pdf

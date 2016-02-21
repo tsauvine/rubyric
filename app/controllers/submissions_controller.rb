@@ -187,17 +187,6 @@ class SubmissionsController < ApplicationController
       logger.debug "Submission accepted"
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
-      
-      if @exercise.collaborative_mode == 'review'
-        logger.info "Collaborative mode (#{@exercise.collaborative_mode}) == 'review'"
-        logger.info "review mode (#{@exercise.review_mode})"
-        logger.info "annotatable (#{@submission.annotatable?})"
-        if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
-          AnnotationAssessment.create(:submission_id => @submission.id)
-        end
-      else
-        logger.info "Collaborative mode (#{@exercise.collaborative_mode}) != 'review'"
-      end
     else
       @status = 'error'
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
@@ -279,12 +268,6 @@ class SubmissionsController < ApplicationController
       logger.debug "Submission accepted"
       flash[:success] = t('submissions.new.submission_received')
       log "submit success #{@submission.id},#{@exercise.id}"
-      
-      if @exercise.collaborative_mode == 'review'
-        if ['annotation', 'exam'].include?(@exercise.review_mode) && @submission.annotatable?
-          AnnotationAssessment.create(:submission_id => @submission.id)
-        end
-      end
     else
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
