@@ -82,7 +82,7 @@
               <h3>Submission</h3>
               <% unless @exercise.new_record? %>
                 <% unless @submission.extension.blank? %>
-                  <%= link_to "#{@submission.filename}", @submission %>
+                  <%= link_to "#{@submission.filename}", submission_path(@submission) %>
                   <small>(<%=l @submission.created_at %>)</small>
                 <% end %>
               <% else %>

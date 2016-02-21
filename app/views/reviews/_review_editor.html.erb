@@ -51,7 +51,7 @@
         <% unless @exercise.new_record? %>
           <% unless @submission.filename.blank? %>
             <p>
-              <%= link_to "#{@submission.filename}", @submission %>
+              <%= link_to "#{@submission.filename}", submission_path(@submission) %>
               <small>(<%=l @submission.created_at %>)</small>
             </p>
           <% end %>
