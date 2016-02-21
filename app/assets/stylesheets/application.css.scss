@@ -578,6 +578,35 @@ p.feedback-preview {
 
 }
 
+.collaborative-assignments {
+  h3 {
+    margin: 0em 0em 0em 0em;
+  }
+  
+  .submission-thumbnail {
+    margin: 0em 1em 1em 0em;
+  }
+  
+  ul {
+    margin-left: 1em;
+  }
+  
+  img {
+    margin: 0px;
+  }
+  
+  ul.reviews {
+    display: inline;
+    margin: 0px;
+    padding: 0px;
+    
+    li {
+      display: inline;
+      margin: 0em 0.5em;
+    }
+  }
+}
+
 
 #exercise-manager-frontpage {
   td {

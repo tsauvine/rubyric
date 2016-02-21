@@ -664,10 +664,14 @@ p.feedback-preview {
 
 .collaborative-assignments {
   h3 {
-    margin: 1em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
   }
   ul {
     margin-left: 1em;
+  }
+  
+  img {
+    margin: 0em 1em 0em 0em;
   }
   
   ul.reviews {

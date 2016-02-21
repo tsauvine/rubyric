@@ -6,6 +6,7 @@ fi:
   exercise_settings_heading: "Harjoituksen asetukset"
 
   exercises:
+    create_review: 'Luo arvostelu'
     my_submissions:
       my_submissions: "Omat palautukset"
       submissions: "Palautukset"

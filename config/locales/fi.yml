@@ -15,6 +15,7 @@ fi:
   Reviewer: 'Arvioija'
   Grade: 'Arvosana'
   collaborative_review: 'Palaute'
+  anonymous_review: 'Palaute'
   Feedback_available_at: 'Voit katsoa palautetta osoitteessa'
 
  # Used in array.to_sentence.

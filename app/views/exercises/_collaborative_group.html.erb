@@ -8,39 +8,43 @@
     <% end %>
 
     <!-- Reviews -->
-    <ul class="submissions list-unstyled">
+    <div class="submissions list-unstyled">
       <% collaborative_group.submissions.each do |submission| %>
-        <li>
-          <% if submission.reviews.size > 0 %>
-            <% if submission.annotatable? %>
-              <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
-            <% else %>
-              <%= submission.filename %>
-            <% end %>
-          <% else %>
-            <%= link_to submission_path(submission) do %>
-              <% if submission.annotatable? %>
+        <!-- Thumbnail -->
+        <div class="submission-thumbnail pull-left">
+          <% if submission.annotatable? %>
+            <% if submission.reviews.size > 0 %>
                 <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
-              <% else %>
-                <%= submission.filename %>
+            <% else %>
+              <%= link_to submission_path(submission) do %>
+                  <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
               <% end %>
             <% end %>
           <% end %>
           
-          <%= truncate(submission.payload, :length => 256) %>
+          <div class="filename"><%= link_to submission.filename, submission_path(submission) %></div>
+        </div>
+        
+        <div>
+          <div class="payload"><%= truncate(submission.payload, :length => 256) %></div>
           
           <ul class="reviews">
             <% submission.reviews.each do |review| %>
-              <% next if review.user == current_user %>
-              <% if @exercise.collaborative_mode == 'review' %>
+              <% if @exercise.collaborative_mode == 'review' && submission.annotatable? %>
                 <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises') %></li>
               <% else %>
                 <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises') %></li>
               <% end %>
             <% end %>
           </ul>
-        </li>
+          
+          <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
+            <%= link_to t('exercises.create_review'), review_submission_path(submission.id), :class => 'btn btn-mini' %>
+          <% end %>
+        </div>
+        <div class="clearfix"></div>
       <% end %>
-    </ul>
+    </div>
+  
   </div>
 </div>

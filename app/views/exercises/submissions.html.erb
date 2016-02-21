@@ -75,6 +75,7 @@
   </h2>
   
   <% if params[:view] == 'thumbnails' %>
+    <div class="collaborative-assignments">
       <%= render :partial => 'collaborative_group', :collection => @groups %>
     </div>
   <% else %>

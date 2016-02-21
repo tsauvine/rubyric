@@ -283,7 +283,7 @@ class SubmissionsController < ApplicationController
 
   # Assign to current user and start review
   def review
-    return access_denied unless @course.has_teacher(current_user) || @submission.group.has_reviewer?(current_user)
+    return access_denied unless @course.has_teacher(current_user) || @submission.group.has_reviewer?(current_user) || (@exercise.collaborative_mode == 'review' && (@course_instance.has_student(current_user) || @course_instance.has_assistant(current_user)))
 
     review = @submission.assign_to(current_user)
 

@@ -6,6 +6,7 @@ en:
   exercise_settings_heading: "Assignment settings"
 
   exercises:
+    create_review: 'Create review'
     my_submissions:
       my_submissions: "My submissions"
       submissions: "Submissions"

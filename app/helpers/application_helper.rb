@@ -7,7 +7,9 @@ module ApplicationHelper
   end
 
   def reviewer_name(review)
-    if review.user
+    if @exercise && @exercise.anonymous_graders
+      t 'anonymous_review'
+    elsif review.user
       review.user.name
     else
       t 'collaborative_review'
