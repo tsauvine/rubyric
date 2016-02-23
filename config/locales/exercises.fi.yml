@@ -7,7 +7,7 @@ fi:
 
   exercises:
     create_review: 'Luo arvostelu'
-    create_review: 'Kommentoi'
+    create_comment: 'Kommentoi'
     my_submissions:
       my_submissions: "Omat palautukset"
       submissions: "Palautukset"
