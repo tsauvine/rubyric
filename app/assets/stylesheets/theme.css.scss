@@ -4,6 +4,10 @@
 }
 */
 
+a .glyphicon {
+  color: black;
+}
+
 /* Bootstrap navbar tweaks */
 .navbar, .navbar-inner {
   background: #eee image-url("navbar.png") repeat-x;
@@ -68,6 +72,27 @@
   color: #fff;
 }
 
+ul.nav-stacked {
+  padding: 0px;
+
+  & > li > a {
+    padding: 4px 15px;
+    border-radius: 0px;
+  }
+  
+  .nav-header {
+    color: #888;
+    font-variant-caps: small-caps;
+    font-weight: bold;
+    padding: 6px 15px;
+    margin-top: 15px;
+  }
+  
+  .glyphicon {
+    color: #444;
+    margin-right: 4px;
+  }
+}
 
 table.pricing {
   width: auto;

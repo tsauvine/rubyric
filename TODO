@@ -36,12 +36,13 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 näytä lti-kursseille tuloslistassa lti_user_id
 
 = Koodiaapinen =
-- kuvan ympärille tyhjää, että pystyy lisäämään annotaatioita
-- näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
+- ohjeistusta review-näkymään opiskelijoille
 - pisteet takaisin plussaan A+-protokollalla
 - pisteet takaisin plussaan LTI-protokollalla
 - jos collaborative-moodissa ei ole muiden palautuksia, niin näytä 'Ei vielä palautuksia'
-- ohjeistusta review-näkymään opiskelijoille
++ näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
++ thumbnail-viewssä \n -> <br />
++ thumbnail-errorit
 + palautuksen voi poistaa, vaikka on arvionteja
 + jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
 

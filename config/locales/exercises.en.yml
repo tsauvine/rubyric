@@ -7,13 +7,14 @@ en:
 
   exercises:
     create_review: 'Create review'
+    create_comment: 'Create comment'
     my_submissions:
       my_submissions: "My submissions"
       submissions: "Submissions"
       reviews: "Reviews"
       viewable_groups: "Others' submissions"
       viewable_groups_instructions_view: "View others' submissions."
-      viewable_groups_instructions_review: "View others' submissions and give feedback."
+      viewable_groups_instructions_review: "View and comment others' submissions."
       view_feedback_from: "View feedback (%{name})"
       view_collaborative_feedback: 'View feedback'
       peer_review_hint: "Each students' task is to conduct %{peer_review_count} peer reviews."

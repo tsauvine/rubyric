@@ -1,4 +1,5 @@
-<div class="col-lg-4 col-md-6">
+
+<div class="col-lg-4 col-sm-6 col-xs-12">
   <div class="group well" id="group<%= collaborative_group.id %>">
     <!-- Name -->
     <% if @exercise.anonymous_submissions %>
@@ -9,11 +10,15 @@
 
     <!-- Reviews -->
     <div class="submissions list-unstyled">
-      <% collaborative_group.submissions.each do |submission| %>
+      <% collaborative_group.submissions.each_with_index do |submission, index| %>
+        <% if index > 0 %>
+          <hr />
+        <% end %>
+        
         <div class="submission">
           <!-- Thumbnail -->
           <div class="submission-thumbnail pull-left">
-            <% if submission.annotatable? %>
+            <% if submission.conversion == 'image' %>
               <% if submission.reviews.size > 0 %>
                   <%= image_tag thumbnail_submission_path(submission), :alt => submission.filename %>
               <% else %>
@@ -26,22 +31,35 @@
             <div class="filename"><%= link_to submission.filename, submission_path(submission) %></div>
           </div>
           
-          <div>
-            <div class="payload"><%= truncate(submission.payload, :length => 256) %></div>
+          <div class="pull-left">
+            <% unless submission.payload.blank? %>
+              <div class="payload"><%= truncate(submission.payload, :length => 256).gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></div>
+            <% end %>
             
             <ul class="reviews">
               <% submission.reviews.each do |review| %>
-                <% if @exercise.collaborative_mode == 'review' && submission.annotatable? %>
-                  <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-default' %></li>
+                <% if @exercise.collaborative_mode == 'review' && review.user.nil? %>
+                  <li><%= link_to reviewer_name(review), edit_review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-primary' %></li>
                 <% else %>
-                  <li><%= link_to reviewer_name(review), review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-default' %></li>
+                  <li><%
+                    if review.feedback.blank?
+                      tooltip = t('exercises.my_submissions.view_collaborative_feedback')
+                    else
+                      tooltip = truncate(review.feedback || '', :length => 256).gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe
+                    end
+                    %>
+                    <%= link_to review_path(:id => review.id, :ref => 'exercises'), :class => 'btn btn-sm btn-default', 'data-toggle'=>"popover", 'data-content'=>tooltip, :title => reviewer_name(review) do %>
+                      <span class="glyphicon glyphicon-user"></span>
+                    <% end %>
+                  </li>
                 <% end %>
+              <% end %>
+              <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
+                <li><%= link_to t('exercises.create_comment'), review_submission_path(submission.id), :class => 'btn btn-primary btn-sm' %></li>
               <% end %>
             </ul>
             
-            <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
-              <p><%= link_to t('exercises.create_review'), review_submission_path(submission.id), :class => 'btn btn-default btn-sm' %></p>
-            <% end %>
+            
           </div>
           <div class="clearfix"></div>
         </div>

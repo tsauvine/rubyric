@@ -7,13 +7,14 @@ fi:
 
   exercises:
     create_review: 'Luo arvostelu'
+    create_review: 'Kommentoi'
     my_submissions:
       my_submissions: "Omat palautukset"
       submissions: "Palautukset"
       reviews: "Arvostelut"
       viewable_groups: "Muiden palautukset"
       viewable_groups_instructions_view: "Katsele muiden palautuksia."
-      viewable_groups_instructions_review: "Katsele muiden palautuksia ja anna palautetta."
+      viewable_groups_instructions_review: "Katsele ja kommentoi muiden palautuksia."
       view_feedback_from: "Katso palautetta (%{name})"
       view_collaborative_feedback: 'Katso palautetta'
       peer_review_hint: "Jokaisen opiskelijan tehtävänä on tehdä %{peer_review_count} vertaisarviointia."
