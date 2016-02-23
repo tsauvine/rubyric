@@ -293,7 +293,7 @@ class Submission < ActiveRecord::Base
     unless submission.filename.blank?
       Open3.popen3('file', submission.full_filename()) do |stdin, stdout, stderr, wait_thr|
         line = stdout.gets
-        parts = line.split(':')
+        parts = line.strip.split(':')
         logger.debug "File type: (#{parts[1]})"
         
         if parts.size < 1
@@ -301,7 +301,7 @@ class Submission < ActiveRecord::Base
           return
         elsif parts[1].include?('text') && !non_annotatable_extensions.include?(submission.extension)
           logger.info "Converting plain text to html"
-          submission.convert_ascii_to_html()
+          submission.convert_ascii_to_html(parts[1])
         elsif parts[1].include?('PDF document')
           logger.info "Post processing pdf"
           submission.postprocess_pdf()
@@ -315,11 +315,11 @@ class Submission < ActiveRecord::Base
           return
         end
       end
-    else
-      submission.convert_plaintext_payload_to_pdf()
+#     else
+#       submission.convert_plaintext_payload_to_pdf()
     end
     
-    if submission.exercise.collaborative_mode == 'review' && ['annotation', 'exam'].include?(submission.exercise.review_mode) && submission.annotatable?
+    if submission.exercise.collaborative_mode == 'review' && ['annotation', 'exam'].include?(submission.exercise.review_mode) && submission.annotatable? && !AnnotationAssessment.exists?(:submission_id => submission.id, :user_id => nil)
       AnnotationAssessment.create(:submission_id => submission.id)
     end
   end
@@ -404,18 +404,36 @@ class Submission < ActiveRecord::Base
     self.save()
   end
   
-  def convert_ascii_to_html
+  def convert_ascii_to_html(file_type)
+    parts = file_type.split(',')
+    
+    enable_syntax_highlight = !parts[0].include?('text')
+    
     # Syntax hilighting
-    command = "pygmentize -O full,linespans=line -f html -o #{converted_html_filename} #{self.full_filename}"
-    if !system(command)
-      # Pygmentize failed. Try again with plaintext lexer.
-      command = "pygmentize -f html -l text -o #{converted_html_filename} #{self.full_filename}"
+    if enable_syntax_highlight
+      command = "pygmentize -O linespans=line -f html -o #{converted_html_filename} #{self.full_filename}"
       if !system(command)
-        logger.warn "pygmentize is unable to convert #{self.full_filename} to HTML"
-        return false
+        # Pygmentize failed. Try again with plaintext lexer.
+        enable_syntax_highlight = false
+#         command = "pygmentize -f html -l text -o #{converted_html_filename} #{self.full_filename}"
+#         if !system(command)
+#           logger.warn "pygmentize is unable to convert #{self.full_filename} to HTML"
+#           return false
+#         end
       end
     end
-  
+
+    unless enable_syntax_highlight
+      File.open(converted_html_filename, "w") do |file|
+        width = 80
+        content = IO.read(self.full_filename).gsub('<', '&lt;').gsub('>', '&gt;')
+        content = content.scan(/\S.{0,#{width}}\S(?=\s|$)|\S+/)
+        content = '<div class="highlight"><pre>' + content.join("\n") + '</pre></div>'
+        
+        file.write(content)
+      end
+    end
+    
     # Convert to PDF
 #     command = "wkhtmltopdf.sh -d 50 -B 0mm -L 0mm -R 0mm -T 0mm #{converted_html_filename} #{converted_pdf_filename}"
 #     logger.info command
