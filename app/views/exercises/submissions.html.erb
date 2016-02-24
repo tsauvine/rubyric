@@ -1,6 +1,12 @@
 <!-- exercises/submissions.html.erb -->
 <% content_for :javascript do %>
   <%= javascript_include_tag 'submissions.js' %>
+  <%= javascript_include_tag 'bootstrap.js' %>
+  <script>
+    $(function () {
+      $('[data-toggle="popover"]').popover({'trigger': 'hover', 'placement': 'top', 'html': true})
+    })
+  </script>
 <% end %>
 
 <div class="page-header">
@@ -68,8 +74,8 @@
     Submissions
     <% unless @exercise.collaborative_mode.blank? %>
       <div class="btn-group">
-        <%= link_to exercise_path(@exercise),                        :class => "btn #{params[:view] != 'thumbnails' ? 'active' : ''}", :title => "List view" do %><i class="icon-align-justify"></i><% end %>
-        <%= link_to exercise_path(@exercise, :view => 'thumbnails'), :class => "btn #{params[:view] == 'thumbnails' ? 'active' : ''}",        :title => "Thumbnail view" do %><i class="icon-th"></i><% end %>
+        <%= link_to exercise_path(@exercise),                        :class => "btn btn-default #{params[:view] != 'thumbnails' ? 'active' : ''}", :title => "List view" do %><span class="glyphicon glyphicon-align-justify"></span><% end %>
+        <%= link_to exercise_path(@exercise, :view => 'thumbnails'), :class => "btn btn-default #{params[:view] == 'thumbnails' ? 'active' : ''}", :title => "Thumbnail view" do %><span class="glyphicon glyphicon-th"></span><% end %>
       </div>
     <% end %>
   </h2>
@@ -97,9 +103,9 @@
             <td><%= @groups.size %> groups
             </td>
             <td>
-              <button class="btn" id="reviews-select-all" onclick="return false;"> Select all</button>
-              <button class="btn" id="reviews-select-finished" onclick="return false;">Select finished</button>
-              <button class="btn" id="reviews-select-none" onclick="return false;">Select none</button>
+              <button class="btn btn-default" id="reviews-select-all" onclick="return false;"> Select all</button>
+              <button class="btn btn-default" id="reviews-select-finished" onclick="return false;">Select finished</button>
+              <button class="btn btn-default" id="reviews-select-none" onclick="return false;">Select none</button>
             </td>
             <td></td>
             <td></td>

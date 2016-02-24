@@ -347,6 +347,7 @@ class Annotation
     pagePos = @pagePosition()
     pageWidth = @submissionPage.pageWidth()
     
+    return
     return if !pageWidth? || pagePos.x <= pageWidth + 8 && pagePos.x >= 0
     
     # Limit x

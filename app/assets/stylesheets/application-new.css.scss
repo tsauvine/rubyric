@@ -657,9 +657,13 @@ p.feedback-preview {
     font-weight: bold;
   }
 
-  .spacer {
+  .spacer td {
+    padding: 1px;
   }
 
+  .submissions_table .btn {
+    margin: 0px;
+  }
 }
 
 .collaborative-assignments {
@@ -670,7 +674,7 @@ p.feedback-preview {
     margin-left: 1em;
   }
   
-  img {
+  .submission-thumbnail {
     margin: 0em 1em 0em 0em;
   }
   
