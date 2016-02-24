@@ -10,6 +10,9 @@
     <%= f.hidden_field :grade %>
     <%= hidden_field_tag :rubric_payload, @exercise.rubric %>
     <%= hidden_field_tag :send_review %>
+    <% if !@exercise.collaborative_mode.blank? && !@is_assistant && !@is_teacher %>
+      <%= hidden_field_tag :role, 'collaborator' %>
+    <% end %>
 
     <div class="tabbable review-editor" id="review-editor" data-review-url="<%= review_url(@review.id) %>">
       <%= render :partial => 'review_editor', :locals => {:f => f} %>

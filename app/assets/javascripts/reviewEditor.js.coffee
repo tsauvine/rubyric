@@ -261,15 +261,18 @@ class @Rubric
 
     @finalComment = data['finalComment']
 
-    if (@gradingMode == 'average' && @grades.length > 0) || @gradingMode == 'sum'
-      @finishable = ko.computed((=>
-        for page in @pages
-          return false unless page.finished()
-        
-        return true
-        ) , this)
+    if @role? && @role == 'collaborator'
+      @finishable = ko.observable(false)
     else
-      @finishable = ko.observable(true)
+      if (@gradingMode == 'average' && @grades.length > 0) || @gradingMode == 'sum'
+        @finishable = ko.computed((=>
+          for page in @pages
+            return false unless page.finished()
+          
+          return true
+          ) , this)
+      else
+        @finishable = ko.observable(true)
 
   # grades: array of grade values (strings or numbers)
   calculateGrade: (grades) ->
@@ -343,13 +346,13 @@ class @ReviewEditor extends @Rubric
 
   constructor: () ->
     super()
-    
     @saved = true
     @finalGrade = ko.observable()
     @finishedText = ko.observable('')
     @finalizing = ko.observable(false)
     
     element = $('#review-editor')
+    @role = $('#role').val()
     @demo_mode = element.data('demo')
     @initialPageId = element.data('initial-rubric-page')
     unless @demo_mode
