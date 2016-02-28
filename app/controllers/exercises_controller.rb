@@ -57,7 +57,7 @@ class ExercisesController < ApplicationController
       # Find groups of the user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
       
-      # How many submissions doe the user have?
+      # How many submissions does the user have?
       # FIXME: this is a quick hack, probably inefficient
       @own_submission_count = 0
       @available_groups.each do |group|

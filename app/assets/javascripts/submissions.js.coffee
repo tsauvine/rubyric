@@ -1,4 +1,4 @@
-#= require bootstrap.js
+#= require bootstrap-3.1.1.min
 
 jQuery ->
   # Attach event listeners

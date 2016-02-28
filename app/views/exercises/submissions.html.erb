@@ -1,7 +1,6 @@
 <!-- exercises/submissions.html.erb -->
 <% content_for :javascript do %>
   <%= javascript_include_tag 'submissions.js' %>
-  <%= javascript_include_tag 'bootstrap.js' %>
   <script>
     $(function () {
       $('[data-toggle="popover"]').popover({'trigger': 'hover', 'placement': 'top', 'html': true})

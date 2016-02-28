@@ -13,8 +13,8 @@
   <tr class="submission" id="submission<%= submission.id %>">
     <td rowspan="<%= [submission.reviews.size,1].max %>">
       <div class="dropdown pull-right">
-        <a class="dropdown-toggle" data-toggle="dropdown" href="#"><b class="caret"></b></a>
-        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdownMenu">
+        <a id="dropdown-<%= submission.id %>" class="dropdown-toggle" data-toggle="dropdown" href="#" aria-haspopup="true" aria-expanded="false" role="button"><b class="caret"></b></a>
+        <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-<%= submission.id %>">
           <li><%= link_to 'Create new review', review_submission_path(submission.id) %></li>
           <li><%= link_to 'New submission...', submit_path(:exercise => @exercise.id, :group => group.id) %></li>
           <% if @course_instance.exercises.size > 1 %>
