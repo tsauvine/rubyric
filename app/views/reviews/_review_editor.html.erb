@@ -12,7 +12,7 @@
       <li><a data-bind="text:name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
     <!-- /ko -->
 
-    <!-- ko if: finishable() || finalizing() -->
+    <!-- ko if: finishable() -->
       <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
     <!-- /ko -->
 
@@ -108,7 +108,10 @@
 
       <!-- ko if: $root.finalizing -->
         <div class="alert alert-info">
-          Individual pages cannot be edited because you are already finalizing the feedback. <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
+          Individual pages cannot be edited because feedback is already finalized.
+          <% if !@exercise.collaborative_mode.blank? || @is_assistant || @is_teacher %>
+            <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
+          <% end %>
         </div>
       <!-- /ko -->
       

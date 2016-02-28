@@ -378,6 +378,7 @@ class @AnnotationEditor extends Rubric
     super()
     
     @element = $('#annotation-editor')
+    @role = $('#role').val()
     @submission_url = @element.data('submission-url')
     @page_count = @element.data('page-count')
     @page_width = parseFloat(@element.data('page-width'))
