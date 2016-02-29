@@ -467,6 +467,10 @@ class @AnnotationEditor extends Rubric
       new_zoom = 0.25 if new_zoom < 0.25
       new_zoom = 2.0 if new_zoom > 2.0
       @zoom(new_zoom)
+    
+    unless @demo_mode
+      $(window).bind 'beforeunload', =>
+        return "You have unsaved changes. Leave anyway?" unless @saved
   
   createSubmissionPages: ->
     previousPage = undefined
@@ -532,6 +536,7 @@ class @AnnotationEditor extends Rubric
   
   addCommand: (command) ->
     @commandBuffer.buffer.push(command)
+    @saved = false
   
   
   subscribeToAnnotation: (annotation) ->
@@ -577,7 +582,6 @@ class @AnnotationEditor extends Rubric
   clickGrade: (phrase) =>
     if @gradingMode != 'sum' && !phrase.criterion.annotationsHaveGrades()
       this.addCommand(new SetSelectedPhraseCommand(phrase.criterion, phrase))
-      @saved = false
   
   
   clickPhrase: (phrase) =>
@@ -604,7 +608,6 @@ class @AnnotationEditor extends Rubric
       this.addCommand(new SetSelectedPhraseCommand(phrase.criterion, undefined))
     
     page.createAnnotation(options)
-    @saved = false
   
   dropPhraseToAnnotation: (receiverAnnotation, draggedAnnotation, event, ui) =>
     #console.log draggedAnnotation

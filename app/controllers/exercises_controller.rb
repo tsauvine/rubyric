@@ -21,6 +21,7 @@ class ExercisesController < ApplicationController
   def show
     @exercise = Exercise.find(params[:id])
     load_course
+    I18n.locale = @course_instance.locale || I18n.locale
     
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
@@ -29,7 +30,6 @@ class ExercisesController < ApplicationController
       render :action => 'submissions', :layout => 'fluid-new'
     else
       # Student's or assistant's view
-      I18n.locale = @course_instance.locale || I18n.locale
       @is_assistant = @course_instance.has_assistant(current_user)
       
       # Find reviews assigned to the user
@@ -58,7 +58,7 @@ class ExercisesController < ApplicationController
       # Find groups of the user
       @available_groups = Group.where('course_instance_id=? AND user_id=?', @course_instance.id, current_user.id).joins(:users).all
       
-      # How many submissions doe the user have?
+      # How many submissions does the user have?
       # FIXME: this is a quick hack, probably inefficient
       @own_submission_count = 0
       @available_groups.each do |group|
