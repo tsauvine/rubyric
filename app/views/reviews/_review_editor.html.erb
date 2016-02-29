@@ -149,7 +149,9 @@
         </div>
       </div>
       
-      <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
+      <!-- ko if: criteria().size > 0 -->
+        <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
+      <!-- /ko -->
       
       <!-- Grades -->
       <!-- ko if: $root.gradingMode == 'average' && selectableGrades.length > 0 -->

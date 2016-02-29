@@ -25,6 +25,7 @@ class ExercisesController < ApplicationController
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
+      
       render :action => 'submissions', :layout => 'fluid-new'
     else
       # Student's or assistant's view
