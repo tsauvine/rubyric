@@ -429,7 +429,8 @@ class ExercisesController < ApplicationController
       end
       
       if review_counts.empty?
-        redirect_to @exercise, :warning => 'Nothing to review'
+        flash[:warning] = t('exercises.nothing_to_peer_review')
+        redirect_to @exercise
         return
       end
 

@@ -6,7 +6,7 @@
   <% end %>
  
   <ul id="tabs" class="nav nav-tabs">
-    <li class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
+    <li id="tutorial-tab" class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
 
     <!-- ko foreach: pages -->
       <li><a data-bind="text:name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
@@ -28,7 +28,7 @@
   <div class="tab-pane active" id="tab-overview">
     <div class="row-fluid">
       <h2>Review</h2>
-
+      
       <!-- Warnings -->
       <% if @review && @review.status == 'mailed' %>
         <div class="alert">
@@ -46,7 +46,7 @@
     <div class="row-fluid">
       <div class="span4 well">
         <!-- View submission -->
-        <h3>Submission</h3>
+        <h3 id="tutorial-heading">Submission</h3>
 
         <% unless @exercise.new_record? %>
           <% unless @submission.filename.blank? %>
