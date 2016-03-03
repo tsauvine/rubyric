@@ -53,9 +53,7 @@
   
   <div class="row intro">
     <div class="col-sm-12">
-      Rubyric is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
-      Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
-      However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
+      <%= t('.frontpage_intro_html').html_safe %>
     </div>
   </div>
   
@@ -227,7 +225,7 @@
       </p>
       -->
 
-      <h2><%=t :frontpage_login_heading %></h2>
+      <h2><%=t ('.frontpage_login_heading') %></h2>
       <% if defined?(SHIB_AALTO_PATH) %>
         <%= render :partial => 'sessions/aalto' %>
       <% end %>

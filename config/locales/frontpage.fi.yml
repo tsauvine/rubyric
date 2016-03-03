@@ -1,6 +1,13 @@
 fi:
-  frontpage_login_heading: "Kirjaudu"
-  frontpage_intro_html: "Rubyric on rubriikkipohjainen arvostelutyökalu, jonka helpottaa sanallisen palautteen antamista suurilla kursseilla. <a href='http://www.cse.hut.fi/en/research/letech/rubyric/'>Lue lisää...</a>"
+  frontpage:
+    info:
+      frontpage_login_heading: "Kirjaudu"
+      frontpage_intro_html: >
+        Rubyric is an online tool that allows you to receive submissions, create <strong>assessment rubrics</strong> and <strong>annotate submissions</strong> with feedback.
+        Rubrics make it easy to give comprehensive feedback to students by allowing you to reuse commonly occurring feedback phrases.
+        However, the phrases can be freely edited in order to give fully <strong>personalized feedback</strong> for each student.
+        
+        
 
   frontpage_courses_teacher_heading: "Omat kurssit (opettajana)"
   frontpage_courses_assistant_heading: "Omat kurssit (assarina)"
