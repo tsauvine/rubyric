@@ -1,3 +1,5 @@
+#= require jquery.grumble.min
+#= require jquery.crumble
 #= require reviewEditor
 
 jQuery ->
@@ -8,3 +10,5 @@ jQuery ->
   editor.parseRubric(rubric)
 
   editor.loadReview()
+  
+  $('#tour').crumble()

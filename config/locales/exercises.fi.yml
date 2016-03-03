@@ -8,6 +8,7 @@ fi:
   exercises:
     create_review: 'Luo arvostelu'
     create_comment: 'Kommentoi'
+    nothing_to_peer_review: 'Vertaisarviointia varten ei ole tarpeeksi palautuksia'
     my_submissions:
       my_submissions: "Omat palautukset"
       submissions: "Palautukset"

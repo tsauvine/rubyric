@@ -38,6 +38,16 @@ class User < ActiveRecord::Base
   def require_password?
     new_record?
   end
+  
+  def knowledge=(new_knowledge)
+    new_knowledge = JSON.parse(new_knowledge || '{}') if new_knowledge.is_a? String
+    current_knowledge = JSON.parse(read_attribute(:knowledge) || '{}')
+    
+    logger.debug("current_knowledge: #{current_knowledge}")
+    logger.debug("new_knowledge: #{new_knowledge}")
+    
+    write_attribute(:knowledge, current_knowledge.merge!(new_knowledge))
+  end
 
   def get_pricing
     if self.course_count < 1
