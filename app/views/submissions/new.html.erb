@@ -1,5 +1,5 @@
 <% content_for(:meta) do %>
-  <meta name="max-points" value="<%= @exercise.max_grade %>" />
+  <meta name="max-points" value="<%= @exercise.max_grade || 0 %>" />
   <meta name="DC.title" value="<%= @exercise.name %>" />
   <meta name="DC.Description" value="<%= @exercise.submit_pre_message %>" />
 <% end %>

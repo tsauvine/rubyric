@@ -288,7 +288,7 @@ class Submission < ActiveRecord::Base
   def self.post_process(id)
     submission = Submission.find(id)
     
-    !non_annotatable_extensions = ['rkt']
+    non_annotatable_extensions = ['rkt']
     
     # Try to recognize submission type
     unless submission.filename.blank?
