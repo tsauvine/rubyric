@@ -46,7 +46,7 @@ gem 'cancan'
 #gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
 gem 'delayed_job_active_record', :git => 'git://github.com/collectiveidea/delayed_job_active_record.git'
 gem 'daemons'
-gem 'rest_client'
+gem 'rest_client', '1.8.0'
 
 #gem 'paypal-sdk-core' # , :git => 'https://github.com/paypal/sdk-core-ruby.git'
 gem 'paypal-sdk-rest'
