@@ -93,4 +93,48 @@ class FeedbackMailer < ActionMailer::Base
     mail(:to => ERRORS_EMAIL, :subject => '[Rubyric] Undelivered feedback mails')
   end
   
+  # Sends grades and feedback to A+
+  def aplus_feedback(submission, reviews)
+    @reviews = reviews
+    @exercise = submission.exercise
+    @course_instance = @exercise.course_instance
+    @course = @course_instance.course
+    
+    combined_grade = 0.0
+    grade_count = 0
+    max_grade = submission.exercise.max_grade
+    feedback = ''
+    review_ids = []
+    
+    reviews.each_with_index do |review, index|
+      review_ids << review.id
+      #feedback << "<h1>Review #{index + 1}</h1>\n<pre>#{review.feedback}</pre>\n"
+      
+      begin
+        combined_grade += Float(review.grade)
+        grade_count += 1
+      rescue ArgumentError => e
+      end
+    end
+    
+    if max_grade.nil?
+      max_grade = 1
+      combined_grade = 1
+    elsif grade_count == 0
+      combined_grade = 0
+    else
+      combined_grade /= grade_count
+    end
+    
+    I18n.with_locale(@course_instance.locale || I18n.locale) do
+      feedback = render_to_string(action: :aplus)
+    end
+    
+    response = RestClient.post(self.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
+    #logger.debug("Submission #{submission.id}: #{combined_grade}/#{max_grade}. #{feedback}")
+    
+    # TODO: handle errors
+    Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
+  end
+
 end

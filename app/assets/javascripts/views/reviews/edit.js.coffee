@@ -11,4 +11,4 @@ jQuery ->
 
   editor.loadReview()
   
-  $('#tour').crumble()
+  #$('#tour').crumble()

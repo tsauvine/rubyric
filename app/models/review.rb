@@ -1,4 +1,5 @@
 # encoding: UTF-8
+
 class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader
@@ -10,7 +11,7 @@ class Review < ActiveRecord::Base
   def include_in_results?
     status == 'finished' || status == 'mailed' || status == 'mailing'
   end
-
+  
   def update_from_json(id, json)
     review = Review.find(id)
     review.update_attributes(json)
@@ -284,14 +285,18 @@ class Review < ActiveRecord::Base
   
   def self.deliver_reviews(review_ids)
     errors = []
+    aplus_reviews = {} # { Submission => [Review, Review, ...] }
     
     # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
-      
-      # TODO: handle A+ submissions
-      
       begin
-        FeedbackMailer.review(review).deliver
+        if review.submission.is_a?(AplusSubmission)
+          # Bundle reviews that belong to the same AplusSubmission
+          aplus_reviews[review.submission] ||= []
+          aplus_reviews[review.submission] << review
+        else
+          FeedbackMailer.review(review).deliver
+        end
       #rescue Net::SMTPFatalError => e
       rescue Exception => e
         logger.error e
@@ -301,10 +306,13 @@ class Review < ActiveRecord::Base
       end
     end
     
+    aplus_reviews.each do |submission, reviews|
+      FeedbackMailer.aplus_feedback(submission, reviews)
+    end
+    
     # Send delivery errors to teacher
     FeedbackMailer.delivery_errors(errors).deliver unless errors.empty?
   end
-
   
   def self.deliver_bundled_reviews(course_instance_id)
     course_instance = CourseInstance.find(course_instance_id)

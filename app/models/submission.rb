@@ -1,5 +1,6 @@
 #require "ftools"
 require 'open3.rb'
+require 'rest_client'
 
 # http://wiki.rubyonrails.org/rails/pages/HowtoUploadFiles
 
@@ -496,5 +497,4 @@ class Submission < ActiveRecord::Base
     
     return count
   end
-
 end

@@ -17,6 +17,7 @@ fi:
   collaborative_review: 'Palaute'
   anonymous_review: 'Palaute'
   Feedback_available_at: 'Voit katsoa palautetta osoitteessa'
+  Feedback_available_here: 'Lue palaute täällä'
 
  # Used in array.to_sentence.
   support:

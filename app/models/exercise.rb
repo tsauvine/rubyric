@@ -13,13 +13,37 @@ class Exercise < ActiveRecord::Base
   
   validates_presence_of :name
 
-  def max_points
-    # TODO
-    1
+  # Feedback grouping options: exercise, sections, categories
+  
+  def max_grade
+    return nil if self.rubric.blank?
+    rubric = rubric_content()
+    
+    case rubric['gradingMode']
+    when 'average'
+      max_grade = nil
+      rubric['grades'].each do |grade|
+        begin
+          num_grade = Float(grade)
+          max_grade = num_grade if !max_grade || num_grade > max_grade
+        rescue ArgumentError => e
+        end
+      end
+      return max_grade
+    when 'sum'
+      sum = 0.0
+      rubric['pages'].each do |page|
+        begin
+          sum += Float(page['maxSum'] || 0)
+        rescue ArgumentError => e
+        end
+      end
+      return sum
+    else
+      return nil
+    end
   end
   
-  # Feedback grouping options: exercise, sections, categories
-
   # Returns a relation representing groups who have submitted this exercise. Users and submissions are eager loaded.
   def groups_with_submissions
     Group.where(:course_instance_id => self.course_instance_id)
@@ -54,9 +78,8 @@ class Exercise < ActiveRecord::Base
   end
 
   def rubric_content
-    return {} unless self.rubric
-
-    JSON.parse(self.rubric)
+    return @rubric_content if defined?(@rubric_content)
+    @rubric_content = JSON.parse(self.rubric || {})
   end
   
   # Populates the rubric with some example data.
