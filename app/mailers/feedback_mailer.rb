@@ -131,11 +131,15 @@ class FeedbackMailer < ActionMailer::Base
     end
     
     logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade, feedback: feedback}}"
-    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
+    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback}, :ssl_version => 'TLSv1_2')
     #logger.debug("Submission #{submission.id}: #{combined_grade}/#{max_grade}. #{feedback}")
     
-    # TODO: handle errors
-    Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
+    if response.code == 200
+      Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
+    else
+      logger.error "Failed to submit points to A+"
+      logger.error response
+    end
   end
 
 end
