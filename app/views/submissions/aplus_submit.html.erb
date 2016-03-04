@@ -1,6 +1,6 @@
 <!-- submissions/aplus-submit.html.erb -->
 <% content_for(:meta) do %>
-  <meta name="max-points" value="<%= @exercise.max_grade || 0 %>" />
+  <meta name="max-points" value="<%= @exercise.max_grade.to_i || 0 %>" />
   <meta name="DC.title" value="<%= @exercise.name %>" />
   <meta name="DC.Description" value="" />
   <meta name="status" value="<%= @status %>" />
