@@ -114,6 +114,7 @@ class FeedbackMailer < ActionMailer::Base
         combined_grade += Float(review.grade)
         grade_count += 1
       rescue ArgumentError => e
+      rescue TypeError => e
       end
     end
     
