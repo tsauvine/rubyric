@@ -127,7 +127,7 @@ class FeedbackMailer < ActionMailer::Base
     end
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
-      feedback = render_to_string(action: :aplus)
+      feedback = render_to_string(action: :aplus).to_str
     end
     
     logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade, feedback: feedback}}"
