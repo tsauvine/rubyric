@@ -21,15 +21,15 @@
   <%= render :partial => 'shared/analytics' -%>
 </head>
 
-<nav class="navbar navbar-default" role="navigation">
-  <div class="container-fluid">
-    <div class="navbar-header">
-      <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
-    </div>
-  </div>
-</nav>
-
 <body>
+  <nav class="navbar navbar-default" role="navigation">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+      </div>
+    </div>
+  </nav>
+
   <%= yield  %>
 </body>
 </html>

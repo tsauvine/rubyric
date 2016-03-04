@@ -10,7 +10,7 @@
 <%= h(review.feedback).gsub(/(\r\n|\n|\r)/, "<br />\n").html_safe %>
 <% end -%>
 
-<% if review.submission.is_a? AplusSubmission %><p>
+<% if review.is_a? AnnotationAssessment %><p>
 <a href="<%= review_url(review.id, :group_token => review.submission.group.access_token, :protocol => 'https://') %>"><%= t :Feedback_available_here %></a>
 </p><% end -%>
 
