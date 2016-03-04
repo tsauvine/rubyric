@@ -123,7 +123,7 @@ class FeedbackMailer < ActionMailer::Base
     elsif combined_grade.nil? || grade_count == 0
       combined_grade = 0
     else
-      combined_grade = Math.round(combined_grade / grade_count).to_i
+      combined_grade = (combined_grade / grade_count).round
     end
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
