@@ -123,7 +123,7 @@ class FeedbackMailer < ActionMailer::Base
     elsif combined_grade.nil? || grade_count == 0
       combined_grade = 0
     else
-      combined_grade /= grade_count
+      combined_grade = Math.round(combined_grade / grade_count).to_i
     end
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
@@ -131,8 +131,7 @@ class FeedbackMailer < ActionMailer::Base
     end
     
     logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade, feedback: feedback}}"
-    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback}) # :ssl_version => 'TLSv1_2'
-    #logger.debug("Submission #{submission.id}: #{combined_grade}/#{max_grade}. #{feedback}")
+    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
     
     if response.code == 200
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
