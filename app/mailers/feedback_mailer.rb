@@ -102,7 +102,7 @@ class FeedbackMailer < ActionMailer::Base
     
     combined_grade = 0.0
     grade_count = 0
-    max_grade = submission.exercise.max_grade
+    max_grade = submission.exercise.max_grade.round
     feedback = ''
     review_ids = []
     
