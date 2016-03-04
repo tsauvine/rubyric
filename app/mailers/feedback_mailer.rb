@@ -120,7 +120,7 @@ class FeedbackMailer < ActionMailer::Base
     if max_grade.nil?
       max_grade = 1
       combined_grade = 1
-    elsif grade_count == 0
+    elsif combined_grade.nil? || grade_count == 0
       combined_grade = 0
     else
       combined_grade /= grade_count
@@ -130,6 +130,7 @@ class FeedbackMailer < ActionMailer::Base
       feedback = render_to_string(action: :aplus)
     end
     
+    logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})"
     response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
     #logger.debug("Submission #{submission.id}: #{combined_grade}/#{max_grade}. #{feedback}")
     
