@@ -21,6 +21,7 @@ fi:
       peer_review_hint: "Jokaisen opiskelijan tehtävänä on tehdä %{peer_review_count} vertaisarviointia."
       peer_review_hint_singular: "Jokaisen opiskelijan tehtävänä on tehdä vertaisarviointi."
       peer_review_submit_first: "Vertaisarviointi on tehtävissä sen jälkeen, kun oma tehtävä on palautettu."
+      peer_review_active_after_deadline: "Vertaisarviointi aukeaa tehtävän määräajan jälkeen."
       new_submission_button: "Palauta tiedosto"
       no_submissions: "Ei palautuksia tähän harjoitukseen"
       new_peer_review: "Aloita uusi vertaisarvio"

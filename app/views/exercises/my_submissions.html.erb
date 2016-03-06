@@ -22,15 +22,19 @@
   <h2><%=t '.reviews' %></h2>
   
   <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 %>
-    <% if @own_submission_count > 0 %>
+    <p class="hint">
       <% if @exercise.peer_review_goal == 1 %>
-        <p class="hint"><%= t('.peer_review_hint_singular') %></p>
+        <%= t('.peer_review_hint_singular') %>
       <% else %>
-        <p class="hint"><%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %></p>
+        <%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %>
       <% end %>
-    <% else %>
-      <p class="hint"><%= t('.peer_review_submit_first') %></p>
-    <% end %>
+      
+      <% if @exercise.peer_review_timing == 'after_deadline' && Time.now.utc < @exercise.deadline %>
+        <%= t('.peer_review_active_after_deadline') %>
+      <% elsif @own_submission_count < 1 %>
+        <%= t('.peer_review_submit_first') %>
+      <% end %>
+    </p>
   <% end %>
 
   <% unless @assigned_groups.empty? %>
@@ -49,7 +53,7 @@
     </table>
   <% end %>
   
-  <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && @own_submission_count > 0 %>
+  <% if @exercise.peer_review_active? && @own_submission_count > 0 %>
     <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
   <% end %>
 

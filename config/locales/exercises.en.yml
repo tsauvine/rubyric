@@ -21,6 +21,7 @@ en:
       peer_review_hint: "Each students' task is to conduct %{peer_review_count} peer reviews."
       peer_review_hint_singular: "Each students' task is to conduct a peer review."
       peer_review_submit_first: "You can conduct peer reviews after submitting your own assignment."
+      peer_review_active_after_deadline: "Peer review starts after the due date of the assignment."
       new_submission_button: "New submission"
       no_submissions: "No submissions to this assignment"
       new_peer_review: "Create new peer review"

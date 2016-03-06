@@ -44,6 +44,10 @@ class Exercise < ActiveRecord::Base
     end
   end
   
+  def peer_review_active?
+    peer_review_goal && peer_review_goal > 0 && (peer_review_timing != 'after_deadline' || Time.now > deadline)
+  end
+  
   # Returns a relation representing groups who have submitted this exercise. Users and submissions are eager loaded.
   def groups_with_submissions
     Group.where(:course_instance_id => self.course_instance_id)

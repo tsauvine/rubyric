@@ -69,6 +69,13 @@
     </div>
   </div>
   
+  <div class="control-group">
+    <%= f.label :grader_can_email, 'Allow reviewers to send reviews immediately', :class => 'control-label' %><br />
+    <div class="controls">
+      <%= f.check_box :grader_can_email %> 
+    </div>
+  </div>
+  
   <%
     # <h2>Message to be shown before submitting (HTML allowed):</h2>
     # f.text_area :submit_pre_message, :rows => 3, :cols => 80
@@ -77,6 +84,15 @@
     # f.text_area :submit_post_message, :rows => 3, :cols => 80
   %>
   
+  <div class="control-group">
+    <%= f.label :submit_pre_message, 'Submission instructions', :class => 'control-label' %><br />
+    <div class="controls">
+      <%= f.text_area :submit_pre_message, :rows => 8, :style => 'width: 30em' %> 
+    </div>
+  </div>
+
+  
+  <h2>Peer review</h2>
   <!-- Peer review -->
   <div class="control-group">
     <%= f.label :peer_review_goal, 'Peer review', :class => 'control-label' %>
@@ -95,7 +111,18 @@
       </label>
     </div>
   </div>
+  
+   <div class="control-group">
+    <%= f.label :peer_review_timing, 'Open peer review', :class => 'control-label' %>
+    <div class="controls">
+      <label>
+        <%= f.select(:peer_review_timing, options_for_select([["As soon as there are submissions", 'immediately'], ["After the deadline of the assignment", 'after_deadline']], @exercise.peer_review_timing)) %>
+      </label>
+    </div>
+  </div>
 
+  
+  <h2>Anonymity</h2>
   <div class="control-group">
     <%= f.label :anonymous_graders, 'Anonymous reviewers', :class => 'control-label' %>
     <div class="controls">
@@ -109,20 +136,6 @@
     <div class="controls">
       <%= f.check_box :anonymous_submissions %> 
       <span class="hint">Reviewers cannot see students' names. (Does not apply to the teachers.)</span>
-    </div>
-  </div>
-
-  <div class="control-group">
-    <%= f.label :grader_can_email, 'Allow reviewers to send reviews immediately', :class => 'control-label' %><br />
-    <div class="controls">
-      <%= f.check_box :grader_can_email %> 
-    </div>
-  </div>
-  
-  <div class="control-group">
-    <%= f.label :submit_pre_message, 'Submission instructions', :class => 'control-label' %><br />
-    <div class="controls">
-      <%= f.text_area :submit_pre_message, :rows => 8, :style => 'width: 30em' %> 
     </div>
   </div>
 
