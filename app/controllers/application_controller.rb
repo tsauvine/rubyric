@@ -80,6 +80,7 @@ class ApplicationController < ActionController::Base
     
     if @course
       @is_teacher = @course.has_teacher(current_user)
+      Time.zone = @course.time_zone unless @course.time_zone.blank?
     end
   end
   

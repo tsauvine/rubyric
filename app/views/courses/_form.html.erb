@@ -30,6 +30,13 @@
       <span class="hint"><%=t :course_email_hint %></span>
     </div>
   </div>
+  
+  <div class="control-group">
+    <%= f.label :time_zone, t(:time_zone), :class => 'control-label' %>
+    <div class="controls">
+      <%= f.time_zone_select(:time_zone) %>
+    </div>
+  </div>
 
   <div class="control-group">
     <div class="controls">

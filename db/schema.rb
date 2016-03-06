@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160306173737) do
+ActiveRecord::Schema.define(:version => 20160306180822) do
 
   create_table "aplus_submissions", :force => true do |t|
     t.integer "submission_id",  :null => false
@@ -63,6 +63,7 @@ ActiveRecord::Schema.define(:version => 20160306173737) do
     t.datetime "updated_at"
     t.string   "email"
     t.integer  "organization_id"
+    t.string   "time_zone"
   end
 
   create_table "courses_teachers", :id => false, :force => true do |t|
