@@ -30,7 +30,7 @@
   <div class="control-group">
     <%= f.label :deadline, :class => 'control-label' %>
     <div class="controls">
-      <%= text_field_tag "exercise[deadline]", l(@exercise.deadline) %>
+      <%= text_field_tag "exercise[deadline]", @exercise.deadline.nil? ? '' : l(@exercise.deadline) %>
     </div>
   </div>
   

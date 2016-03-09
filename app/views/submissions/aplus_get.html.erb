@@ -26,7 +26,7 @@
       <p><%= file_field_tag 'file' %></p>
     <% end %>
     
-    <% if @exercise.submission_type.include?('textarea') %>
+    <% if (@exercise.submission_type || '').include?('textarea') %>
       <p><%= text_area_tag :payload, @submission.payload, :rows => 5, :style => 'width: 100%' %></p>
     <% end %>
     
