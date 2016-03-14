@@ -133,6 +133,7 @@ class FeedbackMailer < ActionMailer::Base
     
     logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade.round, feedback: feedback}}"
     response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
+    logger.info response
     
     if response.code == 200
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
