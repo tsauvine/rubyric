@@ -30,6 +30,10 @@
               <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="no" /> No grade</label></li>
               <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="average" /> Mean</label></li>
               <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="sum" /> Sum</label></li>
+              
+              <% if defined?(@course_instance) && @course_instance.submission_policy == 'lti' %>
+                <li><label><input type="radio" name="grading-mode" data-bind="checked: gradingMode" value="always_pass" /> Always pass</label></li>
+              <% end %>
             </ul>
           </div>
           

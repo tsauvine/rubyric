@@ -94,7 +94,7 @@ class FeedbackMailer < ActionMailer::Base
   end
   
   # Sends grades and feedback to A+
-  def aplus_feedback(submission, reviews)
+  def aplus_feedback(submission, reviews = [])
     @reviews = reviews
     @exercise = submission.exercise
     @course_instance = @exercise.course_instance
@@ -102,7 +102,7 @@ class FeedbackMailer < ActionMailer::Base
     
     combined_grade = 0.0
     grade_count = 0
-    max_grade = submission.exercise.max_grade
+    max_grade = @exercise.max_grade
     feedback = ''
     review_ids = []
     
@@ -121,7 +121,7 @@ class FeedbackMailer < ActionMailer::Base
     if max_grade.nil?
       max_grade = 1
       combined_grade = 1
-    elsif combined_grade.nil? || grade_count == 0
+    elsif grade_count == 0
       combined_grade = 0
     else
       combined_grade = (combined_grade / grade_count).round
@@ -131,7 +131,7 @@ class FeedbackMailer < ActionMailer::Base
       feedback = render_to_string(action: :aplus).to_str
     end
     
-    logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade.round, feedback: feedback}}"
+    #logger.info "Submission #{submission.id} (#{submission.aplus_feedback_url})\n#{{points: combined_grade, max_points: max_grade.round, feedback: feedback}}"
     response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
     
     if response.code == 200

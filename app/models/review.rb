@@ -281,8 +281,6 @@ class Review < ActiveRecord::Base
     return text
   end
   
-  
-  
   def self.deliver_reviews(review_ids)
     errors = []
     aplus_reviews = {} # { Submission => [Review, Review, ...] }
@@ -307,7 +305,8 @@ class Review < ActiveRecord::Base
     end
     
     aplus_reviews.each do |submission, reviews|
-      FeedbackMailer.aplus_feedback(submission, reviews)
+      # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
+      FeedbackMailer.delay.aplus_feedback(submission, reviews)
     end
     
     # Send delivery errors to teacher

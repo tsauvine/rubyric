@@ -162,7 +162,7 @@ class Submission < ActiveRecord::Base
   
   # Returns the path of a bitmap rendering of the submission
   # This method blocks until the bitmap is rendered and available.
-  # returns false if the image cannot be rendered
+  # raises ActiveRecord::RecordNotFound if image is not renderable
   def image_path(page_number, zoom)
     # Sanitize parameters
     zoom ||= 1.0
@@ -178,7 +178,7 @@ class Submission < ActiveRecord::Base
     elsif self.conversion == 'image'
       return image_path_bitmap(zoom)
     else
-      raise Exception("Submission #{id} cannot be rendered.")
+      raise ActiveRecord::RecordNotFound
     end
   end
   
@@ -284,7 +284,8 @@ class Submission < ActiveRecord::Base
   end
   
   
-  # Post-processes the submission. ASCII files are converted to HTML with a syntax highlighter. Doc and Docx files are converted to PDF with LibreOffice.
+  # Post-processes the submission. ASCII files are converted to HTML with a syntax highlighter.
+  # TODO: Doc and Docx files are converted to PDF with LibreOffice.
   def self.post_process(id)
     submission = Submission.find(id)
     
@@ -322,6 +323,11 @@ class Submission < ActiveRecord::Base
     
     if submission.exercise.collaborative_mode == 'review' && ['annotation', 'exam'].include?(submission.exercise.review_mode) && submission.annotatable? && !AnnotationAssessment.exists?(:submission_id => submission.id, :user_id => nil)
       AnnotationAssessment.create(:submission_id => submission.id)
+    end
+    
+    # FIXME: this is a temporary hack for Koodiaapinen
+    if submission.is_a?(AplusSubmission) && submission.exercise.grading_mode == 'always_pass'
+      FeedbackMailer.delay.aplus_feedback(submission)
     end
   end
   

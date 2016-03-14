@@ -35,7 +35,6 @@ class SubmissionsController < ApplicationController
       format.png do
         response.headers["Expires"] = 1.year.from_now.httpdate
         bitmap_info = @submission.image_path(params[:page], params[:zoom])
-        # TODO: unless bitmap_info
         send_file bitmap_info[:path], :filename => bitmap_info[:filename], :type => bitmap_info[:mimetype], :disposition => 'inline'
       end
     end
