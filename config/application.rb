@@ -61,6 +61,11 @@ module Rubyric
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    # FIXME: only in edge version
+    config.after_initialize do
+      Delayed::Backend::ActiveRecord::Job.set_table_name 'delayd_jobs_edge'
+    end
+
     # Version of your assets, change this if you want to expire all your assets
     config.assets.version = '1.45'
   end
