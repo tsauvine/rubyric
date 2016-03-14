@@ -63,7 +63,7 @@ module Rubyric
 
     # FIXME: only in edge version
     config.after_initialize do
-      Delayed::Backend::ActiveRecord::Job.set_table_name 'delayd_jobs_edge'
+      Delayed::Backend::ActiveRecord::Job.set_table_name 'delayed_jobs_edge'
     end
 
     # Version of your assets, change this if you want to expire all your assets
