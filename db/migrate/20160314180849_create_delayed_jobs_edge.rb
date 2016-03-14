@@ -12,7 +12,7 @@ class CreateDelayedJobsEdge < ActiveRecord::Migration
       table.timestamps
     end
 
-    add_index :delayed_jobs_edge, [:priority, :run_at], :name => 'delayed_jobs_priority'
+    add_index :delayed_jobs_edge, [:priority, :run_at], :name => 'delayed_jobs_edge_priority'
   end
 
   def self.down
