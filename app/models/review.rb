@@ -306,7 +306,7 @@ class Review < ActiveRecord::Base
     
     aplus_reviews.each do |submission, reviews|
       # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
-      FeedbackMailer.delay.aplus_feedback(submission, reviews)
+      FeedbackMailer.aplus_feedback(submission, reviews)
     end
     
     # Send delivery errors to teacher

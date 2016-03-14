@@ -76,7 +76,7 @@ class Submission < ActiveRecord::Base
       end
     end
     
-    Submission.delay.post_process(self.id)
+    Submission.delay(run_at: 5.seconds.from_now).post_process(self.id)
   end
 
   def move(target_exercise)
@@ -328,7 +328,7 @@ class Submission < ActiveRecord::Base
     # FIXME: this is a temporary hack for Koodiaapinen
     if submission.is_a?(AplusSubmission) && submission.exercise.grading_mode == 'always_pass'
       logger.info "Sending points to A+"
-      FeedbackMailer.delay.aplus_feedback(submission)
+      FeedbackMailer.aplus_feedback(submission)
     end
   end
   
