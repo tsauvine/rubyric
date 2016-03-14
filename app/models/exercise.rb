@@ -18,11 +18,14 @@ class Exercise < ActiveRecord::Base
   
   def grading_mode
     return nil if self.rubric.blank?
-    rubric_content()
+    rubric_content()['gradingMode']
   end
   
   def max_grade
-    case grading_mode
+    return nil if self.rubric.blank?
+    rubric = rubric_content()
+    
+    case rubric['gradingMode']
     when 'average'
       max_grade = nil
       rubric['grades'].each do |grade|
