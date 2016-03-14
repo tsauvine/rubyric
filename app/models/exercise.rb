@@ -18,7 +18,7 @@ class Exercise < ActiveRecord::Base
   
   def grading_mode
     return nil if self.rubric.blank?
-    rubric_content()['gradingMode']
+    rubric_content()
   end
   
   def max_grade
