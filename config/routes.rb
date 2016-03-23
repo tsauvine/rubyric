@@ -58,7 +58,7 @@ Rubyric::Application.routes.draw do
     post 'delete_reviews'
     post 'send_reviews'
     post 'create_peer_review'
-    get 'create_example_submission'
+    get 'create_example_submissions'
     #get 'results'
     match 'results' => 'exercises#results', :via => [:get, :post]
 
