@@ -180,7 +180,7 @@ class ExercisesController < ApplicationController
         end
       end
       
-      if params[:include] != 'all' && best_review
+      if params[:include] == 'best' && best_review
         @results.concat group.group_members.collect {|member| [member, best_review]}
       else
         group.group_members.each do |member|
