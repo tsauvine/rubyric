@@ -6,14 +6,32 @@
   </h1>
 </div>
 
-<p>
+<%= form_tag exercise_results_path(@exercise) do %>
+  <div class="well">
+    <p>
+      If multiple reviews exist for the same group, include<br />
+      <%= radio_button_tag 'include', 'best', params[:include] != 'all' %> Best grade<br />
+      <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All grades
+    </p>
+    
+    <p>
+      <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
+      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet (new)<% end %>
+    </p>
+  </div>
+  <!--
   <%= link_to exercise_results_path(@exercise, :format => :csv), :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %> <span class="hint"></span>
-</p>
+  -->
+<% end %>
 
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
-      <th>studentnumber</th>
+      <% if @course_instance.submission_policy == 'lti' %>
+        <th>student ID</th>
+      <% else %>
+        <th>studentnumber</th>
+      <% end %>
       <th>first name</th>
       <th>last name</th>
       <th>email</th>
@@ -41,4 +59,4 @@
   </tbody>
 </table>
 
-<p>Note: In case multiple reviews exist for the same group, the review with the highest grade counts.</p>
+<!--p>Note: In case multiple reviews exist for the same group, the review with the highest grade counts.</p-->
