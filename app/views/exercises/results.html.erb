@@ -10,8 +10,8 @@
   <div class="well">
     <p>
       If multiple reviews exist for the same group, include<br />
-      <%= radio_button_tag 'include', 'best', params[:include] != 'all' %> Best grade<br />
-      <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All grades
+      <%= radio_button_tag 'include', 'all', params[:include] != 'best' %> All grades<br />
+      <%= radio_button_tag 'include', 'best', params[:include] == 'best' %> Best grade
     </p>
     
     <p>
@@ -19,9 +19,6 @@
       <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet (new)<% end %>
     </p>
   </div>
-  <!--
-  <%= link_to exercise_results_path(@exercise, :format => :csv), :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %> <span class="hint"></span>
-  -->
 <% end %>
 
 <table class="table table-condensed table-bordered table-striped">
