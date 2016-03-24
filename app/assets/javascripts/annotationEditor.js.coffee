@@ -650,17 +650,20 @@ class @AnnotationEditor extends Rubric
       $('#review_grade').val('')
     
     # Set status
-    if @finalizing()
+    if options['invalidate']?
+      status = 'invalidated'
+    else if @finalizing()
       if @gradingMode == 'average' && @grades.length > 0 && !@finalGrade()?
         status = 'unfinished'
       else
         status = 'finished'
-        
-        $('#send_review').val('true') if options['send']?  # Send immediately?
     else
       status = 'started'
     
     $('#review_status').val(status)
+    
+    # Send immediately?
+    $('#send_review').val('true') if status == 'finished' && options['send']?
     
     $('#zoom_preference').val(@zoom() * 100)
     
@@ -675,3 +678,7 @@ class @AnnotationEditor extends Rubric
   
   saveAndSend: ->
     this.save({send: true})
+  
+  clickInvalidate: ->
+    this.save({invalidate: true})
+  

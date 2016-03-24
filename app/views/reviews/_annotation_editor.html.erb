@@ -250,6 +250,8 @@
             <% if current_user && current_user.tester == 'alpha' %>
               <button name="save" value="next" type="submit" class="btn btn-success" data-bind="click: save">Next</button>
             <% end %>
+            
+            <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
           </p>
         <% end %>
       </div>

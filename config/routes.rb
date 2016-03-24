@@ -102,7 +102,8 @@ Rubyric::Application.routes.draw do
     member do
       get :finish
       put :update_finish
-      get :reopen  # FIXME: should be POST
+      get :reopen     # FIXME: should be POST
+      get :invalidate # FIXME: should be POST
       get :upload
       post :upload
       get :download

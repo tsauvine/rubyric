@@ -252,6 +252,8 @@
         <% if @exercise.grader_can_email %>
           <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
         <% end %>
+        
+        <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
       </p>
     <% end %>
   </div>

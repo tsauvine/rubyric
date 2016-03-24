@@ -138,6 +138,8 @@ class AnnotationAssessment < Review
     errors = []
     
     AnnotationAssessment.where(:id => review_ids).find_each do |assessment|
+      next if assessment.status == 'invalidated'
+      
       begin
         FeedbackMailer.annotation(assessment).deliver
       rescue Exception => e

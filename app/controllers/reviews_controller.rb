@@ -59,11 +59,11 @@ class ReviewsController < ApplicationController
     return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user) || (@exercise.collaborative_mode == 'review' && @course_instance.has_student(current_user))
 
     # Check that the review has not been mailed
-    if @review.status == 'mailed'
+    if @review.status == 'mailed' || @review.status == 'invalidated'
       respond_to do |format|
         format.json { head :no_content } # TODO: error message
         format.html {
-          flash[:error] = 'Review has already been mailed and cannot be edited any more'
+          flash[:error] = 'This review cannot be edited any more'
           redirect_to @exercise
         }
       end
@@ -199,7 +199,7 @@ class ReviewsController < ApplicationController
     load_course
 
     # Authorization
-    return access_denied unless @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email) || is_admin?(current_user)
+    return access_denied unless @course.has_teacher(current_user) || (@review.user == current_user && @exercise.grader_can_email)
 
     if @review.status == 'mailed'
       @review.status = 'finished'
@@ -209,6 +209,23 @@ class ReviewsController < ApplicationController
     redirect_to edit_review_path(@review)
     
     log "reopen_review #{@review.id},#{@exercise.id}"
+  end
+  
+  def invalidate
+    @review = Review.find(params[:id])
+    @exercise = @review.submission.exercise
+    load_course
+
+    # Authorization
+    return access_denied unless @course.has_teacher(current_user)
+
+    
+    @review.status = 'invalidated'
+    @review.save
+
+    redirect_to exercise_path(@exercise)
+    
+    log "invalidate_review #{@review.id},#{@exercise.id}"
   end
 
   def upload

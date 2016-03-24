@@ -287,6 +287,8 @@ class Review < ActiveRecord::Base
     
     # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
+      next if review.status == 'invalidated'
+      
       begin
         if review.submission.is_a?(AplusSubmission)
           # Bundle reviews that belong to the same AplusSubmission
