@@ -13,11 +13,6 @@
 
 ActiveRecord::Schema.define(:version => 20160306180822) do
 
-  create_table "aplus_submissions", :force => true do |t|
-    t.integer "submission_id",  :null => false
-    t.string  "submission_url"
-  end
-
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
     t.integer "course_instance_id"
@@ -119,7 +114,7 @@ ActiveRecord::Schema.define(:version => 20160306180822) do
     t.string   "lti_context_id"
     t.string   "lti_resource_link_id"
     t.integer  "peer_review_goal"
-    t.string   "collaborative_mode"
+    t.string   "collaborative_mode",      :default => ""
     t.string   "submission_type"
     t.string   "peer_review_timing"
   end
