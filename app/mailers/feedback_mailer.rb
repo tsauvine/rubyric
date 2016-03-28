@@ -150,14 +150,14 @@ class FeedbackMailer < ActionMailer::Base
           started_review_count = 0
           Review.where(:user_id => student.id).find_each do |review|
             next unless valid_submission_ids.include?(review.submission_id)
-            finished_review_count += 1 if ['finished', 'mailed'].include?(review.status)
-            started_review_count += 1 if review.status == 'started' || review.status.blank?
+            finished_review_count += 1 if ['finished', 'mailing', 'mailed', 'invalidated'].include?(review.status)
+            started_review_count += 1 if ['started'].include?(review.status) || review.status.blank?
           end
           
           total_review_count = finished_review_count + started_review_count
           max_review_count = total_review_count if total_review_count > max_review_count
           
-          file.puts "(#{finished_review_count}/#{finished_review_count + started_review_count}) #{group.users.first.firstname} #{group.users.first.lastname}"
+          file.puts "#{max_review_count},#{finished_review_count} #{group.users.first.firstname} #{group.users.first.lastname}"
         end
       end
       
@@ -166,6 +166,9 @@ class FeedbackMailer < ActionMailer::Base
         return
       end
     end
+    
+#     Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
+#     return
     
     I18n.with_locale(@course_instance.locale || I18n.locale) do
       feedback = render_to_string(action: :aplus).to_str
@@ -178,7 +181,7 @@ class FeedbackMailer < ActionMailer::Base
 #       )
     end
     
-    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
+    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade.round, feedback: feedback})
     
     if response.code == 200
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
