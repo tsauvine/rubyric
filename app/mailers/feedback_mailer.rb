@@ -99,6 +99,8 @@ class FeedbackMailer < ActionMailer::Base
     @exercise = submission.exercise
     @course_instance = @exercise.course_instance
     @course = @course_instance.course
+    group = submission.group
+    subject = "#{@course.full_name} - #{@exercise.name}"
     
     combined_grade = 0.0
     grade_count = 0
@@ -127,8 +129,52 @@ class FeedbackMailer < ActionMailer::Base
       combined_grade = (combined_grade / grade_count).round
     end
     
+    recipients = []
+    group.group_members.each do |member|
+      if !member.email.blank?
+        recipients << member.email
+      elsif member.user && !member.user.email.blank?
+        recipients << member.user.email
+      end
+    end
+    
+    # Koodiaapinen hack Spring 2016 (Note: does not work correctly for group work)
+    if @exercise.id == 218
+      # Count reviews conducted by the user
+      valid_submission_ids = @exercise.submission_ids
+      max_review_count = 0
+      
+      File.open('peer_reviews.txt', 'a') do |file|
+        group.users.each do |student|
+          finished_review_count = 0
+          started_review_count = 0
+          Review.where(:user_id => student.id).find_each do |review|
+            next unless valid_submission_ids.include?(review.submission_id)
+            finished_review_count += 1 if ['finished', 'mailed'].include?(review.status)
+            started_review_count += 1 if review.status == 'started'
+          end
+          
+          max_review_count = finished_review_count if finished_review_count > max_review_count
+          
+          file.puts "(#{finished_review_count}/#{finished_review_count + started_review_count}) #{group.users.first.firstname} #{group.users.first.lastname}"
+        end
+      end
+      
+      if max_review_count < @exercise.peer_review_goal
+        Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'finished')
+        return
+      end
+    end
+    
     I18n.with_locale(@course_instance.locale || I18n.locale) do
       feedback = render_to_string(action: :aplus).to_str
+    
+      mail(
+        :to => recipients.join(","),
+        :subject => subject,
+        :template_path => 'feedback_mailer',
+        :template_name => 'aplus'
+      )
     end
     
     response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
