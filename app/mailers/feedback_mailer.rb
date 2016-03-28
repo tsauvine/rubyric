@@ -154,7 +154,8 @@ class FeedbackMailer < ActionMailer::Base
             started_review_count += 1 if review.status == 'started'
           end
           
-          max_review_count = finished_review_count if finished_review_count > max_review_count
+          total_review_count = finished_review_count + started_review_count
+          max_review_count = total_review_count if total_review_count > max_review_count
           
           file.puts "(#{finished_review_count}/#{finished_review_count + started_review_count}) #{group.users.first.firstname} #{group.users.first.lastname}"
         end
