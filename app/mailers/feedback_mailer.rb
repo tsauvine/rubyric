@@ -151,7 +151,7 @@ class FeedbackMailer < ActionMailer::Base
           Review.where(:user_id => student.id).find_each do |review|
             next unless valid_submission_ids.include?(review.submission_id)
             finished_review_count += 1 if ['finished', 'mailed'].include?(review.status)
-            started_review_count += 1 if review.status == 'started'
+            started_review_count += 1 if review.status == 'started' || review.status.blank?
           end
           
           total_review_count = finished_review_count + started_review_count
