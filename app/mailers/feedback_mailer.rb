@@ -129,14 +129,14 @@ class FeedbackMailer < ActionMailer::Base
       combined_grade = (combined_grade / grade_count).round
     end
     
-    recipients = []
-    group.group_members.each do |member|
-      if !member.email.blank?
-        recipients << member.email
-      elsif member.user && !member.user.email.blank?
-        recipients << member.user.email
-      end
-    end
+#     recipients = []
+#     group.group_members.each do |member|
+#       if !member.email.blank?
+#         recipients << member.email
+#       elsif member.user && !member.user.email.blank?
+#         recipients << member.user.email
+#       end
+#     end
     
     # Koodiaapinen hack Spring 2016 (Note: does not work correctly for group work)
     if @exercise.id == 218
@@ -169,12 +169,12 @@ class FeedbackMailer < ActionMailer::Base
     I18n.with_locale(@course_instance.locale || I18n.locale) do
       feedback = render_to_string(action: :aplus).to_str
     
-      mail(
-        :to => recipients.join(","),
-        :subject => subject,
-        :template_path => 'feedback_mailer',
-        :template_name => 'aplus'
-      )
+#       mail(
+#         :to => recipients.join(","),
+#         :subject => subject,
+#         :template_path => 'feedback_mailer',
+#         :template_name => 'aplus'
+#       )
     end
     
     response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade, feedback: feedback})
