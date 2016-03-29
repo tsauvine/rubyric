@@ -191,4 +191,32 @@ class FeedbackMailer < ActionMailer::Base
     end
   end
 
+  def submission_received(submission_id)
+    @submission = Submission.find(submission_id)
+    @group = @submission.group
+    @exercise = @submission.exercise
+    @course_instance = @exercise.course_instance
+    @course = @course_instance.course
+    
+    subject = "#{@course.full_name} - #{@exercise.name}"
+    
+    # FIXME: repetition, see review()
+    recipients = []
+    @group.group_members.each do |member|
+      if !member.email.blank?
+        recipients << member.email
+      elsif member.user && !member.user.email.blank?
+        recipients << member.user.email
+      end
+    end
+    
+    I18n.with_locale(@course_instance.locale || I18n.locale) do
+      mail(
+        :to => recipients.join(","),
+        :subject => subject
+      )
+    end
+    
+  end
+  
 end

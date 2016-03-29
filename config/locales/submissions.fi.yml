@@ -1,5 +1,8 @@
 fi:
   submissions:
+    received: "Palautuksesi on vastaanotettu."
+    submission_time: "Palautusaika:"
+    
     new:
       group_members: "Ryhmän jäsenet"
       name_column: "Nimi"

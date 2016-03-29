@@ -44,6 +44,7 @@ class SubmissionMailer < ActionMailer::Base
       return
     end
     
+    submission = nil
     if email.has_attachments?
       email.attachments.each do |attachment|
         submission = Submission.new(:exercise => @exercise, :group => @group)
@@ -60,5 +61,7 @@ class SubmissionMailer < ActionMailer::Base
       submission.extension = 'txt'
       submission.save
     end
+    
+    FeedbackMailer.delay.submission_received(submission.id)
   end
 end
