@@ -415,17 +415,28 @@ class ExercisesController < ApplicationController
       review_counts = []
       @exercise.groups_with_submissions.each do |group|
         next if group.users.include?(current_user)
-        next if group.submissions.empty?
         
-        review_count = 0
-        skip = false
+        # Find the latest submission
+        latest_submission = nil
         group.submissions.each do |submission|
-          review_count += submission.reviews.size
-          skip = true if submission.reviews.any? {|review| review.user == current_user}
+          next unless submission.exercise_id == @exercise.id
+          latest_submission = submission if !latest_submission || submission.created_at > latest_submission.created_at
+        end
+        next unless latest_submission
+        submission = latest_submission
+        
+        skip = false
+        review_count = 0
+        
+        submission.reviews.each do |review|
+          review_count += 1 unless review.status == 'invalidated'
+          
+          # User cannot review the same group twice
+          skip = true if review.user == current_user
         end
         next if skip
         
-        review_counts << {:group => group, :count => review_count }
+        review_counts << {:group => group, :count => review_count}
       end
       
       if review_counts.empty?
