@@ -37,7 +37,7 @@ class ReviewsController < ApplicationController
     I18n.locale = @course_instance.locale || I18n.locale
 
     # Authorization
-    return access_denied unless @review.user == current_user || @course.has_teacher(current_user) || is_admin?(current_user) || (@exercise.collaborative_mode == 'review' && @course_instance.has_student(current_user))
+    return access_denied unless (@review.user == current_user && current_user != nil) || @course.has_teacher(current_user) || is_admin?(current_user) || (@exercise.collaborative_mode == 'review' && @course_instance.has_student(current_user))
 
     if @review.type == 'AnnotationAssessment'
       render :action => 'annotation', :layout => 'annotation'
