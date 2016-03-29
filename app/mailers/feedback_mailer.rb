@@ -126,7 +126,7 @@ class FeedbackMailer < ActionMailer::Base
     elsif grade_count == 0
       combined_grade = 0
     else
-      combined_grade = (combined_grade / grade_count).round
+      combined_grade = combined_grade / grade_count
     end
     
 #     recipients = []
@@ -139,7 +139,15 @@ class FeedbackMailer < ActionMailer::Base
 #     end
     
     # Koodiaapinen hack Spring 2016 (Note: does not work correctly for group work)
-    if @exercise.id == 218
+    # Don't send feedback if the student has not conducted peer reviews
+    # Convert points to pass/fail
+    if @exercise.id == 218 || @exercise.id == 235
+      if combined_grade >= 4.99
+        combined_grade = max_grade
+      else
+        combined_grade = 0
+      end
+      
       # Count reviews conducted by the user
       valid_submission_ids = @exercise.submission_ids
       max_review_count = 0
@@ -181,7 +189,7 @@ class FeedbackMailer < ActionMailer::Base
 #       )
     end
     
-    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade, max_points: max_grade.round, feedback: feedback})
+    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback})
     
     if response.code == 200
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
