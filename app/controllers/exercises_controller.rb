@@ -436,7 +436,7 @@ class ExercisesController < ApplicationController
         end
         next if skip
         
-        review_counts << {:group => group, :count => review_count}
+        review_counts << {:group => group, :count => review_count, :submission => latest_submission}
       end
       
       if review_counts.empty?
@@ -446,11 +446,11 @@ class ExercisesController < ApplicationController
       end
 
       # Select the group with the least reviews
+      review_counts.shuffle!
       review_counts.sort! {|a,b| a[:count] <=> b[:count]}
       group = review_counts.first
-      submission = group[:group].submissions.last
       
-      review = submission.assign_to(current_user)
+      review = group[:submission].assign_to(current_user)
     end
 
     redirect_to edit_review_path(review)
