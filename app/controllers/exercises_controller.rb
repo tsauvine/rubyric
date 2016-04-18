@@ -25,9 +25,12 @@ class ExercisesController < ApplicationController
     
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
+      logger.info "Starting groups_with_submissions"
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
+      logger.info "Finished groups_with_submissions"
       
       render :action => 'submissions', :layout => 'fluid-new'
+      logger.info "Finished rendering"
     else
       # Student's or assistant's view
       @is_assistant = @course_instance.has_assistant(current_user)
@@ -68,6 +71,9 @@ class ExercisesController < ApplicationController
       
       render :action => 'my_submissions', :layout => 'fluid-new'
     end
+    
+    memory_usage = `ps -o rss= -p #{$$}`.to_i
+    logger.debug "Memory consumption: #{memory_usage / 1048576} MB"
     
     log "exercise view #{@exercise.id}"
   end
