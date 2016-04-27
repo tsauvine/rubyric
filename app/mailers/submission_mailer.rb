@@ -48,7 +48,7 @@ class SubmissionMailer < ActionMailer::Base
     if email.has_attachments?
       email.attachments.each do |attachment|
         submission = Submission.new(:exercise => @exercise, :group => @group)
-        submission.payload = email.body
+        #submission.payload = email.body
         submission.file = attachment
         submission.save
       end
