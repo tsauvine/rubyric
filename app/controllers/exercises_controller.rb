@@ -21,16 +21,19 @@ class ExercisesController < ApplicationController
   def show
     @exercise = Exercise.find(params[:id])
     load_course
+    @course_instance_exercise_count = @course_instance.exercises.size
     I18n.locale = @course_instance.locale || I18n.locale
     
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
-      logger.info "Starting groups_with_submissions"
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
-      logger.info "Finished groups_with_submissions"
       
+#       @groups = Group.where(:course_instance_id => @course_instance.id)
+#         .includes([:reviewers, {:group_members => :user}, :submission_summaries => {:review_summaries => :user}])
+#         .where(:submissions => {:exercise_id => @exercise.id})
+#         .order('groups.id, submissions.created_at DESC, reviews.id')
+        
       render :action => 'submissions', :layout => 'fluid-new'
-      logger.info "Finished rendering"
     else
       # Student's or assistant's view
       @is_assistant = @course_instance.has_assistant(current_user)
@@ -72,8 +75,8 @@ class ExercisesController < ApplicationController
       render :action => 'my_submissions', :layout => 'fluid-new'
     end
     
-    memory_usage = `ps -o rss= -p #{$$}`.to_i
-    logger.debug "Memory consumption: #{memory_usage / 1048576} MB"
+#     memory_usage = `ps -o rss= -p #{$$}`.to_i
+#     logger.debug "Memory consumption: #{memory_usage / 1048576} MB"
     
     log "exercise view #{@exercise.id}"
   end

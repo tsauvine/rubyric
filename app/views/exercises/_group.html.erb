@@ -17,7 +17,7 @@
         <ul class="dropdown-menu" role="menu" aria-labelledby="dropdown-<%= submission.id %>">
           <li><%= link_to 'Create new review', review_submission_path(submission.id) %></li>
           <li><%= link_to 'New submission...', submit_path(:exercise => @exercise.id, :group => group.id) %></li>
-          <% if @course_instance.exercises.size > 1 %>
+          <% if @course_instance_exercise_count > 1 %>
             <li><%= link_to 'Move submission...', move_submission_path(submission) %></li>
           <% end %>
           <!-- if submission.reviews.empty? -->
@@ -44,7 +44,7 @@
       <td></td>
       </tr>
     <% else %>
-      <% row = 0; submission.reviews.each do |review| %>
+      <% row = 0; submission.reviews.includes(:user).each do |review| %>
           <% if (row > 0) %>
             <tr class="submission">
           <% end; row += 1 %>

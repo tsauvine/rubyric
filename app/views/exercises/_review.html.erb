@@ -3,7 +3,7 @@
 <tr class="submission" id="review<%= review.id %>">
   <td><%= (submission.group.users.collect do |user| "<span title='#{user.name}'>#{user.studentnumber}</span>" end).join(', ') %></td>
   <td>
-    <span <%= submission.late? ? 'class="late"' : '' %>><%= submission.created_at %></span>
+    <span <%= submission.late?(@exercise) ? 'class="late"' : '' %>><%= submission.created_at %></span>
       (<%= link_to "#{submission.extension}", {:controller => 'submissions', :action => 'show', :id => submission.id} %>)
   </td>
   <td><%= review.status %></td>

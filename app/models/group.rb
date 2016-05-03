@@ -6,6 +6,7 @@ class Group < ActiveRecord::Base
   has_many :users, :through => :group_members
   
   has_many :submissions, {:order => 'created_at DESC', :dependent => :destroy}
+  has_many :submission_summaries, :select => "submissions.id, submissions.created_at, submissions.filename, submissions.extension", :class_name => "Submission", :order => 'created_at DESC', :dependent => :destroy
 
   has_many :group_reviewers, :dependent => :destroy
   has_many :reviewers, :through => :group_reviewers, :source => :user, :class_name => 'User'

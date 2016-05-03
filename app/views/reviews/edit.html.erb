@@ -10,7 +10,7 @@
     <%= f.hidden_field :grade %>
     <%= hidden_field_tag :rubric_payload, @exercise.rubric %>
     <%= hidden_field_tag :send_review %>
-    <% if !@exercise.collaborative_mode.blank? && !@is_assistant && !@is_teacher %>
+    <% if @exercise.collaborative_mode == 'review' && !@is_assistant && !@is_teacher %>
       <%= hidden_field_tag :role, 'collaborator' %>
     <% end %>
 
@@ -27,6 +27,7 @@
 
 </div>
 
+<!--
 <ol id="tour" style="display: none;">
   <li data-target="#tutorial-tab" data-angle="130">
     The first step in the tour
@@ -35,3 +36,4 @@
     This is the second step in the tour
   </li>
 </ol>
+-->

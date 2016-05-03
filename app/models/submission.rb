@@ -10,6 +10,10 @@ class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
   has_many :reviews, {:order => :id, :dependent => :destroy }
+  
+  has_many :review_summaries, :select => "reviews.id, reviews.status, reviews.grade, reviews.user_id", :class_name => "Review" #, :foreign_key => 'review_id'
+  #has_many :review_summaries, :class_name => "Review", -> { select([:id, :submission_id, :status, :grade, :user_id]) }
+  #, -> { where('posts.title is not null') }
 
   after_create :write_file
 
@@ -155,9 +159,8 @@ class Submission < ActiveRecord::Base
     assign_to(user) if reviews.empty?
   end
 
-  def late?(ex = nil)
-    ex ||= self.exercise
-    ex.deadline && self.created_at > ex.deadline
+  def late?(exercise)
+    exercise.deadline && self.created_at > exercise.deadline
   end
   
   # Returns the path of a bitmap rendering of the submission
