@@ -189,9 +189,36 @@ class FeedbackMailer < ActionMailer::Base
 #       )
     end
     
-    response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback})
+    success = false
+    if submission.aplus_feedback_url.blank?
+      puts "MAX GRADE: #{max_grade}"
+      # Generate JSON for manual transfer
+      object = {
+        "students_by_email" => submission.group.group_members.map {|member| member.email },
+        "feedback" => feedback,
+        "grader" => 'grader_placeholder',
+        "exercise_id" => 'exercise_id_placeholder',
+        "submission_time" => submission.created_at,
+        "points" => (10 * combined_grade / max_grade).round
+      }
+      
+      File.open('aplus_grades.json', 'a') do |file|
+        file.print object.to_json
+        file.puts ','
+      end
+      
+      success = true
+    else
+      if Rails.env == 'production'
+        response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback})
+        
+        success = true if response.code == 200
+      else
+        logger.debug "Skipping A+ API call in development environment. #{submission.aplus_feedback_url}, points: #{combined_grade.round}, max_points: #{max_grade.round}"
+      end
+    end
     
-    if response.code == 200
+    if success
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
     else
       logger.error "Failed to submit points to A+"
