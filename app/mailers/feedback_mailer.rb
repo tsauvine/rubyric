@@ -196,8 +196,8 @@ class FeedbackMailer < ActionMailer::Base
       object = {
         "students_by_email" => submission.group.group_members.map {|member| member.email },
         "feedback" => feedback,
-        "grader" => 'grader_placeholder',
-        "exercise_id" => 'exercise_id_placeholder',
+        "grader" => 3832,
+        "exercise_id" => 1719,
         "submission_time" => submission.created_at,
         "points" => (10 * combined_grade / max_grade).round
       }
