@@ -510,6 +510,63 @@ class Exercise < ActiveRecord::Base
     results
   end
   
+  # returns a Hash
+  # {
+  #   "objects": [
+  #     {
+  #       "students_by_student_id": [
+  #         "XXXXX1"
+  #       ],
+  #       "feedback": "Nicely solved exercise!",
+  #       "grader": X1,
+  #       "exercise_id": Z1,
+  #       "submission_time": "2014-09-24 11:50",
+  #       "points": 100
+  #     },
+  #     {
+  #       "students_by_student_id": [
+  #         "XXXXX2"
+  #       ],
+  #       "feedback": "You can do better!",
+  #       "grader": X1,
+  #       "exercise_id": Z2,
+  #       "submission_time": "2014-09-24 11:50",
+  #       "points": 20
+  #     },
+  #     {
+  #       "students_by_email": [
+  #         "none@no.email"
+  #       ],
+  #       "feedback": "Last one.",
+  #       "grader": X1,
+  #       "exercise_id": Z2,
+  #       "submission_time": "2014-09-24 11:50",
+  #       "points": 1
+  #     }
+  #   ]
+  # }
+  def aplus_results
+    # TODO: implement
+    results = {}
+    
+    Group.where(:course_instance_id => self.course_instance_id).includes([{:submissions => [:reviews => :user, :group => :users]}, :users]).each do |group|
+      group.submissions.each do |submission|
+        next unless submission.exercise_id == self.id
+        submission.reviews.each do |review|
+          next unless review.include_in_results?
+          
+          group.group_members.each do |member|
+            student_id = member.user.studentnumber || member.user.email
+            results[student_id] ||= []
+            results[student_id] << review.grade
+          end
+        end
+      end
+    end
+    
+    results
+  end
+  
   # Returns the id of the review that is next in sequence for the user.
   # Returns nil if no more reviews are in queue.
   def next_review(user, done_review)

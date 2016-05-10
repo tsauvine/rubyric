@@ -214,6 +214,17 @@ class ExercisesController < ApplicationController
     @results = @exercise.student_results
     log "student_results #{@exercise.id}"
   end
+  
+  def aplus_results
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    render :text => @exercise.aplus_results.to_json
+    
+    log "aplus_results #{@exercise.id}"
+  end
 
   def statistics
     @exercise = Exercise.find(params[:id])
