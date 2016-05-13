@@ -28,9 +28,26 @@ class ExercisesController < ApplicationController
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
       
-#       @groups.sort! do |a,b|
-#         a.id <=> b.id
-#       end
+      sort_mode = if @exercise.id == 208
+        :name
+      else
+        :id
+      end
+      
+      case sort_mode
+      when :name
+        @groups.sort! { |a, b| Group.compare_by_name(a, b) }
+      when :earliest_submission
+        @groups.sort! { |a, b| Group.compare_by_submission_time(a, b, @exercise, :earliest) }
+      when :latest_submission
+        @groups.sort! { |a, b| Group.compare_by_submission_time(a, b, @exercise, :latest) }
+      when :status
+        @groups.sort! { |a, b| Group.compare_by_submission_status(a, b, @exercise) }
+      when :id
+        @groups.sort!(a.id <=> b.id)
+      else
+        @groups.sort!(a.id <=> b.id)
+      end
         
       render :action => 'submissions', :layout => 'fluid-new'
     else
