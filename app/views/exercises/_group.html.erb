@@ -2,7 +2,9 @@
   <td colspan="4">
     <!-- Reviewers -->
     <div class="pull-right hint">
-      <%= (group.reviewers.collect do |user| "#{user.name}" end).join(', ') %>
+      <%= 
+      (group.reviewers.collect do |user| "#{user.name}" end).join(', ')
+      %>
     </div>
     
     <!-- Students -->
@@ -44,7 +46,7 @@
       <td></td>
       </tr>
     <% else %>
-      <% row = 0; submission.reviews.includes(:user).each do |review| %>
+      <% row = 0; submission.reviews.each do |review| %>
           <% if (row > 0) %>
             <tr class="submission">
           <% end; row += 1 %>

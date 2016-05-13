@@ -57,7 +57,7 @@ class Exercise < ActiveRecord::Base
   # Returns a relation representing groups who have submitted this exercise. Users and submissions are eager loaded.
   def groups_with_submissions
     Group.where(:course_instance_id => self.course_instance_id)
-      .includes([:users, {:submissions => {:reviews => :user}}])
+      .includes([:reviewers, {:group_members => :user}, {:submissions => {:reviews => :user}}])
       .where(:submissions => {:exercise_id => self.id})
   end
   

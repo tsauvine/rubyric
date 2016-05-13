@@ -28,10 +28,9 @@ class ExercisesController < ApplicationController
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
       
-#       @groups = Group.where(:course_instance_id => @course_instance.id)
-#         .includes([:reviewers, {:group_members => :user}, :submission_summaries => {:review_summaries => :user}])
-#         .where(:submissions => {:exercise_id => @exercise.id})
-#         .order('groups.id, submissions.created_at DESC, reviews.id')
+#       @groups.sort! do |a,b|
+#         a.id <=> b.id
+#       end
         
       render :action => 'submissions', :layout => 'fluid-new'
     else
