@@ -44,9 +44,9 @@ class ExercisesController < ApplicationController
       when :status
         @groups.sort! { |a, b| Group.compare_by_submission_status(a, b, @exercise) }
       when :id
-        @groups.sort!(a.id <=> b.id)
+        @groups.sort! { |a, b| a.id <=> b.id }
       else
-        @groups.sort!(a.id <=> b.id)
+        @groups.sort! { |a, b| a.id <=> b.id }
       end
         
       render :action => 'submissions', :layout => 'fluid-new'
