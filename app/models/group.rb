@@ -171,7 +171,83 @@ class Group < ActiveRecord::Base
       extreme_status || ''
     end
     
-    # FIXME: compare by semantic value
+    # FIXME: compare by semantic value, e.g. :finished < :mailed
     a_extreme <=> b_extreme
+  end
+  
+  # Returns the total result of this group to a specific exercise, considering all submissions and reviews
+  # parameters:
+  #     average: :mean / :median
+  #     n_best: integer
+  # returns
+  # {
+  #   grade: ,
+  #   reviews: [Review, ...],
+  #   not_enough_reviews: true / false or missing
+  #   errors: [String, ...]
+  # }
+  def result(exercise, average, n_best)
+    reviews = []
+    result = {
+      :errors => []
+      }
+    
+    # Collect the reviews that should be included in the results
+    submissions.each do |submission|
+      next unless submission.exercise_id == exercise.id
+      submission.reviews.each do |review|
+        next unless review.include_in_results?
+        
+        reviews << review
+      end
+    end
+    
+    # Sort reviews by grade
+    not_sortable = false
+    begin
+      reviews.sort! { |a, b| a.grade <=> b.grade }
+    rescue
+      not_sortable = true
+    end
+    
+    # Take n best
+    if n_best && n_best > 0
+      reviews.slice!(0, options[:n_best])
+      
+      result[:not_enough_reviews] = true if n_best > reviews.size
+    end
+    
+    # Calculate mean or median
+    if average == :median
+      result[:grade] = begin
+        if reviews.empty?
+          nil
+        elsif reviews.size == 1
+          reviews.first.grade
+        else
+          reviews.inject{ |sum, review| sum + review.grade }.to_f / reviews.size
+        end
+      rescue
+        nil
+      end
+    else
+      result[:grade] = begin
+        if reviews.empty?
+          nil
+        elsif not_sortable
+          result[:errors] << 'Cannot calculate median because grades are not sortable.'
+          nil
+        #elsif reviews.size % 2 == 0
+        #  # Even number or reviews
+        #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
+        else
+          reviews[reviews.size / 2].grade
+        end
+      end
+    else
+
+    result[:reviews] = reviews
+    
+    return result
   end
 end

@@ -36,6 +36,7 @@ GEM
     activesupport (3.2.17)
       i18n (~> 0.6, >= 0.6.4)
       multi_json (~> 1.0)
+    addressable (2.4.0)
     arel (3.0.3)
     authlogic (3.4.0)
       activerecord (>= 3.2)
@@ -43,6 +44,16 @@ GEM
       request_store (~> 1.0.5)
     builder (3.0.4)
     cancan (1.6.10)
+    capybara (2.7.1)
+      addressable
+      mime-types (>= 1.16)
+      nokogiri (>= 1.3.3)
+      rack (>= 1.0.0)
+      rack-test (>= 0.5.4)
+      xpath (~> 2.0)
+    capybara-webkit (1.11.1)
+      capybara (>= 2.3.0, < 2.8.0)
+      json
     coffee-rails (3.2.2)
       coffee-script (>= 2.2.0)
       railties (~> 3.2.0)
@@ -53,6 +64,7 @@ GEM
     daemons (1.1.9)
     delayed_job (4.0.0)
       activesupport (>= 3.0, < 4.1)
+    diff-lcs (1.2.5)
     erubis (2.7.0)
     execjs (2.0.2)
     ffi (1.9.3)
@@ -79,8 +91,11 @@ GEM
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
     mime-types (1.25.1)
+    mini_portile2 (2.0.0)
     multi_json (1.9.2)
     netrc (0.7.9)
+    nokogiri (1.6.7.2)
+      mini_portile2 (~> 2.0.0.rc2)
     oauth (0.4.7)
     paypal-sdk-core (0.2.8)
       multi_json (~> 1.0)
@@ -119,6 +134,23 @@ GEM
     request_store (1.0.5)
     rest_client (1.8.0)
       netrc (~> 0.7.7)
+    rspec-core (3.4.4)
+      rspec-support (~> 3.4.0)
+    rspec-expectations (3.4.0)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-mocks (3.4.1)
+      diff-lcs (>= 1.2.0, < 2.0)
+      rspec-support (~> 3.4.0)
+    rspec-rails (3.4.2)
+      actionpack (>= 3.0, < 4.3)
+      activesupport (>= 3.0, < 4.3)
+      railties (>= 3.0, < 4.3)
+      rspec-core (~> 3.4.0)
+      rspec-expectations (~> 3.4.0)
+      rspec-mocks (~> 3.4.0)
+      rspec-support (~> 3.4.0)
+    rspec-support (3.4.1)
     sass (3.2.19)
     sass-rails (3.2.6)
       railties (~> 3.2.0)
@@ -127,6 +159,12 @@ GEM
     scrypt (1.2.1)
       ffi-compiler (>= 0.0.2)
       rake
+    shoulda (3.5.0)
+      shoulda-context (~> 1.0, >= 1.0.1)
+      shoulda-matchers (>= 1.4.1, < 3.0)
+    shoulda-context (1.2.1)
+    shoulda-matchers (2.8.0)
+      activesupport (>= 3.0.0)
     sprockets (2.2.2)
       hike (~> 1.2)
       multi_json (~> 1.0)
@@ -149,6 +187,8 @@ GEM
       macaddr (~> 1.0)
     uuidtools (2.1.4)
     xml-simple (1.1.3)
+    xpath (2.0.0)
+      nokogiri (~> 1.3)
 
 PLATFORMS
   ruby
@@ -156,6 +196,8 @@ PLATFORMS
 DEPENDENCIES
   authlogic
   cancan
+  capybara
+  capybara-webkit
   coffee-rails (~> 3.2.1)
   daemons
   delayed_job_active_record!
@@ -166,8 +208,10 @@ DEPENDENCIES
   pg
   rails (= 3.2.17)
   rest_client (= 1.8.0)
+  rspec-rails (~> 3.4)
   sass (~> 3.2.5)
   sass-rails (~> 3.2.3)
   scrypt
+  shoulda
   therubyracer
   uglifier (>= 1.0.3)

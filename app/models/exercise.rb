@@ -567,6 +567,43 @@ class Exercise < ActiveRecord::Base
     results
   end
   
+  
+  # Returns the results for each student
+  # [
+  #    {:member => GroupMember, :reviewer => User, :review => Review, :submission => Submission, :grade => String/Integer, :notes => String}
+  #    ...
+  # ]
+  # mode: all, mean, n_best
+  def results(groups, options = {})
+    results = []
+    
+    groups.each do |group|
+      group_result = group.result(self, options[:average], options[:n_best])
+    
+      # Construct result
+      if options[:include_all]
+        results.concat group.group_members.collect do |member|
+          group_result[:reviews].collect do |review|
+            { member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade }
+          end
+        end
+      else
+        if results[:not_enough_reviews]
+          results.concat group.group_members.collect do |member|
+            { member: member, notes: "Not enough reviews" }
+          end
+        else
+          results.concat group.group_members.collect { |member|
+            { member: member, grade: group_result[:grade] }
+          }
+        end
+      end
+    end
+    
+    # Sort the result
+    results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
+  end
+  
   # Returns the id of the review that is next in sequence for the user.
   # Returns nil if no more reviews are in queue.
   def next_review(user, done_review)

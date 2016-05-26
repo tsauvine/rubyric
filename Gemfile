@@ -19,11 +19,14 @@ group :assets do
 
   gem 'uglifier', '>= 1.0.3'
   gem 'jquery-ui-rails'
-  
-  #gem 'capybara'
-  #gem 'capybara-webkit'
 end
 
+group :test, :development do
+  gem 'rspec-rails', '~> 3.4'
+  gem 'shoulda'
+  gem 'capybara'
+  gem 'capybara-webkit'
+end
 
 gem 'jquery-rails'
 
@@ -42,7 +45,6 @@ gem 'jquery-rails'
 gem 'authlogic'
 gem 'scrypt'
 gem 'cancan'
-#gem 'shoulda'
 #gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
 gem 'delayed_job_active_record', :git => 'git://github.com/collectiveidea/delayed_job_active_record.git'
 gem 'daemons'

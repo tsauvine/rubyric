@@ -179,44 +179,11 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @results = [] # [[member, review], [member, review], ...]
-    @groups = Group.where(:course_instance_id => @course_instance.id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])
+    options = {}
+    options[:include_all] = true if params[:include] == 'all'
     
-    @groups.each do |group|
-      best_review = nil
-      best_grade = Float::MIN
-      all_reviews = []
-      
-      # Collect the reviews that should be included in the results
-      group.submissions.each do |submission|
-        next unless submission.exercise_id == @exercise.id
-        submission.reviews.each do |review|
-          next unless review.include_in_results?
-          
-          # Determine grade
-          grade = Float(review.grade) rescue Float::MIN
-          
-          if !grade.nil? && (best_review.nil? || grade > best_grade)
-            best_review = review
-            best_grade = grade
-          end
-          
-          all_reviews << review
-        end
-      end
-      
-      if params[:include] == 'best' && best_review
-        @results.concat group.group_members.collect {|member| [member, best_review]}
-      else
-        group.group_members.each do |member|
-          all_reviews.each do |review|
-            @results << [member, review]
-          end
-        end
-      end
-    end
-    
-    @results.sort! { |a, b| (a[0].studentnumber || '') <=> (b[0].studentnumber || '') }
+    groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])
+    @results = @exercise.results(groups, options)
     
     log "results #{@exercise.id}"
   end

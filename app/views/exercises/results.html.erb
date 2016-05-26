@@ -24,33 +24,31 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
-      <% if @course_instance.submission_policy == 'lti' %>
-        <th>student ID</th>
-      <% else %>
-        <th>studentnumber</th>
-      <% end %>
+      <th>student ID</th>
       <th>first name</th>
       <th>last name</th>
       <th>email</th>
       <th>grade</th>
       <th>submitted_at</th>
       <th>reviewer</th>
+      <th>notes</th>
     </tr>
   </thead>
   <tbody>
     <% @results.each do |result| %>
       <tr>
-        <% if @course_instance.submission_policy == 'lti' && result[0].user %>
-          <td><%= result[0].user.lti_user_id %></td>
+        <% if @course_instance.submission_policy == 'lti' %>
+          <td><% if result[:member].user %><%= result[:member].user.lti_user_id %><% end %></td>
         <% else %>
-          <td><%= result[0].studentnumber %></td>
+          <td><%= result[:member].studentnumber %></td>
         <% end %>
-        <td><%= result[0].firstname %></td>
-        <td><%= result[0].lastname %></td>
-        <td><%= result[0].email %></td>
-        <td><%= result[1].grade %></td>
-        <td><%= result[1].submission.created_at %></td>
-        <td><% if result[1].user %><%= result[1].user.name  %> (<%= result[1].user.studentnumber %>)<% end %></td>
+        <td><% if result[:member].user %><%= result[:member].user.firstname %><% end %></td>
+        <td><% if result[:member].user %><%= result[:member].user.lastname %><% end %></td>
+        <td><%= result[:member].email %></td>
+        <td><%= result[:grade] %></td>
+        <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
+        <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>
+        <td><%= result[:notes] %></td>
       </tr>
     <% end %>
   </tbody>
