@@ -588,7 +588,7 @@ class Exercise < ActiveRecord::Base
           end
         end
       else
-        if results[:not_enough_reviews]
+        if group_result[:not_enough_reviews]
           results.concat group.group_members.collect do |member|
             { member: member, notes: "Not enough reviews" }
           end

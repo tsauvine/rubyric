@@ -10,7 +10,7 @@ describe Exercise, '#results' do
       GroupMember.new(:studentnumber => '23456')
       ]
     
-    submission = Submission.new(:group => group)
+    submission = Submission.new(:group => group, :exercise => @exercise)
     submission.reviews = [
       Review.new(:status => 'finished', :grade => 1),
       Review.new(:status => 'finished', :grade => 2),

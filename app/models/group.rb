@@ -186,21 +186,26 @@ class Group < ActiveRecord::Base
   #   not_enough_reviews: true / false or missing
   #   errors: [String, ...]
   # }
-  def result(exercise, average, n_best)
+  def result(exercise, average, n_best = nil)
     reviews = []
     result = {
       :errors => []
       }
     
     # Collect the reviews that should be included in the results
+    logger.debug "Group has #{submissions.size} submissions."
     submissions.each do |submission|
       next unless submission.exercise_id == exercise.id
       submission.reviews.each do |review|
-        next unless review.include_in_results?
+        unless review.include_in_results?
+          logger.debug "Omitting review."
+          next
+        end
         
         reviews << review
       end
     end
+    logger.debug "Considering #{reviews.size} reviews"
     
     # Sort reviews by grade
     not_sortable = false
@@ -208,43 +213,55 @@ class Group < ActiveRecord::Base
       reviews.sort! { |a, b| a.grade <=> b.grade }
     rescue
       not_sortable = true
+      logger.debug "Reviews are not sortable"
     end
     
     # Take n best
     if n_best && n_best > 0
+      logger.debug "Taking #{n_best} reviews"
       reviews.slice!(0, options[:n_best])
       
-      result[:not_enough_reviews] = true if n_best > reviews.size
+      if n_best > reviews.size
+        result[:not_enough_reviews] = true
+        logger.debug "Not enough reviews"
+      end
     end
     
     # Calculate mean or median
     if average == :median
       result[:grade] = begin
         if reviews.empty?
+          logger.debug "No reviews. Result is nil."
           nil
         elsif reviews.size == 1
+          logger.debug "Take result from the only review."
           reviews.first.grade
         else
+          logger.debug "Result is the average of #{reviews.size} reviews."
           reviews.inject{ |sum, review| sum + review.grade }.to_f / reviews.size
         end
       rescue
+        logger.debug "Failed to calculate average. Result is nil."
         nil
       end
     else
       result[:grade] = begin
         if reviews.empty?
+          logger.debug "No reviews. Result is nil."
           nil
         elsif not_sortable
+          logger.debug "Cannot calculate median because grades are not sortable. Result is nil."
           result[:errors] << 'Cannot calculate median because grades are not sortable.'
           nil
         #elsif reviews.size % 2 == 0
         #  # Even number or reviews
         #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
         else
+          logger.debug "Result is the median."
           reviews[reviews.size / 2].grade
         end
       end
-    else
+    end
 
     result[:reviews] = reviews
     
