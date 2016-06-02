@@ -175,95 +175,100 @@ class Group < ActiveRecord::Base
     a_extreme <=> b_extreme
   end
   
-  # Returns the total result of this group to a specific exercise, considering all submissions and reviews
-  # parameters:
-  #     average: :mean / :median
-  #     n_best: integer
-  # returns
+  # Returns the total result of this group to a specific exercise, considering all submissions and reviews.
+  # Hint: eager load submissions and reviews to maximize performance (includes(:submissions => :reviews)).
+  #
+  # average - :mean / :median
+  # n_best  - integer
+  #
+  # Returns
   # {
-  #   grade: ,
-  #   reviews: [Review, ...],
+  #   grade: integer / float / String / nil,
+  #   reviews: [Review, ...],  # all reviews that are included in grading
   #   not_enough_reviews: true / false or missing
   #   errors: [String, ...]
   # }
   def result(exercise, average, n_best = nil)
+    submission_count = 0
+    average ||= :max
     reviews = []
     result = {
-      :errors => []
+        :errors => []
       }
     
     # Collect the reviews that should be included in the results
-    logger.debug "Group has #{submissions.size} submissions."
     submissions.each do |submission|
       next unless submission.exercise_id == exercise.id
+      
+      submission_count += 1
       submission.reviews.each do |review|
-        unless review.include_in_results?
-          logger.debug "Omitting review."
-          next
-        end
+        next unless review.include_in_results?
         
         reviews << review
       end
     end
-    logger.debug "Considering #{reviews.size} reviews"
+    result[:reviews] = reviews
     
-    # Sort reviews by grade
+    # Sort reviews by grade, best first
     not_sortable = false
     begin
-      reviews.sort! { |a, b| a.grade <=> b.grade }
+      reviews.sort! { |a, b| b.grade <=> a.grade }
+      #logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
     rescue
       not_sortable = true
-      logger.debug "Reviews are not sortable"
     end
     
     # Take n best
-    if n_best && n_best > 0
+    if n_best
       logger.debug "Taking #{n_best} reviews"
-      reviews.slice!(0, options[:n_best])
-      
-      if n_best > reviews.size
+      if n_best.abs > reviews.size
         result[:not_enough_reviews] = true
         logger.debug "Not enough reviews"
       end
+      
+      if n_best > 0
+        # N best
+        reviews = reviews.slice(0, n_best)
+      else
+        # N worst
+        reviews = reviews.slice(n_best, -n_best)
+      end
+      
+      #logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
     end
     
     # Calculate mean or median
-    if average == :median
-      result[:grade] = begin
-        if reviews.empty?
-          logger.debug "No reviews. Result is nil."
-          nil
-        elsif reviews.size == 1
-          logger.debug "Take result from the only review."
-          reviews.first.grade
+    if submission_count == 0
+      result[:no_submissions] = true
+    elsif reviews.empty?
+      result[:not_enough_reviews] = true
+    elsif not_sortable && (average == :median || average == :mix || average == :max)
+      result[:errors] << 'Cannot calculate grade from non-numeric grades.'
+    elsif average == :median
+      result[:grade] = reviews[reviews.size / 2].grade
+      # Even number or reviews:
+      # if reviews.size % 2 == 0
+      #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
+    elsif average == :max
+      #logger.debug "Calculating max"
+      result[:grade] = reviews.first.grade
+    elsif average == :min
+      #logger.debug "Calculating min"
+      result[:grade] = reviews.last.grade
+    elsif average == :mean
+      begin
+        if reviews.size == 1
+          # Non-numeric grades can be handled in this special case
+          result[:grade] = reviews.first.grade
         else
-          logger.debug "Result is the average of #{reviews.size} reviews."
-          reviews.inject{ |sum, review| sum + review.grade }.to_f / reviews.size
+          result[:grade] = reviews.inject(0.0){ |sum, review| sum + review.grade }.to_f / reviews.size
         end
-      rescue
-        logger.debug "Failed to calculate average. Result is nil."
-        nil
+      rescue Exception => e
+        result[:errors] << 'Cannot calculate grade from non-numeric grades.'
       end
     else
-      result[:grade] = begin
-        if reviews.empty?
-          logger.debug "No reviews. Result is nil."
-          nil
-        elsif not_sortable
-          logger.debug "Cannot calculate median because grades are not sortable. Result is nil."
-          result[:errors] << 'Cannot calculate median because grades are not sortable.'
-          nil
-        #elsif reviews.size % 2 == 0
-        #  # Even number or reviews
-        #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
-        else
-          logger.debug "Result is the median."
-          reviews[reviews.size / 2].grade
-        end
-      end
+      raise ArgumentError.new("Average mode sot specified")
     end
-
-    result[:reviews] = reviews
     
     return result
   end

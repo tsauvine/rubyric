@@ -180,12 +180,28 @@ class ExercisesController < ApplicationController
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
     options = {}
-    options[:include_all] = true if params[:include] == 'all'
+    if params[:include] == 'all'
+      options[:include_all] = true
+    else
+      grading_mode = begin 
+          JSON.parse(@exercise.grading_mode || '{}')
+        rescue
+          {}
+        end
+      
+      options[:include_peer_review_count] = true || @exercise.peer_review_goal && @exercise.peer_review_goal > 0
+      options[:average] = grading_mode[:average]
+      options[:n_best] = grading_mode[:n_best]
+    end
     
     groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])
     @results = @exercise.results(groups, options)
     
-    log "results #{@exercise.id}"
+    # Sort the result
+    @results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
+    @results.sort! { |a, b| (a[:notes]) <=> (b[:notes]) }
+    
+    log "results #{@exercise.id}#{params[:include] == 'all' ? ' all' : ''}"
   end
   
   def student_results

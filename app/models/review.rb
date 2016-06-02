@@ -59,7 +59,7 @@ class Review < ActiveRecord::Base
         end
       end
 
-      case submission.exercise.grading_mode
+      case submission.exercise.rubric_grading_mode
         when "average"
           section_grade = (sections_counter == 0) ? 0 : section_points_counter / sections_counter
         else
@@ -71,7 +71,7 @@ class Review < ActiveRecord::Base
     end
 
 
-    case submission.exercise.grading_mode
+    case submission.exercise.rubric_grading_mode
       when "sum"
         grade = category_points_counter
       when "average"

@@ -16,7 +16,7 @@ class Exercise < ActiveRecord::Base
   # Feedback grouping options: exercise, sections, categories
   
   
-  def grading_mode
+  def rubric_grading_mode
     return nil if self.rubric.blank?
     rubric_content()['gradingMode']
   end
@@ -582,26 +582,31 @@ class Exercise < ActiveRecord::Base
     
       # Construct result
       if options[:include_all]
-        results.concat group.group_members.collect do |member|
-          group_result[:reviews].collect do |review|
-            { member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade }
+        group.group_members.collect do |member|
+          group_result[:reviews].each do |review|
+            results << { member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade }
           end
         end
       else
-        if group_result[:not_enough_reviews]
-          results.concat group.group_members.collect do |member|
-            { member: member, notes: "Not enough reviews" }
+        group.group_members.each do |member|
+          created_peer_reviews = 0
+          finished_peer_reviews = 0
+          peer_review_count = if options[:include_peer_review_count] && member.user
+            Review.joins(:submission).where(:user_id => member.user_id, 'submissions.exercise_id' => self.id).all.each do |peer_review|
+              created_peer_reviews += 1
+              finished_peer_reviews += 1 if peer_review.status == 'finished' || peer_review.status == 'mailed'
+            end
+          else
+            nil
           end
-        else
-          results.concat group.group_members.collect { |member|
-            { member: member, grade: group_result[:grade] }
-          }
+          
+          notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
+          results << { member: member, grade: group_result[:grade], created_peer_review_count: created_peer_reviews, finished_peer_review_count: finished_peer_reviews, notes: notes } unless group_result[:no_submissions]
         end
       end
     end
     
-    # Sort the result
-    results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
+    return results
   end
   
   # Returns the id of the review that is next in sequence for the user.

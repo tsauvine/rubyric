@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160306180822) do
+ActiveRecord::Schema.define(:version => 20160602120709) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -82,6 +82,22 @@ ActiveRecord::Schema.define(:version => 20160306180822) do
 
   add_index "delayed_jobs", ["priority", "run_at"], :name => "delayed_jobs_priority"
 
+  create_table "delayed_jobs_edge", :force => true do |t|
+    t.integer  "priority",   :default => 0
+    t.integer  "attempts",   :default => 0
+    t.text     "handler"
+    t.text     "last_error"
+    t.datetime "run_at"
+    t.datetime "locked_at"
+    t.datetime "failed_at"
+    t.string   "locked_by"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
+    t.string   "queue"
+  end
+
+  add_index "delayed_jobs_edge", ["priority", "run_at"], :name => "delayed_jobs_edge_priority"
+
   create_table "exercises", :force => true do |t|
     t.string   "name"
     t.integer  "course_instance_id"
@@ -104,7 +120,7 @@ ActiveRecord::Schema.define(:version => 20160306180822) do
     t.boolean  "grader_can_email"
     t.boolean  "unregistered_can_submit"
     t.boolean  "submit_without_login",    :default => false
-    t.string   "grading_mode",            :default => "average"
+    t.string   "grading_mode"
     t.boolean  "autoassign",              :default => true
     t.text     "xml"
     t.text     "rubric"

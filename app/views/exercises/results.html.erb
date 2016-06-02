@@ -10,13 +10,13 @@
   <div class="well">
     <p>
       If multiple reviews exist for the same group, include<br />
-      <%= radio_button_tag 'include', 'all', params[:include] != 'best' %> All grades<br />
-      <%= radio_button_tag 'include', 'best', params[:include] == 'best' %> Best grade
+      <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All reviews<br />
+      <%= radio_button_tag 'include', 'combined', params[:include] != 'all' %> Combined grade
     </p>
     
     <p>
       <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
-      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet (new)<% end %>
+      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
     </p>
   </div>
 <% end %>
@@ -29,8 +29,13 @@
       <th>last name</th>
       <th>email</th>
       <th>grade</th>
-      <th>submitted_at</th>
-      <th>reviewer</th>
+      <% if params[:include] == 'all' %>
+        <th>submitted_at</th>
+        <th>reviewer</th>
+      <% end %>
+      <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+        <th title="finished (created)">peer review count (*)</th>
+      <% end %>
       <th>notes</th>
     </tr>
   </thead>
@@ -46,12 +51,20 @@
         <td><% if result[:member].user %><%= result[:member].user.lastname %><% end %></td>
         <td><%= result[:member].email %></td>
         <td><%= result[:grade] %></td>
-        <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
-        <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>
+        <% if params[:include] == 'all' %>
+          <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
+          <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>
+        <% end %>
+        <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %><td>
+          <%= result[:finished_peer_review_count] %>
+          <% if result[:finished_peer_review_count] != result[:created_peer_review_count] %>(<%= result[:created_peer_review_count] %>)<% end %>
+        </td><% end %>
         <td><%= result[:notes] %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<!--p>Note: In case multiple reviews exist for the same group, the review with the highest grade counts.</p-->
+<% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+  <p>* number of unfinished peer reviews in parenthesis</p>
+<% end %>

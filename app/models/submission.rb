@@ -329,7 +329,7 @@ class Submission < ActiveRecord::Base
     end
     
     # FIXME: this is a temporary hack for Koodiaapinen
-    if submission.is_a?(AplusSubmission) && submission.exercise.grading_mode == 'always_pass'
+    if submission.is_a?(AplusSubmission) && submission.exercise.rubric_grading_mode == 'always_pass'
       logger.info "Sending points to A+"
       FeedbackMailer.aplus_feedback(submission)
     end
