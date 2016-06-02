@@ -212,10 +212,11 @@ class Group < ActiveRecord::Base
     # Sort reviews by grade, best first
     not_sortable = false
     begin
-      reviews.sort! { |a, b| b.grade <=> a.grade }
-      #logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
+      reviews.sort! { |a, b| Review.compare_grades!(b.grade, a.grade) }
+      logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
     rescue
       not_sortable = true
+      logger.debug "Reviews not sortable: #{reviews.map {|review| review.grade}.join(', ')}"
     end
     
     # Take n best
@@ -234,7 +235,7 @@ class Group < ActiveRecord::Base
         reviews = reviews.slice(n_best, -n_best)
       end
       
-      #logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
+      logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
     end
     
     # Calculate mean or median
@@ -250,10 +251,10 @@ class Group < ActiveRecord::Base
       # if reviews.size % 2 == 0
       #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
     elsif average == :max
-      #logger.debug "Calculating max"
+      logger.debug "Calculating max"
       result[:grade] = reviews.first.grade
     elsif average == :min
-      #logger.debug "Calculating min"
+      logger.debug "Calculating min"
       result[:grade] = reviews.last.grade
     elsif average == :mean
       begin
@@ -261,7 +262,8 @@ class Group < ActiveRecord::Base
           # Non-numeric grades can be handled in this special case
           result[:grade] = reviews.first.grade
         else
-          result[:grade] = reviews.inject(0.0){ |sum, review| sum + review.grade }.to_f / reviews.size
+          mean = reviews.inject(0.0){ |sum, review| sum + Review.cast_grade(review.grade) }.to_f / reviews.size
+          result[:grade] = mean.to_s
         end
       rescue Exception => e
         result[:errors] << 'Cannot calculate grade from non-numeric grades.'

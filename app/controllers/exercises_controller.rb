@@ -198,10 +198,35 @@ class ExercisesController < ApplicationController
     @results = @exercise.results(groups, options)
     
     # Sort the result
-    @results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
-    @results.sort! { |a, b| (a[:notes]) <=> (b[:notes]) }
+    case params[:sort]
+    when 'student-id'
+      @results.sort! { |a, b| (a[:member].studentnumber || '').downcase <=> (b[:member].studentnumber || '').downcase }
+    when 'first-name'
+      @results.sort! { |a, b| (a[:member].firstname || '').downcase <=> (b[:member].firstname.downcase || '') }
+    when 'last-name'
+      @results.sort! { |a, b| (a[:member].lastname || '').downcase <=> (b[:member].lastname || '').downcase }
+    when 'email'
+      @results.sort! { |a, b| (a[:member].email || '').downcase <=> (b[:member].email || '').downcase }
+    when 'grade'
+      @results.sort! { |a, b| Review.compare_grades(a[:grade], b[:grade]) }
+    when 'peer-review-count'
+      #@results.sort! { |a, b| (a[:created_peer_review_count] || 0) <=> (b[:created_peer_review_count] || 0) }
+      @results.sort! { |a, b| (a[:finished_peer_review_count] || 0) <=> (b[:finished_peer_review_count] || 0) }
+    when 'notes'
+      @results.sort! { |a, b| (a[:notes] || '') <=> (b[:notes] || '') }
+    when 'reviewer'
+      @results.sort! { |a, b| (a[:reviewer].nil? ? '' : (a[:reviewer].lastname || '').downcase) <=> (b[:reviewer].nil? ? '' : (b[:reviewer].lastname || '').downcase) }
+    when 'submitted-at'
+      @results.sort! { |a, b| (a[:submission].nil? ? 0 : a[:submission].created_at.to_i) <=> (b[:submission].nil? ? 0 : b[:submission].created_at.to_i) }
+    else
+      @results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
+    end
+    
+    #@results.sort! { |a, b| (a[:notes]) <=> (b[:notes]) }
     
     log "results #{@exercise.id}#{params[:include] == 'all' ? ' all' : ''}"
+    
+    render :action => :results, :layout => 'fluid-new'
   end
   
   def student_results
