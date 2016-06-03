@@ -594,7 +594,7 @@ class Exercise < ActiveRecord::Base
           peer_review_count = if options[:include_peer_review_count] && member.user
             Review.joins(:submission).where(:user_id => member.user_id, 'submissions.exercise_id' => self.id).all.each do |peer_review|
               created_peer_reviews += 1
-              finished_peer_reviews += 1 if peer_review.status == 'finished' || peer_review.status == 'mailed'
+              finished_peer_reviews += 1 if peer_review.status == 'finished' || peer_review.status == 'mailed' || peer_review.status == 'invalidated'
             end
           else
             nil
