@@ -188,9 +188,10 @@ class Group < ActiveRecord::Base
   #   not_enough_reviews: true / false or missing
   #   errors: [String, ...]
   # }
-  def result(exercise, average = :max, n_best = nil)
-    average = average.to_sym if average.is_a? String
+  def result(exercise, average, n_best = nil)
     submission_count = 0
+    average ||= :mean
+    average = average.to_sym if average.is_a? String
     reviews = []
     result = {
         :errors => []
@@ -269,7 +270,7 @@ class Group < ActiveRecord::Base
         result[:errors] << 'Cannot calculate grade from non-numeric grades.'
       end
     else
-      raise ArgumentError.new("Average mode sot specified")
+      raise ArgumentError.new("Unrecognized average mode: #{average}")
     end
     
     return result
