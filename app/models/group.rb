@@ -188,9 +188,9 @@ class Group < ActiveRecord::Base
   #   not_enough_reviews: true / false or missing
   #   errors: [String, ...]
   # }
-  def result(exercise, average, n_best = nil)
+  def result(exercise, average = :max, n_best = nil)
+    average = average.to_sym if average.is_a? String
     submission_count = 0
-    average ||= :max
     reviews = []
     result = {
         :errors => []
