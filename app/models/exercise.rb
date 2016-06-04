@@ -578,7 +578,7 @@ class Exercise < ActiveRecord::Base
     results = []
     
     groups.each do |group|
-      group_result = group.result(self, options[:average], options[:n_best])
+      group_result = group.result(self, options)
     
       # Construct result
       if options[:include_all]
@@ -589,19 +589,15 @@ class Exercise < ActiveRecord::Base
         end
       else
         group.group_members.each do |member|
-          created_peer_reviews = 0
-          finished_peer_reviews = 0
+          # Peer review count
           peer_review_count = if options[:include_peer_review_count] && member.user
-            Review.joins(:submission).where(:user_id => member.user_id, 'submissions.exercise_id' => self.id).all.each do |peer_review|
-              created_peer_reviews += 1
-              finished_peer_reviews += 1 if peer_review.status == 'finished' || peer_review.status == 'mailed' || peer_review.status == 'invalidated'
-            end
+            member.user.peer_review_count(self)
           else
             nil
           end
           
           notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
-          results << { member: member, grade: group_result[:grade], created_peer_review_count: created_peer_reviews, finished_peer_review_count: finished_peer_reviews, notes: notes } unless group_result[:no_submissions]
+          results << { member: member, grade: group_result[:grade], created_peer_review_count: peer_review_count[:created_peer_reviews], finished_peer_review_count: peer_review_count[:finished_peer_reviews], notes: notes } unless group_result[:no_submissions]
         end
       end
     end

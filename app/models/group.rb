@@ -186,12 +186,13 @@ class Group < ActiveRecord::Base
   #   grade: integer / float / String / nil,
   #   reviews: [Review, ...],  # all reviews that are included in grading
   #   not_enough_reviews: true / false or missing
+  #   no_submissions: true / false or missing
   #   errors: [String, ...]
   # }
-  def result(exercise, average, n_best = nil)
+  def result(exercise, options)
     submission_count = 0
-    average ||= :mean
-    average = average.to_sym if average.is_a? String
+    average = (options[:average] || :mean).to_sym
+    n_best = options[:n_best]
     reviews = []
     result = {
         :errors => []

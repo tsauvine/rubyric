@@ -186,11 +186,11 @@ class ExercisesController < ApplicationController
       grading_mode = begin 
           JSON.parse(@exercise.grading_mode || '{}')
         rescue Exception => e
-          logger.error "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
+          logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
           {}
         end
       
-      options[:include_peer_review_count] = true || @exercise.peer_review_goal && @exercise.peer_review_goal > 0
+      options[:include_peer_review_count] = @exercise.peer_review_goal && @exercise.peer_review_goal > 0
       options[:average] = grading_mode['average']
       options[:n_best] = grading_mode['n_best']
     end

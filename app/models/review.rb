@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'set.rb'
 
 class Review < ActiveRecord::Base
   belongs_to :submission
@@ -356,17 +357,14 @@ class Review < ActiveRecord::Base
   
   def self.deliver_reviews(review_ids)
     errors = []
-    aplus_reviews = {} # { Submission => [Review, Review, ...] }
+    aplus_submission_ids = Set.new # Groups whose feedback should be sent to A+
     
-    # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
       next if review.status == 'invalidated'
       
       begin
         if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 208  # Koodiaapinen hack for exercise 208 (some submissions were received via email)
-          # Bundle reviews that belong to the same AplusSubmission
-          aplus_reviews[review.submission] ||= []
-          aplus_reviews[review.submission] << review
+          aplus_submission_ids << review.submission_id
         else
           FeedbackMailer.review(review).deliver
         end
@@ -379,9 +377,9 @@ class Review < ActiveRecord::Base
       end
     end
     
-    aplus_reviews.each do |submission, reviews|
+    aplus_submission_ids.each do |submission_id|
       # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
-      FeedbackMailer.aplus_feedback(submission, reviews)
+      FeedbackMailer.aplus_feedback(submission_id)
     end
     
     # Send delivery errors to teacher
