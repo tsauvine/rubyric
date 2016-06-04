@@ -589,15 +589,16 @@ class Exercise < ActiveRecord::Base
         end
       else
         group.group_members.each do |member|
-          # Peer review count
-          peer_review_count = if options[:include_peer_review_count] && member.user
-            member.user.peer_review_count(self)
-          else
-            nil
+          notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
+          resultline = { member: member, grade: group_result[:grade], notes: notes }
+          
+          if options[:include_peer_review_count] && member.user
+            peer_review_count = member.user.peer_review_count(self)
+            resultline[:created_peer_review_count] = peer_review_count[:created_peer_reviews]
+            resultline[:finished_peer_review_count] = peer_review_count[:finished_peer_reviews]
           end
           
-          notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
-          results << { member: member, grade: group_result[:grade], created_peer_review_count: peer_review_count[:created_peer_reviews], finished_peer_review_count: peer_review_count[:finished_peer_reviews], notes: notes } unless group_result[:no_submissions]
+          results << resultline unless group_result[:no_submissions]
         end
       end
     end
