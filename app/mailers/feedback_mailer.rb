@@ -209,7 +209,7 @@ class FeedbackMailer < ActionMailer::Base
     end
     
     if success
-      Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'mailed')
+      Review.where(:id => review_ids).update_all(:status => 'mailed')
     else
       Review.where(:id => review_ids, :status => 'mailing').update_all(:status => 'finished')
       logger.error "Failed to submit points to A+"
