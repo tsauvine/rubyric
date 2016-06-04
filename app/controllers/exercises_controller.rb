@@ -183,7 +183,7 @@ class ExercisesController < ApplicationController
     if params[:include] == 'all'
       options[:include_all] = true
     else
-      grading_mode = begin 
+      options = begin 
           JSON.parse(@exercise.grading_mode || '{}')
         rescue Exception => e
           logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
@@ -191,8 +191,6 @@ class ExercisesController < ApplicationController
         end
       
       options[:include_peer_review_count] = @exercise.peer_review_goal && @exercise.peer_review_goal > 0
-      options[:average] = grading_mode['average']
-      options[:n_best] = grading_mode['n_best']
     end
     
     groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])

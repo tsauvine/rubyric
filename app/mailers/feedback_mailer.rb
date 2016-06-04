@@ -119,9 +119,11 @@ class FeedbackMailer < ActionMailer::Base
         logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
         {}
       end
-    
+    logger.debug "GRADING MODE: #{grading_mode}"
+      
     group_result = group.result(@exercise, grading_mode)
     combined_grade = Review.cast_grade(group_result[:grade])
+    logger.debug "GRADE: #{group_result}"
 
     # A+ always requires max_grade
     if max_grade.nil?

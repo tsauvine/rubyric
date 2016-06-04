@@ -191,8 +191,11 @@ class Group < ActiveRecord::Base
   # }
   def result(exercise, options)
     submission_count = 0
-    average = (options[:average] || :mean).to_sym
-    n_best = options[:n_best]
+    average = (options['average'] || :mean).to_sym
+    logger.debug "OPTIONS: #{options}"
+    logger.debug ""
+    logger.debug "AVERAGE MODE: #{average}"
+    n_best = options['n_best']
     reviews = []
     result = {
         :errors => []
