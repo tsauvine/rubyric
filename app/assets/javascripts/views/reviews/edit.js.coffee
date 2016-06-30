@@ -3,12 +3,10 @@
 #= require reviewEditor
 
 jQuery ->
-  editor = new ReviewEditor()
-
   rawRubric = $('#rubric_payload').val()
   rubric = $.parseJSON(rawRubric) if rawRubric.length > 0
-  editor.parseRubric(rubric)
-
+  
+  editor = new ReviewEditor(rubric)
   editor.loadReview()
   
   #$('#tour').crumble()
