@@ -64,7 +64,7 @@
     <%= f.label :review_mode, 'Review mode', :class => 'control-label' %>
     <div class="controls">
       <label>
-        <%= f.select(:review_mode, options_for_select([['Plain text', 'text'], ['Annotation', 'annotation']], @exercise.review_mode)) %>
+        <%= f.select(:review_mode, options_for_select([['Annotation', 'annotation'], ['Plain text', 'text']], @exercise.review_mode)) %>
       </label>
     </div>
   </div>
