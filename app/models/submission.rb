@@ -175,7 +175,6 @@ class Submission < ActiveRecord::Base
     
     page_number ||= 0
     page_number = page_number.to_i
-    
     if self.extension == 'pdf' || self.conversion == 'pdf'
       return image_path_pdf(page_number, zoom)
     elsif self.conversion == 'image'

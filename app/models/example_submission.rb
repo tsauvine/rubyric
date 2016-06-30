@@ -12,6 +12,10 @@ class ExampleSubmission < Submission
     Submission.delay.post_process(self.id)
   end
   
+  def extension
+    'pdf'
+  end
+  
   def filename
     'example.pdf'
   end
