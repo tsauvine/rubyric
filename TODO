@@ -40,22 +40,15 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 
 näytä lti-kursseille tuloslistassa lti_user_id
 
-= Koodiaapinen =
-- ohjeistusta review-näkymään opiskelijoille
-- pisteet takaisin plussaan A+-protokollalla
-- pisteet takaisin plussaan LTI-protokollalla
-- jos collaborative-moodissa ei ole muiden palautuksia, niin näytä 'Ei vielä palautuksia'
-+ näytä opiskelijan exercises-dashboardissa collaborative-moodissa muiden palautteet pop-uppina
-+ thumbnail-viewssä \n -> <br />
-+ thumbnail-errorit
-+ palautuksen voi poistaa, vaikka on arvionteja
-+ jos collaborative-näkymässä on palautuksia, joita ei voi annotoida, anna jokaisen arvioijan luoda oma peer-review
-
-- drag'n'drop-palautus
-- varoita, jos yrittää mennä kurssille vanhalla versiolla
 
 = Soon =
 
+- pricing
+- lazy loading of pdf pages
+- tutorial mode
+
+
+drag'n'drop-palautus
 PDF with variable page size
 
 Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf, xvfb
