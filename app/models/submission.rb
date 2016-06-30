@@ -66,7 +66,12 @@ class Submission < ActiveRecord::Base
   # Saves the file to the filesystem. This is called automatically after create.
   # (This must be called after create, because we need to know the id.)
   def write_file
-    #return unless @file_data
+    unless @file_data || self.payload
+      logger.debug "No file data."
+      return
+    else
+      logger.debug "Creating submission file."
+    end
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
