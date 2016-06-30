@@ -66,12 +66,7 @@ class Submission < ActiveRecord::Base
   # Saves the file to the filesystem. This is called automatically after create.
   # (This must be called after create, because we need to know the id.)
   def write_file
-    unless @file_data || self.payload
-      logger.debug "No file data."
-      return
-    else
-      logger.debug "Creating submission file."
-    end
+    return unless @file_data || self.payload
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
@@ -85,7 +80,7 @@ class Submission < ActiveRecord::Base
       end
     end
     
-    Submission.delay(run_at: 5.seconds.from_now).post_process(self.id)
+    Submission.delay.post_process(self.id) # (run_at: 5.seconds.from_now)
   end
 
   def move(target_exercise)

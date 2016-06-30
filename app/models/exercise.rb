@@ -445,21 +445,8 @@ class Exercise < ActiveRecord::Base
 
   # Creates example submissions for existing groups.
   def create_example_submissions
-    example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
-    example_submission_file = nil unless File.exists?(example_submission_file)
-
-    submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
-    begin
-      FileUtils.makedirs(submission_path) if example_submission_file
-    rescue
-      logger.error "Failed to create a directory for submissions (#{submission_path})"
-      example_submission_file = nil
-    end
-
-    # Create submissions
     self.course_instance(true).groups.each do |group|
-      submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
-      FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file
+      submission = ExampleSubmission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
     end
   end
   
