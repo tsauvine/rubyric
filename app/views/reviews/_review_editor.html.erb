@@ -84,7 +84,7 @@
       <% end %>
 
       <!-- Upload review -->
-      <% unless @exercise.new_record? %>
+      <% unless true || @exercise.new_record? %>
         <div class="span4 well">
           <h3>Upload feedback</h3>
           <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
