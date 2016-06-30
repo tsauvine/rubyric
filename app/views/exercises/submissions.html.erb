@@ -33,7 +33,7 @@
     </p>
   
     <p>
-      or <%= link_to 'Generate example submissions', exercise_create_example_submissions_path(@exercise), :class => 'btn' %>
+      or <%= link_to 'Generate example submissions', exercise_create_example_submissions_path(@exercise), :class => 'btn btn-default' %>
     </p>
   </div>
 <% end %>
@@ -41,7 +41,7 @@
 <% if @exercise.rubric.blank? %>
   <!-- No rubric warning  -->
   <div class="alert alert-info">
-    The grading rubric has not been prepared. <%= link_to 'Edit rubric', edit_exercise_rubric_path(@exercise), :class => 'btn' %>
+    The grading rubric has not been prepared. <%= link_to 'Edit rubric', edit_exercise_rubric_path(@exercise), :class => 'btn btn-default' %>
   </div>
 <% end %>
 
