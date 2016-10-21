@@ -35,6 +35,17 @@ UPDATE course_instances set submission_policy='lti' where id=1;
 
 näytä lti-kursseille tuloslistassa lti_user_id
 
+= Metsähovi peer review =
+
+- pisteiden kirjautuminen LTI:n kautta
+- vertaisarviointinäkymän käynnistäminen Moodlen kautta, kun lti-resource-link-id on eri
+- kolmas tehtävä: katso oma arviointisi, arvioi arviointi
+- pisteiden lähettäminen automaattisesti
+- näytä väärin konffatulle tehtävälle LTI-id:t Moodlen konffaamista varten
+- ignore Haka login when user arrives through LTI (allow teachers to access student view for testing)
+- invalidate-nappula pois näkyvistä opiskelijoilta
+
+
 = Koodiaapinen =
 - ohjeistusta review-näkymään opiskelijoille
 - pisteet takaisin plussaan A+-protokollalla
