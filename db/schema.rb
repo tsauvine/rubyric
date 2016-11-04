@@ -21,17 +21,17 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "position",    :default => 0
+    t.integer  "weight"
     t.integer  "exercise_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.float    "weight",      :default => 1.0
+    t.datetime "created_at",                 :null => false
+    t.datetime "updated_at",                 :null => false
   end
 
   create_table "course_instances", :force => true do |t|
     t.integer  "course_id"
     t.string   "name"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                               :null => false
+    t.datetime "updated_at",                               :null => false
     t.text     "description"
     t.boolean  "active",                 :default => true
     t.string   "locale"
@@ -54,8 +54,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "code"
     t.string   "name"
     t.string   "css"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",      :null => false
+    t.datetime "updated_at",      :null => false
     t.string   "email"
     t.integer  "organization_id"
     t.string   "time_zone"
@@ -75,8 +75,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
     t.string   "queue"
   end
 
@@ -93,7 +93,6 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "locked_by"
     t.datetime "created_at",                :null => false
     t.datetime "updated_at",                :null => false
-    t.string   "queue"
   end
 
   add_index "delayed_jobs_edge", ["priority", "run_at"], :name => "delayed_jobs_edge_priority"
@@ -102,27 +101,20 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "name"
     t.integer  "course_instance_id"
     t.datetime "deadline"
+    t.integer  "position",                :default => 0
     t.integer  "groupsizemax",            :default => 1
     t.integer  "groupsizemin",            :default => 1
-    t.integer  "position",                :default => 0
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.integer  "groups_from_exercise"
-    t.string   "feedbackgrouping",        :default => "sections"
-    t.text     "finalcomment"
-    t.string   "positive_caption"
-    t.string   "negative_caption"
-    t.string   "neutral_caption"
+    t.datetime "created_at",                                 :null => false
+    t.datetime "updated_at",                                 :null => false
     t.boolean  "anonymous_graders",       :default => false
     t.boolean  "anonymous_submissions",   :default => false
     t.text     "submit_post_message"
     t.text     "submit_pre_message"
-    t.boolean  "grader_can_email"
+    t.boolean  "grader_can_email",        :default => false
     t.boolean  "unregistered_can_submit"
     t.boolean  "submit_without_login",    :default => false
     t.string   "grading_mode"
     t.boolean  "autoassign",              :default => true
-    t.text     "xml"
     t.text     "rubric"
     t.string   "review_mode"
     t.boolean  "share_rubric",            :default => false
@@ -140,13 +132,13 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
   create_table "feedbacks", :force => true do |t|
     t.integer  "review_id"
     t.integer  "section_id"
-    t.text     "good"
-    t.text     "bad"
+    t.text     "positive"
+    t.text     "negative"
     t.text     "neutral"
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.integer  "section_grading_option_id"
-    t.string   "status",                    :limit => 16
+    t.string   "status"
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
   create_table "group_invitations", :force => true do |t|
@@ -184,9 +176,9 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
 
   create_table "groups", :force => true do |t|
     t.integer  "exercise_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.text     "name"
+    t.string   "name"
+    t.datetime "created_at",                        :null => false
+    t.datetime "updated_at",                        :null => false
     t.integer  "course_instance_id"
     t.string   "access_token"
     t.integer  "min_size",           :default => 1, :null => false
@@ -201,14 +193,6 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string  "studentnumber"
     t.string  "email"
   end
-
-  create_table "infos", :id => false, :force => true do |t|
-    t.integer "exercise_id"
-    t.string  "studentnumber"
-    t.text    "content"
-  end
-
-  add_index "infos", ["exercise_id", "studentnumber"], :name => "index_infos_on_exercise_id_and_studentnumber"
 
   create_table "invitations", :force => true do |t|
     t.string  "token",      :null => false
@@ -237,8 +221,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "name"
     t.integer  "position",     :default => 0
     t.integer  "section_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                  :null => false
+    t.datetime "updated_at",                  :null => false
     t.string   "instructions"
   end
 
@@ -261,12 +245,12 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
 
   create_table "phrases", :force => true do |t|
     t.text     "content"
-    t.integer  "position",                   :default => 0
+    t.integer  "position",   :default => 0
+    t.string   "type"
     t.integer  "item_id"
     t.integer  "user_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string   "feedbacktype", :limit => 32
+    t.datetime "created_at",                :null => false
+    t.datetime "updated_at",                :null => false
   end
 
   create_table "pricings", :force => true do |t|
@@ -280,9 +264,9 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.integer  "submission_id"
     t.text     "feedback"
     t.string   "grade"
-    t.string   "status"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "state"
+    t.datetime "created_at",                             :null => false
+    t.datetime "updated_at",                             :null => false
     t.integer  "calculated_grade"
     t.integer  "final_grade"
     t.text     "notes_to_teacher"
@@ -293,10 +277,9 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "type",             :default => "Review", :null => false
   end
 
-  create_table "roles", :id => false, :force => true do |t|
-    t.integer "user_id"
-    t.integer "course_id"
-    t.string  "role"
+  create_table "section_grades", :id => false, :force => true do |t|
+    t.integer "feedback_id"
+    t.integer "section_grading_option_id"
   end
 
   create_table "section_grading_options", :force => true do |t|
@@ -311,8 +294,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.integer  "position",     :default => 0
     t.text     "instructions"
     t.integer  "category_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                    :null => false
+    t.datetime "updated_at",                    :null => false
     t.float    "weight",       :default => 1.0
   end
 
@@ -328,10 +311,9 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
 
   create_table "submissions", :force => true do |t|
     t.integer  "exercise_id"
-    t.integer  "group_id"
     t.string   "extension"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                            :null => false
+    t.datetime "updated_at",                            :null => false
     t.string   "filename"
     t.boolean  "book_mode"
     t.integer  "page_count"
@@ -360,8 +342,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "email"
     t.string   "studentnumber"
     t.boolean  "admin"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.datetime "created_at",                                :null => false
+    t.datetime "updated_at",                                :null => false
     t.string   "organization"
     t.string   "persistence_token"
     t.string   "perishable_token"
