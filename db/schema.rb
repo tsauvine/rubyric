@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20160602120709) do
+ActiveRecord::Schema.define(:version => 20161104175805) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -326,7 +326,10 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "conversion"
     t.text     "page_sizes"
     t.text     "payload"
+    t.integer  "group_id",                              :null => false
   end
+
+  add_index "submissions", ["group_id"], :name => "index_submissions_on_group_id"
 
   create_table "submissions_users", :id => false, :force => true do |t|
     t.integer "user_id"
