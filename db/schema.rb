@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161104175805) do
+ActiveRecord::Schema.define(:version => 20160602120709) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -21,10 +21,10 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
   create_table "categories", :force => true do |t|
     t.string   "name"
     t.integer  "position",    :default => 0
-    t.integer  "weight"
+    t.float    "weight",      :default => 1.0
     t.integer  "exercise_id"
-    t.datetime "created_at",                 :null => false
-    t.datetime "updated_at",                 :null => false
+    t.datetime "created_at",                   :null => false
+    t.datetime "updated_at",                   :null => false
   end
 
   create_table "course_instances", :force => true do |t|
@@ -104,8 +104,15 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
     t.integer  "position",                :default => 0
     t.integer  "groupsizemax",            :default => 1
     t.integer  "groupsizemin",            :default => 1
-    t.datetime "created_at",                                 :null => false
-    t.datetime "updated_at",                                 :null => false
+    t.datetime "created_at",                                      :null => false
+    t.datetime "updated_at",                                      :null => false
+    t.integer  "groups_from_exercise"
+    t.string   "feedbackgrouping",        :default => "sections"
+    t.text     "finalcomment"
+    t.string   "positive_caption"
+    t.string   "negative_caption"
+    t.string   "neutral_caption"
+    t.text     "xml"
     t.boolean  "anonymous_graders",       :default => false
     t.boolean  "anonymous_submissions",   :default => false
     t.text     "submit_post_message"
@@ -132,13 +139,13 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
   create_table "feedbacks", :force => true do |t|
     t.integer  "review_id"
     t.integer  "section_id"
-    t.text     "positive"
-    t.text     "negative"
+    t.text     "good"
+    t.text     "bad"
     t.text     "neutral"
     t.integer  "section_grading_option_id"
-    t.string   "status"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.string   "status",                    :limit => 16
+    t.datetime "created_at",                              :null => false
+    t.datetime "updated_at",                              :null => false
   end
 
   create_table "group_invitations", :force => true do |t|
@@ -176,7 +183,7 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
 
   create_table "groups", :force => true do |t|
     t.integer  "exercise_id"
-    t.string   "name"
+    t.text     "name"
     t.datetime "created_at",                        :null => false
     t.datetime "updated_at",                        :null => false
     t.integer  "course_instance_id"
@@ -193,6 +200,14 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
     t.string  "studentnumber"
     t.string  "email"
   end
+
+  create_table "infos", :id => false, :force => true do |t|
+    t.integer "exercise_id"
+    t.string  "studentnumber"
+    t.text    "content"
+  end
+
+  add_index "infos", ["exercise_id", "studentnumber"], :name => "index_infos_on_exercise_id_and_studentnumber"
 
   create_table "invitations", :force => true do |t|
     t.string  "token",      :null => false
@@ -245,12 +260,12 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
 
   create_table "phrases", :force => true do |t|
     t.text     "content"
-    t.integer  "position",   :default => 0
-    t.string   "type"
+    t.integer  "position",     :default => 0
+    t.string   "feedbacktype", :default => "32"
     t.integer  "item_id"
     t.integer  "user_id"
-    t.datetime "created_at",                :null => false
-    t.datetime "updated_at",                :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
 
   create_table "pricings", :force => true do |t|
@@ -275,6 +290,12 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
     t.string   "filename"
     t.string   "extension"
     t.string   "type",             :default => "Review", :null => false
+  end
+
+  create_table "roles", :id => false, :force => true do |t|
+    t.integer "user_id"
+    t.integer "course_id"
+    t.string  "role"
   end
 
   create_table "section_grades", :id => false, :force => true do |t|
@@ -314,6 +335,7 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
     t.string   "extension"
     t.datetime "created_at",                            :null => false
     t.datetime "updated_at",                            :null => false
+    t.integer  "group_id",                              :null => false
     t.string   "filename"
     t.boolean  "book_mode"
     t.integer  "page_count"
@@ -326,7 +348,6 @@ ActiveRecord::Schema.define(:version => 20161104175805) do
     t.string   "conversion"
     t.text     "page_sizes"
     t.text     "payload"
-    t.integer  "group_id",                              :null => false
   end
 
   add_index "submissions", ["group_id"], :name => "index_submissions_on_group_id"
