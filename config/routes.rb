@@ -50,7 +50,6 @@ Rubyric::Application.routes.draw do
 
   resources :exercises, :only => [:edit, :destroy, :show] do
     post 'lti'
-    get 'results'
     get 'student_results'
     get 'statistics'
     get 'batch_assign'
@@ -59,8 +58,9 @@ Rubyric::Application.routes.draw do
     post 'delete_reviews'
     post 'send_reviews'
     post 'create_peer_review'
-    
-    get :create_example_submissions
+    get 'create_example_submission'
+    #get 'results'
+    match 'results' => 'exercises#results', :via => [:get, :post]
 
     resource :rubric, :only => [:show, :edit, :update] do
       member do
