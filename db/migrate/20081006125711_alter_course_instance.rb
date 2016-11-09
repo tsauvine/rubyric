@@ -14,7 +14,6 @@ class AlterCourseInstance < ActiveRecord::Migration
 
   def self.down
     add_column :exercises, :email_immediately, :boolean
-    add_column :sections, :weight
     remove_column :exercises, :grader_can_mail
     remove_column :exercises, :unregistered_can_submit
     remove_column :submissions, :filename
@@ -22,7 +21,6 @@ class AlterCourseInstance < ActiveRecord::Migration
     remove_column :reviews, :final_grade
     remove_column :course_instances, :inactive
     remove_column :course_instances, :description
-    remove_column :sections, :weight
     remove_column :items, :instructions
   end
 end

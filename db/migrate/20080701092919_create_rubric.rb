@@ -4,7 +4,7 @@ class CreateRubric < ActiveRecord::Migration
     create_table :categories do |t|
       t.string :name
       t.integer :position, :default => 0
-      t.integer :weight
+      t.float :weight, :default => 1.0
       t.references :exercise
       t.timestamps
     end
@@ -27,7 +27,7 @@ class CreateRubric < ActiveRecord::Migration
     create_table :phrases do |t|
       t.text :content
       t.integer :position, :default => 0
-      t.string :type
+      t.string :feedbacktype, :default => 32
       t.references :item
       t.references :user
 
