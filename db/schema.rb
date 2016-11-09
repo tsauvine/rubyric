@@ -91,6 +91,7 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.datetime "locked_at"
     t.datetime "failed_at"
     t.string   "locked_by"
+    t.string   "queue"
     t.datetime "created_at",                :null => false
     t.datetime "updated_at",                :null => false
   end
