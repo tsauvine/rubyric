@@ -11,7 +11,7 @@ class CreateSubmissions < ActiveRecord::Migration
       t.references :submission
       t.text :feedback
       t.integer :grade
-      t.string :state
+      t.string :status
       t.timestamps
     end
   end
