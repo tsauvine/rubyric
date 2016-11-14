@@ -191,6 +191,7 @@ DEPENDENCIES
   ims-lti
   jquery-rails (~> 3.1.0)
   jquery-ui-rails (~> 4.2.0)
+  json (= 1.8.3)
   paypal-sdk-rest
   pg
   rails (= 3.2.17)
