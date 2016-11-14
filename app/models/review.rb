@@ -287,8 +287,10 @@ class Review < ActiveRecord::Base
     
     # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
+      next if review.status == 'invalidated'
+      
       begin
-        if review.submission.is_a?(AplusSubmission)
+        if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 208  # Koodiaapinen hack for exercise 208 (some submissions were received via email)
           # Bundle reviews that belong to the same AplusSubmission
           aplus_reviews[review.submission] ||= []
           aplus_reviews[review.submission] << review
@@ -306,7 +308,7 @@ class Review < ActiveRecord::Base
     
     aplus_reviews.each do |submission, reviews|
       # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
-      FeedbackMailer.delay.aplus_feedback(submission, reviews)
+      FeedbackMailer.aplus_feedback(submission, reviews)
     end
     
     # Send delivery errors to teacher

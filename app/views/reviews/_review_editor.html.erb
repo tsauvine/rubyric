@@ -4,7 +4,7 @@
       <i class='icon icon-arrow-left'></i>
     <% end %>
   <% end %>
- 
+
   <ul id="tabs" class="nav nav-tabs">
     <li id="tutorial-tab" class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
 
@@ -28,7 +28,7 @@
   <div class="tab-pane active" id="tab-overview">
     <div class="row-fluid">
       <h2>Review</h2>
-      
+
       <!-- Warnings -->
       <% if @review && @review.status == 'mailed' %>
         <div class="alert">
@@ -55,7 +55,7 @@
               <small>(<%=l @submission.created_at %>)</small>
             </p>
           <% end %>
-          
+
           <% unless @submission.payload.blank? %>
             <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
           <% end %>
@@ -88,7 +88,7 @@
         <div class="span4 well">
           <h3>Upload feedback</h3>
           <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
-        
+
           <% if @review %>
             <% if @review.filename.blank? %>
               <%= link_to 'Upload feedback', upload_review_path(@review) %>
@@ -101,7 +101,7 @@
       <% end %>
     </div>
   </div> <!-- /tab-overview -->
-  
+
   <!-- ko foreach: pages -->
     <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
       <!--h2 data-bind="text: name"></h2-->
@@ -114,10 +114,10 @@
           <% end %>
         </div>
       <!-- /ko -->
-      
+
       <!-- Grading instructions (page) -->
       <p class="grading-instructions" data-bind="text: instructions"></p>
-      
+
       <!-- Rubric -->
       <div class="rubric" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
         <div class="criterion">
@@ -129,10 +129,10 @@
             <!-- /ko -->
           </h3>
           <div class="clear"></div>
-          
+
           <!-- Grading instructions (criterion) -->
           <p class="grading-instructions" data-bind="text: instructions"></p>
-          
+
           <!-- Phrases -->
           <div class="phrases">
             <table class="phrases">
@@ -148,16 +148,16 @@
           </div>
         </div>
       </div>
-      
+
       <!-- ko if: criteria().size > 0 -->
         <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
       <!-- /ko -->
-      
+
       <!-- Grades -->
       <!-- ko if: $root.gradingMode == 'average' && selectableGrades.length > 0 -->
         <hr />
         <h3>Grade</h3>
-        
+
         <p>
           <select data-bind="options: selectableGrades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
           <!-- ko if: averageGrade -->
@@ -172,14 +172,16 @@
           <span data-bind="text: averageGrade"></span>
         </h3>
       <!-- /ko -->
-      
+
       <!-- Next page button -->
-      <!-- ko if: nextPage || $root.finishable() -->
-        <button class="btn" data-bind="click: $root.showNextPage">
+        <button class="btn" data-bind="enable: nextPage || $root.finishable(), click: $root.showNextPage">
           Next page
           <i class="icon icon-arrow-right"></i>
         </button>
-      <!-- /ko -->
+
+        <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
+          You have not completed the previous steps.
+        </div>
 
       <!-- Textareas -->
       <div class="textareas" data-bind="foreach: feedback">
@@ -194,19 +196,19 @@
       </div>
     </div>
   <!-- /ko -->
-  
+
   <!-- Finish tab -->
   <div class="tab-pane" id="tab-finish">
     <h2>Finalize Feedback</h2>
-    
+
     <p class="hint">This is the final feedback text that is sent to the students by email.</p>
-    
+
     <% if f %>
       <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
     <% else %>
       <%= text_area_tag :review_feedback, '', :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
     <% end %>
-    
+
     <!-- ko if: gradingMode == 'average' && $root.grades.length > 0 -->
       <h3>Grades</h3>
       <table>
@@ -223,7 +225,7 @@
           </tr>
         </tfoot>
       </table>
-    
+
       <h3>Final Grade</h3>
       <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
     <!-- /ko -->
@@ -244,14 +246,16 @@
         </tfoot>
       </table>
     <!-- /ko -->
-    
+
     <% unless @exercise.new_record? %>
       <p>
         <button class="btn btn-success" data-bind="click: save">Save</button>
-        
+
         <% if @exercise.grader_can_email %>
           <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
         <% end %>
+
+        <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
       </p>
     <% end %>
   </div>

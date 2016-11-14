@@ -15,7 +15,7 @@ class SubmissionMailer < ActionMailer::Base
       logger.warn("Cannot find exercise (#{email.to})")
       return
     end
-    logger.info "Found exercise #{@exercise.id}"
+    logger.debug "Found exercise #{@exercise.id}"
     
     # Find user by email
     @user = User.find_by_email(email.from.first)
@@ -40,23 +40,19 @@ class SubmissionMailer < ActionMailer::Base
     @group.group_members = @group_members
     
     unless @group.save
-      logger.error "Failed to greate group. #{@group.errors.full_messages.join('. ')}"
+      logger.error "Failed to greate group for email submission. #{@group.errors.full_messages.join('. ')}"
       return
     end
     
+    submission = nil
     if email.has_attachments?
       email.attachments.each do |attachment|
-        logger.info "Attachment:"
-        #logger.info attachment
-        
         submission = Submission.new(:exercise => @exercise, :group => @group)
-        submission.payload = email.body
+        #submission.payload = email.body
         submission.file = attachment
         submission.save
       end
     else
-      logger.info "No attachment"
-      
       # Create a submission and put message body to payload
       t = Time.now
       submission = Submission.new(:exercise => @exercise, :group => @group)
@@ -65,5 +61,7 @@ class SubmissionMailer < ActionMailer::Base
       submission.extension = 'txt'
       submission.save
     end
+    
+    FeedbackMailer.delay.submission_received(submission.id)
   end
 end

@@ -33,6 +33,7 @@ module Rubyric
     # The default locale is :en and all translations from config/locales/*.rb,yml are auto loaded.
     config.i18n.load_path += Dir[Rails.root.join('config', 'locales', '*.yml').to_s]
     config.i18n.default_locale = :en
+    I18n.enforce_available_locales = true
 
     # Configure the default encoding used in templates for Ruby 1.9.
     config.encoding = "utf-8"
@@ -61,7 +62,12 @@ module Rubyric
     # Enable the asset pipeline
     config.assets.enabled = true
 
+    # FIXME: only in edge version
+    config.after_initialize do
+      Delayed::Backend::ActiveRecord::Job.set_table_name 'delayed_jobs_edge'
+    end
+
     # Version of your assets, change this if you want to expire all your assets
-    config.assets.version = '1.45'
+    config.assets.version = '1.48'
   end
 end

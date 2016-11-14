@@ -12,6 +12,7 @@
       <div class="alert alert-warning">
         <p>This review has already been mailed and cannot be modified any more.</p>
         <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn btn-default' %>
+        <%= link_to 'Invalidate', invalidate_review_path(@review), :class => 'btn btn-default' %>
       </div>
     </div>
   <% end %>

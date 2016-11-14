@@ -25,6 +25,11 @@ arrayObject = Object::const_get('Array').new
 
 http://www.ctan.org/pkg/pdfcomment
 
+Limiting memory in development:
+  ulimit -v 1000000 -s 1000000
+  bundle exec rails server
+
+
 = LTI =
 https://www.edu-apps.org/code.html
 https://github.com/instructure/ims-lti

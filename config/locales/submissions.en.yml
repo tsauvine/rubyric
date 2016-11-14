@@ -1,5 +1,8 @@
 en:
   submissions:
+    received: "Your submission was received."
+    submission_time: "Submission time:"
+    
     new:
       group_members: "Group members"
       name_column: "Name"

@@ -33,9 +33,25 @@ class CreateUsers < ActiveRecord::Migration
       t.references :user
       t.references :course
     end
+
+    create_table :infos, :id => false, :force => true do |t|
+      t.integer :exercise_id
+      t.string  :studentnumber
+      t.text    :content
+    end
+
+    add_index :infos, [:exercise_id, :studentnumber], :name => 'index_infos_on_exercise_id_and_studentnumber'
+
+    create_table :roles, :id => false, :force => true do |t|
+      t.integer :user_id
+      t.integer :course_id
+      t.string  :role
+    end
   end
 
   def self.down
+    drop_table :roles
+    drop_table :infos
     drop_table :courses_teachers
     drop_table :course_instances_students
     drop_table :assistants_course_instances

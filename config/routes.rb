@@ -51,6 +51,7 @@ Rubyric::Application.routes.draw do
   resources :exercises, :only => [:edit, :destroy, :show] do
     post 'lti'
     get 'student_results'
+    get 'aplus_results'
     get 'statistics'
     get 'batch_assign'
     post 'batch_assign'
@@ -58,7 +59,7 @@ Rubyric::Application.routes.draw do
     post 'delete_reviews'
     post 'send_reviews'
     post 'create_peer_review'
-    get 'create_example_submission'
+    get 'create_example_submissions'
     #get 'results'
     match 'results' => 'exercises#results', :via => [:get, :post]
 
@@ -102,7 +103,8 @@ Rubyric::Application.routes.draw do
     member do
       get :finish
       put :update_finish
-      get :reopen  # FIXME: should be POST
+      get :reopen     # FIXME: should be POST
+      get :invalidate # FIXME: should be POST
       get :upload
       post :upload
       get :download

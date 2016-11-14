@@ -19,7 +19,7 @@
     <%= hidden_field_tag :rubric_page_preference %>
     <%= hidden_field_tag :page_sizes, @submission.page_sizes %>
   
-    <% if !@exercise.collaborative_mode.blank? && !@is_assistant && !@is_teacher %>
+    <% if @exercise.collaborative_mode == 'review' && !@is_assistant && !@is_teacher %>
       <%= hidden_field_tag :role, 'collaborator' %>
     <% end %>
     

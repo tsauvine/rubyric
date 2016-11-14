@@ -3,11 +3,11 @@ class CreateFeedbacks < ActiveRecord::Migration
     create_table :feedbacks do |t|
       t.references :review
       t.references :section
-      t.text :positive
-      t.text :negative
+      t.text :good
+      t.text :bad
       t.text :neutral
       t.references :section_grading_option
-      t.string :status
+      t.string :status, :limit => 16
       t.timestamps
     end
   end

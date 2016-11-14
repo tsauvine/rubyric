@@ -388,7 +388,14 @@ class SubmissionsController < ApplicationController
     # TODO: if teacher, create exercise
     
     # Find or create user, TODO: handle errors
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first
+    if @user
+      # Update attributes
+      @user.email = params['lis_person_contact_email_primary']
+      @user.save(:validate => false)
+    else
+      @user = lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'], params['lis_person_contact_email_primary'])
+    end
     @is_teacher = @course.has_teacher(current_user)
 
     # Create or find group, TODO: handle errors

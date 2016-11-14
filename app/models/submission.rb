@@ -10,6 +10,10 @@ class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
   has_many :reviews, {:order => :id, :dependent => :destroy }
+  
+  has_many :review_summaries, :select => "reviews.id, reviews.status, reviews.grade, reviews.user_id", :class_name => "Review" #, :foreign_key => 'review_id'
+  #has_many :review_summaries, :class_name => "Review", -> { select([:id, :submission_id, :status, :grade, :user_id]) }
+  #, -> { where('posts.title is not null') }
 
   after_create :write_file
 
@@ -76,7 +80,7 @@ class Submission < ActiveRecord::Base
       end
     end
     
-    Submission.delay.post_process(self.id)
+    Submission.delay(run_at: 5.seconds.from_now).post_process(self.id)
   end
 
   def move(target_exercise)
@@ -155,9 +159,8 @@ class Submission < ActiveRecord::Base
     assign_to(user) if reviews.empty?
   end
 
-  def late?(ex = nil)
-    ex ||= self.exercise
-    ex.deadline && self.created_at > ex.deadline
+  def late?(exercise)
+    exercise.deadline && self.created_at > exercise.deadline
   end
   
   # Returns the path of a bitmap rendering of the submission
@@ -327,7 +330,8 @@ class Submission < ActiveRecord::Base
     
     # FIXME: this is a temporary hack for Koodiaapinen
     if submission.is_a?(AplusSubmission) && submission.exercise.grading_mode == 'always_pass'
-      FeedbackMailer.delay.aplus_feedback(submission)
+      logger.info "Sending points to A+"
+      FeedbackMailer.aplus_feedback(submission)
     end
   end
   

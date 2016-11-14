@@ -116,7 +116,7 @@ class ApplicationController < ActionController::Base
       
       # Create group
       payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || lti_create_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'], nil, nil)
+        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || lti_create_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'], nil, nil, member['email'])
         logger.debug "Creating member: #{member['user']} #{member['email']}"
         member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'])
         member.group = group
@@ -132,7 +132,7 @@ class ApplicationController < ActionController::Base
     group
   end
   
-  def lti_create_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber, lastname, firstname)
+  def lti_create_user(oauth_consumer_key, lti_user_id, organization, course_instance, studentnumber, lastname, firstname, email)
     logger.debug "Creating user #{lti_user_id}"
     
     user = User.new()
@@ -251,7 +251,15 @@ class ApplicationController < ActionController::Base
     @organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
 
     # Find or create user
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first || lti_create_user(params['oauth_consumer_key'], params[:user_id], @organization, @course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'])
+    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first
+    if @user
+      # Update attributes
+      @user.email = params['lis_person_contact_email_primary']
+      @user.save(:validate => false)
+    else
+      @user = lti_create_user(params['oauth_consumer_key'], params[:user_id], @organization, @course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'], params['lis_person_contact_email_primary'])
+    end
+    
     unless @user
       @heading =  "Failed to create user account"
       logger.error("Failed to create user (LTI)")

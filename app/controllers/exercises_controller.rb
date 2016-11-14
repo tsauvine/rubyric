@@ -21,12 +21,34 @@ class ExercisesController < ApplicationController
   def show
     @exercise = Exercise.find(params[:id])
     load_course
+    @course_instance_exercise_count = @course_instance.exercises.size
     I18n.locale = @course_instance.locale || I18n.locale
     
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
       
+      sort_mode = if @exercise.id == 208
+        :name
+      else
+        :id
+      end
+      
+      case sort_mode
+      when :name
+        @groups.sort! { |a, b| Group.compare_by_name(a, b) }
+      when :earliest_submission
+        @groups.sort! { |a, b| Group.compare_by_submission_time(a, b, @exercise, :earliest) }
+      when :latest_submission
+        @groups.sort! { |a, b| Group.compare_by_submission_time(a, b, @exercise, :latest) }
+      when :status
+        @groups.sort! { |a, b| Group.compare_by_submission_status(a, b, @exercise) }
+      when :id
+        @groups.sort! { |a, b| a.id <=> b.id }
+      else
+        @groups.sort! { |a, b| a.id <=> b.id }
+      end
+        
       render :action => 'submissions', :layout => 'fluid-new'
     else
       # Student's or assistant's view
@@ -68,6 +90,9 @@ class ExercisesController < ApplicationController
       
       render :action => 'my_submissions', :layout => 'fluid-new'
     end
+    
+#     memory_usage = `ps -o rss= -p #{$$}`.to_i
+#     logger.debug "Memory consumption: #{memory_usage / 1048576} MB"
     
     log "exercise view #{@exercise.id}"
   end
@@ -180,7 +205,7 @@ class ExercisesController < ApplicationController
         end
       end
       
-      if params[:include] != 'all' && best_review
+      if params[:include] == 'best' && best_review
         @results.concat group.group_members.collect {|member| [member, best_review]}
       else
         group.group_members.each do |member|
@@ -204,6 +229,17 @@ class ExercisesController < ApplicationController
 
     @results = @exercise.student_results
     log "student_results #{@exercise.id}"
+  end
+  
+  def aplus_results
+    @exercise = Exercise.find(params[:exercise_id])
+    load_course
+
+    return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
+
+    render :text => @exercise.aplus_results.to_json
+    
+    log "aplus_results #{@exercise.id}"
   end
 
   def statistics
@@ -415,17 +451,28 @@ class ExercisesController < ApplicationController
       review_counts = []
       @exercise.groups_with_submissions.each do |group|
         next if group.users.include?(current_user)
-        next if group.submissions.empty?
         
-        review_count = 0
-        skip = false
+        # Find the latest submission
+        latest_submission = nil
         group.submissions.each do |submission|
-          review_count += submission.reviews.size
-          skip = true if submission.reviews.any? {|review| review.user == current_user}
+          next unless submission.exercise_id == @exercise.id
+          latest_submission = submission if !latest_submission || submission.created_at > latest_submission.created_at
+        end
+        next unless latest_submission
+        submission = latest_submission
+        
+        skip = false
+        review_count = 0
+        
+        submission.reviews.each do |review|
+          review_count += 1 unless review.status == 'invalidated'
+          
+          # User cannot review the same group twice
+          skip = true if review.user == current_user
         end
         next if skip
         
-        review_counts << {:group => group, :count => review_count }
+        review_counts << {:group => group, :count => review_count, :submission => latest_submission}
       end
       
       if review_counts.empty?
@@ -435,11 +482,11 @@ class ExercisesController < ApplicationController
       end
 
       # Select the group with the least reviews
+      review_counts.shuffle!
       review_counts.sort! {|a,b| a[:count] <=> b[:count]}
       group = review_counts.first
-      submission = group[:group].submissions.last
       
-      review = submission.assign_to(current_user)
+      review = group[:submission].assign_to(current_user)
     end
 
     redirect_to edit_review_path(review)

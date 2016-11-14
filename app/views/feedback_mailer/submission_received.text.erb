@@ -1,0 +1,5 @@
+<%= "#{@course.full_name} (#{@course_instance.name}) - #{@exercise.name}" %>
+
+<%=t('submissions.received') %>
+
+<%=t('submissions.submission_time') %> <%= l(@submission.created_at) %>
