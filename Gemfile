@@ -44,6 +44,8 @@ gem 'jquery-rails', '~> 3.1.0'
 # To use debugger
 # gem 'ruby-debug19', :require => 'ruby-debug'
 
+gem 'json', '1.8.3' # For Ruby 2.3 compatibility
+
 gem 'authlogic'
 gem 'scrypt'
 gem 'cancan'
