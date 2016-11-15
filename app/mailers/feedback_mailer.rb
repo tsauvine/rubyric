@@ -141,7 +141,7 @@ class FeedbackMailer < ActionMailer::Base
     # Koodiaapinen hack Spring 2016 (Note: does not work correctly for group work)
     # Don't send feedback if the student has not conducted peer reviews
     # Convert points to pass/fail
-    if @exercise.id == 218 || @exercise.id == 235
+    if [218, 235, 255, 257].include?(@exercise.id)
       if combined_grade >= 4.99
         combined_grade = max_grade
       else

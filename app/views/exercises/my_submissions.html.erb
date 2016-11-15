@@ -32,7 +32,7 @@
       
       <% if @exercise.peer_review_timing == 'after_deadline' && Time.now.utc < @exercise.deadline %>
         <%= t('.peer_review_active_after_deadline') %>
-      <% elsif @own_submission_count < 1 && !(@exercise.id == 208 || @exercise.id == 242) %><!-- Koodiaapinen hack. Remove after 2016. -->
+      <% elsif @own_submission_count < 1 && !(@exercise.id == 289 || @exercise.id == 261) %><!-- Koodiaapinen hack. Remove after 2016. -->
         <%= t('.peer_review_submit_first') %>
       <% end %>
     </p>
@@ -54,7 +54,7 @@
     </table>
   <% end %>
   
-  <% if @exercise.peer_review_active? && (@own_submission_count > 0 || @exercise.id == 208 || @exercise.id == 242) %><!-- Koodiaapinen hack. Remove after 2016. -->
+  <% if @exercise.peer_review_active? && (@own_submission_count > 0 || @exercise.id == 289 || @exercise.id == 261) %><!-- Koodiaapinen hack. Remove after 2016. -->
     <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
   <% end %>
 

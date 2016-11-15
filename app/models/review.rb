@@ -290,7 +290,7 @@ class Review < ActiveRecord::Base
       next if review.status == 'invalidated'
       
       begin
-        if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 208  # Koodiaapinen hack for exercise 208 (some submissions were received via email)
+        if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 289  # Koodiaapinen hack for exercise 289 (some submissions were received via email)
           # Bundle reviews that belong to the same AplusSubmission
           aplus_reviews[review.submission] ||= []
           aplus_reviews[review.submission] << review
