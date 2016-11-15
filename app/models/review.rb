@@ -4,7 +4,7 @@ class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader
 
-  #has_many :feedbacks, :dependent => :destroy
+  #has_many :feedbacks, dependent: :destroy
 
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
@@ -50,7 +50,7 @@ class Review < ActiveRecord::Base
       sections_counter = 0
       section_points_counter = 0
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         if section.section_grading_options.size > 0 && feedback.section_grading_option
@@ -193,6 +193,27 @@ class Review < ActiveRecord::Base
     
   end
 
+  def preview_feedback
+    if self.payload.blank?
+      ''
+    else
+      begin
+        final_comment = []
+        pages = JSON.parse(self.payload)['pages']
+        pages.each do |page|
+          feedbacks = page['feedback']
+          feedbacks.each do |feedback|
+            final_comment.append feedback['text']
+          end
+        end
+        final_comment.join()
+      rescue TypeError => e
+        logger.error e
+        ''
+      end
+    end
+  end
+
   # Collects feedback from all sections and groups all positive feedback together, all neagtive feedback together, etc.
   # Section captions are not shown.
   # Returns a string.
@@ -204,7 +225,7 @@ class Review < ActiveRecord::Base
 
     submission.exercise.categories.each do |category|
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         good << feedback.good + "\n" unless feedback.good.blank?
@@ -234,7 +255,7 @@ class Review < ActiveRecord::Base
       neutral = ''
 
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         good << feedback.good + "\n" unless feedback.good.blank?
@@ -262,7 +283,7 @@ class Review < ActiveRecord::Base
     submission.exercise.categories.each do |category|
       category.sections.each do |section|
 
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         text << "== #{section.name} ==============================\n\n"
@@ -286,7 +307,7 @@ class Review < ActiveRecord::Base
     aplus_reviews = {} # { Submission => [Review, Review, ...] }
     
     # TODO: only send reviews with status 'finished' or 'mailing'
-    Review.where(:id => review_ids).find_each do |review|
+    Review.where(id: review_ids).find_each do |review|
       next if review.status == 'invalidated'
       
       begin
@@ -328,7 +349,7 @@ class Review < ActiveRecord::Base
     end
     
     course_instance.exercises.each do |exercise|
-      Review.where("status='finished' OR status='mailed'").where(:submission_id => exercise.submission_ids).includes(:submission => :group).find_each do |review|
+      Review.where("status='finished' OR status='mailed'").where(submission_id: exercise.submission_ids).includes(submission: :group).find_each do |review|
         review.submission.group.user_ids.each do |user_id|
           reviews_by_userid[user_id] ||= []
           reviews_by_userid[user_id] << review
