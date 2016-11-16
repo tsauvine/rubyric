@@ -13,7 +13,7 @@
 
 <!-- My submissions -->
 <% unless @is_assistant %>
-  <%= render :partial => 'my_submissions' %>
+  <%= render partial: 'my_submissions' %>
 <% end %>
 
 
@@ -27,7 +27,7 @@
       <% if @exercise.peer_review_goal == 1 %>
         <%= t('.peer_review_hint_singular') %>
       <% else %>
-        <%= t('.peer_review_hint', :peer_review_count => @exercise.peer_review_goal) %>
+        <%= t('.peer_review_hint', peer_review_count: @exercise.peer_review_goal) %>
       <% end %>
       
       <% if @exercise.peer_review_timing == 'after_deadline' && Time.now.utc < @exercise.deadline %>
@@ -49,13 +49,13 @@
         </tr>
       </thead>
       <tbody id="submissions_table">
-        <%= render :partial => 'assistant_group', :collection => @assigned_groups %>
+        <%= render partial: 'assistant_group', collection: @assigned_groups %>
       </tbody>
     </table>
   <% end %>
   
   <% if @exercise.peer_review_active? && (@own_submission_count > 0 || @exercise.id == 208 || @exercise.id == 242) %><!-- Koodiaapinen hack. Remove after 2016. -->
-    <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), :class => 'btn btn-primary btn-large' %>
+    <%= button_to t('.new_peer_review'), exercise_create_peer_review_path(@exercise.id), class: 'btn btn-primary btn-large' %>
   <% end %>
 
 <% end %>
@@ -67,15 +67,15 @@
     <h2 class="large-gap"><%=t '.viewable_groups' %></h2>
 
     <% if @exercise.collaborative_mode == 'view' %>
-      <p class="hint"><%= t '.viewable_groups_instructions_view' %></p>
+      <p class="hint"><%=t '.viewable_groups_instructions_view' %></p>
     <% elsif @exercise.collaborative_mode == 'review' %>
-      <p class="hint"><%= t '.viewable_groups_instructions_review' %></p>
+      <p class="hint"><%=t '.viewable_groups_instructions_review' %></p>
     <% end %>
     
-    <%= render :partial => 'collaborative_group', :collection => @viewable_peer_groups %>
+    <%= render partial: 'collaborative_group', collection: @viewable_peer_groups %>
   </div>
 <% end %>
 
 <% if @is_assistant %>
-  <%= render :partial => 'my_submissions' %>
+  <%= render partial: 'my_submissions' %>
 <% end %>

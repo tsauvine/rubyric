@@ -4,21 +4,21 @@
 <% unless @available_groups.empty? %>
   <table class="assignments">
     <% @available_groups.each do |group| %>
-      <% submissions = group.submissions.where(:exercise_id => @exercise.id) %>
+      <% submissions = group.submissions.where(exercise_id: @exercise.id) %>
       <tr class="group">
         <td colspan='3'>
           <%= group.name %>
         </td>
       </tr>
-      
+
       <% if submissions.empty? %>
         <tr class="submission">
-          <td colspan='3'><%= t '.no_submissions' %></td>
+          <td colspan='3'><%=t '.no_submissions' %></td>
         </tr>
       <% else %>
         <% submissions.each do |submission| %>
           <tr class="submission">
-            <td><%=l submission.created_at, :format => :long %></td>
+            <td><%=l submission.created_at, format: :long %></td>
             <td>
               <% unless submission.filename.blank? %>(<%= link_to "#{submission.extension}", submission_path(submission) %>)<% end %>
             </td>
@@ -27,14 +27,14 @@
                 <% if review.status == 'mailed' || @exercise.collaborative_mode != '' %>
                   <%=
                   if @exercise.anonymous_graders
-                    reviewer_name = t('.view_feedback_from', :name => number + 1)
+                    reviewer_name = t('.view_feedback_from', name: number + 1)
                   elsif @exercise.review_mode == 'collaborative'
                     reviewer_name = t('.view_collaborative_feedback')
                   else
-                    reviewer_name = t('.view_feedback_from', :name => reviewer_name(review))
+                    reviewer_name = t('.view_feedback_from', name: reviewer_name(review))
                   end
 
-                  link_to reviewer_name, review_path(:id => review.id, :ref => 'exercises')
+                  link_to reviewer_name, review_path(id: review.id, ref: 'exercises')
                   %>
                   <% unless review.filename.blank? %>
                     (<%= link_to review.filename, download_review_path(review) %>)
@@ -45,14 +45,14 @@
           </tr>
         <% end %>
       <% end %>
-      
+
       <tr class="spacer"><td colspan="3"></td></tr>
     <% end %>
   </table>
 <% else %>
-  <p class="hint"><%= t '.no_submissions' %></p>
+  <p class="hint"><%=t '.no_submissions' %></p>
 <% end %>
 
 <% unless @course_instance.submission_policy == 'lti' %>
-  <p><%= link_to t('.new_submission_button'), submit_url(@exercise.id, :ref => 'exercises'), :class => 'btn btn-primary btn-large' %></p>
+  <p><%= link_to t('.new_submission_button'), submit_url(@exercise.id, ref: 'exercises'), class: 'btn btn-primary btn-large' %></p>
 <% end %>
