@@ -96,7 +96,7 @@ class ExercisesController < ApplicationController
         submissions = group.submissions.where(exercise_id: @exercise.id)
         @own_submission_count += submissions.size
       end
-
+      
       render action: 'my_submissions', layout: 'fluid-new'
     end
 
@@ -178,7 +178,7 @@ class ExercisesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to @course_instance }
-      format.xml { head :ok }
+      format.xml  { head :ok }
     end
   end
 

@@ -1,11 +1,10 @@
 # encoding: UTF-8
-require 'set.rb'
 
 class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader
 
-  #has_many :feedbacks, :dependent => :destroy
+  #has_many :feedbacks, dependent: :destroy
 
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
@@ -20,21 +19,21 @@ class Review < ActiveRecord::Base
       return Integer(string)
     rescue ArgumentError, TypeError
     end
-    
+
     begin
       return Float(string)
     rescue ArgumentError, TypeError
     end
-    
+
     return string
   end
-  
+
   # Natural comparison for grades, so that nil < numerical grade < textual grade.
   # Textual grades are ordered alphabetically and numerical grades in an ascending order.
   def self.compare_grades(a, b)
     a_grade = Review.cast_grade(a)
     b_grade = Review.cast_grade(b)
-    
+
     # Nils first
     if a_grade.nil?
       if b_grade.nil?
@@ -45,7 +44,7 @@ class Review < ActiveRecord::Base
     elsif b_grade.nil?
       return 1
     end
-    
+
     # Numbers before strings
     if a_grade.is_a? String
       if b_grade.is_a? String
@@ -61,16 +60,16 @@ class Review < ActiveRecord::Base
       end
     end
   end
-  
+
   # Tries to compare grades but refuses to compare textual grades.
   # Nil is considered smaller than any numerical grade.
   # Returns nil if either of the arguments are textual.
   def self.compare_grades!(a, b)
     a_grade = Review.cast_grade(a)
     b_grade = Review.cast_grade(b)
-    
+
     return nil if a_grade.is_a?(String) || b_grade.is_a?(String)
-    
+
     # Nils first
     if a_grade.nil?
       if b_grade.nil?
@@ -85,7 +84,7 @@ class Review < ActiveRecord::Base
     # Compare numbers normally
     a_grade <=> b_grade
   end
-  
+
   def update_from_json(id, json)
     review = Review.find(id)
     review.update_attributes(json)
@@ -124,7 +123,7 @@ class Review < ActiveRecord::Base
       sections_counter = 0
       section_points_counter = 0
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         if section.section_grading_options.size > 0 && feedback.section_grading_option
@@ -336,7 +335,7 @@ class Review < ActiveRecord::Base
     submission.exercise.categories.each do |category|
       category.sections.each do |section|
 
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         text << "== #{section.name} ==============================\n\n"
@@ -358,8 +357,8 @@ class Review < ActiveRecord::Base
   def self.deliver_reviews(review_ids)
     errors = []
     aplus_submission_ids = Set.new # Groups whose feedback should be sent to A+
-    
-    Review.where(:id => review_ids).find_each do |review|
+
+    Review.where(id: review_ids).find_each do |review|
       next if review.status == 'invalidated'
       
       begin
