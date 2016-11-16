@@ -49,7 +49,7 @@
         </tr>
       </thead>
       <tbody id="submissions_table">
-        <%= render :partial => 'assistant_group', :collection => @assigned_groups %>
+        <%= render partial: 'assistant_group', collection: @assigned_groups %>
       </tbody>
     </table>
   <% end %>
@@ -67,9 +67,9 @@
     <h2 class="large-gap"><%=t '.viewable_groups' %></h2>
 
     <% if @exercise.collaborative_mode == 'view' %>
-      <p class="hint"><%= t '.viewable_groups_instructions_view' %></p>
+      <p class="hint"><%=t '.viewable_groups_instructions_view' %></p>
     <% elsif @exercise.collaborative_mode == 'review' %>
-      <p class="hint"><%= t '.viewable_groups_instructions_review' %></p>
+      <p class="hint"><%=t '.viewable_groups_instructions_review' %></p>
     <% end %>
     
     <%= render partial: 'collaborative_group', collection: @viewable_peer_groups %>
