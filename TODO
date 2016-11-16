@@ -67,6 +67,12 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Soon =
 
+- pricing
+- lazy loading of pdf pages
+- tutorial mode
+
+
+drag'n'drop-palautus
 PDF with variable page size
 
 Document dependencies: pygmentize, ghostscript, imagemagik, wkhtmltopdf, xvfb

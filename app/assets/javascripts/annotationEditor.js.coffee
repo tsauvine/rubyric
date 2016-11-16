@@ -376,6 +376,7 @@ class Annotation
 class @AnnotationEditor extends Rubric
   constructor: (rubric, review) ->
     super()
+    this.parseRubric(rubric)
     
     @element = $('#annotation-editor')
     @role = $('#role').val()
@@ -438,15 +439,11 @@ class @AnnotationEditor extends Rubric
     status = $('#review_status').val()
     @finalizing(true) if status && status.length > 0 && status != 'started'
     
-    $('#tab-finish-link').tab('show') if @finalizing()
-    
-    this.parseRubric(rubric)
-    
     for page in @pages
       do (page) =>
         page.grade.subscribe (new_grade) =>
           this.addCommand(new SetPageGradeCommand(page, new_grade))
-
+  
     @finishedText(@finalComment) if @finishedText().length < 1 && @finalComment? && @finalComment.length > 0
 
     this.parseReview(review)
@@ -454,8 +451,12 @@ class @AnnotationEditor extends Rubric
     ko.applyBindings(this)
     
     # Select initial rubric page
-    initialPage = @pagesById[parseInt(initialPageId)] if initialPageId
-    if initialPage
+    initialPage = @pagesById[parseInt(initialPageId)] if initialPageId? && initialPageId.length > 0
+    initialPage = @pages[0] unless initialPage?
+    
+    if @finalizing()
+      $('#tab-finish-link').tab('show') 
+    else if initialPage?
       initialPage.showTab()
     else
       $('#tab-overview-link').tab('show')

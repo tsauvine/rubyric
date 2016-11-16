@@ -265,8 +265,8 @@ ActiveRecord::Schema.define(:version => 20160602120709) do
     t.string   "feedbacktype", :limit => 32
     t.integer  "item_id"
     t.integer  "user_id"
-    t.datetime "created_at",                                :null => false
-    t.datetime "updated_at",                                :null => false
+    t.datetime "created_at",                     :null => false
+    t.datetime "updated_at",                     :null => false
   end
 
   create_table "pricings", :force => true do |t|
