@@ -27,13 +27,14 @@ class ExercisesController < ApplicationController
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
-
-      sort_mode = if @exercise.id == 208
+      
+      # Koodiaapinen hack. Remove after 2016.
+      sort_mode = if @exercise.id == 208 || @exercise.id == 289
                     :name
                   else
                     :id
                   end
-
+      
       case sort_mode
         when :name
           @groups.sort! { |a, b| Group.compare_by_name(a, b) }
@@ -187,46 +188,53 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    @results = [] # [[member, review], [member, review], ...]
-    @groups = Group.where(course_instance_id: @course_instance.id).includes([{submissions: [reviews: [:user, :submission], group: :users]}, {group_members: :user}])
-
-    @groups.each do |group|
-      best_review = nil
-      best_grade = Float::MIN
-      all_reviews = []
-
-      # Collect the reviews that should be included in the results
-      group.submissions.each do |submission|
-        next unless submission.exercise_id == @exercise.id
-        submission.reviews.each do |review|
-          next unless review.include_in_results?
-
-          # Determine grade
-          grade = Float(review.grade) rescue Float::MIN
-
-          if !grade.nil? && (best_review.nil? || grade > best_grade)
-            best_review = review
-            best_grade = grade
-          end
-
-          all_reviews << review
+    options = {}
+    if params[:include] == 'all'
+      options[:include_all] = true
+    else
+      options = begin 
+          JSON.parse(@exercise.grading_mode || '{}')
+        rescue Exception => e
+          logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
+          {}
         end
-      end
-
-      if params[:include] == 'best' && best_review
-        @results.concat group.group_members.collect { |member| [member, best_review] }
-      else
-        group.group_members.each do |member|
-          all_reviews.each do |review|
-            @results << [member, review]
-          end
-        end
-      end
+      
+      options[:include_peer_review_count] = @exercise.peer_review_goal && @exercise.peer_review_goal > 0
     end
-
-    @results.sort! { |a, b| (a[0].studentnumber || '') <=> (b[0].studentnumber || '') }
-
-    log "results #{@exercise.id}"
+    
+    groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])
+    @results = @exercise.results(groups, options)
+    
+    # Sort the result
+    case params[:sort]
+    when 'student-id'
+      @results.sort! { |a, b| (a[:member].studentnumber || '').downcase <=> (b[:member].studentnumber || '').downcase }
+    when 'first-name'
+      @results.sort! { |a, b| (a[:member].firstname || '').downcase <=> (b[:member].firstname.downcase || '') }
+    when 'last-name'
+      @results.sort! { |a, b| (a[:member].lastname || '').downcase <=> (b[:member].lastname || '').downcase }
+    when 'email'
+      @results.sort! { |a, b| (a[:member].email || '').downcase <=> (b[:member].email || '').downcase }
+    when 'grade'
+      @results.sort! { |a, b| Review.compare_grades(a[:grade], b[:grade]) }
+    when 'peer-review-count'
+      #@results.sort! { |a, b| (a[:created_peer_review_count] || 0) <=> (b[:created_peer_review_count] || 0) }
+      @results.sort! { |a, b| (a[:finished_peer_review_count] || 0) <=> (b[:finished_peer_review_count] || 0) }
+    when 'notes'
+      @results.sort! { |a, b| (a[:notes] || '') <=> (b[:notes] || '') }
+    when 'reviewer'
+      @results.sort! { |a, b| (a[:reviewer].nil? ? '' : (a[:reviewer].lastname || '').downcase) <=> (b[:reviewer].nil? ? '' : (b[:reviewer].lastname || '').downcase) }
+    when 'submitted-at'
+      @results.sort! { |a, b| (a[:submission].nil? ? 0 : a[:submission].created_at.to_i) <=> (b[:submission].nil? ? 0 : b[:submission].created_at.to_i) }
+    else
+      @results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
+    end
+    
+    #@results.sort! { |a, b| (a[:notes]) <=> (b[:notes]) }
+    
+    log "results #{@exercise.id}#{params[:include] == 'all' ? ' all' : ''}"
+    
+    render :action => :results, :layout => 'fluid-new'
   end
 
   def student_results

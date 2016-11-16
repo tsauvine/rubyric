@@ -78,4 +78,25 @@ class User < ActiveRecord::Base
     PasswordMailer.delay.password_reset_instructions(self.id)
   end
   
+  # Calculates the number of peer reviews created and finished in a certain exercise.
+  # Warning: queries the database.
+  # Returns
+  # {
+  #   created_peer_reviews: integer,
+  #   finished_peer_reviews: integer
+  # }
+  def peer_review_count(exercise)
+    created_peer_reviews = 0
+    finished_peer_reviews = 0
+    
+    Review.joins(:submission).where(:user_id => id, 'submissions.exercise_id' => exercise.id).find_each do |peer_review|
+      created_peer_reviews += 1
+      finished_peer_reviews += 1 if ['finished', 'mailed', 'mailing', 'invalidated'].include? peer_review.status
+    end
+    
+    return {
+      :created_peer_reviews  => created_peer_reviews,
+      :finished_peer_reviews => finished_peer_reviews
+    }
+  end
 end
