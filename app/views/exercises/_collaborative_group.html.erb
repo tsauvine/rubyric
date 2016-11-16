@@ -41,14 +41,18 @@
                   <li><%= link_to t('exercises.create_comment'), edit_review_path(id: review.id, ref: 'exercises'), class: 'btn btn-sm btn-primary' %></li>
                 <% else %>
                   <li><%
-                    if review.feedback.blank?
+                    if review.preview_feedback.blank?
                       tooltip = t('exercises.my_submissions.view_collaborative_feedback')
                     else
-                      tooltip = truncate(review.feedback || '', length: 256)
+                      tooltip = truncate(review.preview_feedback || '', length: 256)
                       #.gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />").html_safe
                     end
                     %>
-                    <%= link_to review_path(id: review.id, ref: 'exercises'), class: 'btn btn-sm btn-default', 'data-toggle' => 'popover', 'data-content' => tooltip, title: reviewer_name(review) do %>
+                    <%= link_to review_path(id: review.id, ref: 'exercises'),
+                                class: 'btn btn-sm btn-default',
+                                'data-toggle' => 'popover',
+                                'data-content' => tooltip,
+                                title: reviewer_name(review) do %>
                       <span class="glyphicon glyphicon glyphicon-comment"></span>
                     <% end %>
                   </li>
