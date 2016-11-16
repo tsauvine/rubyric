@@ -156,19 +156,19 @@ class Review < ActiveRecord::Base
     self.grade = grade.round unless grade.blank?    # Will be deprecated
     self.calculated_grade = grade.round unless grade.blank?
   end
-
+  
   # Collects feedback texts from all sections and and combines them into the final feedback.
   # This destroys the existing final feedback.
   def collect_feedback
     rubric = JSON.parse(self.submission.exercise.rubric)
     review = JSON.parse(self.payload)
-
+    
     # Load rubric
     rubric_pages = {}
     rubric['pages'].each do |page|
       rubric_pages[page['id']] = page
     end
-
+    
     grading_mode = rubric['gradingMode']
     final_comment = rubric['finalComment']
     feedback_categories = rubric['feedbackCategories']
@@ -179,14 +179,14 @@ class Review < ActiveRecord::Base
     no_grading = true          # Is there grading at all?
     if rubric['grades']
       no_grading = false if rubric['grades'].size > 0
-
+      
       rubric['grades'].each_with_index do |raw_grade, index|
         numeric_grading = true if raw_grade.is_a?(Numeric)  # If there is at least one numerical grade, numerical grading is used
-
+        
         grade_index[raw_grade] = index
       end
     end
-
+  
     # Generate feedback text
     text = ''
     grade_sum = 0.0
@@ -195,9 +195,9 @@ class Review < ActiveRecord::Base
     all_grades_set = true
     review['pages'].each do |feedback_page|
       rubric_page = rubric_pages[feedback_page['id']]
-
+      
       text << "== #{rubric_page['name']} ==\n" if rubric_page['name']
-
+      
       feedback = feedback_page['feedback'] || []
       grade = feedback_page['grade']
 
@@ -215,12 +215,12 @@ class Review < ActiveRecord::Base
         text << "\n= #{feedback_categories[2]} =\n" unless feedback_categories[2].blank?
         text << feedback[2]
       end
-
+        
       text << "\n\n"
-
+      
       if grade
         grade_index_sum += grade_index[grade]  # Calculate average index
-
+        
         if grade.is_a?(Numeric) && grade_sum
           grade_sum += grade     # Calculate average value
         else
@@ -229,41 +229,41 @@ class Review < ActiveRecord::Base
       else
         all_grades_set = false
       end
-
+      
       grade_counter += 1
     end
-
+    
     # Final comment
     text << final_comment if final_comment
     self.feedback = text
-
-
+    
+    
     # Calculate grade
     self.grade = nil
 
     grading_finished = all_grades_set || no_grading
-
+    
     if grading_finished && !no_grading
       case grading_mode
       when 'average'
-
+        
         if numeric_grading
           self.grade = (grade_sum / grade_counter).round if grade_sum && grade_counter > 0
         else
           avg_grade_index = (grade_index_sum / grade_counter).round
-
+          
           self.grade = rubric['grades'][avg_grade_index]
         end
-
+        
       when 'sum'
         self.grade = grade_sum
       end
-
+      
       self.status = 'unfinished'
     else
       self.status = 'started'
     end
-
+    
   end
 
   # String representation of feedback collected so far.
@@ -328,7 +328,7 @@ class Review < ActiveRecord::Base
       neutral = ''
 
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         good << feedback.good + "\n" unless feedback.good.blank?
@@ -419,7 +419,7 @@ class Review < ActiveRecord::Base
     end
 
     course_instance.exercises.each do |exercise|
-      Review.where("status='finished' OR status='mailed'").where(:submission_id => exercise.submission_ids).includes(:submission => :group).find_each do |review|
+      Review.where("status='finished' OR status='mailed'").where(submission_id: exercise.submission_ids).includes(submission: :group).find_each do |review|
         review.submission.group.user_ids.each do |user_id|
           reviews_by_userid[user_id] ||= []
           reviews_by_userid[user_id] << review
