@@ -16,7 +16,7 @@ class Exercise < ActiveRecord::Base
   # Feedback grouping options: exercise, sections, categories
   
   
-  def grading_mode
+  def rubric_grading_mode
     return nil if self.rubric.blank?
     rubric_content()['gradingMode']
   end
@@ -565,6 +565,45 @@ class Exercise < ActiveRecord::Base
     end
     
     results
+  end
+  
+  
+  # Returns the results for each student
+  # [
+  #    {:member => GroupMember, :reviewer => User, :review => Review, :submission => Submission, :grade => String/Integer, :notes => String}
+  #    ...
+  # ]
+  # mode: all, mean, n_best
+  def results(groups, options = {})
+    results = []
+    
+    groups.each do |group|
+      group_result = group.result(self, options)
+    
+      # Construct result
+      if options[:include_all]
+        group.group_members.collect do |member|
+          group_result[:reviews].each do |review|
+            results << { member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade }
+          end
+        end
+      else
+        group.group_members.each do |member|
+          notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
+          resultline = { member: member, grade: group_result[:grade], notes: notes }
+          
+          if options[:include_peer_review_count] && member.user
+            peer_review_count = member.user.peer_review_count(self)
+            resultline[:created_peer_review_count] = peer_review_count[:created_peer_reviews]
+            resultline[:finished_peer_review_count] = peer_review_count[:finished_peer_reviews]
+          end
+          
+          results << resultline unless group_result[:no_submissions]
+        end
+      end
+    end
+    
+    return results
   end
   
   # Returns the id of the review that is next in sequence for the user.

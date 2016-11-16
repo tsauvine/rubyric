@@ -1,3 +1,11 @@
+GIT
+  remote: git://github.com/collectiveidea/delayed_job_active_record.git
+  revision: 36f434c4fd660e8f11ce932be117e9c71dde7212
+  specs:
+    delayed_job_active_record (4.1.1)
+      activerecord (>= 3.0, < 5.1)
+      delayed_job (>= 3.0, < 5)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -56,11 +64,8 @@ GEM
       execjs
     coffee-script-source (1.10.0)
     daemons (1.2.4)
-    delayed_job (4.0.6)
-      activesupport (>= 3.0, < 5.0)
-    delayed_job_active_record (4.0.3)
-      activerecord (>= 3.0, < 5.0)
-      delayed_job (>= 3.0, < 4.1)
+    delayed_job (4.1.2)
+      activesupport (>= 3.0, < 5.1)
     diff-lcs (1.2.5)
     erubis (2.7.0)
     execjs (2.7.0)
@@ -187,7 +192,7 @@ DEPENDENCIES
   capybara-webkit
   coffee-rails (~> 3.2.1)
   daemons
-  delayed_job_active_record (~> 4.0.0)
+  delayed_job_active_record!
   ims-lti
   jquery-rails (~> 3.1.0)
   jquery-ui-rails (~> 4.2.0)

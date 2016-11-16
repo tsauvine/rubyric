@@ -1,4 +1,5 @@
 # encoding: UTF-8
+require 'set.rb'
 
 class Review < ActiveRecord::Base
   belongs_to :submission
@@ -10,6 +11,79 @@ class Review < ActiveRecord::Base
 
   def include_in_results?
     status == 'finished' || status == 'mailed' || status == 'mailing'
+  end
+  
+  # Converts a string grade into an Integer or Float, if possible.
+  # Returns Integer, Float or String.
+  def self.cast_grade(string)
+    begin
+      return Integer(string)
+    rescue ArgumentError, TypeError
+    end
+    
+    begin
+      return Float(string)
+    rescue ArgumentError, TypeError
+    end
+    
+    return string
+  end
+  
+  # Natural comparison for grades, so that nil < numerical grade < textual grade.
+  # Textual grades are ordered alphabetically and numerical grades in an ascending order.
+  def self.compare_grades(a, b)
+    a_grade = Review.cast_grade(a)
+    b_grade = Review.cast_grade(b)
+    
+    # Nils first
+    if a_grade.nil?
+      if b_grade.nil?
+        return 0
+      else
+        return -1
+      end
+    elsif b_grade.nil?
+      return 1
+    end
+    
+    # Numbers before strings
+    if a_grade.is_a? String
+      if b_grade.is_a? String
+        return a_grade <=> b_grade
+      else
+        return 1
+      end
+    else
+      if b_grade.is_a? String
+        return -1
+      else
+        return a_grade <=> b_grade
+      end
+    end
+  end
+  
+  # Tries to compare grades but refuses to compare textual grades.
+  # Nil is considered smaller than any numerical grade.
+  # Returns nil if either of the arguments are textual.
+  def self.compare_grades!(a, b)
+    a_grade = Review.cast_grade(a)
+    b_grade = Review.cast_grade(b)
+    
+    return nil if a_grade.is_a?(String) || b_grade.is_a?(String)
+    
+    # Nils first
+    if a_grade.nil?
+      if b_grade.nil?
+        return 0
+      else
+        return -1
+      end
+    elsif b_grade.nil?
+      return 1
+    end
+
+    # Compare numbers normally
+    a_grade <=> b_grade
   end
   
   def update_from_json(id, json)
@@ -59,7 +133,7 @@ class Review < ActiveRecord::Base
         end
       end
 
-      case submission.exercise.grading_mode
+      case submission.exercise.rubric_grading_mode
         when "average"
           section_grade = (sections_counter == 0) ? 0 : section_points_counter / sections_counter
         else
@@ -71,7 +145,7 @@ class Review < ActiveRecord::Base
     end
 
 
-    case submission.exercise.grading_mode
+    case submission.exercise.rubric_grading_mode
       when "sum"
         grade = category_points_counter
       when "average"
@@ -283,17 +357,14 @@ class Review < ActiveRecord::Base
   
   def self.deliver_reviews(review_ids)
     errors = []
-    aplus_reviews = {} # { Submission => [Review, Review, ...] }
+    aplus_submission_ids = Set.new # Groups whose feedback should be sent to A+
     
-    # TODO: only send reviews with status 'finished' or 'mailing'
     Review.where(:id => review_ids).find_each do |review|
       next if review.status == 'invalidated'
       
       begin
         if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 289  # Koodiaapinen hack for exercise 289 (some submissions were received via email)
-          # Bundle reviews that belong to the same AplusSubmission
-          aplus_reviews[review.submission] ||= []
-          aplus_reviews[review.submission] << review
+          aplus_submission_ids << review.submission_id
         else
           FeedbackMailer.review(review).deliver
         end
@@ -306,9 +377,9 @@ class Review < ActiveRecord::Base
       end
     end
     
-    aplus_reviews.each do |submission, reviews|
+    aplus_submission_ids.each do |submission_id|
       # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
-      FeedbackMailer.aplus_feedback(submission, reviews)
+      FeedbackMailer.aplus_feedback(submission_id)
     end
     
     # Send delivery errors to teacher

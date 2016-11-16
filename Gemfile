@@ -49,10 +49,8 @@ gem 'json', '1.8.3' # For Ruby 2.3 compatibility
 gem 'authlogic'
 gem 'scrypt'
 gem 'cancan'
-
-# gem 'delayed_job', '~> 3.0.0'
-gem 'delayed_job_active_record', '~> 4.0.0'
-
+#gem 'delayed_job', :git => 'git://github.com/collectiveidea/delayed_job.git'
+gem 'delayed_job_active_record', :git => 'git://github.com/collectiveidea/delayed_job_active_record.git'
 gem 'daemons'
 gem 'rest_client', '1.8.0'
 
