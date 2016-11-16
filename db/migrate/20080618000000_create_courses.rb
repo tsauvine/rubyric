@@ -22,6 +22,13 @@ class CreateCourses < ActiveRecord::Migration
       t.integer :groupsizemax, :default => 1
       t.integer :groupsizemin, :default => 1
       t.timestamps
+      t.integer  :groups_from_exercise
+      t.string   :feedbackgrouping,        :default => 'sections'
+      t.text     :finalcomment
+      t.string   :positive_caption
+      t.string   :negative_caption
+      t.string   :neutral_caption
+      t.text     :xml
     end
   end
 

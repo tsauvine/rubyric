@@ -2,7 +2,7 @@ require 'rubygems'
 
 # Temporary fix for the "couldn't parse YAML at line" problem
 require 'yaml'
-YAML::ENGINE.yamler = 'syck'
+# YAML::ENGINE.yamler = 'syck'
 
 # Set up gems listed in the Gemfile.
 ENV['BUNDLE_GEMFILE'] ||= File.expand_path('../../Gemfile', __FILE__)
