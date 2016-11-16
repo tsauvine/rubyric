@@ -6,17 +6,19 @@
   </h1>
 </div>
 
-<%= form_tag exercise_results_path(@exercise) do %>
+<%= form_tag exercise_results_path(@exercise, :sort => params[:sort]) do %>
   <div class="well">
     <p>
       If multiple reviews exist for the same group, include<br />
-      <%= radio_button_tag 'include', 'all', params[:include] != 'best' %> All grades<br />
-      <%= radio_button_tag 'include', 'best', params[:include] == 'best' %> Best grade
+      <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All reviews<br />
+      <%= radio_button_tag 'include', 'combined', params[:include] != 'all' %> Combined grade
     </p>
     
     <p>
       <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
-      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet (new)<% end %>
+      <!--
+      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
+      -->
     </p>
   </div>
 <% end %>
@@ -24,36 +26,47 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
-      <% if @course_instance.submission_policy == 'lti' %>
-        <th>student ID</th>
-      <% else %>
-        <th>studentnumber</th>
+      <%= result_table_heading('student ID', :sort => 'student-id') %>
+      <%= result_table_heading('first name', :sort => 'first-name') %>
+      <%= result_table_heading('last name', :sort => 'last-name') %>
+      <%= result_table_heading('email', :sort => 'email') %>
+      <%= result_table_heading('grade', :sort => 'grade') %>
+      <% if params[:include] == 'all' %>
+        <%= result_table_heading('submitted_at', :sort => 'submitted-at') %>
+        <%= result_table_heading('reviewer', :sort => 'reviewer') %>
       <% end %>
-      <th>first name</th>
-      <th>last name</th>
-      <th>email</th>
-      <th>grade</th>
-      <th>submitted_at</th>
-      <th>reviewer</th>
+      <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+        <%= result_table_heading('peer review count (*)', :sort => 'peer-review-count') %>
+      <% end %>
+      <%= result_table_heading('notes', :sort => 'notes') %>
     </tr>
   </thead>
   <tbody>
     <% @results.each do |result| %>
       <tr>
-        <% if @course_instance.submission_policy == 'lti' && result[0].user %>
-          <td><%= result[0].user.lti_user_id %></td>
+        <% if @course_instance.submission_policy == 'lti' %>
+          <td><% if result[:member].user %><%= result[:member].user.lti_user_id %><% end %></td>
         <% else %>
-          <td><%= result[0].studentnumber %></td>
+          <td><%= result[:member].studentnumber %></td>
         <% end %>
-        <td><%= result[0].firstname %></td>
-        <td><%= result[0].lastname %></td>
-        <td><%= result[0].email %></td>
-        <td><%= result[1].grade %></td>
-        <td><%= result[1].submission.created_at %></td>
-        <td><% if result[1].user %><%= result[1].user.name  %> (<%= result[1].user.studentnumber %>)<% end %></td>
+        <td><% if result[:member].user %><%= result[:member].user.firstname %><% end %></td>
+        <td><% if result[:member].user %><%= result[:member].user.lastname %><% end %></td>
+        <td><%= result[:member].email %></td>
+        <td><%= result[:grade] %></td>
+        <% if params[:include] == 'all' %>
+          <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
+          <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>
+        <% end %>
+        <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %><td>
+          <%= result[:finished_peer_review_count] %>
+          <% if result[:finished_peer_review_count] != result[:created_peer_review_count] %>(<%= result[:created_peer_review_count] %>)<% end %>
+        </td><% end %>
+        <td><%= result[:notes] %></td>
       </tr>
     <% end %>
   </tbody>
 </table>
 
-<!--p>Note: In case multiple reviews exist for the same group, the review with the highest grade counts.</p-->
+<% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+  <p>* number of unfinished peer reviews in parenthesis</p>
+<% end %>

@@ -170,8 +170,113 @@ class Group < ActiveRecord::Base
 
       extreme_status || ''
     end
-
-    # FIXME: compare by semantic value
+    
+    # FIXME: compare by semantic value, e.g. :finished < :mailed
     a_extreme <=> b_extreme
+  end
+  
+  # Returns the total result of this group to a specific exercise, considering all submissions and reviews.
+  # Hint: eager load submissions and reviews to maximize performance (includes(:submissions => :reviews)).
+  #
+  # average - :mean / :median
+  # n_best  - integer
+  #
+  # Returns
+  # {
+  #   grade: integer / float / String / nil,
+  #   reviews: [Review, ...],  # all reviews that are included in grading
+  #   not_enough_reviews: true / false or missing
+  #   no_submissions: true / false or missing
+  #   errors: [String, ...]
+  # }
+  def result(exercise, options)
+    submission_count = 0
+    average = (options['average'] || :mean).to_sym
+    logger.debug "OPTIONS: #{options}"
+    logger.debug ""
+    logger.debug "AVERAGE MODE: #{average}"
+    n_best = options['n_best']
+    reviews = []
+    result = {
+        :errors => []
+      }
+    
+    # Collect the reviews that should be included in the results
+    submissions.each do |submission|
+      next unless submission.exercise_id == exercise.id
+      
+      submission_count += 1
+      submission.reviews.each do |review|
+        next unless review.include_in_results?
+        
+        reviews << review
+      end
+    end
+    result[:reviews] = reviews
+    
+    # Sort reviews by grade, best first
+    not_sortable = false
+    begin
+      reviews.sort! { |a, b| Review.compare_grades!(b.grade, a.grade) }
+      logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
+    rescue
+      not_sortable = true
+      logger.debug "Reviews not sortable: #{reviews.map {|review| review.grade}.join(', ')}"
+    end
+    
+    # Take n best
+    if n_best
+      logger.debug "Taking #{n_best} reviews"
+      if n_best.abs > reviews.size
+        result[:not_enough_reviews] = true
+        logger.debug "Not enough reviews"
+      end
+      
+      if n_best > 0
+        # N best
+        reviews = reviews.slice(0, n_best)
+      else
+        # N worst
+        reviews = reviews.slice(n_best, -n_best)
+      end
+      
+      logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
+    end
+    
+    # Calculate mean or median
+    if submission_count == 0
+      result[:no_submissions] = true
+    elsif reviews.empty?
+      result[:not_enough_reviews] = true
+    elsif not_sortable && (average == :median || average == :mix || average == :max)
+      result[:errors] << 'Cannot calculate grade from non-numeric grades.'
+    elsif average == :median
+      result[:grade] = reviews[reviews.size / 2].grade
+      # Even number or reviews:
+      # if reviews.size % 2 == 0
+      #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
+    elsif average == :max
+      logger.debug "Calculating max"
+      result[:grade] = reviews.first.grade
+    elsif average == :min
+      logger.debug "Calculating min"
+      result[:grade] = reviews.last.grade
+    elsif average == :mean
+      begin
+        if reviews.size == 1
+          # Non-numeric grades can be handled in this special case
+          result[:grade] = reviews.first.grade
+        else
+          mean = reviews.inject(0.0){ |sum, review| sum + Review.cast_grade(review.grade) }.to_f / reviews.size
+          result[:grade] = mean.to_s
+        end
+      rescue Exception => e
+        result[:errors] << 'Cannot calculate grade from non-numeric grades.'
+      end
+    else
+      raise ArgumentError.new("Unrecognized average mode: #{average}")
+    end
+    
+    return result
   end
 end

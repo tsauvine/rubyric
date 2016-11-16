@@ -1,23 +1,23 @@
 <div class="row-fluid">
   <% unless @exercise.new_record? %>
-      <%= link_to exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}"), :class => 'back-button pull-left', :title => 'Return to menu' do %>
-          <i class='icon icon-arrow-left'></i>
-      <% end %>
+    <%= link_to exercise_path(@exercise.id, :anchor => "group#{@review.submission.group.id}"), :class => 'back-button pull-left', :title => 'Return to menu' do %>
+      <i class='icon icon-arrow-left'></i>
+    <% end %>
   <% end %>
 
   <ul id="tabs" class="nav nav-tabs">
     <li id="tutorial-tab" class="active"><a href="#tab-overview" data-toggle="tab">Overview</a></li>
 
     <!-- ko foreach: pages -->
-    <li><a data-bind="text:name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
+      <li><a data-bind="text:name, attr:{ href: '#page-' + id, id: 'page-' + id + '-link' }" data-toggle='tab'></a></li>
     <!-- /ko -->
 
     <!-- ko if: finishable() -->
-    <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
+      <li><a href="#tab-finish" id="tab-finish-link" data-toggle="tab" data-bind="click: finish">Finalize</a></li>
     <!-- /ko -->
 
     <% unless @exercise.new_record? %>
-        <li><input type="submit" value="Save" class="btn btn-success" data-bind="click: save"/></li>
+      <li><input type="submit" value="Save" class="btn btn-success" data-bind="click: save" /></li>
     <% end %>
   </ul>
 </div>
@@ -31,16 +31,16 @@
 
       <!-- Warnings -->
       <% if @review && @review.status == 'mailed' %>
-          <div class="alert">
-            This review has already been mailed and cannot be modified any more.
-          </div>
+        <div class="alert">
+          This review has already been mailed and cannot be modified any more.
+        </div>
       <% end %>
 
       <!-- Notes to grader -->
       <% if @review && !@review.notes_to_grader.blank? %>
-          <div class="alert alert-info">
-            <%= @review.notes_to_grader %>
-          </div>
+        <div class="alert alert-info">
+          <%= @review.notes_to_grader %>
+        </div>
       <% end %>
     </div>
     <div class="row-fluid">
@@ -49,131 +49,129 @@
         <h3 id="tutorial-heading">Submission</h3>
 
         <% unless @exercise.new_record? %>
-            <% unless @submission.filename.blank? %>
-                <p>
-                  <%= link_to "#{@submission.filename}", submission_path(@submission) %>
-                  <small>(<%= l @submission.created_at %>)</small>
-                </p>
-            <% end %>
+          <% unless @submission.filename.blank? %>
+            <p>
+              <%= link_to "#{@submission.filename}", submission_path(@submission) %>
+              <small>(<%=l @submission.created_at %>)</small>
+            </p>
+          <% end %>
 
-            <% unless @submission.payload.blank? %>
-                <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
-            <% end %>
+          <% unless @submission.payload.blank? %>
+            <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
+          <% end %>
         <% else %>
-            <!-- Demo -->
-            <%= link_to "#{@submission.filename}", submission_demo_path %>
+          <!-- Demo -->
+          <%= link_to "#{@submission.filename}", submission_demo_path %>
         <% end %>
       </div>
       <% if @submission && @submission.group && !@exercise.anonymous_submissions %>
-          <div class="span4 well">
-            <!-- Group -->
-            <h3>Group</h3>
+        <div class="span4 well">
+          <!-- Group -->
+          <h3>Group</h3>
 
-            <table class="table">
-              <tbody>
+          <table class="table">
+            <tbody>
               <% @submission.group.group_members.each do |member| %>
-                  <tr>
-                    <td><%= member.studentnumber %></td>
-                    <td><%= member.name %></td>
-                    <td><%= member.email %></td>
-                  </tr>
+                <tr>
+                  <td><%= member.studentnumber %></td>
+                  <td><%= member.name %></td>
+                  <td><%= member.email %></td>
+                </tr>
               <% end %>
-              </tbody>
-            </table>
-          </div>
+            </tbody>
+          </table>
+        </div>
       <% end %>
 
       <!-- Upload review -->
-      <% unless @exercise.new_record? %>
-          <div class="span4 well">
-            <h3>Upload feedback</h3>
-            <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
+      <% unless true || @exercise.new_record? %>
+        <div class="span4 well">
+          <h3>Upload feedback</h3>
+          <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
 
-            <% if @review %>
-                <% if @review.filename.blank? %>
-                    <%= link_to 'Upload feedback', upload_review_path(@review) %>
-                <% else %>
-                    <p><%= link_to @review.filename, download_review_path(@review) %></p>
-                    <%= link_to 'Upload again', upload_review_path(@review) %>
-                <% end %>
+          <% if @review %>
+            <% if @review.filename.blank? %>
+              <%= link_to 'Upload feedback', upload_review_path(@review) %>
+            <% else %>
+              <p><%= link_to @review.filename, download_review_path(@review) %></p>
+              <%= link_to 'Upload again', upload_review_path(@review) %>
             <% end %>
-          </div>
+          <% end %>
+        </div>
       <% end %>
     </div>
   </div> <!-- /tab-overview -->
 
   <!-- ko foreach: pages -->
-  <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
-    <!--h2 data-bind="text: name"></h2-->
+    <div class="tab-pane" data-bind="attr: { id: 'page-' + id }">
+      <!--h2 data-bind="text: name"></h2-->
 
-    <!-- ko if: $root.finalizing -->
-    <div class="alert alert-info">
-      Individual pages cannot be edited because feedback is already finalized.
-      <% if !@exercise.collaborative_mode.blank? || @is_assistant || @is_teacher %>
-          <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
-      <% end %>
-    </div>
-    <!-- /ko -->
+      <!-- ko if: $root.finalizing -->
+        <div class="alert alert-info">
+          Individual pages cannot be edited because feedback is already finalized.
+          <% if !@exercise.collaborative_mode.blank? || @is_assistant || @is_teacher %>
+            <button class="btn btn-small" data-bind="click: $root.clickCancelFinalize">Cancel finalizing</button>
+          <% end %>
+        </div>
+      <!-- /ko -->
 
-    <!-- Grading instructions (page) -->
-    <p class="grading-instructions" data-bind="text: instructions"></p>
+      <!-- Grading instructions (page) -->
+      <p class="grading-instructions" data-bind="text: instructions"></p>
 
-    <!-- Rubric -->
-    <div class="rubric" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
-      <div class="criterion">
-        <!-- Heading -->
-        <h3>
-          <span data-bind="text: name"></span>
-          <!-- ko if: selectedPhrase() -->
-          <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
-          <!-- /ko -->
-        </h3>
-        <div class="clear"></div>
+      <!-- Rubric -->
+      <div class="rubric" data-bind="foreach: criteria, css: {compact: phrasesHidden}">
+        <div class="criterion">
+          <!-- Heading -->
+          <h3>
+            <span data-bind="text: name"></span>
+            <!-- ko if: selectedPhrase() -->
+              <button data-bind="text: selectedPhrase().grade" type="button" class="btn highlighted"></button>
+            <!-- /ko -->
+          </h3>
+          <div class="clear"></div>
 
-        <!-- Grading instructions (criterion) -->
-        <p class="grading-instructions" data-bind="text: instructions"></p>
+          <!-- Grading instructions (criterion) -->
+          <p class="grading-instructions" data-bind="text: instructions"></p>
 
-        <!-- Phrases -->
-        <div class="phrases">
-          <table class="phrases">
-            <tbody data-bind="foreach: phrases">
-            <tr class="phrase">
-              <td class="grade" data-bind="if: grade !== undefined">
-                <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: $parent.selectedPhrase() == $data }" type="button" class="btn"></button>
-              </td>
-              <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
-            </tr>
-            </tbody>
-          </table>
+          <!-- Phrases -->
+          <div class="phrases">
+            <table class="phrases">
+              <tbody data-bind="foreach: phrases">
+                <tr class="phrase">
+                  <td class="grade" data-bind="if: grade !== undefined">
+                    <button data-bind="text: grade, click: $root.clickGrade, css: { highlighted: $parent.selectedPhrase() == $data }" type="button" class="btn"></button>
+                  </td>
+                  <td class="phrase" data-bind="html: escaped_content, click: $root.clickPhrase"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- ko if: criteria().size > 0 -->
-    <p>
-      <button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button>
-    </p>
-    <!-- /ko -->
-
-    <!-- Grades -->
-    <!-- ko if: $root.gradingMode == 'average' && selectableGrades.length > 0 -->
-    <hr/>
-    <h3>Grade</h3>
-
-    <p>
-      <select data-bind="options: selectableGrades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
-      <!-- ko if: averageGrade -->
-      Calculated mean: <strong data-bind="text: averageGrade"></strong>
+      <!-- ko if: criteria().size > 0 -->
+        <p><button class="btn btn-small" type="button" data-bind="click: togglePhraseVisibility">Show/Hide Phrases</button></p>
       <!-- /ko -->
-    </p>
-    <!-- /ko -->
-    <!-- ko if: $root.gradingMode == 'sum' -->
-    <hr/>
-    <h3>
-      Points:
-      <span data-bind="text: averageGrade"></span>
-    </h3>
-    <!-- /ko -->
+
+      <!-- Grades -->
+      <!-- ko if: $root.gradingMode == 'average' && selectableGrades.length > 0 -->
+        <hr />
+        <h3>Grade</h3>
+
+        <p>
+          <select data-bind="options: selectableGrades, value: grade, attr: {disabled: $root.finalizing}, optionsCaption: 'Choose grade...'"></select>
+          <!-- ko if: averageGrade -->
+            Calculated mean: <strong data-bind="text: averageGrade"></strong>
+          <!-- /ko -->
+        </p>
+      <!-- /ko -->
+      <!-- ko if: $root.gradingMode == 'sum' -->
+        <hr />
+        <h3>
+          Points:
+          <span data-bind="text: averageGrade"></span>
+        </h3>
+      <!-- /ko -->
 
     <!-- Next page button -->
     <div data-bind="visible: nextPage || $root.role != 'collaborator'">
@@ -187,18 +185,18 @@
       </div>
     </div>
 
-    <!-- Textareas -->
-    <div class="textareas" data-bind="foreach: feedback">
-      <div class="category" data-bind="style: { height: height }">
-        <div class="title">
-          <p data-bind="text: title"></p>
-        </div>
-        <div class="feedback">
-          <textarea data-bind="value: value, attr: {disabled: $root.finalizing}"></textarea>
+      <!-- Textareas -->
+      <div class="textareas" data-bind="foreach: feedback">
+        <div class="category" data-bind="style: { height: height }">
+          <div class="title">
+            <p data-bind="text: title"></p>
+          </div>
+          <div class="feedback">
+            <textarea data-bind="value: value, attr: {disabled: $root.finalizing}"></textarea>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   <!-- /ko -->
 
   <!-- Finish tab -->
@@ -208,59 +206,59 @@
     <p class="hint">This is the final feedback text that is sent to the students by email.</p>
 
     <% if f %>
-        <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
+      <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
     <% else %>
-        <%= text_area_tag :review_feedback, '', :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
+      <%= text_area_tag :review_feedback, '', :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
     <% end %>
 
     <!-- ko if: gradingMode == 'average' && $root.grades.length > 0 -->
-    <h3>Grades</h3>
-    <table>
-      <tbody data-bind="foreach: pages">
-      <tr>
-        <td><span data-bind="text: name"></span>:</td>
-        <td data-bind="text: grade"></td>
-      </tr>
-      </tbody>
-      <tfoot>
-      <tr>
-        <td><strong>Mean:</strong></td>
-        <td><strong data-bind="text: averageGrade"></strong></td>
-      </tr>
-      </tfoot>
-    </table>
+      <h3>Grades</h3>
+      <table>
+        <tbody data-bind="foreach: pages">
+          <tr>
+            <td><span data-bind="text: name"></span>:</td>
+            <td data-bind="text: grade"></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Mean:</strong></td>
+            <td><strong data-bind="text: averageGrade"></strong></td>
+          </tr>
+        </tfoot>
+      </table>
 
-    <h3>Final Grade</h3>
-    <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
+      <h3>Final Grade</h3>
+      <select data-bind="options: $root.grades, value: finalGrade, optionsCaption: 'Choose grade...'"></select>
     <!-- /ko -->
     <!-- ko if: gradingMode == 'sum'-->
-    <h3>Points</h3>
-    <table>
-      <tbody data-bind="foreach: pages">
-      <tr>
-        <td><span data-bind="text: name"></span>:</td>
-        <td data-bind="text: averageGrade"></td>
-      </tr>
-      </tbody>
-      <tfoot>
-      <tr>
-        <td><strong>Sum:</strong></td>
-        <td><strong data-bind="text: averageGrade"></strong></td>
-      </tr>
-      </tfoot>
-    </table>
+      <h3>Points</h3>
+      <table>
+        <tbody data-bind="foreach: pages">
+          <tr>
+            <td><span data-bind="text: name"></span>:</td>
+            <td data-bind="text: averageGrade"></td>
+          </tr>
+        </tbody>
+        <tfoot>
+          <tr>
+            <td><strong>Sum:</strong></td>
+            <td><strong data-bind="text: averageGrade"></strong></td>
+          </tr>
+        </tfoot>
+      </table>
     <!-- /ko -->
 
     <% unless @exercise.new_record? %>
-        <p>
-          <button class="btn btn-success" data-bind="click: save">Save</button>
+      <p>
+        <button class="btn btn-success" data-bind="click: save">Save</button>
 
-          <% if @exercise.grader_can_email %>
-              <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
-          <% end %>
+        <% if @exercise.grader_can_email %>
+          <button class="btn btn-primary" data-bind="click: saveAndSend">Save + Mail</button>
+        <% end %>
 
-          <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
-        </p>
+        <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
+      </p>
     <% end %>
   </div>
 
