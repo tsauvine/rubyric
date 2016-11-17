@@ -24,6 +24,20 @@
         <span class="hint">e.g. exercise1</span>
       </div>
     </div>
+    
+    <div class="control-group">
+      <%= f.label :lti_resource_link_id_review, 'LTI resource link ID for peer review', :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :lti_resource_link_id_review %>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :lti_resource_link_id_feedback, 'LTI resource link ID for viewing feedback', :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :lti_resource_link_id_feedback %>
+      </div>
+    </div>
   <% end %>
   
   <!-- Deadline -->
