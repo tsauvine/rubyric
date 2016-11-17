@@ -92,7 +92,7 @@ class ApplicationController < ActionController::Base
     # Find groups that the user is part of
     available_groups = Group.where('course_instance_id=? AND user_id=?', exercise.course_instance_id, user.id).joins(:users).order(:name).all
     
-    requested_lti_ids = payload.collect {|member| member['user']}
+    requested_lti_ids = payload.collect {|member| member['user'].to_s}
     logger.debug "Requested lti_ids: #{requested_lti_ids}"
     
     # Find the group that matches
@@ -116,9 +116,9 @@ class ApplicationController < ActionController::Base
       
       # Create group
       payload.each do |member|
-        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user']).first || lti_create_user(lti_consumer, member['user'], organization, exercise.course_instance, member['student_id'], nil, nil, member['email'])
-        logger.debug "Creating member: #{member['user']} #{member['email']}"
-        member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'])
+        group_user = User.where(:lti_consumer => lti_consumer, :lti_user_id => member['user'].to_s).first || lti_create_user(lti_consumer, member['user'].to_s, organization, exercise.course_instance, member['student_id'].to_s, nil, nil, member['email'])
+        logger.debug "Creating member: #{member['user'].to_s} #{member['email']}"
+        member = GroupMember.new(:email => member['email'], :studentnumber => member['student_id'].to_s)
         member.group = group
         member.user = group_user
         member.save
@@ -180,6 +180,7 @@ class ApplicationController < ActionController::Base
       return false
     end
     
+    # FIXME: strip params from attributes that should not be used for checksum calculation
     @tp = IMS::LTI::ToolProvider.new(consumer_key, secret, params)
     
     if !@tp.valid_request?(request)
@@ -210,14 +211,14 @@ class ApplicationController < ActionController::Base
   # Attempts to log in an LTI user.
   # Creates an Organization if a new one is encountered.
   # If @exercise is defined already, ensures that it matches the exercise specified in the LTI headers. Otherwise, loads @exercise based on the LTI headers. Same goes for @course_instance.
-  # Returns true if sesion was create successfully.
-  # Otherwise, renders an error message and returns false.
+  # If the session was not successfully created, renders an error message and returns false.
+  # Otherwise, returns :submit, :review or :feedback depending on which view is appropriate based on the LTI request.
   def login_lti_user
     # Testing mode
 #     if Rails.env == 'development' && request.local?
 #       params[:oauth_consumer_key] = 'aalto.fi'
-#       params[:context_id] = 'plus.cs.hut.fi/test/test-01/'
-#       params[:resource_link_id] = 'aplusexercise1412'
+#       params[:context_id] = 'plus.cs.hut.fi/test/test-02/'
+#       params[:resource_link_id] = 'aplusexercise1412feed'
 #       params[:user_id] = '1'
 #     end
     
@@ -232,13 +233,14 @@ class ApplicationController < ActionController::Base
       @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
       
       unless @course_instance
-        @heading =  "This course is not configured"
         logger.warn "LTI login failed. Could not find a course instance with lti_consumer=#{params['oauth_consumer_key']}, lti_context_id=#{params[:context_id]}"
-        render :template => "shared/error"
+        render :template => "shared/lti_error"
         return false
       end
     end
+    @course =  @course_instance.course
     
+    view = :submit
     if defined?(@exercise)
       if @exercise.lti_resource_link_id != params[:resource_link_id]
         logger.warn "LTI login failed. LTI headers specify exercise #{params['oauth_consumer_key']}/#{params[:context_id]}/#{params[:resource_link_id]} but @exercise (id #{@exercise.id}), which had alreay been loaded, has lti_resource_link_id=#{@exercise.lti_resource_link_id || 'nil'}"
@@ -246,6 +248,16 @@ class ApplicationController < ActionController::Base
       end
     else
       @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id => params[:resource_link_id]).first
+      
+      unless @exercise
+        @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id_review => params[:resource_link_id]).first
+        view = :review if @exercise
+      end
+      
+      unless @exercise
+        @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id_feedback => params[:resource_link_id]).first
+        view = :feedback if @exercise
+      end
     end
     
     @organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
@@ -288,7 +300,7 @@ class ApplicationController < ActionController::Base
     end
     CustomLogger.info("#{params['oauth_consumer_key']}/#{params[:user_id]} login_LTI success")
     
-    return true
+    return view
   end
   
   def was_nonce_used_in_last_x_minutes?(nonce, minutes=60)

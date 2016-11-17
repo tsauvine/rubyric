@@ -24,6 +24,20 @@
         <span class="hint">e.g. exercise1</span>
       </div>
     </div>
+    
+    <div class="control-group">
+      <%= f.label :lti_resource_link_id_review, 'LTI resource link ID for peer review', :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :lti_resource_link_id_review %>
+      </div>
+    </div>
+    
+    <div class="control-group">
+      <%= f.label :lti_resource_link_id_feedback, 'LTI resource link ID for viewing feedback', :class => 'control-label' %>
+      <div class="controls">
+        <%= f.text_field :lti_resource_link_id_feedback %>
+      </div>
+    </div>
   <% end %>
   
   <!-- Deadline -->
@@ -64,7 +78,7 @@
     <%= f.label :review_mode, 'Review mode', :class => 'control-label' %>
     <div class="controls">
       <label>
-        <%= f.select(:review_mode, options_for_select([['Plain text', 'text'], ['Annotation', 'annotation']], @exercise.review_mode)) %>
+        <%= f.select(:review_mode, options_for_select([['Annotation', 'annotation'], ['Plain text', 'text']], @exercise.review_mode)) %>
       </label>
     </div>
   </div>
@@ -103,6 +117,7 @@
   </div>
   
   <!-- Review mode -->
+  <!--
   <div class="control-group">
     <%= f.label :collaborative_mode, 'Collaborative mode', :class => 'control-label' %>
     <div class="controls">
@@ -111,6 +126,7 @@
       </label>
     </div>
   </div>
+  -->
   
    <div class="control-group">
     <%= f.label :peer_review_timing, 'Open peer review', :class => 'control-label' %>

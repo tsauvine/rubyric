@@ -66,7 +66,7 @@ class Submission < ActiveRecord::Base
   # Saves the file to the filesystem. This is called automatically after create.
   # (This must be called after create, because we need to know the id.)
   def write_file
-    #return unless @file_data
+    return unless @file_data || self.payload
 
     path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     filename = "#{id}.#{extension}"
@@ -80,7 +80,7 @@ class Submission < ActiveRecord::Base
       end
     end
     
-    Submission.delay(run_at: 5.seconds.from_now).post_process(self.id)
+    Submission.delay.post_process(self.id) # (run_at: 5.seconds.from_now)
   end
 
   def move(target_exercise)
@@ -175,7 +175,6 @@ class Submission < ActiveRecord::Base
     
     page_number ||= 0
     page_number = page_number.to_i
-    
     if self.extension == 'pdf' || self.conversion == 'pdf'
       return image_path_pdf(page_number, zoom)
     elsif self.conversion == 'image'
@@ -329,9 +328,8 @@ class Submission < ActiveRecord::Base
     end
     
     # FIXME: this is a temporary hack for Koodiaapinen
-    if submission.is_a?(AplusSubmission) && submission.exercise.grading_mode == 'always_pass'
-      logger.info "Sending points to A+"
-      FeedbackMailer.aplus_feedback(submission)
+    if submission.is_a?(AplusSubmission) && submission.exercise.rubric_grading_mode == 'always_pass'
+      FeedbackMailer.aplus_feedback(submission.id)
     end
   end
   

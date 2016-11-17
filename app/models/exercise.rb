@@ -16,7 +16,7 @@ class Exercise < ActiveRecord::Base
   # Feedback grouping options: exercise, sections, categories
   
   
-  def grading_mode
+  def rubric_grading_mode
     return nil if self.rubric.blank?
     rubric_content()['gradingMode']
   end
@@ -445,22 +445,8 @@ class Exercise < ActiveRecord::Base
 
   # Creates example submissions for existing groups.
   def create_example_submissions
-    example_submission_file = "#{SUBMISSIONS_PATH}/example.pdf"
-    example_submission_file = nil unless File.exists?(example_submission_file)
-    #example_submission_file = nil
-
-    submission_path = "#{SUBMISSIONS_PATH}/#{self.id}"
-    begin
-      FileUtils.makedirs(submission_path) if example_submission_file
-    rescue
-      example_submission_file = nil
-    end
-
-    # Create submissions
     self.course_instance(true).groups.each do |group|
-      submission = Submission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
-
-      FileUtils.ln_s(example_submission_file, "#{submission_path}/#{submission.id}.pdf") if example_submission_file
+      submission = ExampleSubmission.create(:exercise_id => self.id, :group_id => group.id, :extension => 'pdf', :filename => 'example.pdf')
     end
   end
   
@@ -565,6 +551,45 @@ class Exercise < ActiveRecord::Base
     end
     
     results
+  end
+  
+  
+  # Returns the results for each student
+  # [
+  #    {:member => GroupMember, :reviewer => User, :review => Review, :submission => Submission, :grade => String/Integer, :notes => String}
+  #    ...
+  # ]
+  # mode: all, mean, n_best
+  def results(groups, options = {})
+    results = []
+    
+    groups.each do |group|
+      group_result = group.result(self, options)
+    
+      # Construct result
+      if options[:include_all]
+        group.group_members.collect do |member|
+          group_result[:reviews].each do |review|
+            results << { member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade }
+          end
+        end
+      else
+        group.group_members.each do |member|
+          notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
+          resultline = { member: member, grade: group_result[:grade], notes: notes }
+          
+          if options[:include_peer_review_count] && member.user
+            peer_review_count = member.user.peer_review_count(self)
+            resultline[:created_peer_review_count] = peer_review_count[:created_peer_reviews]
+            resultline[:finished_peer_review_count] = peer_review_count[:finished_peer_reviews]
+          end
+          
+          results << resultline unless group_result[:no_submissions]
+        end
+      end
+    end
+    
+    return results
   end
   
   # Returns the id of the review that is next in sequence for the user.

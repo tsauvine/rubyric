@@ -135,17 +135,11 @@ class Criterion
         if annotation.grade()?
           grades.push(annotation.grade())
       
-#       console.log @name
-#       console.log grades
-      
       grade = if grades.length > 0
-#         console.log "a"
         @rubricEditor.calculateGrade(grades)
       else if @selectedPhrase()
-#         console.log "b"
         @selectedPhrase().grade
       else
-#         console.log "c"
         undefined
       
       numeric_grade = parseFloat(grade)
@@ -344,7 +338,7 @@ class @Rubric
 
 class @ReviewEditor extends @Rubric
 
-  constructor: () ->
+  constructor: (rubric) ->
     super()
     @saved = true
     @finalGrade = ko.observable()
@@ -354,10 +348,15 @@ class @ReviewEditor extends @Rubric
     element = $('#review-editor')
     @role = $('#role').val()
     @demo_mode = element.data('demo')
-    @initialPageId = element.data('initial-rubric-page')
+    initialPageId = element.data('initial-rubric-page')
     unless @demo_mode
       $(window).bind 'beforeunload', =>
         return "You have unsaved changes. Leave anyway?" unless @saved
+    
+    this.parseRubric(rubric)
+    
+    @initialPage = @pagesById[parseInt(initialPageId)] if initialPageId? && initialPageId.length > 0
+    @initialPage = @pages[0] unless @initialPage?
 
   #
   # Loads the review
@@ -431,9 +430,8 @@ class @ReviewEditor extends @Rubric
     # Activate the finalizing tab
     if @finalizing()
       $('#tab-finish-link').tab('show')
-    else if @initialPageId
-      initialPage = @pagesById[parseInt(@initialPageId)]
-      initialPage.showTab() if initialPage
+    else if @initialPage?
+      @initialPage.showTab()
 
   # Returns the review as JSON
   encodeJSON: ->

@@ -4,6 +4,7 @@
   <script>
     $(function () {
       $('[data-toggle="popover"]').popover({'trigger': 'hover', 'placement': 'top'})
+      $('[data-toggle="tooltip"]').popover({'trigger': 'hover', 'placement': 'top'})
     })
   </script>
 <% end %>
@@ -85,7 +86,7 @@
     </div>
   <% else %>
     <%= form_tag exercise_send_reviews_path(@exercise) do %>
-      <table class="assignments hover-buttons">
+      <table class="table assignments hover-buttons">
         <thead>
           <tr>
             <td>Submission</td>

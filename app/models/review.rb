@@ -4,24 +4,97 @@ class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader
 
-  #has_many :feedbacks, :dependent => :destroy
+  #has_many :feedbacks, dependent: :destroy
 
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated
 
   def include_in_results?
     status == 'finished' || status == 'mailed' || status == 'mailing'
   end
-  
+
+  # Converts a string grade into an Integer or Float, if possible.
+  # Returns Integer, Float or String.
+  def self.cast_grade(string)
+    begin
+      return Integer(string)
+    rescue ArgumentError, TypeError
+    end
+
+    begin
+      return Float(string)
+    rescue ArgumentError, TypeError
+    end
+
+    return string
+  end
+
+  # Natural comparison for grades, so that nil < numerical grade < textual grade.
+  # Textual grades are ordered alphabetically and numerical grades in an ascending order.
+  def self.compare_grades(a, b)
+    a_grade = Review.cast_grade(a)
+    b_grade = Review.cast_grade(b)
+
+    # Nils first
+    if a_grade.nil?
+      if b_grade.nil?
+        return 0
+      else
+        return -1
+      end
+    elsif b_grade.nil?
+      return 1
+    end
+
+    # Numbers before strings
+    if a_grade.is_a? String
+      if b_grade.is_a? String
+        return a_grade <=> b_grade
+      else
+        return 1
+      end
+    else
+      if b_grade.is_a? String
+        return -1
+      else
+        return a_grade <=> b_grade
+      end
+    end
+  end
+
+  # Tries to compare grades but refuses to compare textual grades.
+  # Nil is considered smaller than any numerical grade.
+  # Returns nil if either of the arguments are textual.
+  def self.compare_grades!(a, b)
+    a_grade = Review.cast_grade(a)
+    b_grade = Review.cast_grade(b)
+
+    return nil if a_grade.is_a?(String) || b_grade.is_a?(String)
+
+    # Nils first
+    if a_grade.nil?
+      if b_grade.nil?
+        return 0
+      else
+        return -1
+      end
+    elsif b_grade.nil?
+      return 1
+    end
+
+    # Compare numbers normally
+    a_grade <=> b_grade
+  end
+
   def update_from_json(id, json)
     review = Review.find(id)
     review.update_attributes(json)
   end
-  
+
   # Saves the file to the filesystem.
   # This must be called after create, because we need to know the id.
   def write_file(file_data, exercise)
     return unless file_data
-      
+
     # TODO: check if utf-8 will cause problems
     self.filename = file_data.original_filename
     self.extension = file_data.original_filename.split(".").last
@@ -34,13 +107,13 @@ class Review < ActiveRecord::Base
       file.write(file_data.read)
     end
   end
-  
+
   # Returns the location of the feedback file in the filesystem.
   def full_filename
     "#{FEEDBACK_PATH}/#{submission.exercise.id}/#{id}.#{extension}"
   end
 
-  
+
   def calculate_grade
     categories_counter = 0
     category_points_counter = 0
@@ -50,7 +123,7 @@ class Review < ActiveRecord::Base
       sections_counter = 0
       section_points_counter = 0
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         if section.section_grading_options.size > 0 && feedback.section_grading_option
@@ -59,7 +132,7 @@ class Review < ActiveRecord::Base
         end
       end
 
-      case submission.exercise.grading_mode
+      case submission.exercise.rubric_grading_mode
         when "average"
           section_grade = (sections_counter == 0) ? 0 : section_points_counter / sections_counter
         else
@@ -71,7 +144,7 @@ class Review < ActiveRecord::Base
     end
 
 
-    case submission.exercise.grading_mode
+    case submission.exercise.rubric_grading_mode
       when "sum"
         grade = category_points_counter
       when "average"
@@ -193,6 +266,27 @@ class Review < ActiveRecord::Base
     
   end
 
+  # String representation of feedback collected so far.
+  def preview_feedback
+    if self.payload.blank?
+      ''
+    else
+      begin
+        final_comment = []
+        pages = JSON.parse(self.payload)['pages']
+        pages.each do |page|
+          feedbacks = page['feedback']
+          feedbacks.each do |feedback|
+            final_comment.append feedback['text']
+          end
+        end
+        final_comment.join()
+      rescue TypeError => e
+        logger.error e
+        ''
+      end
+    end
+  end
   # Collects feedback from all sections and groups all positive feedback together, all neagtive feedback together, etc.
   # Section captions are not shown.
   # Returns a string.
@@ -234,7 +328,7 @@ class Review < ActiveRecord::Base
       neutral = ''
 
       category.sections.each do |section|
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         good << feedback.good + "\n" unless feedback.good.blank?
@@ -262,7 +356,7 @@ class Review < ActiveRecord::Base
     submission.exercise.categories.each do |category|
       category.sections.each do |section|
 
-        feedback = Feedback.find(:first, :conditions => ["section_id = ? AND review_id = ?", section.id, self.id])
+        feedback = Feedback.find(:first, conditions: ['section_id = ? AND review_id = ?', section.id, self.id])
         next unless feedback
 
         text << "== #{section.name} ==============================\n\n"
@@ -280,20 +374,17 @@ class Review < ActiveRecord::Base
 
     return text
   end
-  
+
   def self.deliver_reviews(review_ids)
     errors = []
-    aplus_reviews = {} # { Submission => [Review, Review, ...] }
-    
-    # TODO: only send reviews with status 'finished' or 'mailing'
-    Review.where(:id => review_ids).find_each do |review|
+    aplus_submission_ids = Set.new # Groups whose feedback should be sent to A+
+
+    Review.where(id: review_ids).find_each do |review|
       next if review.status == 'invalidated'
-      
+
       begin
-        if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 208  # Koodiaapinen hack for exercise 208 (some submissions were received via email)
-          # Bundle reviews that belong to the same AplusSubmission
-          aplus_reviews[review.submission] ||= []
-          aplus_reviews[review.submission] << review
+        if review.submission.is_a?(AplusSubmission) || review.submission.exercise_id == 289  # Koodiaapinen hack for exercise 289 (some submissions were received via email)
+          aplus_submission_ids << review.submission_id
         else
           FeedbackMailer.review(review).deliver
         end
@@ -305,50 +396,50 @@ class Review < ActiveRecord::Base
         review.save
       end
     end
-    
-    aplus_reviews.each do |submission, reviews|
+
+    aplus_submission_ids.each do |submission_id|
       # NOTE: intentionally omitting .deliver because we don't actually want to send the reviews by email but post them to A+
-      FeedbackMailer.aplus_feedback(submission, reviews)
+      FeedbackMailer.aplus_feedback(submission_id)
     end
-    
+
     # Send delivery errors to teacher
     FeedbackMailer.delivery_errors(errors).deliver unless errors.empty?
   end
-  
+
   def self.deliver_bundled_reviews(course_instance_id)
     course_instance = CourseInstance.find(course_instance_id)
-    
+
     users_by_id = {}
     reviews_by_userid = {}
-    
+
     course_instance.groups.each do |group|
       group.users.each do |user|
         users_by_id[user.id] = user
       end
     end
-    
+
     course_instance.exercises.each do |exercise|
-      Review.where("status='finished' OR status='mailed'").where(:submission_id => exercise.submission_ids).includes(:submission => :group).find_each do |review|
+      Review.where("status='finished' OR status='mailed'").where(submission_id: exercise.submission_ids).includes(submission: :group).find_each do |review|
         review.submission.group.user_ids.each do |user_id|
           reviews_by_userid[user_id] ||= []
           reviews_by_userid[user_id] << review
         end
       end
     end
-    
+
     reviews_by_userid.each do |user_id, reviews|
       exercise_grades = {}
       reviews.each do |review|
         exercise_grades[review.submission.exercise_id] = review.grade
       end
-      
+
       FeedbackMailer.bundled_reviews(course_instance, users_by_id[user_id], reviews, exercise_grades).deliver
-      
+
       reviews.each do |review|
         review.status = 'mailed'
         review.save
       end
     end
   end
-    
+
 end

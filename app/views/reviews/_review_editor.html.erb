@@ -84,7 +84,7 @@
       <% end %>
 
       <!-- Upload review -->
-      <% unless @exercise.new_record? %>
+      <% unless true || @exercise.new_record? %>
         <div class="span4 well">
           <h3>Upload feedback</h3>
           <p class="hint">You can upload a file, such as an annotated PDF, as feedback to students.</p>
@@ -173,15 +173,17 @@
         </h3>
       <!-- /ko -->
 
-      <!-- Next page button -->
-        <button class="btn" data-bind="enable: nextPage || $root.finishable(), click: $root.showNextPage">
-          Next page
-          <i class="icon icon-arrow-right"></i>
-        </button>
+    <!-- Next page button -->
+    <div data-bind="visible: nextPage || $root.role != 'collaborator'">
+      <button class="btn" data-bind="enable: nextPage || $root.finishable(), click: $root.showNextPage">
+        Next page
+        <i class="icon icon-arrow-right"></i>
+      </button>
 
-        <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
-          You have not completed the previous steps.
-        </div>
+      <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
+        You have not completed the previous steps.
+      </div>
+    </div>
 
       <!-- Textareas -->
       <div class="textareas" data-bind="foreach: feedback">
