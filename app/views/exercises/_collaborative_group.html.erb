@@ -37,8 +37,10 @@
                   Attachment
               <% end %>
               <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
-                  <%= link_to t('exercises.create_comment'), review_submission_path(submission.id),
-                              class: 'btn btn-sm btn-primary' %>
+                  <%= link_to review_submission_path(submission.id),
+                              class: 'btn btn-sm btn-primary' do %>
+                    <span class="glyphicon glyphicon-plus" style="color:white" aria-hidden="true"></span> <%=t('exercises.create_comment')%>
+                  <% end %>
               <% end %>
             </div>
 
