@@ -1,72 +1,82 @@
 <div class="col-lg-4 col-sm-6 col-xs-12">
   <div class="group well" id="group<%= collaborative_group.id %>">
     <!-- Name -->
-    <% if @exercise.anonymous_submissions %>
-      <h3>Group <%= collaborative_group.id %></h3>
-    <% else %>
-      <h3><%= collaborative_group.name %></h3>
-    <% end %>
+    <h2>
+      <% if @exercise.anonymous_submissions %>
+          Group <%= collaborative_group.id %>
+      <% else %>
+          <%= collaborative_group.name %>
+      <% end %>
+    </h2>
 
     <!-- Reviews -->
     <div class="submissions list-unstyled">
       <% collaborative_group.submissions.each_with_index do |submission, index| %>
-        <% if index > 0 %>
-          <hr />
-        <% end %>
-        
-        <div class="submission">
-          <!-- Thumbnail -->
-          <div class="submission-thumbnail pull-left">
-            <% if submission.conversion == 'image' %>
-              <% if submission.reviews.size > 0 %>
-                  <%= image_tag thumbnail_submission_path(submission), alt: submission.filename %>
-              <% else %>
-                <%= link_to submission_path(submission) do %>
-                    <%= image_tag thumbnail_submission_path(submission), alt: submission.filename %>
-                <% end %>
+          <% if index > 0 %>
+              <hr/>
+          <% end %>
+
+          <div class="submission">
+            <!-- Thumbnail -->
+            <div class="submission-thumbnail pull-left">
+              <% if submission.conversion == 'image' %>
+                  <% if submission.reviews.size > 0 %>
+                      <%= image_tag thumbnail_submission_path(submission), alt: submission.filename %>
+                  <% else %>
+                      <%= link_to submission_path(submission) do %>
+                          <%= image_tag thumbnail_submission_path(submission), alt: submission.filename %>
+                      <% end %>
+                  <% end %>
               <% end %>
-            <% end %>
-            
-            <div class="filename"><%= link_to submission.filename, submission_path(submission) %></div>
-          </div>
-          
-          <div class="pull-left">
-            <% unless submission.payload.blank? %>
-              <pre class="payload"><%= truncate(submission.payload, length: 256).gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
-            <% end %>
-            
-            <ul class="reviews">
-              <% submission.reviews.each do |review| %>
-                <% if @exercise.collaborative_mode == 'review' && review.user.nil? %>
-                  <li><%= link_to t('exercises.create_comment'), edit_review_path(id: review.id, ref: 'exercises'), class: 'btn btn-sm btn-primary' %></li>
-                <% else %>
-                  <li><%
-                    if review.preview_feedback.blank?
-                      tooltip = t('exercises.my_submissions.view_collaborative_feedback')
-                    else
-                      tooltip = truncate(review.preview_feedback || '', length: 256)
-                      #.gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />").html_safe
-                    end
-                    %>
-                    <%= link_to review_path(id: review.id, ref: 'exercises'),
-                                class: 'btn btn-sm btn-default',
-                                'data-toggle' => 'popover',
-                                'data-content' => tooltip,
-                                title: reviewer_name(review) do %>
-                      <span class="glyphicon glyphicon glyphicon-comment"></span>
-                    <% end %>
-                  </li>
-                <% end %>
+
+              <%= link_to submission_path(submission),
+                          type: 'button',
+                          class: 'btn btn-sm btn-default',
+                          'data-toggle' => 'tooltip', 'data-placement' => 'top', title: submission.filename do %>
+                  <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
+                  Attachment
               <% end %>
               <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
-                <li><%= link_to t('exercises.create_comment'), review_submission_path(submission.id), class: 'btn btn-primary btn-sm' %></li>
+                  <%= link_to review_submission_path(submission.id),
+                              class: 'btn btn-sm btn-primary' do %>
+                    <span class="glyphicon glyphicon-plus" style="color:white" aria-hidden="true"></span> <%=t('exercises.create_comment')%>
+                  <% end %>
               <% end %>
-            </ul>
+            </div>
+
+            <div class="pull-left">
+              <% unless submission.payload.blank? %>
+                  <pre class="payload"><%= truncate(submission.payload, length: 256).gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
+              <% end %>
+
+              <ul class="reviews">
+                <% submission.reviews.each do |review| %>
+                    <% if @exercise.collaborative_mode == 'review' && review.user.nil? %>
+                        <li><%= link_to t('exercises.create_comment'), edit_review_path(id: review.id, ref: 'exercises'), class: 'btn btn-sm btn-primary' %></li>
+                    <% else %>
+                        <li>
+                          <%
+                            if review.preview_feedback.blank?
+                              tooltip = t('exercises.my_submissions.view_collaborative_feedback')
+                            else
+                              tooltip = truncate(review.preview_feedback || '', length: 256)
+                              #.gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />").html_safe
+                            end
+                          %>
+                          <%= link_to reviewer_name(review), review_path(id: review.id, ref: 'exercises'),
+                                      class: 'label label-default',
+                                      'data-toggle' => 'popover',
+                                      'data-content' => tooltip,
+                                      title: reviewer_name(review) %>
+                        </li>
+                    <% end %>
+                <% end %>
+              </ul>
+            </div>
+            <div class="clearfix"></div>
           </div>
-          <div class="clearfix"></div>
-        </div>
       <% end %>
     </div>
-  
+
   </div>
 </div>

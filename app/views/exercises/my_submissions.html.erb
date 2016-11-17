@@ -3,6 +3,7 @@
   <script>
     $(function () {
       $('[data-toggle="popover"]').popover({'trigger': 'hover', 'placement': 'top', 'html': true})
+      $('[data-toggle="tooltip"]').popover({'trigger': 'hover', 'placement': 'top', 'html': true})
     })
   </script>
 <% end %>
@@ -39,7 +40,7 @@
   <% end %>
 
   <% unless @assigned_groups.empty? %>
-    <table class="assignments">
+    <table class="table assignments">
       <thead>
         <tr>
           <td>Submission</td>
