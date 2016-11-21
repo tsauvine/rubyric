@@ -45,7 +45,10 @@
     <% @results.each do |result| %>
       <tr>
         <% if @course_instance.submission_policy == 'lti' %>
-          <td><% if result[:member].user %><%= result[:member].user.lti_user_id %><% end %></td>
+          <td>
+            <% if result[:member].user %><%= result[:member].user.lti_user_id %><% end %>
+            <% unless result[:member].studentnumber.nil? %>(<%= result[:member].studentnumber %>)<% end %>
+          </td>
         <% else %>
           <td><%= result[:member].studentnumber %></td>
         <% end %>
