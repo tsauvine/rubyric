@@ -2,7 +2,7 @@
 <h2><%=t '.my_submissions' %></h2>
 
 <% unless @available_groups.empty? %>
-  <table class="table assignments">
+  <table class="assignments">
     <% @available_groups.each do |group| %>
       <% submissions = group.submissions.where(exercise_id: @exercise.id) %>
       <tr class="group">
