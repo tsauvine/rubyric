@@ -173,15 +173,17 @@
         </h3>
       <!-- /ko -->
 
-      <!-- Next page button -->
-        <button class="btn" data-bind="enable: nextPage || $root.finishable(), click: $root.showNextPage">
-          Next page
-          <i class="icon icon-arrow-right"></i>
-        </button>
+    <!-- Next page button -->
+    <div data-bind="visible: nextPage || $root.role != 'collaborator'">
+      <button class="btn" data-bind="enable: nextPage || $root.finishable(), click: $root.showNextPage">
+        Next page
+        <i class="icon icon-arrow-right"></i>
+      </button>
 
-        <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
-          You have not completed the previous steps.
-        </div>
+      <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
+        You have not completed the previous steps.
+      </div>
+    </div>
 
       <!-- Textareas -->
       <div class="textareas" data-bind="foreach: feedback">

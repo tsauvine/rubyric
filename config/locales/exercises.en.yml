@@ -7,7 +7,7 @@ en:
 
   exercises:
     create_review: 'Create review'
-    create_comment: 'Create comment'
+    create_comment: 'Comment'
     nothing_to_peer_review: 'Not enough submissions for peer review'
     my_submissions:
       my_submissions: "My submissions"

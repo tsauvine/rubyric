@@ -5,15 +5,21 @@ class ExercisesController < ApplicationController
 
   def lti
     # Temporarily disable signature checking
-    #       unless authenticate_lti_signature
-    #         logger.info "Failed to auth LTI signature"
-    #         return
-    #       end
+    if params['lis_person_contact_email_primary'] == 'tapio.auvinen@aalto.fi' && !authenticate_lti_signature
+      logger.info "Failed to auth LTI signature"
+      return
+    end
+    
     unless login_lti_user
       logger.info "Failed to login LTI user"
       return
     end
 
+    unless @exercise
+      render :template => "shared/lti_error"
+      return
+    end
+    
     redirect_to @exercise
   end
 
@@ -96,7 +102,7 @@ class ExercisesController < ApplicationController
         submissions = group.submissions.where(exercise_id: @exercise.id)
         @own_submission_count += submissions.size
       end
-
+      
       render action: 'my_submissions', layout: 'fluid-new'
     end
 
@@ -178,7 +184,7 @@ class ExercisesController < ApplicationController
 
     respond_to do |format|
       format.html { redirect_to @course_instance }
-      format.xml { head :ok }
+      format.xml  { head :ok }
     end
   end
 

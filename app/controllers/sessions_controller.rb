@@ -181,11 +181,12 @@ class SessionsController < ApplicationController
   # Adds user to course (unless already added)
   def lti
     return unless authenticate_lti_signature
-    return unless login_lti_user
+    
+    lti_view = login_lti_user
+    return unless lti_view
     
     if @exercise
-      if !@is_instructor && @exercise.deadline && Time.now < @exercise.deadline
-        # Before deadline, go to submit
+      if lti_view == :submit
         # Create or find group, TODO: handle errors
         group = if params[:custom_group_members]
           logger.info("LTI request: #{params[:custom_group_members]}")
@@ -193,14 +194,23 @@ class SessionsController < ApplicationController
         else
           lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, @organization, params['oauth_consumer_key'])
         end
+        
+        unless group
+          @heading =  "Failed to create group (LTI)"
+          logger.error("Failed to create group (LTI)")
+          render :template => "shared/error"
+          return
+        end
 
         # Redirect to submit
         redirect_to submit_path(:exercise => @exercise.id, :group => group.id)
-      else
-        # After deadline, go to dashboard view
+      else # if lti_view == :review || lti_view == :feedback
         redirect_to exercise_path(:id => @exercise.id)
       end
     else
+      # FIXME; don't show this to students
+      flash[:warning] = "lti_context_id=#{params[:context_id]}, resource_link_id=#{params[:resource_link_id]}"
+      
       redirect_to course_instance_path(:id => @course_instance.id)
     end
   end
