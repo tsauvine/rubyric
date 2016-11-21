@@ -71,6 +71,9 @@ näytä lti-kursseille tuloslistassa lti_user_id
 - lazy loading of pdf pages
 - tutorial mode
 
+In sum mode, if max grades are not set for pages, sending points to A+ will fail. Rubyric should refuse to deliver and display an error message.
+
+In group submission via LTI (session/lti) validate that the user is one of the custom_group_members.
 
 drag'n'drop-palautus
 PDF with variable page size
