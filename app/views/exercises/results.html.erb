@@ -35,7 +35,7 @@
         <%= result_table_heading('submitted_at', :sort => 'submitted-at') %>
         <%= result_table_heading('reviewer', :sort => 'reviewer') %>
       <% end %>
-      <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+      <% if @exercise.peer_review? && params[:include] != 'all' %>
         <%= result_table_heading('peer review count (*)', :sort => 'peer-review-count') %>
       <% end %>
       <%= result_table_heading('notes', :sort => 'notes') %>
@@ -57,7 +57,7 @@
           <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
           <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>
         <% end %>
-        <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %><td>
+        <% if @exercise.peer_review? && params[:include] != 'all' %><td>
           <%= result[:finished_peer_review_count] %>
           <% if result[:finished_peer_review_count] != result[:created_peer_review_count] %>(<%= result[:created_peer_review_count] %>)<% end %>
         </td><% end %>
@@ -67,6 +67,6 @@
   </tbody>
 </table>
 
-<% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 && params[:include] != 'all' %>
+<% if @exercise.peer_review? && params[:include] != 'all' %>
   <p>* number of unfinished peer reviews in parenthesis</p>
 <% end %>

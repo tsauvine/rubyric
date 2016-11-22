@@ -1,0 +1,5 @@
+fi:
+  reviews:
+    edit:
+      next_page_hint: 'Voit edetä seuraavalle sivulle sen jälkeen kun olet valinnut arvosanan jokaiselle arviointikriteerille sekä koko sivulle.'
+      final_feedback_hint: 'Voit muokata lopullista palautetekstiä, joka lähetetään opiskelijoille.'

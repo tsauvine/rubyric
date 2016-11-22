@@ -205,7 +205,7 @@ class ExercisesController < ApplicationController
           {}
         end
       
-      options[:include_peer_review_count] = @exercise.peer_review_goal && @exercise.peer_review_goal > 0
+      options[:include_peer_review_count] = @exercise.peer_review?
     end
     
     groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])

@@ -1,0 +1,5 @@
+fi:
+  reviews:
+    edit:
+      next_page_hint: 'You can proceed to the next page after selecting a grade for every assessment criterion and the whole page.'
+      final_feedback_hint: 'This is the final feedback text that will be sent to the students.'

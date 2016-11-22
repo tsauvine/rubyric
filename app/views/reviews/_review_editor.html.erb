@@ -115,6 +115,28 @@
         </div>
       <!-- /ko -->
 
+      <!-- View submission -->
+      <% unless @exercise.new_record? %>
+        <% unless @submission.filename.blank? %>
+          <p>
+            Submission:
+            <%= link_to "#{@submission.filename}", submission_path(@submission), class: 'download-submission' %>
+            <small>(<%=l @submission.created_at %>)</small>
+          </p>
+        <% end %>
+        
+        <% unless @submission.payload.blank? %>
+          <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
+        <% end %>
+        
+        <% if @submission.video? %>
+          <%= video_player(@submission.payload) %>
+        <% end %>
+      <% else %>
+        <!-- Demo -->
+        <%= link_to "#{@submission.filename}", submission_demo_path %>
+      <% end %>
+      
       <!-- Grading instructions (page) -->
       <p class="grading-instructions" data-bind="text: instructions"></p>
 
@@ -181,7 +203,7 @@
       </button>
 
       <div class="alert alert-warning" role="alert" data-bind="visible: !(nextPage || $root.finishable())">
-        You have not completed the previous steps.
+        <%= t('reviews.edit.next_page_hint') %>
       </div>
     </div>
 
@@ -203,7 +225,7 @@
   <div class="tab-pane" id="tab-finish">
     <h2>Finalize Feedback</h2>
 
-    <p class="hint">This is the final feedback text that is sent to the students by email.</p>
+    <p class="hint"><%= t('reviews.edit.final_feedback_hint') %></p>
 
     <% if f %>
       <%= f.text_area :feedback, :style => "width: 600px; height: 600px;", 'data-bind' => "value: finishedText" %>
