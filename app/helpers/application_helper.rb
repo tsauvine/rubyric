@@ -26,7 +26,7 @@ module ApplicationHelper
     if stripped_url.downcase =~ /^(https?:\/\/.*panopto)/
       video_id = nil
       
-      match = /([\w-]*.mp4)$/.match(stripped_url)
+      match = /([\w-]*).mp4$/.match(stripped_url)
       video_id = match.captures.first if match
         
       unless match
@@ -36,7 +36,7 @@ module ApplicationHelper
       
       if video_id
         return "<video controls='' width='#{width}px'>
-<source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}?mediaTargetType=videoPodcast' type='video/mp4'></source>
+<source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}.mp4?mediaTargetType=videoPodcast' type='video/mp4'></source>
 Your browser does not support the video tag.
 </video>".html_safe
       else
@@ -46,7 +46,7 @@ Your browser does not support the video tag.
     
     # Long Youtube URL
     if stripped_url.downcase =~ /^https?:\/\/www\.youtube\.com\/watch/
-      match = /v=([\w-]*)$/.match(stripped_url)
+      match = /v=([\w-]*)/.match(stripped_url)
       return '' unless match
       video_id = match.captures.first
       if video_id
