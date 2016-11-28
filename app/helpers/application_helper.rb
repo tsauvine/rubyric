@@ -16,18 +16,62 @@ module ApplicationHelper
     end
   end
   
-  def video_player(url, width = 640)
-    url = "https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/ab0ad6a2-bd80-42cb-a29e-49ec3cc677ec.mp4?mediaTargetType=videoPodcast"
-    
-    video_id = /[\w-]*.mp4/.match(url)
-    unless video_id
+  def video_player(url = '', width = 640)
+    stripped_url = url.strip
+    if stripped_url.blank?
       return ''
     end
     
-    html = "
-<video controls='' width='#{width}px'>
-  <source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}?mediaTargetType=videoPodcast' type='video/mp4'></source>
-  Your browser does not support the video tag.
+    # Panopto  
+    if stripped_url.downcase =~ /^(https?:\/\/.*panopto)/
+      video_id = nil
+      
+      match = /([\w-]*.mp4)$/.match(stripped_url)
+      video_id = match.captures.first if match
+        
+      unless match
+        match = /id=([\w-]*)$/.match(stripped_url)
+        video_id = match.captures.first if match
+      end
+      
+      if video_id
+        return "<video controls='' width='#{width}px'>
+<source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}?mediaTargetType=videoPodcast' type='video/mp4'></source>
+Your browser does not support the video tag.
 </video>".html_safe
+      else
+        return ''
+      end
+    end
+    
+    # Long Youtube URL
+    if stripped_url.downcase =~ /^https?:\/\/www\.youtube\.com\/watch/
+      match = /v=([\w-]*)$/.match(stripped_url)
+      return '' unless match
+      video_id = match.captures.first
+      if video_id
+        return "<iframe type='text/html' width='#{width}' height='#{(width * 0.5625).floor}'
+src='https://www.youtube.com/embed/#{video_id}?autoplay=0&origin=#{RUBYRIC_HOST}'
+frameborder='0'></iframe>".html_safe
+      else
+        return ''
+      end
+    end
+    
+    # Short Youtube URL
+    if stripped_url.downcase =~ /^https?:\/\/youtu\.be\//
+      match = /([\w-]*)$/.match(stripped_url)
+      return '' unless match
+      video_id = match.captures.first
+      if video_id
+        return "<iframe type='text/html' width='#{width}' height='#{(width * 0.5625).floor}'
+src='https://www.youtube.com/embed/#{video_id}?autoplay=0&origin=#{RUBYRIC_HOST}'
+frameborder='0'></iframe>".html_safe
+      else
+        return ''
+      end
+    end
+    
+    return ''
   end
 end
