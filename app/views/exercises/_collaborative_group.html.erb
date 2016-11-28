@@ -31,10 +31,9 @@
 
               <%= link_to submission_path(submission),
                           type: 'button',
-                          class: 'btn btn-sm btn-default',
-                          'data-toggle' => 'tooltip', 'data-placement' => 'top', title: submission.filename do %>
+                          class: 'btn btn-sm btn-default' do %>
                   <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span>
-                  Attachment
+                  <%= submission.filename %>
               <% end %>
               <% if @exercise.collaborative_mode == 'review' && !submission.annotatable? %>
                   <%= link_to review_submission_path(submission.id),
@@ -63,11 +62,13 @@
                               #.gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />").html_safe
                             end
                           %>
-                          <%= link_to reviewer_name(review), review_path(id: review.id, ref: 'exercises'),
-                                      class: 'label label-default',
-                                      'data-toggle' => 'popover',
-                                      'data-content' => tooltip,
-                                      title: reviewer_name(review) %>
+                          <% if review.status %>
+                            <%= link_to reviewer_name(review), review_path(id: review.id, ref: 'exercises'),
+                                        class: 'label label-default',
+                                        'data-toggle' => 'popover',
+                                        'data-content' => tooltip,
+                                        title: reviewer_name(review) %>
+                          <% end %>
                         </li>
                     <% end %>
                 <% end %>

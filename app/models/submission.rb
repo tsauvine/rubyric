@@ -123,6 +123,26 @@ class Submission < ActiveRecord::Base
     return IO.read(converted_html_filename)
   end
   
+  # Returns the first thing in payload that looks like a URL (begins with http://).
+  def payload_url
+    return if payload.blank?
+    
+    match = /https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*)/.match(payload)
+    return match[0] if match
+  end
+  
+  def video?
+    url = payload_url
+    puts "URL: #{url}"
+    return false unless url
+    
+    match = /Panopto/.match(url)
+    return true if match 
+    
+    return false
+  end
+  
+  
   # Assigns this submission to be reviewed by user.
   def assign_to(user)
     user = User.find(user) unless user.is_a?(User)

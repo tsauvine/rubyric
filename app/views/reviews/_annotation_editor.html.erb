@@ -251,7 +251,9 @@
               <button name="save" value="next" type="submit" class="btn btn-success" data-bind="click: save">Next</button>
             <% end %>
             
-            <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
+            <% if defined?(@course) && @course.has_teacher(current_user) %>
+              <button class="btn btn-default" data-bind="click: clickInvalidate">Invalidate</button>
+            <% end %>
           </p>
         <% end %>
       </div>

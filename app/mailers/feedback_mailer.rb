@@ -101,7 +101,7 @@ class FeedbackMailer < ActionMailer::Base
     @course_instance = @exercise.course_instance
     @course = @course_instance.course
     subject = "#{@course.full_name} - #{@exercise.name}"
-    peer_reviews_required = @exercise.peer_review_goal && @exercise.peer_review_goal > 0
+    peer_reviews_required = @exercise.peer_review?
     always_pass = @exercise.rubric_grading_mode == 'always_pass'
     
     @reviews = []

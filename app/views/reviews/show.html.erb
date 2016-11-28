@@ -23,7 +23,11 @@
 </p>
 
 <% unless @submission.payload.blank? %>
-  <p><%= @submission.payload %></p>
+  <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
+<% end %>
+
+<% if @submission.video? %>
+  <%= video_player(@submission.payload) %>
 <% end %>
 
 <% if !@exercise.anonymous_graders && @grader %>

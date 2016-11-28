@@ -19,15 +19,15 @@
 
 
 <!-- Reviews -->
-<% if !@assigned_groups.empty? || (@exercise.peer_review_goal && @exercise.peer_review_goal > 0) %>
+<% if !@assigned_groups.empty? || @exercise.peer_review? %>
   <h2><%=t '.reviews' %></h2>
   
   <!-- Peer review -->
-  <% if @exercise.peer_review_goal && @exercise.peer_review_goal > 0 %>
+  <% if @exercise.peer_review? %>
     <p class="hint">
       <% if @exercise.peer_review_goal == 1 %>
         <%= t('.peer_review_hint_singular') %>
-      <% else %>
+      <% elsif @exercise.peer_review_goal > 1 %>
         <%= t('.peer_review_hint', peer_review_count: @exercise.peer_review_goal) %>
       <% end %>
       

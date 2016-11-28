@@ -116,23 +116,21 @@
     </div>
   </div>
   
-  <!-- Review mode -->
-  <!--
-  <div class="control-group">
-    <%= f.label :collaborative_mode, 'Collaborative mode', :class => 'control-label' %>
-    <div class="controls">
-      <label>
-        <%= f.select(:collaborative_mode, options_for_select([['No', nil], ["View others' submissions and feedback", 'view'], ["Construct feedback collaboratively", 'review']], @exercise.collaborative_mode)) %>
-      </label>
-    </div>
-  </div>
-  -->
-  
    <div class="control-group">
     <%= f.label :peer_review_timing, 'Open peer review', :class => 'control-label' %>
     <div class="controls">
       <label>
         <%= f.select(:peer_review_timing, options_for_select([["As soon as there are submissions", 'immediately'], ["After the deadline of the assignment", 'after_deadline']], @exercise.peer_review_timing)) %>
+      </label>
+    </div>
+  </div>
+  
+  <!-- Collaboration -->
+  <div class="control-group">
+    <%= f.label :collaborative_mode, 'Collaborative mode', :class => 'control-label' %>
+    <div class="controls">
+      <label>
+        <%= f.select(:collaborative_mode, options_for_select([['No', nil], ["View others' submissions and feedback", 'view'], ["Construct feedback collaboratively", 'review']], @exercise.collaborative_mode)) %>
       </label>
     </div>
   </div>

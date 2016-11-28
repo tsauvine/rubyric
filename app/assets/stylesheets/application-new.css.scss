@@ -390,6 +390,10 @@ table.histogram td {
   div.criterion h3 button {
     visibility: hidden;
   }
+  
+  .download-submission {
+    font-size: 140%;
+  }
 }
 
 
@@ -461,7 +465,6 @@ p.feedback-preview {
   border: 1px solid black;
   font-family: monospace;
 }
-
 
 /**************************************************************************
  * Rubric editor (teacher view)

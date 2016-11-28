@@ -1,6 +1,6 @@
 class CourseInstance < ActiveRecord::Base
   belongs_to :course
-  has_many :exercises, {:order => :deadline, :dependent => :destroy}
+  has_many :exercises, {:order => [:deadline, :name], :dependent => :destroy}
   has_many :groups
   
   has_and_belongs_to_many :students, {:class_name => 'User', :join_table => 'course_instances_students', :order => :studentnumber}
