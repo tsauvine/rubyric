@@ -35,10 +35,11 @@ module ApplicationHelper
       end
       
       if video_id
-        return "<video controls='' width='#{width}px'>
-<source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}.mp4?mediaTargetType=videoPodcast' type='video/mp4'></source>
-Your browser does not support the video tag.
-</video>".html_safe
+        #return "<video controls='' width='#{width}px'>
+#<source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}.mp4?mediaTargetType=videoPodcast' type='video/mp4'></source>
+#Your browser does not support the video tag.
+#</video>".html_safe
+        return "<iframe src='https://aalto.cloud.panopto.eu/Panopto/Pages/Embed.aspx?id=#{video_id}&v=1' width='#{width}' height='#{(width * 0.5625).floor}' style='padding: 0px;' frameborder='0'></iframe>".html_safe
       else
         return ''
       end
