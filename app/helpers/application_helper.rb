@@ -16,7 +16,7 @@ module ApplicationHelper
     end
   end
   
-  def video_player(url)
+  def video_player(url, width = 640)
     url = "https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/ab0ad6a2-bd80-42cb-a29e-49ec3cc677ec.mp4?mediaTargetType=videoPodcast"
     
     video_id = /[\w-]*.mp4/.match(url)
@@ -25,7 +25,7 @@ module ApplicationHelper
     end
     
     html = "
-<video controls='' width='640px'>
+<video controls='' width='#{width}px'>
   <source src='https://aalto.cloud.panopto.eu/Panopto/Podcast/Stream/#{video_id}?mediaTargetType=videoPodcast' type='video/mp4'></source>
   Your browser does not support the video tag.
 </video>".html_safe

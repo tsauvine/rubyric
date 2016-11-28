@@ -1,4 +1,4 @@
-<div class="col-lg-4 col-sm-6 col-xs-12">
+<div class="col-lg-3 col-sm-6 col-xs-12">
   <div class="group well" id="group<%= collaborative_group.id %>">
     <!-- Name -->
     <h2>
@@ -27,6 +27,8 @@
                           <%= image_tag thumbnail_submission_path(submission), alt: submission.filename %>
                       <% end %>
                   <% end %>
+              <% elsif submission.video? %>
+                <%= video_player(submission.payload, 240) %>
               <% end %>
 
               <%= link_to submission_path(submission),

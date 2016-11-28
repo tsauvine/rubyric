@@ -56,7 +56,7 @@ class ExercisesController < ApplicationController
           @groups.sort! { |a, b| a.id <=> b.id }
       end
 
-      render action: 'submissions', layout: 'fluid-new'
+      render action: 'submissions', layout: params[:view] == 'thumbnails' ? 'wide-new' : 'fluid-new'
     else
       # Student's or assistant's view
       @is_assistant = @course_instance.has_assistant(current_user)
@@ -103,7 +103,7 @@ class ExercisesController < ApplicationController
         @own_submission_count += submissions.size
       end
       
-      render action: 'my_submissions', layout: 'fluid-new'
+      render action: 'my_submissions', layout: 'wide-new'
     end
 
 #     memory_usage = `ps -o rss= -p #{$$}`.to_i
