@@ -12,8 +12,14 @@ ko.bindingHandlers.onload = {
 
     # Enable tooltip for criteria when user attempts to click
     $('[data-toggle="tooltip"]').tooltip({
-      delay: {show: 500, hide: 0}
-    })
+      trigger: 'manual'
+    }).click ->
+      tt = $(this)
+      tt.tooltip 'show'
+      setTimeout (->
+        tt.tooltip 'hide'
+      ), 1000
+
 }
 
 # Custom KnockOut binding for the jQuery UI draggable
