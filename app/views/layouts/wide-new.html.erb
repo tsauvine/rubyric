@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta http-equiv="content-type" content="text/html;charset=UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+  <![endif]-->
+  
+  <title><% if content_for?(:title)%><%= yield(:title) %><% elsif @exercise && !@exercise.new_record? %><%= @exercise.name %> - <%= @course.name %> - Rubyric<% else %><%=t :app_title %><% end %></title>
+  <%= csrf_meta_tag %>
+  <%= stylesheet_link_tag "application-new", :media => "all" %>
+  <%= yield(:stylesheets) %>
+  <%= javascript_include_tag "application" %>
+  <%= yield(:javascript) %>
+  <%= render :partial => 'shared/analytics' -%>
+</head>
+
+<body>
+
+<nav class="navbar navbar-default" role="navigation">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <%= link_to root_path, :class => 'navbar-brand' do image_tag 'logo.png', :alt => 'Rubyric' end %>
+    </div>
+
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <% if current_user %>
+          <li><%= link_to "My preferences", preferences_path %></li>
+          <li><%= link_to "Log out #{current_user.name}", session_path, :method => :delete %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="container-fluid">
+  <div class="row-fluid">
+    <!-- Content -->
+    <div class="col-sm-12">
+      <%= render 'layouts/messages' %>
+      
+      <%= yield  %>
+    </div>
+  </div>
+</div>
+
+
+<% if content_for?(:footer) -%>
+<footer class="footer">
+  <div class="container">
+    <%= yield(:footer) %>
+  </div>
+</footer>
+<% end -%>
+
+</body>
+</html>

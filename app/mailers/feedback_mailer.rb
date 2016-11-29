@@ -185,7 +185,7 @@ class FeedbackMailer < ActionMailer::Base
       end
     else
       if Rails.env == 'production'
-        response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback})
+        response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback, notify: 'yes'})
         success = false unless response.code == 200
       else
         logger.debug "Skipping A+ API call in development environment. #{submission.aplus_feedback_url}, points: #{combined_grade.round}, max_points: #{max_grade.round}"

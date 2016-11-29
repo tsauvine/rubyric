@@ -133,11 +133,12 @@ class Submission < ActiveRecord::Base
   
   def video?
     url = payload_url
-    puts "URL: #{url}"
     return false unless url
+    url = url.strip.downcase
     
-    match = /Panopto/.match(url)
-    return true if match 
+    return true if url =~ /^http(s)?:\/\/.*panopto/
+    return true if url =~ /^http(s)?:\/\/www\.youtube\.com\/watch/
+    return true if url =~ /^http(s)?:\/\/youtu\.be\//
     
     return false
   end
