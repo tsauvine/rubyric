@@ -149,7 +149,7 @@ class Submission < ActiveRecord::Base
     user = User.find(user) unless user.is_a?(User)
     options = {:user => user, :submission => self}
     
-    if ['annotation', 'exam'].include?(self.exercise.review_mode) && self.annotatable?
+    if %w(annotation exam).include?(self.exercise.review_mode) && self.annotatable?
       review = AnnotationAssessment.new(options)
     else
       review = Review.new(options)
