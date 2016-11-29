@@ -2,14 +2,14 @@
   <%= javascript_include_tag 'views/reviews/annotation' %>
 <% end %>
 
-<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, :format => 'png') %>"
+<div class="annotation-editor" id="annotation-editor" data-submission-url="<%= submission_path(@submission.id, format: 'png') %>"
   data-page-count="<%= @submission.page_count %>"
   data-page-width="<%= @submission.page_width %>"
   data-page-height="<%= @submission.page_height %>"
   data-initial-rubric-page="<%= params['rubric_page'] || current_user.submission_sort_preference %>"
   data-initial-zoom="<%= params['zoom'] || current_user.zoom_preference %>"
   >
-  <%= form_for @review, :as => :review, :url => review_path(@review) do |f| %>
+  <%= form_for @review, as: :review, url: review_path(@review) do |f| %>
     <%= f.hidden_field :payload %>
     <%= f.hidden_field :status %>
     <%= f.hidden_field :grade %>
@@ -23,7 +23,7 @@
       <%= hidden_field_tag :role, 'collaborator' %>
     <% end %>
     
-    <%= render :partial => 'reviews/annotation_editor', :locals => {:f => f} %>
+    <%= render partial: 'reviews/annotation_editor', locals: {f: f} %>
     
   <% end %>
 </div>
