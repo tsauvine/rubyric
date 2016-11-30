@@ -209,15 +209,21 @@ class CourseInstance < ActiveRecord::Base
     reviewers_ambiguous_keys = {}
     reviewer_keys = [:email, :studentnumber] # , :firstname, :lastname, :name
     (self.course.teachers + self.assistants + self.students).each do |user|
+      # Ignore LTI users as they cause problems because of duplicate email addresses.
+      # This check can be removed if an email address is not saved for LTI users.
+      next unless user.lti_user_id.blank?
+      
       reviewer_keys.each do |key|
         value = user.send(key)
         next unless value
         value = value.downcase.strip
         
-        # Mark the key as ambiguous if it has been seen already
-        reviewers_ambiguous_keys[value] = true if reviewers[value]
-        
-        reviewers[value] = user
+        # Save the key if it's not already reserved to another user
+        if !reviewers[value] || reviewers[value] == user
+          reviewers[value] = user
+        else
+          reviewers_ambiguous_keys[value] = true
+        end
       end
     end
     
@@ -329,12 +335,14 @@ class CourseInstance < ActiveRecord::Base
           # Detect ambiguous keys
           if reviewers_ambiguous_keys[reviewer_key]
             # TODO: warn about ambiguous key
+            logger.debug "Ambiguous key #{reviewer_key}"
             next
           end
           
           reviewer = reviewers[reviewer_key]
           unless reviewer
             # TODO: warn that reviewer was not found
+            logger.debug "Reviewer #{reviewer_key} not found"
             next
           end
           
