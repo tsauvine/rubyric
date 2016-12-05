@@ -21,7 +21,7 @@ class SubmissionsController < ApplicationController
         unless File.exist?(@submission.full_filename)
           # TODO: better error message
           @heading = 'File not found'
-          render :template => "shared/error"
+          render template: 'shared/error'
         else
           mime_type = nil
           mime_type = Mime::Type.lookup_by_extension(@submission.extension.downcase) unless @submission.extension.blank?
@@ -33,7 +33,7 @@ class SubmissionsController < ApplicationController
       end
       
       format.png do
-        response.headers["Expires"] = 1.year.from_now.httpdate
+        response.headers['Expires'] = 1.year.from_now.httpdate
         bitmap_info = @submission.image_path(params[:page], params[:zoom])
         send_file bitmap_info[:path], :filename => bitmap_info[:filename], :type => bitmap_info[:mimetype], :disposition => 'inline'
       end
@@ -43,7 +43,7 @@ class SubmissionsController < ApplicationController
   def thumbnail
     return access_denied unless group_membership_validated(@submission.group) || @submission.has_reviewer?(current_user) || @course.has_teacher(current_user) || (@exercise.collaborative_mode != '' && @course_instance.has_student(current_user))
     
-    response.headers["Expires"] = 1.year.from_now.httpdate
+    response.headers['Expires'] = 1.year.from_now.httpdate
     if File.exists? @submission.thumbnail_path
       send_file @submission.thumbnail_path, :filename => "#{@submission.id}-thumbnail.jpg", :type => 'image/jpeg', :disposition => 'inline'
     else
@@ -79,29 +79,29 @@ class SubmissionsController < ApplicationController
     # Select group
     @group = nil
     if params[:member_token]
-      logger.debug "Memebr token given (#{params[:member_token]})"
+      logger.debug "Member token given (#{params[:member_token]})"
       member = GroupMember.find_by_access_token(params[:member_token])
       if member
         @group = member.group
-        logger.debug "Member found"
+        logger.debug 'Member found'
         
         unless member.user_id
-          logger.debug "Member authenticated"
+          logger.debug 'Member authenticated'
           member.authenticated()
           flash[:success] = t('submissions.new.email_confirmed')
         end
 
       else
-        logger.debug "Member not found. Invalid token. Group not selected."
-        render :action => 'invalid_token', :status => 403
+        logger.debug 'Member not found. Invalid token. Group not selected.'
+        render action: 'invalid_token', status: 403
         return
       end
     elsif params[:group_token]
-      logger.debug "Group token given"
+      logger.debug 'Group token given'
       @group = Group.find_by_access_token(params[:group_token])
 
       unless @group
-        render :action => 'invalid_token', :status => 403
+        render action: 'invalid_token', status: 403
         return
       end
     elsif params[:group]
@@ -117,7 +117,7 @@ class SubmissionsController < ApplicationController
     
     # Unauthenticated users must always create group manually
     if !@group && @course_instance.submission_policy == 'unauthenticated'
-      logger.debug "No group selected. Redirect to create group."
+      logger.debug 'No group selected. Redirect to create group.'
       redirect_to new_exercise_group_path(:exercise_id => @exercise.id)
       return
     end
@@ -158,7 +158,7 @@ class SubmissionsController < ApplicationController
       @status = 'error'
       return
     end
-    logger.debug "Submission policy accepted"
+    logger.debug 'Submission policy accepted'
     
     # Group information comes from LTI
     @submission.group = @group
@@ -167,7 +167,7 @@ class SubmissionsController < ApplicationController
     file_required = @exercise.submission_type.blank? || @exercise.submission_type == 'file'
     
     if file_required && params[:file].blank?
-      logger.debug "No file submitted"
+      logger.debug 'No file submitted'
       flash[:error] = t('submissions.new.missing_file')
       redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token], :ref => params[:ref])
       return
@@ -183,7 +183,7 @@ class SubmissionsController < ApplicationController
     @submission.payload = params[:payload]
     
     if @submission.save
-      logger.debug "Submission accepted"
+      logger.debug 'Submission accepted'
       @status = 'accepted'
       log "submit success #{@submission.id},#{@exercise.id}"
     else
@@ -200,7 +200,7 @@ class SubmissionsController < ApplicationController
       @exercise.course_instance.students << @user unless @exercise.course_instance.students.include?(@user)
     end
     
-    logger.debug "A+ Submission successful"
+    logger.debug 'A+ Submission successful'
   end
 
   def create
@@ -212,11 +212,11 @@ class SubmissionsController < ApplicationController
     @is_teacher = @course.has_teacher(@user)
     
     return access_denied unless logged_in? || @course_instance.submission_policy == 'unauthenticated'
-    logger.debug "Login accepted"
+    logger.debug 'Login accepted'
 
     # Check that instance is active and student is enrolled
     return unless @is_teacher || submission_policy_accepted?
-    logger.debug "Submission policy accepted"
+    logger.debug 'Submission policy accepted'
     
     if @submission.group
       # Check that user is member of group
@@ -224,11 +224,11 @@ class SubmissionsController < ApplicationController
         render :template => 'shared/forbidden', :status => 403, :layout => 'wide'
         return
       end
-      logger.debug "Membership accepted"
+      logger.debug 'Membership accepted'
     else
-      logger.debug "No group specified"
+      logger.debug 'No group specified'
       if @exercise.groupsizemax <= 1 && current_user
-        logger.debug "Creating group of one"
+        logger.debug 'Creating group of one'
         # Create a group automatically
         groupname = @user ? @user.studentnumber : 'untitled group'
         group = Group.new({:course_instance_id => @course_instance.id, :exercise_id => @exercise.id, :name => groupname})
@@ -242,13 +242,13 @@ class SubmissionsController < ApplicationController
         return
       end
     end
-    logger.debug "Group accepted"
+    logger.debug 'Group accepted'
 
     # Check the file, TODO: check that both file and payload are not blank
     file_required = @exercise.submission_type.blank? || @exercise.submission_type == 'file'
     
     if file_required && params[:file].blank?
-      logger.debug "No file submitted"
+      logger.debug 'No file submitted'
       flash[:error] = t('submissions.new.missing_file')
       redirect_to submit_url(@exercise.id, :member_token => params[:member_token], :group_token => params[:group_token], :ref => params[:ref])
       return
@@ -264,7 +264,7 @@ class SubmissionsController < ApplicationController
     @submission.payload = params[:payload]
     
     if @submission.save
-      logger.debug "Submission accepted"
+      logger.debug 'Submission accepted'
       flash[:success] = t('submissions.new.submission_received')
       log "submit success #{@submission.id},#{@exercise.id}"
     else
@@ -272,11 +272,11 @@ class SubmissionsController < ApplicationController
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
     end
     
-    logger.debug "Submission successful"
+    logger.debug 'Submission successful'
     if params[:ref] == 'exercises'
-      redirect_to exercise_path(:id => @submission.exercise_id)
+      redirect_to exercise_path(id: @submission.exercise_id)
     else
-      redirect_to submit_path(:exercise => @submission.exercise_id, :group => @submission.group_id, :member_token => params[:member_token], :group_token => params[:group_token])
+      redirect_to submit_path(exercise: @submission.exercise_id, group: @submission.group_id, member_token: params[:member_token], group_token: params[:group_token])
     end
   end
 
@@ -332,13 +332,13 @@ class SubmissionsController < ApplicationController
   private
   
   def submission_policy_accepted?
-    logger.debug "Checking submission policy"
+    logger.debug 'Checking submission policy'
     
     # Check that instance is open
     if !@course_instance.active
-      render :action => 'instance_inactive'
+      render action: 'instance_inactive'
       log "submit view #{@exercise.id} instance_inactive"
-      logger.debug "Instance inactive"
+      logger.debug 'Instance inactive'
       return false
     end
     
@@ -346,7 +346,7 @@ class SubmissionsController < ApplicationController
     if @course_instance.submission_policy == 'enrolled' && !@course_instance.students.include?(@user)
       render :action => 'not_enrolled'
       log "submit view #{@exercise.id} not_enrolled"
-      logger.debug "Not enrolled"
+      logger.debug 'Not enrolled'
       return false
     end
     
@@ -357,19 +357,19 @@ class SubmissionsController < ApplicationController
     # Authorized IP?
     remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
     unless ['127.0.0.1', '130.233.195.24'].include? remote_ip
-      @heading =  "LTI error: Requests only allowed from A+"
-      render :template => "shared/error"
+      @heading = 'LTI error: Requests only allowed from A+'
+      render template: 'shared/error'
       return false
     end
     
     # Find exercise
     organization = Organization.find_by_domain(params['oauth_consumer_key']) || Organization.create(domain: params['oauth_consumer_key'])
     
-    @course_instance = CourseInstance.where(:lti_consumer => params['oauth_consumer_key'], :lti_context_id => params[:context_id]).first
+    @course_instance = CourseInstance.where(lti_consumer: params['oauth_consumer_key'], lti_context_id: params[:context_id]).first
     unless @course_instance
-      @heading =  "This LTI course is not configured"
+      @heading = 'This LTI course is not configured'
       logger.warn "LTI login failed. Could not find a course instance with lti_consumer=#{params['oauth_consumer_key']}, lti_context_id=#{params[:context_id]}"
-      render :template => "shared/error"
+      render template: 'shared/error'
       return false
     end
     
@@ -380,19 +380,19 @@ class SubmissionsController < ApplicationController
     
     @exercise = Exercise.where(:course_instance_id => @course_instance.id, :lti_resource_link_id => params[:resource_link_id]).first
     unless @exercise
-      @heading =  "This LTI exercise is not configured"
-      render :template => "shared/error"
+      @heading = 'This LTI exercise is not configured'
+      render template: 'shared/error'
       return false
     end
     
     # TODO: if teacher, create exercise
     
     # Find or create user, TODO: handle errors
-    @user = User.where(:lti_consumer => params['oauth_consumer_key'], :lti_user_id => params[:user_id]).first
+    @user = User.where(lti_consumer: params['oauth_consumer_key'], lti_user_id: params[:user_id]).first
     if @user
       # Update attributes
       @user.email = params['lis_person_contact_email_primary']
-      @user.save(:validate => false)
+      @user.save(validate: false)
     else
       @user = lti_create_user(params['oauth_consumer_key'], params[:user_id], organization, @exercise.course_instance, params[:custom_student_id], params['lis_person_name_family'], params['lis_person_name_given'], params['lis_person_contact_email_primary'])
     end
