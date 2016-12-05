@@ -80,7 +80,7 @@
         <%= f.hidden_field :allowed_extensions, id: 'allowed_extensions' %>
         <% Exercise::ALLOWED_EXTS.each do |ext| %>
             <div class="checkbox">
-              <label><%= check_box_tag ext, ext %><%= ext %></label>
+              <label><%= check_box_tag ext, ext, false, class: 'allowed_extensions' %><%= ext %></label>
             </div>
         <% end %>
       </div>
@@ -178,3 +178,23 @@
       </div>
     </div>
 <% end %>
+
+<script type="text/javascript">
+    var allowedExtensionsInput = document.getElementById('allowed_extensions');
+    var allowedExtensionsOptions = $('.allowed_extensions');
+
+    allowedExtensionsOptions.change(function () {
+        var inputVal = allowedExtensionsOptions.map(function (i, op) {
+            return {
+                value: op.value,
+                checked: op.checked
+            };
+        }).filter(function (i, obj) {
+            return obj.checked;
+        }).map(function(i, obj) {
+            return obj.value
+        }).get().join(' ');
+
+        allowedExtensionsInput.value = inputVal;
+    })
+</script>

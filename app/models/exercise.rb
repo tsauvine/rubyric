@@ -634,7 +634,7 @@ class Exercise < ActiveRecord::Base
 
   def use_allowed_extensions_only
     extensions = allowed_extensions.split()
-    if extensions & ALLOWED_EXTS != extensions
+    unless extensions & ALLOWED_EXTS == extensions
       errors.add :allowed_extensions, 'some extensions are invalid'
     end
   end
