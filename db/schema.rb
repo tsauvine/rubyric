@@ -135,7 +135,7 @@ ActiveRecord::Schema.define(:version => 20161205121420) do
     t.string   "peer_review_timing"
     t.string   "lti_resource_link_id_review"
     t.string   "lti_resource_link_id_feedback"
-    t.string   "allowed_extensions"
+    t.string   "allowed_extensions",            :default => "",         :null => false
   end
 
   add_index "exercises", ["lti_consumer", "lti_context_id"], :name => "index_exercises_on_lti_consumer_and_lti_context_id"
