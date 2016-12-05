@@ -1,7 +1,7 @@
 <% content_for(:meta) do %>
-  <meta name="max-points" value="<%= @exercise.max_grade.to_i || 0 %>" />
-  <meta name="DC.title" value="<%= @exercise.name %>" />
-  <meta name="DC.Description" value="" />
+    <meta name="max-points" value="<%= @exercise.max_grade.to_i || 0 %>"/>
+    <meta name="DC.title" value="<%= @exercise.name %>"/>
+    <meta name="DC.Description" value=""/>
 <% end %>
 
 <!-- submissions/new.html.erb -->
@@ -12,146 +12,164 @@
 
 <div id="submit-form">
   <!-- Group -->
-  <% if @group && (@exercise.groupsizemax > 1 || @group.group_members.size > 1)  %>
-    <div class="row">
-      <div class="span6">
+  <% if @group && (@exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
+      <div class="row">
+        <div class="span6">
 
-        <h2><%=t '.group_members' %></h2>
-        <table class="table">
-          <thead>
+          <h2><%= t '.group_members' %></h2>
+          <table class="table">
+            <thead>
             <tr>
               <% unless @course_instance.submission_policy == 'unauthenticated' %>
-                <td><%=t '.name_column' %></td>
+                  <td><%= t '.name_column' %></td>
               <% end %>
-              <td><%=t '.email_column' %></td>
+              <td><%= t '.email_column' %></td>
               <td></td>
             </tr>
-          </thead>
-          <tbody>
+            </thead>
+            <tbody>
             <% @group.group_members.each do |member| %>
-              <% if member.user %>
-                <tr>
-                  <% unless @course_instance.submission_policy == 'unauthenticated' %>
-                    <td><%= member.user.name %></td>
-                  <% end %>
-                  <td>
-                  <% if member.user.email.blank? %>
-                    <%= member.email %>
-                  <% else %>
-                    <%= member.user.email %>
-                  <% end %>
-                  </td>
-                  <td></td>
-                </tr>
-              <% else %>
-                <tr>
-                  <% unless @course_instance.submission_policy == 'unauthenticated' %>
-                    <td></td>
-                  <% end %>
-                  <td><%= member.email %></td>
-                  <td><% unless @course_instance.submission_policy == 'unauthenticated' %><%=t '.invited' %><% end %></td>
-                </tr>
-              <% end %>
+                <% if member.user %>
+                    <tr>
+                      <% unless @course_instance.submission_policy == 'unauthenticated' %>
+                          <td><%= member.user.name %></td>
+                      <% end %>
+                      <td>
+                        <% if member.user.email.blank? %>
+                            <%= member.email %>
+                        <% else %>
+                            <%= member.user.email %>
+                        <% end %>
+                      </td>
+                      <td></td>
+                    </tr>
+                <% else %>
+                    <tr>
+                      <% unless @course_instance.submission_policy == 'unauthenticated' %>
+                          <td></td>
+                      <% end %>
+                      <td><%= member.email %></td>
+                      <td>
+                        <% unless @course_instance.submission_policy == 'unauthenticated' %><%= t '.invited' %>
+                        <% end %></td>
+                    </tr>
+                <% end %>
             <% end %>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
 
-        <% unless @course_instance.submission_policy == 'lti' %>
-          <p>
-            <%= link_to t('.edit_group'), edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
-            <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
-            -%>
-          </p>
-          <p>
-            <% if current_user && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
-              <%= link_to t('.choose_group'), exercise_groups_path(:exercise_id => @exercise.id) %><br />
-            <% end %>
-          </p>
-        <% end %>
+          <% unless @course_instance.submission_policy == 'lti' %>
+              <p>
+                <%= link_to t('.edit_group'), edit_exercise_group_path(:exercise_id => @exercise.id, :id => @group.id, :member_token => params[:member_token], :group_token => params[:group_token]), :class => 'btn' %>
+                <% # link_to 'Create new group', new_exercise_group_path(:exercise_id => @exercise.id), :class => 'btn'
+                -%>
+              </p>
+              <p>
+                <% if current_user && (@available_groups.size > 1 || @exercise.groupsizemax > 1 || @group.group_members.size > 1) %>
+                    <%= link_to t('.choose_group'), exercise_groups_path(:exercise_id => @exercise.id) %><br/>
+                <% end %>
+              </p>
+          <% end %>
+        </div>
       </div>
-    </div>
   <% end %>
 
 
   <!-- Submissions -->
   <% unless @submissions.empty? %>
-    <div class="row">
-      <div class="span12">
-        <h2><%=t '.submissions' %></h2>
-        <table class="submissions">
-          <% @submissions.each do |submission| %>
-            <tr>
-              <td>
-                <%=l submission.created_at, :format => :long %>
-                <% unless submission.filename.blank? %>
-                  (<%= link_to "#{submission.extension}", submission_url(submission.id, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
-                <% end %>
-              </td>
-              <td>
-                <% submission.reviews.each do |review| %>
-                  <% if review.status == 'mailed' %>
-                    <%= link_to 'View feedback', review_path(review, :member_token => params[:member_token], :group_token => params[:group_token]) %>
-                    <% unless review.filename.blank? %>
-                      (<%= link_to review.filename, download_review_path(review) %>)
+      <div class="row">
+        <div class="span12">
+          <h2><%= t '.submissions' %></h2>
+          <table class="submissions">
+            <% @submissions.each do |submission| %>
+                <tr>
+                  <td>
+                    <%= l submission.created_at, :format => :long %>
+                    <% unless submission.filename.blank? %>
+                        (<%= link_to "#{submission.extension}", submission_url(submission.id, :member_token => params[:member_token], :group_token => params[:group_token]) %>
+                        )
                     <% end %>
-                  <% end %>
-                  <br />
-                <% end %>
-              </td>
-            </tr>
-          <% end %>
-        </table>
+                  </td>
+                  <td>
+                    <% submission.reviews.each do |review| %>
+                        <% if review.status == 'mailed' %>
+                            <%= link_to 'View feedback', review_path(review, :member_token => params[:member_token], :group_token => params[:group_token]) %>
+                            <% unless review.filename.blank? %>
+                                (<%= link_to review.filename, download_review_path(review) %>)
+                            <% end %>
+                        <% end %>
+                        <br/>
+                    <% end %>
+                  </td>
+                </tr>
+            <% end %>
+          </table>
+        </div>
       </div>
-    </div>
   <% end %>
 
 
   <!-- Upload -->
   <div class="row">
     <div class="span12">
-      <%= form_for @submission, :html => { :multipart => true } do |f| %>
-        <%= hidden_field_tag :ref, params[:ref] %>
-        <%= f.hidden_field :exercise_id, :value => @exercise.id %>
-        <% if @group %>
-          <%= f.hidden_field :group_id, :value => @group.id %>
-        <% end -%>
-        <% if params['group_token'] %>
-          <%= hidden_field_tag :group_token, params['group_token'] %>
-        <% end -%>
-        <% if params['member_token'] %>
-          <%= hidden_field_tag :member_token, params['member_token'] %>
-        <% end -%>
+      <%= form_for @submission, html: {multipart: true, class: 'dropzone'} do |f| %>
+          <%= hidden_field_tag :ref, params[:ref] %>
+          <%= f.hidden_field :exercise_id, value: @exercise.id %>
+          <% if @group %>
+              <%= f.hidden_field :group_id, value: @group.id %>
+          <% end -%>
+          <% if params['group_token'] %>
+              <%= hidden_field_tag :group_token, params['group_token'] %>
+          <% end -%>
+          <% if params['member_token'] %>
+              <%= hidden_field_tag :member_token, params['member_token'] %>
+          <% end -%>
 
-        <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
-          <h2><%=t '.submit_heading_file' %></h2>
-        <% else %>
-          <h2><%=t '.submit_heading' %></h2>
-        <% end %>
-        
-        <% unless @exercise.submit_pre_message.blank? %>
-          <p><%= @exercise.submit_pre_message.html_safe %></p>
-        <% end %>
-        
-        <div id="exercise">
           <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
-            <p><%= file_field_tag 'file' %></p>
-          <% end %>
-          
-          <% if (@exercise.submission_type || '').include?('textarea') %>
-            <p><%= text_area_tag :payload, @submission.payload, :rows => 5, :style => 'width: 100%' %></p>
+              <h2><%= t '.submit_heading_file' %></h2>
+          <% else %>
+              <h2><%= t '.submit_heading' %></h2>
           <% end %>
 
-          <p><%= f.submit t('.submit_button'), :class => 'btn btn-primary' %></p>
-        </div>
+          <% unless @exercise.submit_pre_message.blank? %>
+              <p><%= @exercise.submit_pre_message.html_safe %></p>
+          <% end %>
+
+          <div id="exercise">
+            <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
+                <div class="fallback">
+                  <p><%= file_field_tag 'file' %></p>
+                  <p><%= f.submit t('.submit_button'), class: 'btn btn-primary' %></p>
+                </div>
+                <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.css">
+                <script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.js"></script>
+                <script type="text/javascript">
+                    Dropzone.options.newSubmission = {
+                        maxFiles: 1,
+                        init: function () {
+                            this.on('complete', function (file, response) {
+                                location.reload();
+                            })
+                        }
+                    };
+                </script>
+            <% end %>
+
+            <% if (@exercise.submission_type || '').include?('textarea') %>
+                <p><%= text_area_tag :payload, @submission.payload, rows: 5, style: 'width: 100%' %></p>
+                <p><%= f.submit t('.submit_button'), class: 'btn btn-primary' %></p>
+            <% end %>
+          </div>
       <% end %>
     </div>
   </div>
 </div>
-  
+
 <% if @is_teacher %>
-  <%= link_to t(:Back), @exercise %>
+    <%= link_to t(:Back), @exercise %>
 <% end %>
 
 <% if defined?(@tp) && @tp && @tp.launch_presentation_return_url %>
-  <a href="<%= @tp.build_return_url %>">Click here to return to <%= @tp.tool_consumer_instance_name || "your LMS" %>.</a>
+    <a href="<%= @tp.build_return_url %>">Click here to return to <%= @tp.tool_consumer_instance_name || 'your LMS' %>
+      .</a>
 <% end %>
