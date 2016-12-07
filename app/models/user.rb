@@ -9,8 +9,8 @@ class User < ActiveRecord::Base
     #c.transition_from_restful_authentication = true
   end
 
-  validates :login, :uniqueness => true, :allow_nil => true
-  validates :email, :uniqueness => true
+  validates :login, uniqueness: true, allow_nil: true
+  validates :email, uniqueness: true
   
   attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
 
@@ -19,21 +19,22 @@ class User < ActiveRecord::Base
   has_many :orders
   
   has_many :group_members
-  has_many :groups, :through => :group_members
+  has_many :groups, through: :group_members
   #has_and_belongs_to_many :groups
   
-  has_many :reviews, :order => 'id'          # reviews as a grader
+  has_many :reviews, order: 'id' # reviews as a grader
+  has_many :review_ratings
 
   has_many :group_reviewers
-  has_many :assigned_groups, :through => :group_reviewers, :source => :group
+  has_many :assigned_groups, through: :group_reviewers, source: :group
 
   # has_many :group_reviewers
-  # has_many :groups_to_review, :order => 'id', :through => :group_reviewers
+  # has_many :groups_to_review, order: 'id', through: :group_reviewers
 
   # TODO: filter inactive courses
-  has_and_belongs_to_many :course_instances_student, {:class_name => 'CourseInstance', :join_table => 'course_instances_students', :order => :course_instance_id}
-  has_and_belongs_to_many :course_instances_assistant, {:class_name => 'CourseInstance', :join_table => 'assistants_course_instances', :order => :course_instance_id}
-  has_and_belongs_to_many :courses_teacher, {:class_name => 'Course', :join_table => 'courses_teachers', :order => :code}
+  has_and_belongs_to_many :course_instances_student, {class_name: 'CourseInstance', join_table: 'course_instances_students', order: :course_instance_id}
+  has_and_belongs_to_many :course_instances_assistant, {class_name: 'CourseInstance', join_table: 'assistants_course_instances', order: :course_instance_id}
+  has_and_belongs_to_many :courses_teacher, {class_name: 'Course', join_table: 'courses_teachers', order: :code}
 
   def require_password?
     new_record?
@@ -89,14 +90,14 @@ class User < ActiveRecord::Base
     created_peer_reviews = 0
     finished_peer_reviews = 0
     
-    Review.joins(:submission).where(:user_id => id, 'submissions.exercise_id' => exercise.id).find_each do |peer_review|
+    Review.joins(:submission).where(user_id: id, 'submissions.exercise_id' => exercise.id).find_each do |peer_review|
       created_peer_reviews += 1
-      finished_peer_reviews += 1 if ['finished', 'mailed', 'mailing', 'invalidated'].include? peer_review.status
+      finished_peer_reviews += 1 if %w(finished mailed mailing invalidated).include? peer_review.status
     end
     
     return {
-      :created_peer_reviews  => created_peer_reviews,
-      :finished_peer_reviews => finished_peer_reviews
+        created_peer_reviews: created_peer_reviews,
+        finished_peer_reviews: finished_peer_reviews
     }
   end
 end
