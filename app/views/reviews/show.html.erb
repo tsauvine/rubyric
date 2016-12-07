@@ -5,49 +5,64 @@
 </div>
 
 <% if @course.has_teacher(current_user) && @review.status == 'mailed' %>
-  <div class="row">
-    <div class="alert">
-      <p>This review has already been mailed and cannot be modified any more.</p>
-      <%= link_to 'Reopen', reopen_review_path(@review), :class => 'btn' %>
-      <%= link_to 'Invalidate', invalidate_review_path(@review), :class => 'btn' %>
+    <div class="row">
+      <div class="alert">
+        <p>This review has already been mailed and cannot be modified any more.</p>
+        <%= link_to 'Reopen', reopen_review_path(@review), class: 'btn' %>
+        <%= link_to 'Invalidate', invalidate_review_path(@review), class: 'btn' %>
+      </div>
     </div>
-  </div>
 <% end %>
 
 <p>
   <b>Submission:</b>
-  <%=l @submission.created_at, :format => :long %>
+  <%= l @submission.created_at, :format => :long %>
   <% unless @submission.filename.blank? %>
-    (<%= link_to "#{@submission.extension}", submission_url(@submission, :member_token => params[:member_token], :group_token => params[:group_token]) %>)
+      (<%= link_to "#{@submission.extension}", submission_url(@submission, member_token: params[:member_token], group_token: params[:group_token]) %>
+      )
   <% end %>
 </p>
 
 <% unless @submission.payload.blank? %>
-  <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
+    <pre class="payload"><%= @submission.payload.gsub('<', '&lt;').gsub('>', '&gt;').gsub(URI.regexp, '<a target="_blank" href="\0">\0</a>').html_safe %></pre>
 <% end %>
 
 <% if @submission.video? %>
-  <%= video_player(@submission.payload) %>
+    <%= video_player(@submission.payload) %>
 <% end %>
 
 <% if !@exercise.anonymous_graders && @grader %>
-  <p><b>Reviewer:</b> <%= @grader.name %></p>
+    <p><b>Reviewer:</b> <%= @grader.name %></p>
 <% end %>
 
 <% unless @review.grade.blank? %>
-  <p>Grade: <%= @review.grade %></p>
+    <p>Grade: <%= @review.grade %></p>
 <% end %>
 
 <% unless @review.feedback.blank? %>
-  <p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
+    <p class="feedback-preview"><%= (@review.feedback || '').gsub('<', '&lt;').gsub('>', '&gt;').gsub("\n", "<br />\n").html_safe %></p>
 <% end %>
 
 <% unless @review.filename.blank? %>
-  <p>Uploaded feedback: <%= link_to @review.filename, download_review_path(@review) %></p>
+    <p>Uploaded feedback: <%= link_to @review.filename, download_review_path(@review) %></p>
 <% end %>
 
 <% if params[:ref] == 'exercises' %>
-  <p><%= link_to 'Back', @exercise %></p>
+    <p><%= link_to 'Back', @exercise %></p>
 <% else %>
-  <p><%= link_to 'Back', submit_url(@exercise.id, :group => @group, :member_token => params[:member_token], :group_token => params[:group_token]) %></p>
+    <p><%= link_to 'Back', submit_url(@exercise.id, group: @group, member_token: params[:member_token], group_token: params[:group_token]) %></p>
 <% end %>
+
+<div class="row">
+  <% @review.review_ratings.each do |rating| %>
+      <div class="col-md-3">
+        <p>User: <%= rating.user.name %></p>
+        <p>
+          Rating:
+          <% rating.rating.time do %>
+              <i class="icon-star"></i>
+          <% end %>
+        </p>
+      </div>
+  <% end %>
+</div>
