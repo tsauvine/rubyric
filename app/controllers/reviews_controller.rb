@@ -278,8 +278,9 @@ class ReviewsController < ApplicationController
   end
 
   def rate
-    puts params[:id]
-    puts params[:rating]
+    review = Review.find(params[:id])
+    rating = params[:rating]
+    ReviewRating.first_or_initialize(user: current_user, review: review).update_attributes(rating: rating)
     render nothing: true, status: :ok
   end
 
