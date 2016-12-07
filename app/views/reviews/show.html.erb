@@ -53,7 +53,15 @@
     <p><%= link_to 'Back', submit_url(@exercise.id, group: @group, member_token: params[:member_token], group_token: params[:group_token]) %></p>
 <% end %>
 
-<div class="row">
+<div id="review-rating">
+  <button class="btn-rating-icon" data-rating="1"><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="2"><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="3"><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="4"><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="5"><i class="icon-star"></i></button>
+</div>
+
+<div id="ratings" class="row">
   <% @review.review_ratings.each do |rating| %>
       <div class="col-md-3">
         <p>User: <%= rating.user.name %></p>
@@ -66,3 +74,7 @@
       </div>
   <% end %>
 </div>
+
+<script type="text/javascript">
+
+</script>
