@@ -6,17 +6,17 @@ class ExercisesController < ApplicationController
   def lti
     # Temporarily disable signature checking
     if params['lis_person_contact_email_primary'] == 'tapio.auvinen@aalto.fi' && !authenticate_lti_signature
-      logger.info "Failed to auth LTI signature"
+      logger.info 'Failed to auth LTI signature'
       return
     end
     
     unless login_lti_user
-      logger.info "Failed to login LTI user"
+      logger.info 'Failed to login LTI user'
       return
     end
 
     unless @exercise
-      render :template => "shared/lti_error"
+      render template: 'shared/lti_error'
       return
     end
     
@@ -208,7 +208,7 @@ class ExercisesController < ApplicationController
       options[:include_peer_review_count] = @exercise.peer_review?
     end
     
-    groups = Group.where(:course_instance_id => @exercise.course_instance_id).includes([{:submissions => [:reviews => [:user, :submission], :group => :users]}, {:group_members => :user}])
+    groups = Group.where(course_instance_id: @exercise.course_instance_id).includes([{submissions: [reviews: [:user, :submission], group: :users]}, {group_members: :user}])
     @results = @exercise.results(groups, options)
     
     # Sort the result
@@ -240,7 +240,7 @@ class ExercisesController < ApplicationController
     
     log "results #{@exercise.id}#{params[:include] == 'all' ? ' all' : ''}"
     
-    render :action => :results, :layout => 'fluid-new'
+    render action: :results, layout: 'fluid-new'
   end
 
   def student_results

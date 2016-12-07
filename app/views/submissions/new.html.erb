@@ -146,10 +146,14 @@
                 <script type="text/javascript">
                     Dropzone.options.newSubmission = {
                         maxFiles: 1,
+                        acceptedFiles: '<%= @exercise.allowed_extensions.split().map { |e| ".#{e}" }.join(',') %>',
                         init: function () {
                             this.on('complete', function (file, response) {
                                 location.reload();
-                            })
+                            });
+                            this.on('error', function(file, error) {
+                                alert(error)
+                            });
                         }
                     };
                 </script>
