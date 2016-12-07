@@ -76,5 +76,16 @@
 </div>
 
 <script type="text/javascript">
-
+    $('.btn-rating-icon').each(function () {
+        var btn = $(this)
+        btn.click(function () {
+            var rateValue = btn.data('rating');
+            // post rating value for this review here
+            $.post(location.pathname + '/rate?rating=' + rateValue, {
+                success: function (response) {
+                    console.log(response);
+                }
+            });
+        });
+    });
 </script>

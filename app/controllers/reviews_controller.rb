@@ -277,4 +277,10 @@ class ReviewsController < ApplicationController
     end
   end
 
+  def rate
+    puts params[:id]
+    puts params[:rating]
+    render nothing: true, status: :ok
+  end
+
 end
