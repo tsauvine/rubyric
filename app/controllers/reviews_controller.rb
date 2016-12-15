@@ -1,5 +1,7 @@
 class ReviewsController < ApplicationController
 
+  # TODO: perform group member validation using callback
+
   # GET /reviews/1
   def show
     @review = Review.find(params[:id])
@@ -280,8 +282,16 @@ class ReviewsController < ApplicationController
   def rate
     review = Review.find(params[:id])
     rating = params[:rating]
-    ReviewRating.first_or_initialize(user: current_user, review: review).update_attributes(rating: rating)
-    render nothing: true, status: :ok
+
+    # only group member of submission can perform review rating
+    group = review.submission.group
+
+    if group.has_member? current_user
+      ReviewRating.first_or_initialize(user: current_user, review: review).update_attributes(rating: rating)
+      render nothing: true, status: :ok
+    else
+      render nothing: true, status: :forbidden
+    end
   end
 
 end
