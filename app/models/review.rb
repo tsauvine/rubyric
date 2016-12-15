@@ -4,6 +4,8 @@ class Review < ActiveRecord::Base
   belongs_to :submission
   belongs_to :user        # grader
 
+  has_many :review_ratings
+
   #has_many :feedbacks, dependent: :destroy
 
   # status: [empty], started, unfinished, finished, mailing, mailed, invalidated

@@ -1,5 +1,7 @@
 class ReviewsController < ApplicationController
 
+  # TODO: perform group member validation using callback
+
   # GET /reviews/1
   def show
     @review = Review.find(params[:id])
@@ -12,15 +14,18 @@ class ReviewsController < ApplicationController
 
     return access_denied unless group_membership_validated(@group) || @review.user == current_user || @course.has_teacher(current_user) || @course_instance.has_assistant(current_user) || (@exercise.collaborative_mode != '' && @course_instance.has_student(current_user))
 
+    @can_view_review_raters = (@group.has_member? current_user) or (@review.user == current_user) or (@course.has_teacher current_user)
+    @can_rate_review = @group.has_member? current_user
+
     if @review.type == 'AnnotationAssessment'
       @submission = @review.submission
       @page_count = @submission.page_count
 
-      render :action => 'show-annotation', :layout => 'plain-new'
+      render action: 'show-annotation', layout: 'plain-new'
       log "view_annotation #{@review.id},#{@exercise.id}"
     else
       respond_to do |format|
-        format.html { render :action => 'show', :layout => 'narrow' }
+        format.html { render action: 'show', layout: 'narrow' }
         format.json { render json: @review.payload }
       end
 
@@ -184,7 +189,7 @@ class ReviewsController < ApplicationController
     unless @review.update_attributes(params[:review])
       # Error
       flash[:error] = 'Failed to update'
-      render :action => 'finish', :layout => 'wide'
+      render action: 'finish', layout: 'wide'
       return
     end
 
@@ -270,10 +275,27 @@ class ReviewsController < ApplicationController
           @heading = 'File not found'
           render template: 'shared/error', layout: 'narrow'
         else
-          send_file @review.full_filename, :type => Mime::Type.lookup_by_extension(@review.extension.downcase) || 'application/octet-stream', :filename => @review.filename
+          send_file @review.full_filename, type: Mime::Type.lookup_by_extension(@review.extension.downcase) || 'application/octet-stream', filename: @review.filename
           log "download_review #{@review.id},#{@exercise.id}"
         end
       end
+    end
+  end
+
+  def rate
+    review = Review.find(params[:id])
+    rating = params[:rating]
+
+    # only group member of submission can perform review rating
+    group = review.submission.group
+
+    if group.has_member? current_user
+      rating_item = ReviewRating.where(user_id: current_user.id, review_id: review.id).first_or_initialize
+      rating_item.rating = rating
+      rating_item.save
+      render nothing: true, status: :ok
+    else
+      render nothing: true, status: :forbidden
     end
   end
 

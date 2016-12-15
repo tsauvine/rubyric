@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161205121420) do
+ActiveRecord::Schema.define(:version => 20161207131201) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -277,6 +277,18 @@ ActiveRecord::Schema.define(:version => 20161205121420) do
     t.integer "paid_students",    :default => 0, :null => false
     t.integer "planned_students", :default => 0, :null => false
   end
+
+  create_table "review_ratings", :force => true do |t|
+    t.integer  "review_id"
+    t.integer  "user_id"
+    t.integer  "rating",     :limit => 2, :null => false
+    t.datetime "created_at",              :null => false
+    t.datetime "updated_at",              :null => false
+  end
+
+  add_index "review_ratings", ["review_id", "user_id"], :name => "index_review_ratings_on_review_id_and_user_id", :unique => true
+  add_index "review_ratings", ["review_id"], :name => "index_review_ratings_on_review_id"
+  add_index "review_ratings", ["user_id"], :name => "index_review_ratings_on_user_id"
 
   create_table "reviews", :force => true do |t|
     t.integer  "user_id"
