@@ -16,7 +16,7 @@
 
 <p>
   <b>Submission:</b>
-  <%= l @submission.created_at, :format => :long %>
+  <%= l @submission.created_at, format: :long %>
   <% unless @submission.filename.blank? %>
       (<%= link_to "#{@submission.extension}", submission_url(@submission, member_token: params[:member_token], group_token: params[:group_token]) %>
       )
@@ -55,11 +55,11 @@
 
 Rate:
 <div id="review-rating">
-  <button class="btn-rating-icon" data-rating="1"><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="2"><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="3"><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="4"><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="5"><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="1" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="2" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="3" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="4" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
+  <button class="btn-rating-icon" data-rating="5" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
 </div>
 
 <hr>
@@ -67,9 +67,12 @@ Rate:
 <div id="ratings" class="row">
   <% @review.review_ratings.each do |rating| %>
       <div class="col-md-3">
-        <p>User: <%= rating.user.name %></p>
         <p>
-          Rating:
+          <% if @can_view_review_raters %>
+              <%= rating.user.name %>:
+          <% else %>
+              Anonymous:
+          <% end %>
           <% rating.rating.times do %>
               <i class="icon-star"></i>
           <% end %>
