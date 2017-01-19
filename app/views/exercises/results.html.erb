@@ -16,9 +16,7 @@
     
     <p>
       <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
-      <!--
       <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
-      -->
     </p>
   </div>
 <% end %>
@@ -31,6 +29,7 @@
       <%= result_table_heading('last name', :sort => 'last-name') %>
       <%= result_table_heading('email', :sort => 'email') %>
       <%= result_table_heading('grade', :sort => 'grade') %>
+      <%= result_table_heading('grade disagreement', :sort => 'grade-range') %>
       <% if params[:include] == 'all' %>
         <%= result_table_heading('submitted_at', :sort => 'submitted-at') %>
         <%= result_table_heading('reviewer', :sort => 'reviewer') %>
@@ -56,6 +55,9 @@
         <td><% if result[:member].user %><%= result[:member].user.lastname %><% end %></td>
         <td><%= result[:member].email %></td>
         <td><%= result[:grade] %></td>
+        <% if params[:include] != 'all' %>
+          <td><%= result[:grade_range] %></td>
+        <% end %>
         <% if params[:include] == 'all' %>
           <td><% if result[:submission] %><%= result[:submission].created_at %><% end %></td>
           <td><% if result[:reviewer] %><%= result[:reviewer].name  %> <% unless result[:reviewer].studentnumber.blank? %>(<%= result[:reviewer].studentnumber %>)<% end %><% end %></td>

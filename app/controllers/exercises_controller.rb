@@ -199,11 +199,11 @@ class ExercisesController < ApplicationController
       options[:include_all] = true
     else
       options = begin 
-          JSON.parse(@exercise.grading_mode || '{}')
+        JSON.parse(@exercise.grading_mode || '{}')
         rescue Exception => e
           logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
           {}
-        end
+      end
       
       options[:include_peer_review_count] = @exercise.peer_review?
     end
@@ -223,6 +223,8 @@ class ExercisesController < ApplicationController
       @results.sort! { |a, b| (a[:member].email || '').downcase <=> (b[:member].email || '').downcase }
     when 'grade'
       @results.sort! { |a, b| Review.compare_grades(a[:grade], b[:grade]) }
+    when 'grade-range'
+      @results.sort! { |a, b| (b[:grade_range] || 0) <=> (a[:grade_range] || 0) }
     when 'peer-review-count'
       #@results.sort! { |a, b| (a[:created_peer_review_count] || 0) <=> (b[:created_peer_review_count] || 0) }
       @results.sort! { |a, b| (a[:finished_peer_review_count] || 0) <=> (b[:finished_peer_review_count] || 0) }

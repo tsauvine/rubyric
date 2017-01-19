@@ -193,7 +193,6 @@ class Group < ActiveRecord::Base
     submission_count = 0
     average = (options['average'] || :mean).to_sym
     logger.debug "OPTIONS: #{options}"
-    logger.debug ""
     logger.debug "AVERAGE MODE: #{average}"
     n_best = options['n_best']
     reviews = []
@@ -218,10 +217,10 @@ class Group < ActiveRecord::Base
     not_sortable = false
     begin
       reviews.sort! { |a, b| Review.compare_grades!(b.grade, a.grade) }
-      logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
+      #logger.debug "Reviews after sorting #{reviews.map {|review| review.grade}.join(', ')}"
     rescue
       not_sortable = true
-      logger.debug "Reviews not sortable: #{reviews.map {|review| review.grade}.join(', ')}"
+      #logger.debug "Reviews not sortable: #{reviews.map {|review| review.grade}.join(', ')}"
     end
     
     # Take n best
@@ -243,6 +242,24 @@ class Group < ActiveRecord::Base
       logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
     end
     
+    # Cast grades into the most convenient types, e.g. 4.0 => 4
+    cast_grades = reviews.map {|review| Review.cast_grade(review.grade)}
+    
+    # Calculate grade range (difference between extreme grades)
+    result[:grade_range] = case reviews.size
+    when 0
+      nil
+    when 1
+      0
+    else
+      begin
+        minmax = cast_grades.minmax
+        minmax[1] - minmax[0]
+      rescue
+        nil
+      end
+    end
+    
     # Calculate mean or median
     if submission_count == 0
       result[:no_submissions] = true
@@ -256,10 +273,8 @@ class Group < ActiveRecord::Base
       # if reviews.size % 2 == 0
       #  (reviews[reviews.size / 2 - 1].grade + reviews[reviews.size / 2].grade) / 2
     elsif average == :max
-      logger.debug "Calculating max"
       result[:grade] = reviews.first.grade
     elsif average == :min
-      logger.debug "Calculating min"
       result[:grade] = reviews.last.grade
     elsif average == :mean
       begin
@@ -267,7 +282,7 @@ class Group < ActiveRecord::Base
           # Non-numeric grades can be handled in this special case
           result[:grade] = reviews.first.grade
         else
-          mean = reviews.inject(0.0){ |sum, review| sum + Review.cast_grade(review.grade) }.to_f / reviews.size
+          mean = cast_grades.inject(0.0){ |sum, grade| sum + grade }.to_f / reviews.size
           result[:grade] = mean.to_s
         end
       rescue Exception => e

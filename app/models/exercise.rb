@@ -571,10 +571,10 @@ class Exercise < ActiveRecord::Base
 
     groups.each do |group|
       group_result = group.result(self, options)
-
+      
       # Construct result
       if options[:include_all]
-        group.group_members.collect do |member|
+        group.group_members.each do |member|
           group_result[:reviews].each do |review|
             results << {member: member, reviewer: review.user, review: review, submission: review.submission, grade: review.grade}
           end
@@ -582,7 +582,8 @@ class Exercise < ActiveRecord::Base
       else
         group.group_members.each do |member|
           notes = group_result[:not_enough_reviews] ? 'Not enough reviews.' : ''
-          resultline = {member: member, grade: group_result[:grade], notes: notes}
+          #resultline = {member: member, grade: group_result[:grade], notes: notes}
+          resultline = group_result.merge({member: member, notes: notes})
 
           if options[:include_peer_review_count] && member.user
             peer_review_count = member.user.peer_review_count(self)
