@@ -137,16 +137,13 @@
 
           <div id="exercise">
             <% if @exercise.submission_type.blank? || @exercise.submission_type.include?('file') %>
-                <div class="fallback">
-                  <p><%= file_field_tag 'file' %></p>
-                  <p><%= f.submit t('.submit_button'), class: 'btn btn-primary' %></p>
-                </div>
                 <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.css">
                 <script src="//cdnjs.cloudflare.com/ajax/libs/dropzone/4.3.0/dropzone.js"></script>
                 <script type="text/javascript">
                     Dropzone.options.newSubmission = {
                         maxFiles: 1,
                         acceptedFiles: '<%= @exercise.allowed_extensions.split().map { |e| ".#{e}" }.join(',') %>',
+                        clickable: false,
                         init: function () {
                             this.on('complete', function (file, response) {
                                 location.reload();
@@ -157,6 +154,10 @@
                         }
                     };
                 </script>
+                <div>
+                  <p><%= file_field_tag 'file' %></p>
+                  <p><%= f.submit t('.submit_button'), class: 'btn btn-primary' %></p>
+                </div>
             <% end %>
 
             <% if (@exercise.submission_type || '').include?('textarea') %>

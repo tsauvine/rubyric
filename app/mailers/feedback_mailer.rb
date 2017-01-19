@@ -133,7 +133,7 @@ class FeedbackMailer < ActionMailer::Base
     end
 
     # A+ always requires max_grade
-    if max_grade.nil?
+    if max_grade.nil? || max_grade == 0
       max_grade = 1
       combined_grade = 1
       logger.warn "No max_grade for exercise #{@exercise.id}."
@@ -160,37 +160,54 @@ class FeedbackMailer < ActionMailer::Base
     #  }
     
     # Deliver
-    success = true
+    success = false
     response = nil
     if group_result[:not_enough_reviews] || group_result[:no_submissions]
-      success = false
       logger.info "Not enough reviews for group #{group.id}"
     elsif combined_grade.nil? || combined_grade.is_a?(String)
-      success = false
       logger.info "No numeric grade for group #{group.id}."
-    elsif submission.aplus_feedback_url.blank?
-      # Generate JSON for manual transfer
-      object = {
-        "students_by_email" => submission.group.group_members.map {|member| member.email },
-        "feedback" => feedback,
-        "grader" => 3832,
-        "exercise_id" => 1719,
-        "submission_time" => submission.created_at,
-        "points" => (6 * combined_grade / max_grade).round
-      }
+    elsif !submission.lti_launch_params.blank?
+      # Send grades via LTI
+      params = JSON.parse(submission.lti_launch_params)
+      consumer_key = params['oauth_consumer_key']
+      secret = OAUTH_CREDS[consumer_key]
+      logger.debug params
+      logger.debug params.class.name
+      provider = IMS::LTI::ToolProvider.new(consumer_key, secret, params)
       
-      File.open('aplus_grades.json', 'a') do |file|
-        file.print object.to_json
-        file.puts ','
+      response = provider.post_replace_result!(combined_grade / max_grade)
+      if response.success? || response.processing?
+        success = true
+      elsif response.unsupported?
+        logger.warn "Failed to send grades for group #{group.id} via LTI (unspported)."
+      else
+        logger.warn "Failed to send grades for group #{group.id} via LTI."
       end
-    else
+
+    elsif !submission.aplus_feedback_url.blank?
+      # Send grades to A+
       if Rails.env == 'production'
         response = RestClient.post(submission.aplus_feedback_url, {points: combined_grade.round, max_points: max_grade.round, feedback: feedback, notify: 'yes'})
-        success = false unless response.code == 200
+        success = true if response.code == 200
       else
         logger.debug "Skipping A+ API call in development environment. #{submission.aplus_feedback_url}, points: #{combined_grade.round}, max_points: #{max_grade.round}"
       end
     end
+    
+    # Generate JSON for manual transfer
+#       object = {
+#         "students_by_email" => submission.group.group_members.map {|member| member.email },
+#         "feedback" => feedback,
+#         "grader" => 3832,
+#         "exercise_id" => 1719,
+#         "submission_time" => submission.created_at,
+#         "points" => (6 * combined_grade / max_grade).round
+#       }
+#       
+#       File.open('aplus_grades.json', 'a') do |file|
+#         file.print object.to_json
+#         file.puts ','
+#       end
     
     if success
       Review.where(:id => review_ids, :status => ['finished', 'mailing']).update_all(:status => 'mailed')

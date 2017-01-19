@@ -163,7 +163,7 @@ class ApplicationController < ActionController::Base
   # Returns true if the request is legit.
   # Renders an error message and returns false otherwise.
   def authenticate_lti_signature(options = {})
-    return true if Rails.env == 'development' && request.local?
+    #return true if Rails.env == 'development' && request.local?
     
     unless params['oauth_consumer_key'] && params[:context_id] && params[:resource_link_id] && params[:user_id]
       @heading =  "Insufficient LTI parameters received"

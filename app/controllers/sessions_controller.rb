@@ -185,6 +185,9 @@ class SessionsController < ApplicationController
     lti_view = login_lti_user
     return unless lti_view
     
+    # Save LTI launch params to session. These are needed later for sending grades back to LMS.
+    session[:lti_launch_params] = params.to_json
+    
     if @exercise
       if lti_view == :submit
         # Create or find group, TODO: handle errors
@@ -208,9 +211,6 @@ class SessionsController < ApplicationController
         redirect_to exercise_path(:id => @exercise.id)
       end
     else
-      # FIXME; don't show this to students
-      flash[:warning] = "lti_context_id=#{params[:context_id]}, resource_link_id=#{params[:resource_link_id]}"
-      
       redirect_to course_instance_path(:id => @course_instance.id)
     end
   end

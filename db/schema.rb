@@ -11,7 +11,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20161207131201) do
+ActiveRecord::Schema.define(:version => 20170119212115) do
 
   create_table "assistants_course_instances", :id => false, :force => true do |t|
     t.integer "user_id"
@@ -305,7 +305,8 @@ ActiveRecord::Schema.define(:version => 20161207131201) do
     t.text     "payload"
     t.string   "filename"
     t.string   "extension"
-    t.string   "type",             :default => "Review", :null => false
+    t.string   "type",              :default => "Review", :null => false
+    t.text     "lti_launch_params"
   end
 
   create_table "roles", :id => false, :force => true do |t|
@@ -359,6 +360,7 @@ ActiveRecord::Schema.define(:version => 20161207131201) do
     t.string   "conversion"
     t.text     "page_sizes"
     t.text     "payload"
+    t.text     "lti_launch_params"
   end
 
   create_table "submissions_users", :id => false, :force => true do |t|

@@ -510,7 +510,7 @@ class ExercisesController < ApplicationController
       review_counts.sort! { |a, b| a[:count] <=> b[:count] }
       group = review_counts.first
 
-      review = group[:submission].assign_to(current_user)
+      review = group[:submission].assign_to(current_user, session[:lti_launch_params])
     end
 
     redirect_to edit_review_path(review)
