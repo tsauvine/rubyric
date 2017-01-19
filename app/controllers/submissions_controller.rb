@@ -181,7 +181,7 @@ class SubmissionsController < ApplicationController
       @submission.file = params[:file]
     end
     @submission.payload = params[:payload]
-
+    
     if @submission.save
       logger.debug 'Submission accepted'
       @status = 'accepted'
@@ -244,13 +244,6 @@ class SubmissionsController < ApplicationController
     end
     logger.debug 'Group accepted'
 
-    # Check file extension
-    unless @exercise.allowed_extensions.include?(@submission.extension)
-      flash[:error] = "Extension #{@submission.extension} is not allowed."
-      redirect_to submit_path(exercise: @submission.exercise_id, ref: params[:ref]), status: :bad_request
-      return
-    end
-
     # Check the file, TODO: check that both file and payload are not blank
     file_required = @exercise.submission_type.blank? || @exercise.submission_type == 'file'
 
@@ -269,7 +262,19 @@ class SubmissionsController < ApplicationController
       @submission.file = params[:file]
     end
     @submission.payload = params[:payload]
+    
+    # Check file extension
+    if !@exercise.allowed_extensions.blank? && !@exercise.allowed_extensions.include?(@submission.extension)
+      flash[:error] = "Extension #{@submission.extension} is not allowed."
+      redirect_to submit_path(exercise: @submission.exercise_id, ref: params[:ref]), status: :bad_request
+      return
+    end
 
+    # Store LTI launch params so that grades can be sent to LMS.
+    # FIXME: Grades can only be sent to the submitter, not group members.
+    # Is it better to not send any grades for group work?
+    @submission.lti_launch_params = session[:lti_launch_params]
+    
     if @submission.save
       logger.debug 'Submission accepted'
       flash[:success] = t('submissions.new.submission_received')
@@ -278,9 +283,11 @@ class SubmissionsController < ApplicationController
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
     end
-
-    logger.debug 'Submission successful'
-    if params[:ref] == 'exercises'
+    
+    if request.format == 'json'
+      # If post comes from Dropzone, don't do anything
+      render :nothing => true, :status => 200
+    elsif params[:ref] == 'exercises'
       redirect_to exercise_path(id: @submission.exercise_id)
     else
       redirect_to submit_path(exercise: @submission.exercise_id, group: @submission.group_id, member_token: params[:member_token], group_token: params[:group_token])
@@ -291,7 +298,7 @@ class SubmissionsController < ApplicationController
   def review
     return access_denied unless @course.has_teacher(current_user) || @submission.group.has_reviewer?(current_user) || (@exercise.collaborative_mode == 'review' && (@course_instance.has_student(current_user) || @course_instance.has_assistant(current_user)))
 
-    review = @submission.assign_to(current_user)
+    review = @submission.assign_to(current_user, session[:lti_launch_params])
 
     redirect_to edit_review_path(review)
     log "create_review #{@submission.id},#{@exercise.id}"

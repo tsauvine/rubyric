@@ -145,7 +145,7 @@ class Submission < ActiveRecord::Base
 
 
   # Assigns this submission to be reviewed by user.
-  def assign_to(user)
+  def assign_to(user, lti_launch_params=nil)
     user = User.find(user) unless user.is_a?(User)
     options = {user: user, submission: self}
 
@@ -154,6 +154,8 @@ class Submission < ActiveRecord::Base
     else
       review = Review.new(options)
     end
+    
+    review.lti_launch_params = lti_launch_params
 
     review.save
 
