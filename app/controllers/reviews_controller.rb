@@ -16,6 +16,7 @@ class ReviewsController < ApplicationController
 
     @can_view_review_raters = (@group.has_member? current_user) or (@review.user == current_user) or (@course.has_teacher current_user)
     @can_rate_review = @group.has_member? current_user
+    @rating_item = ReviewRating.where(user_id: current_user.id, review_id: @review.id).first_or_initialize
 
     if @review.type == 'AnnotationAssessment'
       @submission = @review.submission
@@ -25,7 +26,7 @@ class ReviewsController < ApplicationController
       log "view_annotation #{@review.id},#{@exercise.id}"
     else
       respond_to do |format|
-        format.html { render action: 'show', layout: 'narrow' }
+        format.html { render action: 'show', layout: 'narrow-new' }
         format.json { render json: @review.payload }
       end
 
@@ -291,8 +292,13 @@ class ReviewsController < ApplicationController
 
     if group.has_member? current_user
       rating_item = ReviewRating.where(user_id: current_user.id, review_id: review.id).first_or_initialize
+      
+      logger.info(rating_item)
+      
       rating_item.rating = rating
       rating_item.save
+      logger.error(rating_item.errors.full_messages)
+      
       render nothing: true, status: :ok
     else
       render nothing: true, status: :forbidden

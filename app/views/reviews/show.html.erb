@@ -47,49 +47,11 @@
     <p>Uploaded feedback: <%= link_to @review.filename, download_review_path(@review) %></p>
 <% end %>
 
+<%= render 'rate_review' %>
+
 <% if params[:ref] == 'exercises' %>
     <p><%= link_to 'Back', @exercise %></p>
 <% else %>
     <p><%= link_to 'Back', submit_url(@exercise.id, group: @group, member_token: params[:member_token], group_token: params[:group_token]) %></p>
 <% end %>
 
-Rate:
-<div id="review-rating">
-  <button class="btn-rating-icon" data-rating="1" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="2" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="3" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="4" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
-  <button class="btn-rating-icon" data-rating="5" <% if !@can_rate_review %>disabled<% end %>><i class="icon-star"></i></button>
-</div>
-
-<hr>
-
-<div id="ratings" class="row">
-  <% @review.review_ratings.each do |rating| %>
-      <div class="col-md-3">
-        <p>
-          <% if @can_view_review_raters %>
-              <%= rating.user.name %>:
-          <% else %>
-              Anonymous:
-          <% end %>
-          <% rating.rating.times do %>
-              <i class="icon-star"></i>
-          <% end %>
-        </p>
-      </div>
-  <% end %>
-</div>
-
-<script type="text/javascript">
-    $('.btn-rating-icon').each(function () {
-        var btn = $(this)
-        btn.click(function () {
-            var rateValue = btn.data('rating');
-            $.post(location.pathname + '/rate?rating=' + rateValue)
-                .done(function () {
-                    // perform update ui
-                });
-        });
-    });
-</script>

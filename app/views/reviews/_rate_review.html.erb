@@ -1,0 +1,26 @@
+<div>
+  <div id="review-rating" class="review-rating">
+    <p>After reading and reflecting on the comments you received, choose from the following options:</p>
+    <ul class="list-unstyled">
+      <li class="<%= @rating_item.rating == 0 ? 'selected' : '' %>"><button class="btn-rating-icon" data-rating="0" <% if !@can_rate_review %>disabled<% end %>>0</button> There was no feedback.</li>
+      <li class="<%= @rating_item.rating == 1 ? 'selected' : '' %>"><button class="btn-rating-icon" data-rating="1" <% if !@can_rate_review %>disabled<% end %>>1</button> There was some feedback, but it was minimal and didn't have constructive comments.</li>
+      <li class="<%= @rating_item.rating == 2 ? 'selected' : '' %>"><button class="btn-rating-icon" data-rating="2" <% if !@can_rate_review %>disabled<% end %>>2</button> The feedback was constructive (even if you don’t agree with the comments).</li>
+    </ul>
+  </div>
+  <div class="clearfix"></div>
+</div>
+
+<script type="text/javascript">
+    $('#review-rating li').each(function () {
+        var li = $(this)
+        var btn = li.find('button')
+        btn.click(function () {
+            var rateValue = btn.data('rating');
+            $.post('<%= rate_review_path(@review) %>?rating=' + rateValue)
+                .done(function () {
+                    $('#review-rating li').removeClass('selected');
+                    li.addClass('selected');
+                });
+        });
+    });
+</script>

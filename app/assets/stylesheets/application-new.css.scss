@@ -741,6 +741,28 @@ pre.payload {
 }
 
 
+/**************************************************************************
+ * Review ratings
+ **************************************************************************/
+
+.review-rating {
+  margin: 1em;
+  float: left;
+  
+  font-size: 16px;
+
+  li {
+    button {
+      font-size: 24px;
+      margin: 4px;
+    }
+  }
+  
+  li.selected {
+    border: 1px solid gray;
+  }
+}
+
 
 /******************
  * Error messages
