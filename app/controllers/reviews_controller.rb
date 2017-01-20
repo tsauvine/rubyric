@@ -285,19 +285,23 @@ class ReviewsController < ApplicationController
 
   def rate
     review = Review.find(params[:id])
+    @exercise = review.submission.exercise
+    load_course
+    
     rating = params[:rating]
 
     # only group member of submission can perform review rating
     group = review.submission.group
 
-    if group.has_member? current_user
+    if @course.has_teacher(current_user) || group.has_member?(current_user)
       rating_item = ReviewRating.where(user_id: current_user.id, review_id: review.id).first_or_initialize
       
       logger.info(rating_item)
       
       rating_item.rating = rating
       rating_item.save
-      logger.error(rating_item.errors.full_messages)
+      
+      #ReviewRating.delay.deliver_ratings_lti(rating_item.id)
       
       render nothing: true, status: :ok
     else
