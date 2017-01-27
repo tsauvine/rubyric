@@ -370,7 +370,7 @@ class SubmissionsController < ApplicationController
   def load_lti
     # Authorized IP?
     remote_ip = (request.env['HTTP_X_FORWARDED_FOR'] || request.remote_ip).split(',').first
-    unless %w(127.0.0.1 130.233.195.24).include? remote_ip
+    unless APLUS_IP_WHITELIST.include? remote_ip
       @heading = 'LTI error: Requests only allowed from A+'
       render template: 'shared/error'
       return false

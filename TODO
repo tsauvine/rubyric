@@ -42,13 +42,12 @@ näytä lti-kursseille tuloslistassa lti_user_id
 
 = Metsähovi peer review =
 
-ok vertaisarviointinäkymän käynnistäminen Moodlen kautta, kun lti-resource-link-id on eri
-1  pisteiden kirjautuminen LTI:n kautta
+1  ratingien pisteiden kirjautuminen LTI:n kautta
 2  ignore Haka login when user arrives through LTI (allow teachers to access student view for testing)
 3  invalidate-nappula pois näkyvistä opiskelijoilta
-3  vertaisarvioitujen tehtävien sorttaus arvosanojen varianssin mukaan
--  kolmas tehtävä: katso oma arviointisi, arvioi arviointi
--  näytä väärin konffatulle tehtävälle LTI-id:t Moodlen konffaamista varten
+ok vertaisarviointinäkymän käynnistäminen Moodlen kautta, kun lti-resource-link-id on eri
+ok pisteiden kirjautuminen LTI:n kautta
+ok vertaisarvioitujen tehtävien sorttaus arvosanojen varianssin mukaan
 
 
 = Koodiaapinen =
