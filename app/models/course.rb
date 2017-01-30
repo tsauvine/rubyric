@@ -1,9 +1,9 @@
 class Course < ActiveRecord::Base
-  has_many :course_instances, {:order => :id, :dependent => :destroy}
-  has_many :active_instances, {:order => :id, :dependent => :destroy, :class_name => 'CourseInstance', :conditions => {:active => true}}
+  has_many :course_instances, dependent: :destroy
+  has_many :active_instances, dependent: :destroy, class_name: 'CourseInstance'
   belongs_to :organization
 
-  has_and_belongs_to_many :teachers, {:class_name => 'User', :join_table => 'courses_teachers', :order => :studentnumber}
+  has_and_belongs_to_many :teachers, {class_name: 'User', join_table: 'courses_teachers', order: :studentnumber}
 
   validates_presence_of :name
 
@@ -14,7 +14,7 @@ class Course < ActiveRecord::Base
       "#{self.code} #{self.name}"
     end
   end
-  
+
   def has_teacher(user)
     user && teachers.include?(user)
   end
@@ -63,7 +63,7 @@ class Course < ActiveRecord::Base
     course = Course.new(:name => 'Example course')
     course.organization_id = teacher.organization_id if teacher
     course.save(:validate => false)
-    
+
     course.teachers << teacher if teacher
 
     instance = CourseInstance.new(:course_id => course.id, :name => Time.now.year, :submission_policy => 'unauthenticated')
@@ -80,7 +80,7 @@ class Course < ActiveRecord::Base
     )
     exercise.initialize_example_rubric
     exercise.save(:validate => false)
-    
+
     # FIXME: makedirs may throw an exception
     submission_path = "#{SUBMISSIONS_PATH}/#{exercise.id}"
     FileUtils.makedirs(submission_path)
@@ -88,7 +88,7 @@ class Course < ActiveRecord::Base
     # Create groups and submissions
     instance.create_example_groups(10)
     exercise.create_example_submissions
-    
+
     return exercise
   end
 end

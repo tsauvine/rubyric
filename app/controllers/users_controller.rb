@@ -2,13 +2,6 @@ class UsersController < ApplicationController
 
   before_filter :login_required, :only => [:edit, :update]
   layout 'narrow'
-  
-  # GET /users/1
-#   def show
-#     @user = User.find(params[:id])
-#
-#     return access_denied unless is_admin?(current_user) || @user == current_user
-#   end
 
   def new
     # Anyone can create an account
@@ -21,9 +14,8 @@ class UsersController < ApplicationController
   end
 
   def create
-    # Create user
     @user = User.new(params[:user])
-    
+
     if !@user.email.blank? && User.exists?(email: @user.email)
       # User exists, try to log in
       @session = Session.new(params[:user])
@@ -39,9 +31,8 @@ class UsersController < ApplicationController
         return
       end
     end
-    
+
     if @user.save
-      # Success
       logger.info("Created user #{@user.email} (traditional)")
 
       # Login
@@ -60,7 +51,7 @@ class UsersController < ApplicationController
       render :action => 'new', :layout => 'narrow-new'
       log "create_user_traditional fail #{@user.errors.full_messages.join('. ')}"
     end
-    
+
   end
 
 
@@ -72,7 +63,7 @@ class UsersController < ApplicationController
     end
 
     return access_denied unless @user == current_user || is_admin?(current_user)
-    
+
     log "edit_user view"
   end
 
@@ -96,15 +87,15 @@ class UsersController < ApplicationController
 
   def search
     return access_denied unless current_user && current_user.teacher?
-    
+
     query = params[:query]
-    
+
     if query.include? '@'
       users = User.where(:email => query).order(:lastname).limit(100).all
     else
       users = User.where(["lower(firstname) LIKE ? OR lower(lastname) LIKE ?", "%#{query.downcase}%", "%#{query.downcase}%"]).order(:lastname).limit(100).all
     end
-    
+
     respond_to do |format|
       format.json { render :json => users.as_json(:only => [ :id, :firstname, :lastname ]) }
     end

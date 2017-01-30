@@ -181,7 +181,7 @@ class SubmissionsController < ApplicationController
       @submission.file = params[:file]
     end
     @submission.payload = params[:payload]
-    
+
     if @submission.save
       logger.debug 'Submission accepted'
       @status = 'accepted'
@@ -203,9 +203,10 @@ class SubmissionsController < ApplicationController
     logger.debug 'A+ Submission successful'
   end
 
+  # TODO: use carrierwave to simplify file upload
   def create
     @user = current_user
-    @submission = Submission.new(params[:submission])
+    @submission = Submission.new(submission_params)
     @exercise = @submission.exercise
     load_course
     I18n.locale = @course_instance.locale || I18n.locale
@@ -262,7 +263,7 @@ class SubmissionsController < ApplicationController
       @submission.file = params[:file]
     end
     @submission.payload = params[:payload]
-    
+
     # Check file extension
     if !@exercise.allowed_extensions.blank? && !@exercise.allowed_extensions.include?(@submission.extension)
       flash[:error] = "Extension #{@submission.extension} is not allowed."
@@ -274,7 +275,7 @@ class SubmissionsController < ApplicationController
     # FIXME: Grades can only be sent to the submitter, not group members.
     # Is it better to not send any grades for group work?
     @submission.lti_launch_params = session[:lti_launch_params]
-    
+
     if @submission.save
       logger.debug 'Submission accepted'
       flash[:success] = t('submissions.new.submission_received')
@@ -283,7 +284,7 @@ class SubmissionsController < ApplicationController
       flash[:error] = "Failed to submit. #{@submission.errors.full_messages.join('. ')}"
       log "submit fail #{@exercise.id} #{@submission.errors.full_messages.join('. ')}"
     end
-    
+
     if request.format == 'json'
       # If post comes from Dropzone, don't do anything
       render :nothing => true, :status => 200
@@ -344,6 +345,10 @@ class SubmissionsController < ApplicationController
   end
 
   private
+
+  def submission_params
+    params.require(:submission).permit(:exercise_id, :group_id)
+  end
 
   def submission_policy_accepted?
     logger.debug 'Checking submission policy'

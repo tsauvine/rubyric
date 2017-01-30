@@ -14,20 +14,20 @@ class SessionsController < ApplicationController
   end
 
   def create
-    @session = Session.new(params[:session])
+    @session = Session.new(session_params)
 
     session[:logout_url] = nil
 
     if @session.save
       logger.info "Login successful"
       redirect_back_or_default root_url
-      
+
       CustomLogger.info("#{current_user.login} login_traditional success")
     else
       logger.info "Login failed. #{@session.errors.full_messages.join(',')}"
       #flash[:error] = t('sessions_login_failed')
       render :action => :new
-      
+
       CustomLogger.info("guest login_traditional fail #{@session.errors.full_messages.join(',')}")
     end
   end
@@ -37,7 +37,7 @@ class SessionsController < ApplicationController
       redirect_to(root_url)
       return
     end
-    
+
     logout_url = session[:logout_url]
     current_session.destroy
 
@@ -46,7 +46,7 @@ class SessionsController < ApplicationController
     else
       redirect_to(root_url)
     end
-    
+
     log "logout"
   end
 
@@ -100,19 +100,19 @@ class SessionsController < ApplicationController
       # TODO: user organization ID
       user = User.find_by_studentnumber(shibinfo[:studentnumber], :conditions => "login IS NULL")
     end
-    
+
     if !user && !shibinfo[:email].blank?
       logger.debug "Trying to find by email #{shibinfo[:email]}"
       user = User.find_by_email(shibinfo[:email])
     end
-    
+
     # Create new account or update an existing
     unless user
       logger.debug "User not found. Trying to create."
 
       # Find organization
       organization_domain = (shibinfo[:login] || '').split('@',2)[1]
-      
+
       # New user
       user = User.new()
       user.login = shibinfo[:login]
@@ -144,7 +144,7 @@ class SessionsController < ApplicationController
       user.email = shibinfo[:email] if user.email.blank?
       user.reset_persistence_token if user.persistence_token.blank?  # Authlogic won't work if persistence token is empty
       #user.reset_single_access_token if user.single_access_token.blank?
-      
+
       unless user.organization
         organization_domain = (shibinfo[:login] || '').split('@',2)[1]
         user.organization = Organization.find_by_domain(organization_domain) || Organization.create(domain: organization_domain) if organization_domain
@@ -173,21 +173,21 @@ class SessionsController < ApplicationController
       redirect_back_or_default(root_url)
     end
   end
-  
-  
+
+
   # Authenicates LTI request
   # Creates session
   # Creates user (unless exists)
   # Adds user to course (unless already added)
   def lti
     return unless authenticate_lti_signature
-    
+
     lti_view = login_lti_user
     return unless lti_view
-    
+
     # Save LTI launch params to session. These are needed later for sending grades back to LMS.
     session[:lti_launch_params] = params.to_json
-    
+
     if @exercise
       if lti_view == :submit
         # Create or find group, TODO: handle errors
@@ -197,7 +197,7 @@ class SessionsController < ApplicationController
         else
           lti_find_or_create_group([{'user' => params[:user_id], 'email' => params[:lis_person_contact_email_primary], 'name' => ''}], @exercise, @user, @organization, params['oauth_consumer_key'])
         end
-        
+
         unless group
           @heading =  "Failed to create group (LTI)"
           logger.error("Failed to create group (LTI)")
@@ -214,5 +214,11 @@ class SessionsController < ApplicationController
       redirect_to course_instance_path(:id => @course_instance.id)
     end
   end
-  
+
+  private
+
+  def session_params
+    params.require(:session).permit(:email, :password, :remember_me)
+  end
+
 end

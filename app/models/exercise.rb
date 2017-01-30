@@ -4,7 +4,7 @@ include REXML
 
 class Exercise < ActiveRecord::Base
   belongs_to :course_instance
-  has_many :groups, order: 'name, id'
+  has_many :groups
   has_many :submissions
 
   validates :groupsizemin, numericality: {only_integer: true, greater_than: 0}

@@ -1,11 +1,3 @@
-# This file should contain all the record creation needed to seed the database with its default values.
-# The data can then be loaded with the rake db:seed (or created alongside the db with db:setup).
-#
-# Examples:
-#
-#   cities = City.create([{ :name => 'Chicago' }, { :name => 'Copenhagen' }])
-#   Major.create(:name => 'Daley', :city => cities.first)
-
 puts "Creating example users and courses"
 
 example_organization = Organization.create(:name => 'Example', :domain => 'example.com')
@@ -23,7 +15,7 @@ example_organization = Organization.create(:name => 'Example', :domain => 'examp
 # user.studentnumber = '123456'
 # user.organization = example_organization
 # user.save
-# 
+#
 # user = User.new(:password => '56724356', :password_confirmation => '56724356', :firstname => "Student", :lastname => "2", :email => 'student.2@example.com')
 # user.login = 'student-2'
 # user.studentnumber = '234567'
@@ -36,7 +28,7 @@ example_organization = Organization.create(:name => 'Example', :domain => 'examp
 #   course = Course.create(:code => "0.#{100 + i}", :name => 'Test')
 #   instance = CourseInstance.create(:name => "Spring #{Time.now.year}", :course => course)
 #   exercise = Exercise.create(:name => 'Exercise 1', :course_instance => instance)
-#   
+#
 #   example_courses[i] = course
 # end
 
@@ -52,7 +44,7 @@ example_organization = Organization.create(:name => 'Example', :domain => 'examp
 #   user.email = "teacher#{i}@example.com"
 #   user.organization = example_organization
 #   user.save
-#   
+#
 #   if example_courses[i]
 #     example_courses[i].teachers << user
 #   end
