@@ -9,7 +9,7 @@ class ExercisesController < ApplicationController
       logger.info 'Failed to auth LTI signature'
       return
     end
-    
+
     unless login_lti_user
       logger.info 'Failed to login LTI user'
       return
@@ -19,7 +19,7 @@ class ExercisesController < ApplicationController
       render template: 'shared/lti_error'
       return
     end
-    
+
     redirect_to @exercise
   end
 
@@ -33,14 +33,16 @@ class ExercisesController < ApplicationController
     if @course.has_teacher(current_user) || is_admin?(current_user)
       # Teacher's view
       @groups = @exercise.groups_with_submissions.order('groups.id, submissions.created_at DESC, reviews.id')
-      
+
       # Koodiaapinen hack. Remove after 2016.
       sort_mode = if @exercise.id == 208 || @exercise.id == 289
                     :name
                   else
                     :id
                   end
-      
+
+      @groups = @groups.to_a
+
       case sort_mode
         when :name
           @groups.sort! { |a, b| Group.compare_by_name(a, b) }
@@ -102,7 +104,7 @@ class ExercisesController < ApplicationController
         submissions = group.submissions.where(exercise_id: @exercise.id)
         @own_submission_count += submissions.size
       end
-      
+
       render action: 'my_submissions', layout: 'wide-new'
     end
 
@@ -126,7 +128,7 @@ class ExercisesController < ApplicationController
 
   # POST /exercises
   def create
-    @exercise = Exercise.new(params[:exercise])
+    @exercise = Exercise.new(exercise_params)
     @exercise.course_instance_id = params[:course_instance_id]
     load_course
 
@@ -161,7 +163,7 @@ class ExercisesController < ApplicationController
 
     return access_denied unless @course.has_teacher(current_user) || is_admin?(current_user)
 
-    if @exercise.update_attributes(params[:exercise])
+    if @exercise.update_attributes(exercise_params)
       #flash[:success] = 'Assignment was successfully updated.'
       redirect_to @exercise
       log "edit_exercise success #{@exercise.id}"
@@ -198,19 +200,18 @@ class ExercisesController < ApplicationController
     if params[:include] == 'all'
       options[:include_all] = true
     else
-      options = begin 
+      options = begin
         JSON.parse(@exercise.grading_mode || '{}')
         rescue Exception => e
           logger.warn "Invalid grading mode for exercise #{@exercise.id}: #{@exercise.grading_mode}\n#{e}"
           {}
       end
-      
       options[:include_peer_review_count] = @exercise.peer_review?
     end
-    
+
     groups = Group.where(course_instance_id: @exercise.course_instance_id).includes([{submissions: [reviews: [:user, :submission], group: :users]}, {group_members: :user}])
     @results = @exercise.results(groups, options)
-    
+
     # Sort the result
     case params[:sort]
     when 'student-id'
@@ -237,11 +238,11 @@ class ExercisesController < ApplicationController
     else
       @results.sort! { |a, b| (a[:member].studentnumber || '') <=> (b[:member].studentnumber || '') }
     end
-    
+
     #@results.sort! { |a, b| (a[:notes]) <=> (b[:notes]) }
-    
+
     log "results #{@exercise.id}#{params[:include] == 'all' ? ' all' : ''}"
-    
+
     render action: :results, layout: 'fluid-new'
   end
 
@@ -517,5 +518,11 @@ class ExercisesController < ApplicationController
     log "create_peer_review #{submission.id},#{@exercise.id}"
   end
 
+  private
 
+  def exercise_params
+    # TODO: rename groupsizemin to group_size_min
+    # TODO: rename groupsizemax to group_size_max
+    params.require(:exercise).permit(:course_instance_id, :name, :deadline, :groupsizemin, :groupsizemax, :submission_type, :allowed_extensions, :review_mode, :grader_can_email, :submit_pre_message, :peer_review_goal, :peer_review_timing, :collaborative_mode, :anonymous_graders, :anonymous_submissions)
+  end
 end

@@ -1,11 +1,11 @@
-Rubyric::Application.routes.draw do 
+Rubyric::Application.routes.draw do
   resource :session, only: [:new, :create, :destroy] do
     get 'shibboleth'
     post 'lti'
   end
 
   resources :password_resets, only: [:new, :create, :edit, :update]
-  
+
   resource :frontpage, only: [:show], controller: 'frontpage'
 
   resources :users, except: [:index] do
@@ -13,7 +13,8 @@ Rubyric::Application.routes.draw do
       get :search
     end
   end
-  match 'preferences' => 'users#edit'
+
+  get 'preferences' => 'users#edit'
 
   resources :courses, only: [:index, :show, :edit, :update] do
     resources :course_instances, only: [:new]
@@ -23,17 +24,17 @@ Rubyric::Application.routes.draw do
   resources :course_instances do
     post :send_feedback_bundle
     get :create_example_groups
-    
+
     resources :exercises, only: [:new, :create, :update] do
       member do
         get :archive
       end
     end
-    
+
     resources :reviewers, only: [:index, :create, :destroy], controller: 'course_instances/reviewers'
-    
+
     resource :students, only: [:show], controller: 'course_instances/students'
-    
+
     resource :groups, only: [:update], controller: 'course_instances/groups'
     resources :groups, only: [:index, :edit, :update], controller: 'course_instances/groups' do
       collection do
@@ -41,7 +42,7 @@ Rubyric::Application.routes.draw do
         post :batch
       end
     end
-    
+
     resources :orders do
       get :execute
       get :cancel
@@ -80,7 +81,9 @@ Rubyric::Application.routes.draw do
 
     resources :groups
   end
-  match 'groups/:id/join/:token' => 'groups#join', as: :join_group
+
+  # FIXME: is this an orphan route? there seems to be no controller action defined
+  post 'groups/:id/join/:token' => 'groups#join', as: :join_group
 
   resources :invitations, only: [:show, :destroy], id: /[^\/]+/ do
 #     member do
@@ -89,7 +92,7 @@ Rubyric::Application.routes.draw do
 #       get 'group'
 #     end
   end
-  
+
   resources :submissions, only: [:show, :new, :create, :destroy] do
     member do
       get :thumbnail
@@ -98,7 +101,7 @@ Rubyric::Application.routes.draw do
       match 'move' => 'submissions#move', via: [:get, :post]
     end
   end
-  
+
   resources :reviews, only: [:show, :edit, :update] do
     member do
       get :finish
@@ -111,7 +114,7 @@ Rubyric::Application.routes.draw do
       post :rate
     end
   end
-  
+
   resource :demo, only: [] do
     get :rubric
     get :review
@@ -122,20 +125,18 @@ Rubyric::Application.routes.draw do
   resource :admin, only: [:show] do
     post :test_mailer
   end
-  
-  #match '/exercise/new/:instance' => 'exercises#new'
-  match 'submit/:exercise' => 'submissions#new', via: :get, as: :submit
-  match 'submit/:exercise' => 'submissions#create', via: :post
-  match '/receive_email', to: 'submissions#receive_email', via: :post
-  
-  match 'aplus/:exercise' => 'submissions#aplus_get', via: :get
-  match 'aplus/:exercise' => 'submissions#aplus_submit', via: :post
 
-  match '/login' => 'sessions#new', as: :login
-  match '/logout' => 'sessions#destroy', as: :logout
+  get 'submit/:exercise' => 'submissions#new', as: :submit
+  post 'submit/:exercise' => 'submissions#create'
+  post '/receive_email', to: 'submissions#receive_email'
 
-  match '/client_event', to: 'application#log_client_event', as: 'log_client_event'
-  
-  
+  get 'aplus/:exercise' => 'submissions#aplus_get'
+  post 'aplus/:exercise' => 'submissions#aplus_submit'
+
+  get '/login' => 'sessions#new', as: :login
+  delete '/logout' => 'sessions#destroy', as: :logout
+
+  match '/client_event' => 'application#log_client_event', via: [:get, :post], as: :log_client_event
+
   root to: 'frontpage#show'
 end

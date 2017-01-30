@@ -5,32 +5,32 @@ source 'https://rubygems.org'
 
 ruby '2.1.9'
 
-gem 'rails', '3.2.17'
+gem 'rails', '4.2.7'
 
 gem 'pg'
 #gem 'sqlite3'
 
 # Gems used only for assets and not required in production environments by default.
-group :assets do
-  gem 'sass', '~> 3.2.5' # Sass is locked for now because of this bug: https://github.com/sass/sass/issues/1028. Remove this line at some point.
-  gem 'sass-rails', '~> 3.2.3'
-  gem 'coffee-rails', '~> 3.2.1'
 
-  # See https://github.com/sstephenson/execjs#readme for more supported runtimes
-  gem 'therubyracer'
+gem 'sass' # Sass is locked for now because of this bug: https://github.com/sass/sass/issues/1028. Remove this line at some point.
+gem 'sass-rails', '~> 5.0.6'
+gem 'coffee-rails', '~> 4.2.1'
 
-  gem 'uglifier', '>= 1.0.3'
-  gem 'jquery-ui-rails', '~> 4.2.0'
-end
+# See https://github.com/sstephenson/execjs#readme for more supported runtimes
+gem 'therubyracer', '~> 0.12.3'
+
+gem 'uglifier', '~> 3.0.4'
+gem 'jquery-ui-rails', '~> 4.2.0'
+
 
 group :test, :development do
-  gem 'rspec-rails', '~> 3.4'
+  gem 'rspec-rails'
   gem 'shoulda'
   gem 'capybara'
   gem 'capybara-webkit'
 end
 
-gem 'jquery-rails', '~> 3.1.0'
+gem 'jquery-rails', '~> 4.2.2'
 
 # To use Jbuilder templates for JSON
 # gem 'jbuilder'

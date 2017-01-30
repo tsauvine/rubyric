@@ -9,9 +9,9 @@ require 'rest_client'
 class Submission < ActiveRecord::Base
   belongs_to :exercise
   belongs_to :group
-  has_many :reviews, {order: :id, dependent: :destroy}
+  has_many :reviews, dependent: :destroy
 
-  has_many :review_summaries, select: 'reviews.id, reviews.status, reviews.grade, reviews.user_id', class_name: 'Review' #, :foreign_key => 'review_id'
+  has_many :review_summaries, class_name: 'Review' #, :foreign_key => 'review_id'
   #has_many :review_summaries, :class_name => "Review", -> { select([:id, :submission_id, :status, :grade, :user_id]) }
   #, -> { where('posts.title is not null') }
 
@@ -154,7 +154,7 @@ class Submission < ActiveRecord::Base
     else
       review = Review.new(options)
     end
-    
+
     review.lti_launch_params = lti_launch_params
 
     review.save

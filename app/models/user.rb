@@ -11,18 +11,18 @@ class User < ActiveRecord::Base
 
   validates :login, uniqueness: true, allow_nil: true
   validates :email, uniqueness: true
-  
-  attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
+
+  # attr_accessible :firstname, :lastname, :email, :password, :password_confirmation
 
   belongs_to :organization
-  
+
   has_many :orders
-  
+
   has_many :group_members
   has_many :groups, through: :group_members
   #has_and_belongs_to_many :groups
-  
-  has_many :reviews, order: 'id' # reviews as a grader
+
+  has_many :reviews # reviews as a grader
   has_many :review_ratings
 
   has_many :group_reviewers
@@ -39,14 +39,14 @@ class User < ActiveRecord::Base
   def require_password?
     new_record?
   end
-  
+
   def knowledge=(new_knowledge)
     new_knowledge = JSON.parse(new_knowledge || '{}') if new_knowledge.is_a? String
     current_knowledge = JSON.parse(read_attribute(:knowledge) || '{}')
-    
+
     logger.debug("current_knowledge: #{current_knowledge}")
     logger.debug("new_knowledge: #{new_knowledge}")
-    
+
     write_attribute(:knowledge, current_knowledge.merge!(new_knowledge))
   end
 
@@ -73,12 +73,12 @@ class User < ActiveRecord::Base
   def teacher?
     courses_teacher.size > 0
   end
-  
+
   def deliver_password_reset_instructions
     reset_perishable_token!
     PasswordMailer.delay.password_reset_instructions(self.id)
   end
-  
+
   # Calculates the number of peer reviews created and finished in a certain exercise.
   # Warning: queries the database.
   # Returns
@@ -89,12 +89,12 @@ class User < ActiveRecord::Base
   def peer_review_count(exercise)
     created_peer_reviews = 0
     finished_peer_reviews = 0
-    
+
     Review.joins(:submission).where(user_id: id, 'submissions.exercise_id' => exercise.id).find_each do |peer_review|
       created_peer_reviews += 1
       finished_peer_reviews += 1 if %w(finished mailed mailing invalidated).include? peer_review.status
     end
-    
+
     return {
         created_peer_reviews: created_peer_reviews,
         finished_peer_reviews: finished_peer_reviews

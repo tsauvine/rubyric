@@ -5,8 +5,8 @@ class Group < ActiveRecord::Base
   has_many :group_members, dependent: :destroy
   has_many :users, through: :group_members
 
-  has_many :submissions, {order: 'created_at DESC', dependent: :destroy}
-  has_many :submission_summaries, select: 'submissions.id, submissions.created_at, submissions.filename, submissions.extension', class_name: 'Submission', order: 'created_at DESC', dependent: :destroy
+  has_many :submissions, dependent: :destroy
+  has_many :submission_summaries, class_name: 'Submission', dependent: :destroy
 
   has_many :group_reviewers, dependent: :destroy
   has_many :reviewers, through: :group_reviewers, source: :user, class_name: 'User'
@@ -89,7 +89,7 @@ class Group < ActiveRecord::Base
   end
 
   def self.compare_by_name(a, b)
-    # Try to find a memebr with a User and a name
+    # Try to find a member with a User and a name
     a_member = a.group_members.max_by { |member| member.user ? (member.user.lastname.blank? ? 1 : 2) : 0 }
     b_member = b.group_members.max_by { |member| member.user ? (member.user.lastname.blank? ? 1 : 2) : 0 }
 
@@ -170,11 +170,11 @@ class Group < ActiveRecord::Base
 
       extreme_status || ''
     end
-    
+
     # FIXME: compare by semantic value, e.g. :finished < :mailed
     a_extreme <=> b_extreme
   end
-  
+
   # Returns the total result of this group to a specific exercise, considering all submissions and reviews.
   # Hint: eager load submissions and reviews to maximize performance (includes(:submissions => :reviews)).
   #
@@ -199,20 +199,20 @@ class Group < ActiveRecord::Base
     result = {
         :errors => []
       }
-    
+
     # Collect the reviews that should be included in the results
     submissions.each do |submission|
       next unless submission.exercise_id == exercise.id
-      
+
       submission_count += 1
       submission.reviews.each do |review|
         next unless review.include_in_results?
-        
+
         reviews << review
       end
     end
     result[:reviews] = reviews
-    
+
     # Sort reviews by grade, best first
     not_sortable = false
     begin
@@ -222,7 +222,7 @@ class Group < ActiveRecord::Base
       not_sortable = true
       #logger.debug "Reviews not sortable: #{reviews.map {|review| review.grade}.join(', ')}"
     end
-    
+
     # Take n best
     if n_best
       logger.debug "Taking #{n_best} reviews"
@@ -230,7 +230,7 @@ class Group < ActiveRecord::Base
         result[:not_enough_reviews] = true
         logger.debug "Not enough reviews"
       end
-      
+
       if n_best > 0
         # N best
         reviews = reviews.slice(0, n_best)
@@ -238,13 +238,13 @@ class Group < ActiveRecord::Base
         # N worst
         reviews = reviews.slice(n_best, -n_best)
       end
-      
+
       logger.debug "Reviews after slicing #{reviews.map {|review| review.grade}.join(', ')}"
     end
-    
+
     # Cast grades into the most convenient types, e.g. 4.0 => 4
     cast_grades = reviews.map {|review| Review.cast_grade(review.grade)}
-    
+
     # Calculate grade range (difference between extreme grades)
     result[:grade_range] = case reviews.size
     when 0
@@ -259,7 +259,7 @@ class Group < ActiveRecord::Base
         nil
       end
     end
-    
+
     # Calculate mean or median
     if submission_count == 0
       result[:no_submissions] = true
@@ -291,7 +291,7 @@ class Group < ActiveRecord::Base
     else
       raise ArgumentError.new("Unrecognized average mode: #{average}")
     end
-    
+
     return result
   end
 end
