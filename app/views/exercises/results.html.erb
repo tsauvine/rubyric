@@ -13,9 +13,9 @@
       <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All reviews<br />
       <%= radio_button_tag 'include', 'combined', params[:include] != 'all' %> Combined grade
     </p>
-    
+
     <p>
-      <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
+      <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Refresh view<% end %>
       <!--
       <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
       -->
