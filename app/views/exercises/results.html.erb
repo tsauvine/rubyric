@@ -6,17 +6,17 @@
   </h1>
 </div>
 
-<%= form_tag exercise_results_path(@exercise, :sort => params[:sort]) do %>
+<%= form_tag exercise_results_path(@exercise, sort: params[:sort]) do %>
   <div class="well">
     <p>
       If multiple reviews exist for the same group, include<br />
       <%= radio_button_tag 'include', 'all', params[:include] == 'all' %> All reviews<br />
       <%= radio_button_tag 'include', 'combined', params[:include] != 'all' %> Combined grade
     </p>
-    
+
     <p>
-      <%= button_tag :name => :format, :value => 'html', :class => 'btn btn-primary' do %>Resfresh view<% end %>
-      <%= button_tag :name => :format, :value => 'csv', :class => 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
+      <%= button_tag name: :format, value: 'html', class: 'btn btn-primary' do %>Refresh view<% end %>
+      <%= button_tag name: :format, value: 'csv', class: 'btn btn-default' do %><i class="icon-download"></i> Download CSV spreadsheet<% end %>
     </p>
   </div>
 <% end %>
@@ -24,20 +24,20 @@
 <table class="table table-condensed table-bordered table-striped">
   <thead>
     <tr>
-      <%= result_table_heading('student ID', :sort => 'student-id') %>
-      <%= result_table_heading('first name', :sort => 'first-name') %>
-      <%= result_table_heading('last name', :sort => 'last-name') %>
-      <%= result_table_heading('email', :sort => 'email') %>
-      <%= result_table_heading('grade', :sort => 'grade') %>
-      <%= result_table_heading('grade disagreement', :sort => 'grade-range') %>
+      <%= result_table_heading('student ID', sort: 'student-id') %>
+      <%= result_table_heading('first name', sort: 'first-name') %>
+      <%= result_table_heading('last name', sort: 'last-name') %>
+      <%= result_table_heading('email', sort: 'email') %>
+      <%= result_table_heading('grade', sort: 'grade') %>
+      <%= result_table_heading('grade disagreement', sort: 'grade-range') %>
       <% if params[:include] == 'all' %>
-        <%= result_table_heading('submitted_at', :sort => 'submitted-at') %>
-        <%= result_table_heading('reviewer', :sort => 'reviewer') %>
+        <%= result_table_heading('submitted_at', sort: 'submitted-at') %>
+        <%= result_table_heading('reviewer', sort: 'reviewer') %>
       <% end %>
       <% if @exercise.peer_review? && params[:include] != 'all' %>
-        <%= result_table_heading('peer review count (*)', :sort => 'peer-review-count') %>
+        <%= result_table_heading('peer review count (*)', sort: 'peer-review-count') %>
       <% end %>
-      <%= result_table_heading('notes', :sort => 'notes') %>
+      <%= result_table_heading('notes', sort: 'notes') %>
     </tr>
   </thead>
   <tbody>
