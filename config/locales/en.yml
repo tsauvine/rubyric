@@ -1,16 +1,39 @@
+# Files in the config/locales directory are used for internationalization
+# and are automatically loaded by Rails. If you want to use locales other
+# than English, add the necessary files in this directory.
+#
+# To use the locales, use `I18n.t`:
+#
+#     I18n.t 'hello'
+#
+# In views, this is aliased to just `t`:
+#
+#     <%= t('hello') %>
+#
+# To use a different locale, set it with `I18n.locale`:
+#
+#     I18n.locale = :es
+#
+# This would use the information in config/locales/es.yml.
+#
+# To learn more, please read the Rails Internationalization guide
+# available at http://guides.rubyonrails.org/i18n.html.
+
 en:
+  hello: "Hello world"
+
   other_language_name: "In Finnish"
   other_language_code: "fi"
   app_title: "Rubyric Marking Tool - Better Feedback with Less Effort"
-  
+
   settings_changeable_later: "These settings can be changed later."
-  
+
   Back: "Back"
   Save: "Save"
   Create: "Create"
   Edit: "Edit"
   Cancel: "Cancel"
-  
+
   Language: 'Language'
   Reviewer: 'Reviewer'
   Grade: 'Grade'
@@ -18,11 +41,11 @@ en:
   anonymous_review: 'Feedback'
   Feedback_available_at: 'Feedback is available at'
   Feedback_available_here: 'View feedback here'
-  
+
   #################
   # Active Record
   #################
-  
+
   authlogic:
     error_messages:
       login_blank: can not be blank
@@ -37,14 +60,13 @@ en:
       not_approved: Your account is not approved
       no_authentication_details: You did not provide any details for authentication.
       general_credentials_error: Login/Password combination is not valid
-        
+
   activerecord:
     errors:
       models:
         user:
           attributes:
             email:
-              
 #         course_instance:
 #           attributes:
 #             code:
@@ -65,13 +87,10 @@ en:
 #           attributes:
 #             caption:
 #               blank: "caption missing"
-
-
-
   ##############
   # Time & Date
   ##############
-  
+
   date:
     formats:
       # Use the strftime parameters for formats.
